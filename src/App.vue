@@ -1,6 +1,6 @@
 <template>
-  <h3>hi ben</h3>
-  <button type="button">Dont touch me, thats assault!</button>
+  <h3>hi ethank</h3>
+  <button type="button">Dont touch me, thats my nono square!</button>
 </template>
 
 <script setup lang="ts"></script>
