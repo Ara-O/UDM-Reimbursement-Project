@@ -10,7 +10,7 @@
       />
     </div>
     <br />
-    <h3 class="signup-page-title">Sign up page</h3>
+    <h3 class="signup-page-title">Sign Up Page</h3>
     <br />
     <div class="input-field">
       <label for="first-name">First Name: </label>
@@ -36,7 +36,7 @@
       <label for="mailing-address">Mailing Address:</label>
       <input type="text" name="Mailing Address" id="mailing-address" />
     </div>
-    <button class="continue-button">Continue Forward</button>
+    <button class="continue-button">Continue</button>
   </section>
 </template>
 
