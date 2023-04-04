@@ -10,7 +10,7 @@
       />
     </div>
     <br />
-    <h3 class="signup-page-title">Sign Up Page</h3>
+    <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
     <br />
     <div class="input-field">
       <label for="first-name">First Name: </label>
@@ -36,7 +36,19 @@
       <label for="mailing-address">Mailing Address:</label>
       <input type="text" name="Mailing Address" id="mailing-address" />
     </div>
-    <button class="continue-button">Continue</button>
+    <div class="input-field">
+      <label for="phone-number">Phone Number:</label>
+      <input type="text" name="Phone Number" id="phone-number" />
+    </div>
+    <div class="input-field">
+      <label for="password">Password:</label>
+      <input type="text" name="Password" id="password" />
+    </div>
+    <div class="input-field">
+      <label for="foapa-numbers">FOAPA Numbers:</label>
+      <input type="text" name="FOAPA Numbers" id="foapa-numbers" />
+    </div>
+    <button class="signup-button">Sign up</button>
   </section>
 </template>
 
@@ -55,7 +67,7 @@ input {
   flex-direction: column;
 }
 
-.signup-page-title {
+.signup-title {
   font-weight: 600;
   font-size: 25px;
 }
@@ -100,7 +112,7 @@ input {
   width: 140px;
 }
 
-.continue-button {
+.signup-button {
   background-color: var(--udmercy-blue);
   color: white;
   padding: 10px 70px;
