@@ -36,7 +36,7 @@
       <label for="mailing-address">Mailing Address:</label>
       <input type="text" name="Mailing Address" id="mailing-address" />
     </div>
-    <button class="continue-button">Continue</button>
+    <button class="continue-button">Continue Forward</button>
   </section>
 </template>
 
