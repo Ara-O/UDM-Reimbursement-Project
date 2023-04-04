@@ -73,14 +73,16 @@
 
 .input-field {
   margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 450px;
+  justify-content: space-between;
 }
 
 .input-field input {
   margin-left: 30px;
-
   width: 224px;
   height: 36px;
-
   background: #ffffff;
   border: 1px solid #f7f7f7;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
