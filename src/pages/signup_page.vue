@@ -60,10 +60,11 @@ input {
 }
 
 .signup-page {
+  padding: 70px 0px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: auto;
   flex-direction: column;
 }
 
@@ -93,7 +94,7 @@ input {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  width: 450px;
+  width: 470px;
   justify-content: space-between;
 }
 
@@ -109,7 +110,8 @@ input {
 }
 
 .input-field label {
-  width: 140px;
+  width: 175px;
+  font-size: 14px;
 }
 
 .signup-button {
