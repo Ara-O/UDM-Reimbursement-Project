@@ -20,3 +20,7 @@ app.post("/api/register", (req, res) => {
 app.listen(8080, () => {
   console.log("Server started on port 8080");
 });
+
+// NOTES
+//in order to run the backend server, run node app.js
+//in the terminal
