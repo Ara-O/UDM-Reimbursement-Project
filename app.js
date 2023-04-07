@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { bodyParser } from "body-parser";
+import bodyParser from "body-parser";
 
 const app = express();
 
@@ -18,7 +18,8 @@ app.get("/", (req, res) => {
 
 app.post("/api/register", (req, res) => {
   let data = req.body;
-  res.send("hello api post :) + ", JSON.stringify(data));
+  console.log(data.firstName);
+  // res.send("hello api post :) + ", JSON.stringify(data));
 });
 // Start the server
 app.listen(8080, () => {
