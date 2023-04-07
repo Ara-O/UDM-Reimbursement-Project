@@ -30,10 +30,10 @@ app.listen(8080, () => {
 //in order to run the backend server, run node app.js
 //in the terminal
 const connection = mysql.createConnection({
-  host: "127.0.0.1",
+  host: "localhost",
   user: "root",
-  port: 4040,
-  password: "02171110",
+  port: 3306,
+  password: "1234",
 });
 
 connection.connect();
