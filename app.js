@@ -1,8 +1,8 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { bodyParser } from "body-parser";
-import mysql from 'mysql'
+import bodyParser from "body-parser";
+import mysql from "mysql";
 
 const app = express();
 
@@ -30,18 +30,18 @@ app.listen(8080, () => {
 //in order to run the backend server, run node app.js
 //in the terminal
 const connection = mysql.createConnection({
-  host: '127.0.0.1',
-  user: 'root',
+  host: "127.0.0.1",
+  user: "root",
   port: 4040,
-  password: '02171110'
-})
+  password: "12345678",
+});
 
-connection.connect()
+connection.connect();
 
-connection.query('SELECT 1 + 1 AS solution', (err, rows, fields) => {
-  if (err) console.log(err)
+connection.query("SELECT 1 + 1 AS solution", (err, rows, fields) => {
+  if (err) console.log(err);
 
-  console.log('The solution is: ', rows[0].solution)
-})
+  console.log("The solution is: ", rows[0].solution);
+});
 
-connection.end()
+connection.end();
