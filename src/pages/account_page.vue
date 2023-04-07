@@ -14,35 +14,35 @@
     <br />
     <div class="input-field">
       <label for="first-name">First Name: </label>
-      <input type="text" name="First name" id="first-name" />
+      <input type="text" name="First name" id="first-name" required />
     </div>
     <div class="input-field">
       <label for="last-name">Last Name: </label>
-      <input type="text" name="Last Name" id="last-name" />
+      <input type="text" name="Last Name" id="last-name" required />
     </div>
     <div class="input-field">
       <label for="work-email">Work Email: </label>
-      <input type="email" name="Work Email" id="work-email" />
+      <input type="email" name="Work Email" id="work-email" required />
     </div>
     <div class="input-field">
       <label for="employment-number">Employment Number: </label>
-      <input type="text" name="Employment Number" id="employment-number" />
+      <input type="text" name="Employment Number" id="employment-number" required />
     </div>
     <div class="input-field">
       <label for="department">Department:</label>
-      <input type="text" name="Department" id="department" />
+      <input type="text" name="Department" id="department" required />
     </div>
     <div class="input-field">
       <label for="mailing-address">Mailing Address:</label>
-      <input type="text" name="Mailing Address" id="mailing-address" />
+      <input type="text" name="Mailing Address" id="mailing-address" required />
     </div>
     <div class="input-field">
       <label for="phone-number">Phone Number:</label>
-      <input type="text" name="Phone Number" id="phone-number" />
+      <input type="text" name="Phone Number" id="phone-number" required />
     </div>
     <div class="input-field">
       <label for="password">Password:</label>
-      <input type="text" name="Password" id="password" />
+      <input type="text" name="Password" id="password" required />
     </div>
     <button class="button">Save</button>
     <button class="button">Cancel</button>
