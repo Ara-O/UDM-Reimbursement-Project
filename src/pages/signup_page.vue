@@ -12,47 +12,127 @@
     <br />
     <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
     <br />
-    <div class="input-field">
-      <label for="first-name">First Name: </label>
-      <input type="text" name="First name" id="first-name" />
-    </div>
-    <div class="input-field">
-      <label for="last-name">Last Name: </label>
-      <input type="text" name="Last Name" id="last-name" />
-    </div>
-    <div class="input-field">
-      <label for="work-email">Work Email: </label>
-      <input type="email" name="Work Email" id="work-email" />
-    </div>
-    <div class="input-field">
-      <label for="employment-number">Employment Number: </label>
-      <input type="text" name="Employment Number" id="employment-number" />
-    </div>
-    <div class="input-field">
-      <label for="department">Department:</label>
-      <input type="text" name="Department" id="department" />
-    </div>
-    <div class="input-field">
-      <label for="mailing-address">Mailing Address:</label>
-      <input type="text" name="Mailing Address" id="mailing-address" />
-    </div>
-    <div class="input-field">
-      <label for="phone-number">Phone Number:</label>
-      <input type="text" name="Phone Number" id="phone-number" />
-    </div>
-    <div class="input-field">
-      <label for="password">Password:</label>
-      <input type="text" name="Password" id="password" />
-    </div>
-    <div class="input-field">
-      <label for="foapa-numbers">FOAPA Numbers:</label>
-      <input type="text" name="FOAPA Numbers" id="foapa-numbers" />
-    </div>
-    <button class="signup-button">Sign up</button>
+    <form @submit.prevent="registerUser">
+      <div class="input-field">
+        <label for="first-name">First Name: </label>
+        <input
+          type="text"
+          name="First name"
+          id="first-name"
+          v-model="userSignupData.firstName"
+          required
+        />
+      </div>
+      <div class="input-field">
+        <label for="last-name">Last Name: </label>
+        <input
+          type="text"
+          name="Last Name"
+          id="last-name"
+          v-model="userSignupData.lastName"
+        />
+      </div>
+      <div class="input-field">
+        <label for="work-email">Work Email: </label>
+        <input
+          type="email"
+          name="Work Email"
+          id="work-email"
+          v-model="userSignupData.workEmail"
+        />
+      </div>
+      <div class="input-field">
+        <label for="employment-number">Employment Number: </label>
+        <input
+          type="text"
+          name="Employment Number"
+          id="employment-number"
+          v-model="userSignupData.employmentNumber"
+        />
+      </div>
+      <div class="input-field">
+        <label for="department">Department:</label>
+        <input
+          type="text"
+          name="Department"
+          id="department"
+          v-model="userSignupData.department"
+        />
+      </div>
+      <div class="input-field">
+        <label for="mailing-address">Mailing Address:</label>
+        <input
+          type="text"
+          name="Mailing Address"
+          id="mailing-address"
+          v-model="userSignupData.mailingAddress"
+        />
+      </div>
+      <div class="input-field">
+        <label for="phone-number">Phone Number:</label>
+        <input
+          type="text"
+          name="Phone Number"
+          id="phone-number"
+          v-model="userSignupData.phoneNumber"
+        />
+      </div>
+      <div class="input-field">
+        <label for="password">Password:</label>
+        <input
+          type="text"
+          name="Password"
+          id="password"
+          v-model="userSignupData.password"
+        />
+      </div>
+      <div class="input-field">
+        <label for="foapa-numbers">FOAPA Numbers:</label>
+        <input
+          type="text"
+          name="FOAPA Numbers"
+          id="foapa-numbers"
+          v-model="userSignupData.foapaNumber"
+        />
+      </div>
+      <button class="signup-button" type="submit">Sign up</button>
+    </form>
   </section>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import axios from "axios";
+import { reactive } from "vue";
+type UserData = {
+  firstName: string;
+  lastName: string;
+  workEmail: string;
+  employmentNumber: string;
+  department: string;
+  mailingAddress: string;
+  phoneNumber: string;
+  password: string;
+  foapaNumber: string;
+};
+
+let userSignupData = reactive<UserData>({
+  firstName: "",
+  lastName: "",
+  workEmail: "",
+  employmentNumber: "",
+  department: "",
+  mailingAddress: "",
+  phoneNumber: "",
+  password: "",
+  foapaNumber: "",
+});
+
+function registerUser() {
+  axios.post("/api/register", userSignupData).catch((err) => {
+    console.log(err);
+  });
+}
+</script>
 
 <style scoped>
 input {

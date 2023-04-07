@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { bodyParser } from "body-parser";
 
 const app = express();
 
@@ -8,13 +9,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(express.static("dist"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 app.post("/api/register", (req, res) => {
-  res.send("hello api post :)");
+  let data = req.body;
+  res.send("hello api post :) + ", JSON.stringify(data));
 });
 // Start the server
 app.listen(8080, () => {
