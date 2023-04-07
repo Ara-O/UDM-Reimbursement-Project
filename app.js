@@ -1,7 +1,8 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import bodyParser from "body-parser";
+import { bodyParser } from "body-parser";
+import mysql from 'mysql'
 
 const app = express();
 
@@ -18,8 +19,7 @@ app.get("/", (req, res) => {
 
 app.post("/api/register", (req, res) => {
   let data = req.body;
-  console.log(data.firstName);
-  // res.send("hello api post :) + ", JSON.stringify(data));
+  res.send("hello api post :) + ", JSON.stringify(data));
 });
 // Start the server
 app.listen(8080, () => {
@@ -29,3 +29,19 @@ app.listen(8080, () => {
 // NOTES
 //in order to run the backend server, run node app.js
 //in the terminal
+const connection = mysql.createConnection({
+  host: '127.0.0.1',
+  user: 'root',
+  port: 4040,
+  password: '02171110'
+})
+
+connection.connect()
+
+connection.query('SELECT 1 + 1 AS solution', (err, rows, fields) => {
+  if (err) console.log(err)
+
+  console.log('The solution is: ', rows[0].solution)
+})
+
+connection.end()
