@@ -57,6 +57,7 @@ let containsTable = `CREATE TABLE IF NOT EXISTS Contains (
     FOREIGN KEY (reimbursementId) REFERENCES ReimbursementTicket(reimbursementId),
     FOREIGN KEY (activityId) REFERENCES Activity(activityId)
   );`;
+
 export {
   facultyTable,
   foapaTable,
