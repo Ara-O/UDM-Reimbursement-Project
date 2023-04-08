@@ -93,6 +93,7 @@
           required
         />
       </div>
+      <!-- Store foapa numbers in their own table -->
       <div class="input-field">
         <label for="foapa-numbers">FOAPA Numbers:</label>
         <input type="text" name="FOAPA Numbers" id="foapa-numbers" />
@@ -136,8 +137,7 @@
 import axios from "axios";
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
-// @ts-ignore
-// import { stopConnection } from "../../app.js";
+
 type UserData = {
   firstName: string;
   lastName: string;
@@ -169,14 +169,16 @@ let userSignupData = reactive<UserData>({
 });
 
 function registerUser() {
+  //Calls the api/register function and passes the user data, if it was successful, push to the dashboard page
+  //or else, alert the user of an error
   axios
     .post("/api/register", userSignupData)
     .then(() => {
+      alert("User registration successful");
       router.push("/dashboard");
     })
     .catch((err) => {
-      console.log(err.response.data.message);
-      alert(err.message);
+      alert(err.response.data.message);
     });
 }
 </script>

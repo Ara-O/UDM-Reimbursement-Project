@@ -33,7 +33,9 @@ const connection = mysql.createConnection({
   database: "reimbursement_db",
 });
 
-connection.connect();
+connection.connect(function (err) {
+  if (err) throw err;
+});
 
 //Creating all the necessary tables
 connection.query(facultyTable, (err) => {
@@ -65,32 +67,46 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api/register", (req, res) => {
+  const {
+    employmentNumber,
+    firstName,
+    lastName,
+    workEmail,
+    phoneNumber,
+    password,
+    mailingAddress,
+    department,
+    zipCode,
+    city,
+    state,
+  } = req.body;
+
   connection.query(
     "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?)",
     [
-      req.body.employmentNumber,
-      req.body.firstName,
-      req.body.lastName,
-      req.body.workEmail,
-      req.body.phoneNumber,
-      req.body.password,
-      req.body.mailingAddress,
-      req.body.department,
-      req.body.zipCode,
-      req.body.city,
-      req.body.state,
+      employmentNumber,
+      firstName,
+      lastName,
+      workEmail,
+      phoneNumber,
+      password,
+      mailingAddress,
+      department,
+      zipCode,
+      city,
+      state,
     ],
     (err) => {
-      console.log(err.code);
-      if (err.code === "ER_DUP_ENTRY") {
-        res.status(400).json({ message: "User already exists" });
+      if (err) {
+        console.log(err);
+        if (err.code === "ER_DUP_ENTRY") {
+          res.status(409).json({ message: "User already exists" });
+        }
+      } else {
+        res.status(201).json({ message: "User created successfully" });
       }
-
-      connection.end();
     }
   );
-
-  // res.send("hello api post :) + ", JSON.stringify(data));
 });
 
 app.get("/close", () => {
