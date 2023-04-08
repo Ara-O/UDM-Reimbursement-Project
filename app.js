@@ -45,7 +45,7 @@ connection.query("CREATE TABLE IF NOT EXISTS Faculty (\n employmentNumber int NO
 + "workEmail varchar(45) NOT NULL,\n"
 + "phoneNumber varchar(45) NOT NULL,\n"
 + "password varchar(45) NOT NULL,\n"
-+ "mailingAddress varchar(45) NOT NULL,\n"
++ "streetAddress varchar(45) NOT NULL,\n"
 + "department varchar(45) NOT NULL,\n"
 + "zipCode int NOT NULL,\n"
 + "city varchar(45) NOT NULL,\n"
