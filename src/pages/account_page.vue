@@ -84,15 +84,6 @@
       />
     </div>
     <div class="input-field">
-        <label for="zip-code">Zip Code:</label>
-        <input 
-          type="number" 
-          name="Zip Code" 
-          id="zip-code"
-          required
-        />
-    </div>
-    <div class="input-field">
       <label for="city">City:</label>
       <input 
         type="text" 
@@ -110,15 +101,38 @@
         required
       />
     </div>
-    <button class="button">Save</button>
-    <button class="button">Cancel</button>
+    <div class="input-field">
+        <label for="zip-code">Zip Code:</label>
+        <input 
+          type="number" 
+          name="Zip Code" 
+          id="zip-code"
+          required
+        />
+    </div>
+    <button class="button" @click="save">Save</button>
+    <button class="button" @click="cancel">Cancel</button>
     <br />
     <h6 class="trademark-text">Made with love by the Duckateers TM</h6>
     <br />
   </section>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+  import axios from "axios";
+  import { reactive } from "vue";
+  import { useRouter } from "vue-router";
+
+  const router = useRouter();
+
+  function cancel() {
+    router.push("/dashboard");
+  }
+
+  function save(){
+    
+  }
+</script>
 
 <style scoped>
 input {
