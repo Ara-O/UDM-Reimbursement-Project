@@ -30,6 +30,7 @@
           name="Last Name"
           id="last-name"
           v-model="userSignupData.lastName"
+          required
         />
       </div>
       <div class="input-field">
@@ -39,6 +40,7 @@
           name="Work Email"
           id="work-email"
           v-model="userSignupData.workEmail"
+          required
         />
       </div>
       <div class="input-field">
@@ -48,6 +50,7 @@
           name="Employment Number"
           id="employment-number"
           v-model="userSignupData.employmentNumber"
+          required
         />
       </div>
       <div class="input-field">
@@ -57,6 +60,7 @@
           name="Department"
           id="department"
           v-model="userSignupData.department"
+          required
         />
       </div>
       <div class="input-field">
@@ -66,6 +70,7 @@
           name="Mailing Address"
           id="mailing-address"
           v-model="userSignupData.mailingAddress"
+          required
         />
       </div>
       <div class="input-field">
@@ -75,6 +80,7 @@
           name="Phone Number"
           id="phone-number"
           v-model="userSignupData.phoneNumber"
+          required
         />
       </div>
       <div class="input-field">
@@ -84,6 +90,7 @@
           name="Password"
           id="password"
           v-model="userSignupData.password"
+          required
         />
       </div>
       <div class="input-field">
@@ -97,6 +104,7 @@
           name="Zip Code"
           id="zip-code"
           v-model="userSignupData.zipCode"
+          required
         />
       </div>
       <div class="input-field">
@@ -106,6 +114,7 @@
           name="City"
           id="city"
           v-model="userSignupData.city"
+          required
         />
       </div>
       <div class="input-field">
@@ -115,6 +124,7 @@
           name="State"
           id="state"
           v-model="userSignupData.state"
+          required
         />
       </div>
       <button class="signup-button" type="submit">Continue</button>
@@ -125,6 +135,9 @@
 <script lang="ts" setup>
 import axios from "axios";
 import { reactive } from "vue";
+import { useRouter } from "vue-router";
+// @ts-ignore
+// import { stopConnection } from "../../app.js";
 type UserData = {
   firstName: string;
   lastName: string;
@@ -139,24 +152,32 @@ type UserData = {
   state: string;
 };
 
+const router = useRouter();
+
 let userSignupData = reactive<UserData>({
-  firstName: "",
-  lastName: "",
-  workEmail: "",
-  employmentNumber: 0,
-  department: "",
-  mailingAddress: "",
-  phoneNumber: "",
-  password: "",
-  zipCode: 0,
-  city: "",
-  state: "",
+  firstName: "Bob",
+  lastName: "Bobbington",
+  workEmail: "Bob@gmail.com",
+  employmentNumber: 11010,
+  department: "Comp sci",
+  mailingAddress: "123 Fakt",
+  phoneNumber: "313-313-3133",
+  password: "bobby",
+  zipCode: 32422,
+  city: "detroit",
+  state: "mi",
 });
 
 function registerUser() {
-  axios.post("/api/register", userSignupData).catch((err) => {
-    console.log(err);
-  });
+  axios
+    .post("/api/register", userSignupData)
+    .then(() => {
+      router.push("/dashboard");
+    })
+    .catch((err) => {
+      console.log(err.response.data.message);
+      alert(err.message);
+    });
 }
 </script>
 

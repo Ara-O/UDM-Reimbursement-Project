@@ -81,10 +81,18 @@ app.post("/api/register", (req, res) => {
       req.body.state,
     ],
     (err) => {
-      if (err) console.log(err);
+      console.log(err.code);
+      if (err.code === "ER_DUP_ENTRY") {
+        res.status(400).json({ message: "User already exists" });
+      }
+
       connection.end();
     }
   );
 
   // res.send("hello api post :) + ", JSON.stringify(data));
+});
+
+app.get("/close", () => {
+  connection.end();
 });
