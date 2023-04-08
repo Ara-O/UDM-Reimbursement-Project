@@ -12,7 +12,7 @@
     <br />
     <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
     <br />
-    <form @submit.prevent="registerUser">
+    <form @submit.prevent="registerUser" class="signup-form">
       <div class="input-field">
         <label for="first-name">First Name: </label>
         <input
@@ -44,7 +44,7 @@
       <div class="input-field">
         <label for="employment-number">Employment Number: </label>
         <input
-          type="text"
+          type="number"
           name="Employment Number"
           id="employment-number"
           v-model="userSignupData.employmentNumber"
@@ -80,7 +80,7 @@
       <div class="input-field">
         <label for="password">Password:</label>
         <input
-          type="text"
+          type="password"
           name="Password"
           id="password"
           v-model="userSignupData.password"
@@ -88,14 +88,36 @@
       </div>
       <div class="input-field">
         <label for="foapa-numbers">FOAPA Numbers:</label>
+        <input type="text" name="FOAPA Numbers" id="foapa-numbers" />
+      </div>
+      <div class="input-field">
+        <label for="zip-code">Zip Code:</label>
         <input
-          type="text"
-          name="FOAPA Numbers"
-          id="foapa-numbers"
-          v-model="userSignupData.foapaNumber"
+          type="number"
+          name="Zip Code"
+          id="zip-code"
+          v-model="userSignupData.zipCode"
         />
       </div>
-      <button class="signup-button" type="submit">Sign up</button>
+      <div class="input-field">
+        <label for="city">City:</label>
+        <input
+          type="text"
+          name="City"
+          id="city"
+          v-model="userSignupData.city"
+        />
+      </div>
+      <div class="input-field">
+        <label for="state">State:</label>
+        <input
+          type="text"
+          name="State"
+          id="state"
+          v-model="userSignupData.state"
+        />
+      </div>
+      <button class="signup-button" type="submit">Continue</button>
     </form>
   </section>
 </template>
@@ -107,24 +129,28 @@ type UserData = {
   firstName: string;
   lastName: string;
   workEmail: string;
-  employmentNumber: string;
+  employmentNumber: number;
   department: string;
   mailingAddress: string;
   phoneNumber: string;
   password: string;
-  foapaNumber: string;
+  zipCode: number;
+  city: string;
+  state: string;
 };
 
 let userSignupData = reactive<UserData>({
   firstName: "",
   lastName: "",
   workEmail: "",
-  employmentNumber: "",
+  employmentNumber: 0,
   department: "",
   mailingAddress: "",
   phoneNumber: "",
   password: "",
-  foapaNumber: "",
+  zipCode: 0,
+  city: "",
+  state: "",
 });
 
 function registerUser() {
@@ -205,6 +231,12 @@ input {
   cursor: pointer;
   background: #a5093e;
   border-radius: 26px;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media (max-width: 610px) {
