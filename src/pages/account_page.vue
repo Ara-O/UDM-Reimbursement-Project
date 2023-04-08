@@ -14,35 +14,101 @@
     <br />
     <div class="input-field">
       <label for="first-name">First Name: </label>
-      <input type="text" name="First name" id="first-name" required />
+      <input 
+        type="text" 
+        name="First name" 
+        id="first-name" required 
+      />
     </div>
     <div class="input-field">
       <label for="last-name">Last Name: </label>
-      <input type="text" name="Last Name" id="last-name" required />
+      <input 
+        type="text" 
+        name="Last Name" 
+        id="last-name" 
+        required 
+      />
     </div>
     <div class="input-field">
       <label for="work-email">Work Email: </label>
-      <input type="email" name="Work Email" id="work-email" required />
+      <input 
+        type="email" 
+        name="Work Email" 
+        id="work-email" 
+        required 
+      />
     </div>
     <div class="input-field">
       <label for="employment-number">Employment Number: </label>
-      <input type="text" name="Employment Number" id="employment-number" required />
+      <input 
+        type="text" 
+        name="Employment Number" 
+        id="employment-number" 
+        required 
+      />
     </div>
     <div class="input-field">
       <label for="department">Department:</label>
-      <input type="text" name="Department" id="department" required />
-    </div>
-    <div class="input-field">
-      <label for="mailing-address">Mailing Address:</label>
-      <input type="text" name="Mailing Address" id="mailing-address" required />
+      <input 
+        type="text" 
+        name="Department" 
+        id="department" 
+        required 
+      />
     </div>
     <div class="input-field">
       <label for="phone-number">Phone Number:</label>
-      <input type="text" name="Phone Number" id="phone-number" required />
+      <input 
+        type="text" 
+        name="Phone Number" 
+        id="phone-number" 
+        required 
+      />
     </div>
     <div class="input-field">
       <label for="password">Password:</label>
-      <input type="text" name="Password" id="password" required />
+      <input 
+        type="text" 
+        name="Password" 
+        id="password" 
+        required 
+      />
+    </div>
+    <div class="input-field">
+      <label for="street-address">Street Address:</label>
+      <input 
+        type="text" 
+        name="Street Address" 
+        id="street-address" 
+        required 
+      />
+    </div>
+    <div class="input-field">
+        <label for="zip-code">Zip Code:</label>
+        <input 
+          type="number" 
+          name="Zip Code" 
+          id="zip-code"
+          required
+        />
+    </div>
+    <div class="input-field">
+      <label for="city">City:</label>
+      <input 
+        type="text" 
+        name="City" 
+        id="city"
+        required
+      />
+    </div>
+    <div class="input-field">
+      <label for="state">State:</label>
+      <input 
+        type="text" 
+        name="State" 
+        id="state"
+        required
+      />
     </div>
     <button class="button">Save</button>
     <button class="button">Cancel</button>
