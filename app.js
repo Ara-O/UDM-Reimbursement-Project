@@ -79,6 +79,7 @@ app.post("/api/register", (req, res) => {
     zipCode,
     city,
     state,
+    foapaNumber,
   } = req.body;
 
   connection.query(
@@ -106,6 +107,28 @@ app.post("/api/register", (req, res) => {
         res.status(201).json({ message: "User created successfully" });
       }
     }
+  );
+  connection.query(
+    "INSERT INTO foapa VALUES(?,?)",
+    [
+      "employmentNumber",
+      foapaNumber
+    ],
+    (err) => {
+      if (err) {
+        console.log(err);
+        if (err.code === "ER_DUP_ENTRY") {
+          res.status(409).json({ message: "Foapa already exists" });
+        }
+      }
+    }
+  );
+  connection.query(
+    "INSERT INTO possesses VALUES(?,?)",
+    [
+      employmentNumber,
+      foapaNumber
+    ]
   );
 });
 
