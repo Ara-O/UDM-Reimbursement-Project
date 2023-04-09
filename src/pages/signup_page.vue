@@ -96,7 +96,12 @@
       <!-- Store foapa numbers in their own table -->
       <div class="input-field">
         <label for="foapa-numbers">FOAPA Numbers:</label>
-        <input type="text" name="FOAPA Numbers" id="foapa-numbers" />
+        <input 
+          type="text" 
+          name="FOAPA Numbers" 
+          id="foapa-numbers"
+          v-model="userSignupData.foapaNumber"
+        />
       </div>
       <div class="input-field">
         <label for="zip-code">Zip Code:</label>
@@ -150,6 +155,7 @@ type UserData = {
   zipCode: number;
   city: string;
   state: string;
+  foapaNumber: string;
 };
 
 const router = useRouter();
@@ -166,6 +172,7 @@ let userSignupData = reactive<UserData>({
   zipCode: 32422,
   city: "detroit",
   state: "mi",
+  foapaNumber: "1",
 });
 
 function registerUser() {
