@@ -11,6 +11,7 @@ import {
   reimbursementTable,
   containsTable,
 } from "./queries.js";
+
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -66,7 +67,93 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-app.post("/api/register", (req, res) => {
+// async function registerUser(req, res) {
+//   const {
+//     employmentNumber,
+//     firstName,
+//     lastName,
+//     workEmail,
+//     phoneNumber,
+//     password,
+//     mailingAddress,
+//     department,
+//     zipCode,
+//     city,
+//     state,
+//     foapaNumber,
+//   } = req.body;
+
+//   //Creates a transaction so that the error is no longer happening where
+//   //data is inserted to one table and then if theres an error to another table, said other
+//   //tables get left empty
+
+//   await connection.beginTransaction();
+
+//   // Insert into faculty
+//   await connection.query(
+//     "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+//     [
+//       employmentNumber,
+//       firstName,
+//       lastName,
+//       workEmail,
+//       phoneNumber,
+//       password,
+//       mailingAddress,
+//       department,
+//       zipCode,
+//       city,
+//       state,
+//     ],
+//     (err) => {
+//       connection.rollback();
+//       throw err;
+//     }
+//   );
+
+//   let foapaNumberAlreadyExists = false;
+
+//   //Check if foapa is in table
+//   await connection.query(
+//     "SELECT * from foapa WHERE foapaNumber = ?",
+//     [foapaNumber],
+//     (err, rows) => {
+//       if (err) {
+//         connection.rollback();
+//         throw err;
+//       }
+//       if (rows.length > 0) {
+//         console.log("foapa already exists");
+//         foapaNumberAlreadyExists = true;
+//       } else {
+//         console.log("foapa not found");
+//       }
+//     }
+//   );
+
+//   if (!foapaNumberAlreadyExists) {
+//     //insert into foapa table
+//     await connection.query(
+//       "INSERT INTO foapa VALUES(?,?)",
+//       //TODO: Foapa name?
+//       [employmentNumber, foapaNumber]
+//     );
+//   }
+
+//   // insert into possesses
+//   await connection.query(
+//     "INSERT INTO possesses VALUES(?,?)",
+//     [employmentNumber, foapaNumber],
+//     (err) => {
+//       if (err) throw err;
+//       res.status(200).send("User registered successfully");
+//     }
+//   );
+
+//   await connection.commit();
+// }
+
+function registerUser(req, res) {
   const {
     employmentNumber,
     firstName,
@@ -82,6 +169,9 @@ app.post("/api/register", (req, res) => {
     foapaNumber,
   } = req.body;
 
+  connection.beginTransaction();
+
+  //   // Insert into faculty
   connection.query(
     "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?)",
     [
@@ -100,37 +190,41 @@ app.post("/api/register", (req, res) => {
     (err) => {
       if (err) {
         console.log(err);
-        if (err.code === "ER_DUP_ENTRY") {
-          res.status(409).json({ message: "User already exists" });
-        }
+        res.status(409).send({ message: "User already exists" });
+        connection.rollback();
       } else {
-        res.status(201).json({ message: "User created successfully" });
+        connection.query(
+          "SELECT * from foapa WHERE foapaNumber = ?",
+          [foapaNumber],
+          (err, rows) => {
+            if (err) {
+              res.status(409).send({ message: "FOAPA already exists" });
+              connection.rollback();
+            }
+
+            if (rows.length <= 0) {
+              connection.query("INSERT INTO foapa VALUES(?,?)", [
+                employmentNumber,
+                foapaNumber,
+              ]);
+            }
+
+            connection.query(
+              "INSERT INTO possesses VALUES(?,?)",
+              [employmentNumber, foapaNumber],
+              (err) => {
+                res.status(200).send("success");
+                connection.commit();
+              }
+            );
+          }
+        );
       }
     }
   );
-  connection.query(
-    "INSERT INTO foapa VALUES(?,?)",
-    [
-      "employmentNumber",
-      foapaNumber
-    ],
-    (err) => {
-      if (err) {
-        console.log(err);
-        if (err.code === "ER_DUP_ENTRY") {
-          res.status(409).json({ message: "Foapa already exists" });
-        }
-      }
-    }
-  );
-  connection.query(
-    "INSERT INTO possesses VALUES(?,?)",
-    [
-      employmentNumber,
-      foapaNumber
-    ]
-  );
-});
+}
+
+app.post("/api/register", registerUser);
 
 app.get("/close", () => {
   connection.end();
@@ -142,5 +236,6 @@ process
   })
   .on("uncaughtException", (err) => {
     console.error(err, "Uncaught Exception thrown");
+    connection.end();
     process.exit(1);
   });

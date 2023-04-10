@@ -15,14 +15,14 @@ let facultyTable = `CREATE TABLE IF NOT EXISTS Faculty (
 
 let foapaTable = `CREATE TABLE IF NOT EXISTS FOAPA (
     foapaName varchar(45) NOT NULL,
-    foapaNumber int NOT NULL,
+    foapaNumber varchar(45) NOT NULL,
     PRIMARY KEY (foapaNumber)
   );`;
 
 let possessesTable = `
  CREATE TABLE IF NOT EXISTS Possesses (
    employmentNumber int NOT NULL,
-   foapaNumber int NOT NULL,
+   foapaNumber varchar(45) NOT NULL,
    PRIMARY KEY (employmentNumber, foapaNumber),
    FOREIGN KEY (employmentNumber) REFERENCES Faculty(employmentNumber),
    FOREIGN KEY (foapaNumber) REFERENCES FOAPA(foapaNumber)
@@ -30,7 +30,7 @@ let possessesTable = `
 
 let activityTable = `CREATE TABLE IF NOT EXISTS Activity (
     activityId int NOT NULL,
-    foapaNumber int NOT NULL,
+    foapaNumber varchar(45) NOT NULL,
     activityName varchar(45) NOT NULL,
     activityReceipt varchar(45) NOT NULL,
     activityDate date NOT NULL,

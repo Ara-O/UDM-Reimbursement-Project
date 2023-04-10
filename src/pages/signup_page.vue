@@ -96,9 +96,9 @@
       <!-- Store foapa numbers in their own table -->
       <div class="input-field">
         <label for="foapa-numbers">FOAPA Numbers:</label>
-        <input 
-          type="text" 
-          name="FOAPA Numbers" 
+        <input
+          type="text"
+          name="FOAPA Numbers"
           id="foapa-numbers"
           v-model="userSignupData.foapaNumber"
         />
@@ -172,7 +172,7 @@ let userSignupData = reactive<UserData>({
   zipCode: 32422,
   city: "detroit",
   state: "mi",
-  foapaNumber: "1",
+  foapaNumber: "100-1101-0111-0111",
 });
 
 function registerUser() {
@@ -185,6 +185,7 @@ function registerUser() {
       router.push("/dashboard");
     })
     .catch((err) => {
+      console.log(err);
       alert(err.response.data.message);
     });
 }
