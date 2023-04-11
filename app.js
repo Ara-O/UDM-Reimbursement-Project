@@ -138,7 +138,7 @@ function registerUser(req, res) {
   );
 }
 
-app.get("/api/retrieveFoapaNumbers", (req) => {
+app.get("/api/retrieveFoapaNumbers", (req, res) => {
   const employmentNumber = req.query.employmentNumber;
   console.log("this is the employment number " + employmentNumber);
   connection.query(

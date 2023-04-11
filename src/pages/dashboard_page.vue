@@ -4,16 +4,8 @@
       <h3>Foapa Numbers</h3>
       <br />
       <div class="foapa-number-wrapper">
-        <div class="foapa-number">
-          <h3>#1234-1234232-1234</h3>
-          <img src="../assets/trash-icon.png" alt="Trash" />
-        </div>
-        <div class="foapa-number">
-          <h3>#1234-1234232-1234</h3>
-          <img src="../assets/trash-icon.png" alt="Trash" />
-        </div>
-        <div class="foapa-number">
-          <h3>#1234-1234232-1234</h3>
+        <div class="foapa-number" v-for="foapa in userFoapaNumbers">
+          <h3>{{ foapa.foapaNumber }}</h3>
           <img src="../assets/trash-icon.png" alt="Trash" />
         </div>
       </div>
@@ -90,14 +82,21 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import router from "../router";
+
+type FoapaNumbers = {
+  employmentNumber: number;
+  foapaNumber: string;
+};
 
 function closeConnection() {
   axios.get("/close").catch((err) => {
     console.log(err);
   });
 }
+
+let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 function retrieveUserFoapaNumbers() {
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
@@ -106,6 +105,7 @@ function retrieveUserFoapaNumbers() {
       params: { employmentNumber: storedEmploymentNumber },
     })
     .then((res) => {
+      userFoapaNumbers.value = res.data;
       console.log(res);
     })
     .catch((err) => {
