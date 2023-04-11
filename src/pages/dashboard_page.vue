@@ -116,7 +116,7 @@ function retrieveUserFoapaNumbers() {
 onMounted(() => {
   if (localStorage.getItem("employmentNumber") === null) {
     console.log("no local storage item");
-    router.push("/signup");
+    router.push("/");
   } else {
     retrieveUserFoapaNumbers();
   }
