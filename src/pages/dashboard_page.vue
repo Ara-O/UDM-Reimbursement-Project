@@ -27,6 +27,9 @@
             class="search-icon"
           />
         </div>
+        <div class="add-button">
+          <img src="../assets/add-icon.png" alt="Add icon" class="add-icon" />
+        </div>
       </div>
       <div class="search-filters">
         <div class="filter selected">
@@ -40,7 +43,10 @@
         </div>
       </div>
       <br />
-      <h3 style="font-weight: 500; font-size: 14.5px">All Reimbursements</h3>
+      <h3 style="font-weight: 500; font-size: 14.5px">
+        All Reimbursements -
+        <span class="add-reimbursement-prompt">Add reimbursements here</span>
+      </h3>
       <br />
       <div class="reimbursement-wrapper">
         <div class="reimbursement">
