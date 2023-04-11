@@ -67,92 +67,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-// async function registerUser(req, res) {
-//   const {
-//     employmentNumber,
-//     firstName,
-//     lastName,
-//     workEmail,
-//     phoneNumber,
-//     password,
-//     mailingAddress,
-//     department,
-//     zipCode,
-//     city,
-//     state,
-//     foapaNumber,
-//   } = req.body;
-
-//   //Creates a transaction so that the error is no longer happening where
-//   //data is inserted to one table and then if theres an error to another table, said other
-//   //tables get left empty
-
-//   await connection.beginTransaction();
-
-//   // Insert into faculty
-//   await connection.query(
-//     "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-//     [
-//       employmentNumber,
-//       firstName,
-//       lastName,
-//       workEmail,
-//       phoneNumber,
-//       password,
-//       mailingAddress,
-//       department,
-//       zipCode,
-//       city,
-//       state,
-//     ],
-//     (err) => {
-//       connection.rollback();
-//       throw err;
-//     }
-//   );
-
-//   let foapaNumberAlreadyExists = false;
-
-//   //Check if foapa is in table
-//   await connection.query(
-//     "SELECT * from foapa WHERE foapaNumber = ?",
-//     [foapaNumber],
-//     (err, rows) => {
-//       if (err) {
-//         connection.rollback();
-//         throw err;
-//       }
-//       if (rows.length > 0) {
-//         console.log("foapa already exists");
-//         foapaNumberAlreadyExists = true;
-//       } else {
-//         console.log("foapa not found");
-//       }
-//     }
-//   );
-
-//   if (!foapaNumberAlreadyExists) {
-//     //insert into foapa table
-//     await connection.query(
-//       "INSERT INTO foapa VALUES(?,?)",
-//       //TODO: Foapa name?
-//       [employmentNumber, foapaNumber]
-//     );
-//   }
-
-//   // insert into possesses
-//   await connection.query(
-//     "INSERT INTO possesses VALUES(?,?)",
-//     [employmentNumber, foapaNumber],
-//     (err) => {
-//       if (err) throw err;
-//       res.status(200).send("User registered successfully");
-//     }
-//   );
-
-//   await connection.commit();
-// }
-
 function registerUser(req, res) {
   const {
     employmentNumber,
@@ -223,6 +137,23 @@ function registerUser(req, res) {
     }
   );
 }
+
+app.get("/api/retrieveFoapaNumbers", (req) => {
+  const employmentNumber = req.query.employmentNumber;
+  console.log("this is the employment number " + employmentNumber);
+  connection.query(
+    "SELECT * FROM possesses WHERE employmentNumber = ?",
+    [employmentNumber],
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error retrieving data" });
+      } else {
+        res.json(rows);
+      }
+    }
+  );
+});
 
 app.post("/api/register", registerUser);
 

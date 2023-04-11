@@ -182,6 +182,10 @@ function registerUser() {
     .post("/api/register", userSignupData)
     .then(() => {
       alert("User registration successful");
+      localStorage.setItem(
+        "employmentNumber",
+        userSignupData.employmentNumber.toString()
+      );
       router.push("/dashboard");
     })
     .catch((err) => {

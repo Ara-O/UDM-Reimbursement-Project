@@ -90,12 +90,37 @@
 
 <script lang="ts" setup>
 import axios from "axios";
+import { onMounted } from "vue";
+import router from "../router";
 
 function closeConnection() {
   axios.get("/close").catch((err) => {
     console.log(err);
   });
 }
+
+function retrieveUserFoapaNumbers() {
+  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+  axios
+    .get(`/api/retrieveFoapaNumbers`, {
+      params: { employmentNumber: storedEmploymentNumber },
+    })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+onMounted(() => {
+  if (localStorage.getItem("employmentNumber") === null) {
+    console.log("no local storage item");
+    router.push("/signup");
+  } else {
+    retrieveUserFoapaNumbers();
+  }
+});
 </script>
 
 <style scoped>
