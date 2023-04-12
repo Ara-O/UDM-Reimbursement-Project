@@ -180,14 +180,14 @@ function retrieveUserInformation() {
     });
 }
 
-onMounted(() => {
-  if (localStorage.getItem("employmentNumber") === null) {
-    console.log("no local storage item");
-    // Commenting out cau
-    router.push("/");
-  } else {
-    retrieveUserFoapaNumbers();
-    retrieveUserInformation();
-  }
-});
+// onMounted(() => {
+//   if (localStorage.getItem("employmentNumber") === null) {
+//     console.log("no local storage item");
+//     // Commenting out cau
+//     router.push("/");
+//   } else {
+//     retrieveUserFoapaNumbers();
+//     retrieveUserInformation();
+//   }
+// });
 </script>
