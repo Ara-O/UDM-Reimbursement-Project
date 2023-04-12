@@ -17,7 +17,9 @@
       <input 
         type="text" 
         name="First name" 
-        id="first-name" required 
+        id="first-name"
+        v-model="accountInfo.fName"
+          required
       />
     </div>
     <div class="input-field">
@@ -26,7 +28,8 @@
         type="text" 
         name="Last Name" 
         id="last-name" 
-        required 
+        v-model="accountInfo.lName"
+          required
       />
     </div>
     <div class="input-field">
@@ -35,16 +38,8 @@
         type="email" 
         name="Work Email" 
         id="work-email" 
-        required 
-      />
-    </div>
-    <div class="input-field">
-      <label for="employment-number">Employment Number: </label>
-      <input 
-        type="text" 
-        name="Employment Number" 
-        id="employment-number" 
-        required 
+        v-model="accountInfo.workEmail"
+          required
       />
     </div>
     <div class="input-field">
@@ -53,7 +48,8 @@
         type="text" 
         name="Department" 
         id="department" 
-        required 
+        v-model="accountInfo.department"
+          required 
       />
     </div>
     <div class="input-field">
@@ -62,7 +58,8 @@
         type="text" 
         name="Phone Number" 
         id="phone-number" 
-        required 
+        v-model="accountInfo.phoneNumber"
+          required
       />
     </div>
     <div class="input-field">
@@ -71,7 +68,8 @@
         type="text" 
         name="Password" 
         id="password" 
-        required 
+        v-model="accountInfo.password"
+          required
       />
     </div>
     <div class="input-field">
@@ -80,7 +78,8 @@
         type="text" 
         name="Street Address" 
         id="street-address" 
-        required 
+        v-model="accountInfo.streetAddress"
+          required
       />
     </div>
     <div class="input-field">
@@ -89,7 +88,8 @@
         type="text" 
         name="City" 
         id="city"
-        required
+        v-model="accountInfo.city"
+          required
       />
     </div>
     <div class="input-field">
@@ -98,7 +98,8 @@
         type="text" 
         name="State" 
         id="state"
-        required
+        v-model="accountInfo.state"
+          required
       />
     </div>
     <div class="input-field">
@@ -107,11 +108,12 @@
           type="number" 
           name="Zip Code" 
           id="zip-code"
+          v-model="accountInfo.zipCode"
           required
         />
     </div>
     <button class="button" @click="save">Save</button>
-    <button class="button" @click="cancel">Cancel</button>
+    <button class="button" @click="back">Back</button>
     <br />
     <h6 class="trademark-text">Made with love by the Duckateers TM</h6>
     <br />
@@ -121,17 +123,77 @@
 <script lang="ts" setup>
   import axios from "axios";
   import { reactive } from "vue";
+  import { onMounted, ref } from "vue";
   import { useRouter } from "vue-router";
 
   const router = useRouter();
 
-  function cancel() {
+  type UserData = {
+  fName: string;
+  lName: string;
+  workEmail: string;
+  department: string;
+  streetAddress: string;
+  phoneNumber: string;
+  password: string;
+  zipCode: number;
+  city: string;
+  state: string;
+};
+
+  let accountInfo = ref<UserData>({
+  fName: "",
+  lName: "",
+  workEmail: "",
+  department: "",
+  streetAddress: "",
+  phoneNumber: "",
+  password: "",
+  zipCode: 0,
+  city: "",
+  state: "",
+});
+
+  function back() {
     router.push("/dashboard");
   }
 
   function save(){
-    
+    axios
+    .post("/api/updateAccountInfo", accountInfo)
+    .then(() => {
+      alert("Account information updated!");
+    })
+    .catch((err) => {
+      console.log(err);
+      alert(err.response.data.message);
+    });
   }
+
+  function retrieveAccountInformation() {
+  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+  axios
+    .get(`/api/retrieveAccountInfo`, {
+      params: { employmentNumber: storedEmploymentNumber },
+    })
+    .then((res) => {
+      accountInfo.value = res.data[0];
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+onMounted(() => {
+  if (localStorage.getItem("employmentNumber") === null) {
+    console.log("no local storage item");
+    // Commenting out cau
+    router.push("/");
+  } else {
+    retrieveAccountInformation()
+  }
+});
 </script>
 
 <style scoped>

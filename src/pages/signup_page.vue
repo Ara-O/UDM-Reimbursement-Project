@@ -64,11 +64,11 @@
         />
       </div>
       <div class="input-field">
-        <label for="mailing-address">Mailing Address:</label>
+        <label for="street-address">Street Address:</label>
         <input
           type="text"
-          name="Mailing Address"
-          id="mailing-address"
+          name="Street Address"
+          id="street-address"
           v-model="userSignupData.mailingAddress"
           required
         />

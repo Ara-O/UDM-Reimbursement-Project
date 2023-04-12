@@ -45,8 +45,7 @@
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
         All Reimbursements -
-        <span class="add-reimbursement-prompt"
-          >Click here to add reimbursement ticket</span
+        <router-link to="/account">Click here to add reimbursement ticket</router-link
         >
       </h3>
       <br />
@@ -158,11 +157,11 @@ type UserData = {
 };
 
 let userInfo = ref<UserData>({
-  employmentNumber: 2131,
-  firstName: "Bob",
-  lastName: "Bobbington",
-  phoneNumber: "313-313-3133",
-  workEmail: "Bob@gmail.com",
+  employmentNumber: 0,
+  firstName: "",
+  lastName: "",
+  phoneNumber: "",
+  workEmail: "",
 });
 
 function retrieveUserInformation() {
