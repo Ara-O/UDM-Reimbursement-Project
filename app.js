@@ -139,34 +139,36 @@ function registerUser(req, res) {
 }
 
 function updateAccountInfo(req, res) {
+  console.log("Teehee Ethan Employment Numba: " + req.body.employmentNumber);
+
   connection.query(
     `UPDATE Faculty 
     SET 
-        firstName = ?,
-        lastName = ?,
+        fName = ?,
+        lName = ?,
         workEmail = ?,
         department = ?,
-        mailingAddress = ?,
+        streetAddress = ?,
         phoneNumber = ?,
         password = ?,
         zipCode = ?,
         city = ?,
-        state = ?,
+        state = ?
     WHERE
         employmentNumber = ?;
     `,
     [
-      firstName,
-      lastName,
-      workEmail,
-      department,
-      mailingAddress,
-      phoneNumber,
-      password,
-      zipCode,
-      city,
-      state,
-      employmentNumber,
+      req.body.firstName,
+      req.body.lastName,
+      req.body.workEmail,
+      req.body.department,
+      req.body.mailingAddress,
+      req.body.phoneNumber,
+      req.body.password,
+      req.body.zipCode,
+      req.body.city,
+      req.body.state,
+      req.body.employmentNumber
     ],
     (err, rows) => {
       if (err) {
