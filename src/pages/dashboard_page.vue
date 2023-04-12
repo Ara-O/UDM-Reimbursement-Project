@@ -45,7 +45,9 @@
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
         All Reimbursements -
-        <span class="add-reimbursement-prompt">Add reimbursements here</span>
+        <span class="add-reimbursement-prompt"
+          >Click here to add reimbursement ticket</span
+        >
       </h3>
       <br />
       <div class="reimbursement-wrapper">
@@ -82,9 +84,18 @@
       <div class="user-information-header">
         <h3>User Information</h3>
       </div>
-      <div style="margin-top: 10px">
-        <div class="user-information-wrapper">
-          <h3>Work Email: Bananana@ban.com</h3>
+      <div class="user-information-wrapper">
+        <div>
+          <h3>Full Name: {{ userInfo.firstName }} {{ userInfo.lastName }}</h3>
+        </div>
+        <div>
+          <h3>Work Email: {{ userInfo.workEmail }}</h3>
+        </div>
+        <div>
+          <h3>Employment Number: {{ userInfo.employmentNumber }}</h3>
+        </div>
+        <div>
+          <h3>Phone Number: {{ userInfo.phoneNumber }}</h3>
         </div>
       </div>
       <button>Sign Out</button>
@@ -96,10 +107,11 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import "../assets/styles/dashbord-page.css";
+import "../assets/styles/dashboard-page.css";
 import { onMounted, ref } from "vue";
-import router from "../router";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
@@ -137,13 +149,45 @@ function retrieveUserFoapaNumbers() {
     });
 }
 
+type UserData = {
+  firstName: string;
+  lastName: string;
+  workEmail: string;
+  employmentNumber: number;
+  phoneNumber: string;
+};
+
+let userInfo = ref<UserData>({
+  employmentNumber: 2131,
+  firstName: "Bob",
+  lastName: "Bobbington",
+  phoneNumber: "313-313-3133",
+  workEmail: "Bob@gmail.com",
+});
+
+function retrieveUserInformation() {
+  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+  axios
+    .get(`/api/retrieveUserInformation`, {
+      params: { employmentNumber: storedEmploymentNumber },
+    })
+    .then((res) => {
+      userInfo.value = res.data[0];
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
 onMounted(() => {
-  // if (localStorage.getItem("employmentNumber") === null) {
-  //   console.log("no local storage item");
-  //   // Commenting out cau
-  //   router.push("/");
-  // } else {
-  //   retrieveUserFoapaNumbers();
-  // }
+  if (localStorage.getItem("employmentNumber") === null) {
+    console.log("no local storage item");
+    // Commenting out cau
+    router.push("/");
+  } else {
+    retrieveUserFoapaNumbers();
+    retrieveUserInformation();
+  }
 });
 </script>

@@ -85,7 +85,7 @@ function registerUser(req, res) {
 
   connection.beginTransaction();
 
-  //   // Insert into faculty
+  // Insert into faculty
   connection.query(
     "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?)",
     [
@@ -138,7 +138,7 @@ function registerUser(req, res) {
   );
 }
 
-app.get("/api/retrieveFoapaNumbers", (req, res) => {
+function retrieveFoapaNumbers(req, res) {
   const employmentNumber = req.query.employmentNumber;
   console.log("this is the employment number " + employmentNumber);
   connection.query(
@@ -153,8 +153,29 @@ app.get("/api/retrieveFoapaNumbers", (req, res) => {
       }
     }
   );
-});
+}
 
+function retrieveUserInformation(req, res) {
+  const employmentNumber = req.query.employmentNumber;
+  connection.query(
+    "SELECT fName as firstName, lName as lastName, workEmail, phoneNumber, employmentNumber FROM faculty WHERE employmentNumber = ?",
+    [employmentNumber],
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error retrieving user information" });
+      } else {
+        console.log("user info rows " + rows);
+        res.json(rows);
+      }
+    }
+  );
+}
+
+//APIs
+
+app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
+app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.post("/api/register", registerUser);
 
 app.get("/close", () => {

@@ -85,7 +85,7 @@
 }
 
 .add-icon {
-  width: 19px;
+  width: 16px;
 }
 
 .search-filters {
@@ -203,15 +203,21 @@
 }
 
 .user-information-wrapper {
-  width: 300px;
-  height: 59px;
-  padding: 10px 0px;
-  border: 1px solid rgba(246, 246, 246, 0.44);
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0px 2px 2px rgb(83 83 83 / 17%);
+  flex-direction: column;
+  gap: 30px;
+}
+
+.user-information-wrapper div {
   border-radius: 5px;
+  box-shadow: 0px 2px 2px rgb(83 83 83 / 17%);
+  width: 300px;
+  text-align: center;
+  height: 59px;
+  padding: 10px 0px;
+  border: 1px solid rgba(246, 246, 246, 0.44);
 }
 
 .user-information-wrapper h3 {
@@ -234,7 +240,7 @@
 }
 
 .add-reimbursement-prompt {
-  font-weight: 300;
+  font-weight: 400;
   text-decoration: underline;
 }
 
@@ -268,6 +274,10 @@
 
 @media (max-width: 900px) {
   .foapa-number-section {
+    display: none;
+  }
+
+  .add-button {
     display: none;
   }
 
