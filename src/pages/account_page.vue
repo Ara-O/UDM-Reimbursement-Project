@@ -18,7 +18,7 @@
         type="text" 
         name="First name" 
         id="first-name"
-        v-model="accountInfo.firstName"
+        v-model="accountInfo.fName"
           required
       />
     </div>
@@ -28,7 +28,7 @@
         type="text" 
         name="Last Name" 
         id="last-name" 
-        v-model="accountInfo.lastName"
+        v-model="accountInfo.lName"
           required
       />
     </div>
@@ -78,7 +78,7 @@
         type="text" 
         name="Street Address" 
         id="street-address" 
-        v-model="accountInfo.mailingAddress"
+        v-model="accountInfo.streetAddress"
           required
       />
     </div>
@@ -123,36 +123,35 @@
 <script lang="ts" setup>
   import axios from "axios";
   import { reactive } from "vue";
+  import { onMounted, ref } from "vue";
   import { useRouter } from "vue-router";
 
   const router = useRouter();
 
   type UserData = {
-  firstName: string;
-  lastName: string;
+  fName: string;
+  lName: string;
   workEmail: string;
   department: string;
-  mailingAddress: string;
+  streetAddress: string;
   phoneNumber: string;
   password: string;
   zipCode: number;
   city: string;
   state: string;
-  foapaNumber: string;
 };
 
-  let accountInfo = reactive<UserData>({
-  firstName: "Bob",
-  lastName: "Bobbington",
-  workEmail: "Bob@gmail.com",
-  department: "Comp sci",
-  mailingAddress: "123 Fakt",
-  phoneNumber: "313-313-3133",
-  password: "bobby",
-  zipCode: 32422,
-  city: "detroit",
-  state: "mi",
-  foapaNumber: "100-1101-0111-0111",
+  let accountInfo = ref<UserData>({
+  fName: "",
+  lName: "",
+  workEmail: "",
+  department: "",
+  streetAddress: "",
+  phoneNumber: "",
+  password: "",
+  zipCode: 0,
+  city: "",
+  state: "",
 });
 
   function back() {
@@ -161,7 +160,7 @@
 
   function save(){
     axios
-    .post("/api/register", accountInfo)
+    .post("/api/updateAccountInfo", accountInfo)
     .then(() => {
       alert("Account information updated!");
     })
@@ -171,6 +170,30 @@
     });
   }
 
+  function retrieveAccountInformation() {
+  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+  axios
+    .get(`/api/retrieveAccountInfo`, {
+      params: { employmentNumber: storedEmploymentNumber },
+    })
+    .then((res) => {
+      accountInfo.value = res.data[0];
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+onMounted(() => {
+  if (localStorage.getItem("employmentNumber") === null) {
+    console.log("no local storage item");
+    // Commenting out cau
+    router.push("/");
+  } else {
+    retrieveAccountInformation()
+  }
+});
 </script>
 
 <style scoped>
