@@ -4,12 +4,12 @@
       <h3>Foapa Numbers</h3>
       <br />
       <div class="foapa-number-wrapper">
-        <div class="foapa-number" v-for="foapa in userFoapaNumbers">
+        <div class="foapa-number" v-for="foapa in userFoapaNumbers" :key="foapa.foapaNumber">
           <h3>{{ foapa.foapaNumber }}</h3>
           <img
             src="../assets/trash-icon.png"
             alt="Trash"
-            @click="deleteFoapa"
+            @click="deleteFoapa(foapa.foapaNumber)"
           />
         </div>
         <div class="foapa-number">
@@ -17,6 +17,7 @@
             type="text"
             name="Foapa Number"
             placeholder="New FOAPA Number"
+            v-model="obj.foapaNumber"
           />
           <img src="../assets/add-icon2.png" alt="add-icon2" @click="add" />
         </div>
@@ -126,13 +127,26 @@
 import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { routerKey, useRouter } from "vue-router";
 
 const router = useRouter();
+const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+
 type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
 };
+
+let obj = ref({
+    empNo:localStorage.getItem("employmentNumber"),
+    foapaNumber:""
+  }
+)
+
+let obj2 = ref({
+  empNo2:localStorage.getItem("employmentNumber"),
+  foapaNumber2:""
+})
 
 function closeConnection() {
   axios.get("/close").catch((err) => {
@@ -141,11 +155,33 @@ function closeConnection() {
 }
 
 function add() {
-  console.log("The foapa number was added");
+  axios
+    .post("/api/addFoapaNumber", obj.value)
+    .then(()=>{
+      alert("Foapa Number Added");
+      retrieveUserFoapaNumbers();
+      obj.value.foapaNumber="";
+    })
+    .catch((err)=>{
+      console.log(err);
+      alert(err.response.data.message);
+    });
+    
 }
 
-function deleteFoapa() {
-  console.log("The foapa was deleted");
+function deleteFoapa(fNum:string) {
+  obj2.value.foapaNumber2=fNum;
+  axios
+    .post("/api/deleteFoapaNumber", obj2.value)
+    .then(()=>{
+      console.log("The thing that was deleted: " + obj2.value);
+      alert("Foapa Number Deleted");
+      retrieveUserFoapaNumbers();
+    })
+    .catch((err)=>{
+      console.log(err);
+      alert(err.response.data.message);
+    });
 }
 
 let userFoapaNumbers = ref<FoapaNumbers[]>([
@@ -208,14 +244,14 @@ function retrieveUserInformation() {
 function addReimbursement() {
   router.push("/add-reimbursement");
 }
-// onMounted(() => {
-//   if (localStorage.getItem("employmentNumber") === null) {
-//     console.log("no local storage item");
-//     // Commenting out cau
-//     router.push("/");
-//   } else {
-//     retrieveUserFoapaNumbers();
-//     retrieveUserInformation();
-//   }
-// });
+onMounted(() => {
+  if (localStorage.getItem("employmentNumber") === null) {
+    console.log("no local storage item");
+    // Commenting out cau
+    router.push("/");
+  } else {
+    retrieveUserFoapaNumbers();
+    retrieveUserInformation();
+  }
+});
 </script>
