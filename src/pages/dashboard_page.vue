@@ -6,7 +6,7 @@
       <div class="foapa-number-wrapper">
         <div class="foapa-number" v-for="foapa in userFoapaNumbers">
           <h3>{{ foapa.foapaNumber }}</h3>
-          <img src="../assets/trash-icon.png" alt="Trash" />
+          <img src="../assets/trash-icon.png" alt="Trash" @click="deleteFoapa"/>
         </div>
         <div class="foapa-number">
           <input
@@ -14,10 +14,7 @@
             name="Foapa Number"
             placeholder="New FOAPA Number"
           />
-          <button class="add-foapa-button" @click="add">
-            <img src="../assets/add-icon2.png" alt="add-icon2"/>
-          </button>
-          <!-- <img src="../assets/add-icon2.png" alt="add-icon2" @click="add"/> -->
+          <img src="../assets/add-icon2.png" alt="add-icon2" @click="add"/>
         </div>
       </div>
     </section>
@@ -56,8 +53,7 @@
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
         All Reimbursements -
-        <router-link to="/account"
-          >Click here to add reimbursement ticket</router-link
+        <router-link to="/account">Click here to add reimbursement ticket</router-link
         >
       </h3>
       <br />
@@ -136,6 +132,10 @@ function closeConnection() {
 
 function add(){
   console.log("The foapa number was added")
+}
+
+function deleteFoapa(){
+  console.log("The foapa was deleted")
 }
 
 let userFoapaNumbers = ref<FoapaNumbers[]>([
