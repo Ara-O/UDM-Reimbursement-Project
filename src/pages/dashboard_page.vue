@@ -28,7 +28,12 @@
           />
         </div>
         <div class="add-button">
-          <img src="../assets/add-icon.png" alt="Add icon" class="add-icon" />
+          <img
+            src="../assets/add-icon.png"
+            alt="Add icon"
+            class="add-icon"
+            @click="addReimbursement"
+          />
         </div>
       </div>
       <div class="search-filters">
@@ -45,7 +50,7 @@
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
         All Reimbursements -
-        <router-link to="/account"
+        <router-link to="/add-reimbursement"
           >Click here to add reimbursement ticket</router-link
         >
       </h3>
@@ -180,14 +185,17 @@ function retrieveUserInformation() {
     });
 }
 
-onMounted(() => {
-  if (localStorage.getItem("employmentNumber") === null) {
-    console.log("no local storage item");
-    // Commenting out cau
-    router.push("/");
-  } else {
-    retrieveUserFoapaNumbers();
-    retrieveUserInformation();
-  }
-});
+function addReimbursement() {
+  router.push("/add-reimbursement");
+}
+// onMounted(() => {
+//   if (localStorage.getItem("employmentNumber") === null) {
+//     console.log("no local storage item");
+//     // Commenting out cau
+//     router.push("/");
+//   } else {
+//     retrieveUserFoapaNumbers();
+//     retrieveUserInformation();
+//   }
+// });
 </script>
