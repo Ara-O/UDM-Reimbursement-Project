@@ -6,13 +6,25 @@
       <div class="foapa-number-wrapper">
         <div class="foapa-number" v-for="foapa in userFoapaNumbers">
           <h3>{{ foapa.foapaNumber }}</h3>
-          <img src="../assets/trash-icon.png" alt="Trash" />
+          <img
+            src="../assets/trash-icon.png"
+            alt="Trash"
+            @click="deleteFoapa"
+          />
+        </div>
+        <div class="foapa-number">
+          <input
+            type="text"
+            name="Foapa Number"
+            placeholder="New FOAPA Number"
+          />
+          <img src="../assets/add-icon2.png" alt="add-icon2" @click="add" />
         </div>
       </div>
     </section>
 
     <section class="reimbursement-section">
-      <h3>Welcome Mina</h3>
+      <h3>Welcome {{ userInfo.firstName }}</h3>
       <br />
       <div class="reimbursement-search-input">
         <input
@@ -126,6 +138,14 @@ function closeConnection() {
   axios.get("/close").catch((err) => {
     console.log(err);
   });
+}
+
+function add() {
+  console.log("The foapa number was added");
+}
+
+function deleteFoapa() {
+  console.log("The foapa was deleted");
 }
 
 let userFoapaNumbers = ref<FoapaNumbers[]>([
