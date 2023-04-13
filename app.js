@@ -139,42 +139,46 @@ function registerUser(req, res) {
 }
 
 function updateAccountInfo(req, res) {
+  console.log("Teehee Ethan Employment Numba: " + req.body.employmentNumber);
+
   connection.query(
     `UPDATE Faculty 
     SET 
-        firstName = ?,
-        lastName = ?,
+        fName = ?,
+        lName = ?,
         workEmail = ?,
         department = ?,
-        mailingAddress = ?,
+        streetAddress = ?,
         phoneNumber = ?,
         password = ?,
         zipCode = ?,
         city = ?,
-        state = ?,
+        state = ?
     WHERE
         employmentNumber = ?;
     `,
     [
-      firstName,
-      lastName,
-      workEmail,
-      department,
-      mailingAddress,
-      phoneNumber,
-      password,
-      zipCode,
-      city,
-      state,
-      employmentNumber,
+      req.body.fName,
+      req.body.lName,
+      req.body.workEmail,
+      req.body.department,
+      req.body.streetAddress,
+      req.body.phoneNumber,
+      req.body.password,
+      req.body.zipCode,
+      req.body.city,
+      req.body.state,
+      req.body.employmentNumber,
     ],
-    (err, rows) => {
+    (err) => {
       if (err) {
         console.log(err);
-        res.status(500).json({ message: "Error updating account information!" });
+        res
+          .status(500)
+          .json({ message: "Error updating account information!" });
       } else {
-        console.log("user info rows " + rows);
-        res.json(rows);
+        console.log("success");
+        res.status(200).json({ message: "success!" });
       }
     }
   );
@@ -216,17 +220,20 @@ function retrieveUserInformation(req, res) {
 
 function retrieveAccountInfo(req, res) {
   const employmentNumber = req.query.employmentNumber;
-  connection.query("SELECT * FROM FACULTY WHERE employmentNumber = ?",
-  [employmentNumber],
-  (err, rows) => {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ message: "Error retrieving account information" });
-    } else {
-      console.log("user info rows " + rows);
-      res.json(rows);
+  connection.query(
+    "SELECT * FROM FACULTY WHERE employmentNumber = ?",
+    [employmentNumber],
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(500)
+          .json({ message: "Error retrieving account information" });
+      } else {
+        console.log("user info rows " + rows);
+        res.json(rows);
+      }
     }
-  }
   );
 }
 

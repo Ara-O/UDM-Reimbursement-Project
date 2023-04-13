@@ -56,7 +56,8 @@
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
         All Reimbursements -
-        <router-link to="/account">Click here to add reimbursement ticket</router-link
+        <router-link to="/account"
+          >Click here to add reimbursement ticket</router-link
         >
       </h3>
       <br />
