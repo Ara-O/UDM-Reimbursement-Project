@@ -8,11 +8,22 @@
           <h3>{{ foapa.foapaNumber }}</h3>
           <img src="../assets/trash-icon.png" alt="Trash" />
         </div>
+        <div class="foapa-number">
+          <input
+            type="text"
+            name="Foapa Number"
+            placeholder="New FOAPA Number"
+          />
+          <button class="add-foapa-button" @click="add">
+            <img src="../assets/add-icon2.png" alt="add-icon2"/>
+          </button>
+          <!-- <img src="../assets/add-icon2.png" alt="add-icon2" @click="add"/> -->
+        </div>
       </div>
     </section>
 
     <section class="reimbursement-section">
-      <h3>Welcome Mina</h3>
+      <h3>Welcome {{userInfo.firstName}}</h3>
       <br />
       <div class="reimbursement-search-input">
         <input
@@ -122,6 +133,10 @@ function closeConnection() {
   });
 }
 
+function add(){
+  console.log("The foapa number was added")
+}
+
 let userFoapaNumbers = ref<FoapaNumbers[]>([
   {
     employmentNumber: 200,
@@ -179,14 +194,14 @@ function retrieveUserInformation() {
     });
 }
 
-onMounted(() => {
-  if (localStorage.getItem("employmentNumber") === null) {
-    console.log("no local storage item");
-    // Commenting out cau
-    router.push("/");
-  } else {
-    retrieveUserFoapaNumbers();
-    retrieveUserInformation();
-  }
-});
+// onMounted(() => {
+//   if (localStorage.getItem("employmentNumber") === null) {
+//     console.log("no local storage item");
+//     // Commenting out cau
+//     router.push("/");
+//   } else {
+//     retrieveUserFoapaNumbers();
+//     retrieveUserInformation();
+//   }
+// });
 </script>
