@@ -14,103 +14,103 @@
     <br />
     <div class="input-field">
       <label for="first-name">First Name: </label>
-      <input 
-        type="text" 
-        name="First name" 
+      <input
+        type="text"
+        name="First name"
         id="first-name"
         v-model="accountInfo.fName"
-          required
+        required
       />
     </div>
     <div class="input-field">
       <label for="last-name">Last Name: </label>
-      <input 
-        type="text" 
-        name="Last Name" 
-        id="last-name" 
+      <input
+        type="text"
+        name="Last Name"
+        id="last-name"
         v-model="accountInfo.lName"
-          required
+        required
       />
     </div>
     <div class="input-field">
       <label for="work-email">Work Email: </label>
-      <input 
-        type="email" 
-        name="Work Email" 
-        id="work-email" 
+      <input
+        type="email"
+        name="Work Email"
+        id="work-email"
         v-model="accountInfo.workEmail"
-          required
+        required
       />
     </div>
     <div class="input-field">
       <label for="department">Department:</label>
-      <input 
-        type="text" 
-        name="Department" 
-        id="department" 
+      <input
+        type="text"
+        name="Department"
+        id="department"
         v-model="accountInfo.department"
-          required 
+        required
       />
     </div>
     <div class="input-field">
       <label for="phone-number">Phone Number:</label>
-      <input 
-        type="text" 
-        name="Phone Number" 
-        id="phone-number" 
+      <input
+        type="text"
+        name="Phone Number"
+        id="phone-number"
         v-model="accountInfo.phoneNumber"
-          required
+        required
       />
     </div>
     <div class="input-field">
       <label for="password">Password:</label>
-      <input 
-        type="text" 
-        name="Password" 
-        id="password" 
+      <input
+        type="text"
+        name="Password"
+        id="password"
         v-model="accountInfo.password"
-          required
+        required
       />
     </div>
     <div class="input-field">
       <label for="street-address">Street Address:</label>
-      <input 
-        type="text" 
-        name="Street Address" 
-        id="street-address" 
+      <input
+        type="text"
+        name="Street Address"
+        id="street-address"
         v-model="accountInfo.streetAddress"
-          required
+        required
       />
     </div>
     <div class="input-field">
       <label for="city">City:</label>
-      <input 
-        type="text" 
-        name="City" 
+      <input
+        type="text"
+        name="City"
         id="city"
         v-model="accountInfo.city"
-          required
+        required
       />
     </div>
     <div class="input-field">
       <label for="state">State:</label>
-      <input 
-        type="text" 
-        name="State" 
+      <input
+        type="text"
+        name="State"
         id="state"
         v-model="accountInfo.state"
-          required
+        required
       />
     </div>
     <div class="input-field">
-        <label for="zip-code">Zip Code:</label>
-        <input 
-          type="number" 
-          name="Zip Code" 
-          id="zip-code"
-          v-model="accountInfo.zipCode"
-          required
-        />
+      <label for="zip-code">Zip Code:</label>
+      <input
+        type="number"
+        name="Zip Code"
+        id="zip-code"
+        v-model="accountInfo.zipCode"
+        required
+      />
     </div>
     <button class="button" @click="save">Save</button>
     <button class="button" @click="back">Back</button>
@@ -121,14 +121,14 @@
 </template>
 
 <script lang="ts" setup>
-  import axios from "axios";
-  import { reactive } from "vue";
-  import { onMounted, ref } from "vue";
-  import { useRouter } from "vue-router";
+import axios from "axios";
+import { reactive } from "vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
-  const router = useRouter();
+const router = useRouter();
 
-  type UserData = {
+type UserData = {
   fName: string;
   lName: string;
   workEmail: string;
@@ -141,7 +141,7 @@
   state: string;
 };
 
-  let accountInfo = ref<UserData>({
+let accountInfo = ref<UserData>({
   fName: "",
   lName: "",
   workEmail: "",
@@ -154,23 +154,24 @@
   state: "",
 });
 
-  function back() {
-    router.push("/dashboard");
-  }
+function back() {
+  router.push("/dashboard");
+}
 
-  function save(){
-    axios
-    .post("/api/updateAccountInfo", accountInfo)
-    .then(() => {
+function save() {
+  axios
+    .post("/api/updateAccountInfo", accountInfo.value)
+    .then((res) => {
+      console.log(res.data);
       alert("Account information updated!");
     })
     .catch((err) => {
       console.log(err);
       alert(err.response.data.message);
     });
-  }
+}
 
-  function retrieveAccountInformation() {
+function retrieveAccountInformation() {
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
     .get(`/api/retrieveAccountInfo`, {
@@ -191,7 +192,7 @@ onMounted(() => {
     // Commenting out cau
     router.push("/");
   } else {
-    retrieveAccountInformation()
+    retrieveAccountInformation();
   }
 });
 </script>
