@@ -238,6 +238,16 @@ function retrieveAccountInfo(req, res) {
 }
 
 function addReimbursement(req, res) {
+  const {
+    reimbursementId,
+    employmentNumber,
+    eventName,
+    totalAmount,
+    reimbursementStatus,
+    reimbursementDate,
+  } = req.body.reimbursementData;
+  // DATA FORMAT
+  // -------------
   //   reimbursementId: 'reimbursementId',
   //   employmentNumber: 0,
   //   eventName: 'eventName',
@@ -245,41 +255,48 @@ function addReimbursement(req, res) {
   //   reimbursementStatus: 0,
   //   reimbursementDate: '12/12/2022'
 
-  console.log(req.body.reimbursementData);
-  connection.query("INSERT INTO reimbursementticket ");
-  //dashboard-page adding foapa
-  function addFoapaNumber(req, res) {
-    const employmentNumber = req.body.empNo;
-    const foapaNumber = req.body.foapaNumber;
+  //STEP 1
+  // INSERT INTO REIMBURSEMENT
 
-    connection.query(
-      "SELECT * from foapa WHERE foapaNumber = ?",
-      [foapaNumber],
-      (err, rows) => {
-        if (err) {
-          res.status(409).send({ message: "FOAPA already exists" });
-          connection.rollback();
-        }
+  //STEP 2
+  //INSERT INTO ACTIVITIES
 
-        if (rows.length <= 0) {
-          connection.query("INSERT INTO foapa VALUES(?,?)", [
-            employmentNumber,
-            foapaNumber,
-          ]);
-        }
-
-        connection.query(
-          "INSERT INTO possesses VALUES(?,?)",
-          [employmentNumber, foapaNumber],
-          (err) => {
-            res.status(200).send("success");
-            connection.commit();
-          }
-        );
-      }
-    );
-  }
+  // STEP 3
+  //INSERT INTO CONTAINS
 }
+
+function addFoapaNumber(req, res) {
+  const employmentNumber = req.body.empNo;
+  const foapaNumber = req.body.foapaNumber;
+
+  connection.query(
+    "SELECT * from foapa WHERE foapaNumber = ?",
+    [foapaNumber],
+    (err, rows) => {
+      if (err) {
+        res.status(409).send({ message: "FOAPA already exists" });
+        connection.rollback();
+      }
+
+      if (rows.length <= 0) {
+        connection.query("INSERT INTO foapa VALUES(?,?)", [
+          employmentNumber,
+          foapaNumber,
+        ]);
+      }
+
+      connection.query(
+        "INSERT INTO possesses VALUES(?,?)",
+        [employmentNumber, foapaNumber],
+        (err) => {
+          res.status(200).send("success");
+          connection.commit();
+        }
+      );
+    }
+  );
+}
+
 //Deleteing the foapa
 function deleteFoapaNumber(req, res) {
   const employmentNumber = req.body.empNo2;

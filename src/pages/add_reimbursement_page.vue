@@ -217,16 +217,24 @@ function generateRandomId(): string {
   return result;
 }
 
+function parseReimbursementDate(dateString: string) {
+  const parts = dateString.split("/");
+  const year = parts[2];
+  const month = parts[0].padStart(2, "0");
+  const day = parts[1].padStart(2, "0");
+  const newDateString = `${year}-${month}-${day}`;
+}
+
 function saveReimbursement() {
   let randomId: string = generateRandomId();
-
+  let parsedDate = parseReimbursementDate("04/05/2023");
   let reimbursementData = {
-    reimbursementId: "reimbursementId",
-    employmentNumber: 0,
+    reimbursementId: 32322,
+    employmentNumber: 11,
     eventName: "eventName",
     totalAmount: 20,
     reimbursementStatus: 0,
-    reimbursementDate: "2002-02-02",
+    reimbursementDate: parsedDate,
   };
 
   axios
