@@ -25,10 +25,6 @@ export default createRouter({
       component: DashboardPage,
     },
     {
-      path: "/reimbursement",
-      component: ReimbursementPage,
-    },
-    {
       path: "/add-reimbursement",
       component: AddReimbursementPage,
     },
