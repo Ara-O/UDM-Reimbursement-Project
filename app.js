@@ -247,6 +247,63 @@ function addReimbursement(req, res) {
 
   console.log(req.body.reimbursementData);
   connection.query("INSERT INTO reimbursementticket ");
+  //dashboard-page adding foapa
+  function addFoapaNumber(req, res) {
+    const employmentNumber = req.body.empNo;
+    const foapaNumber = req.body.foapaNumber;
+
+    connection.query(
+      "SELECT * from foapa WHERE foapaNumber = ?",
+      [foapaNumber],
+      (err, rows) => {
+        if (err) {
+          res.status(409).send({ message: "FOAPA already exists" });
+          connection.rollback();
+        }
+
+        if (rows.length <= 0) {
+          connection.query("INSERT INTO foapa VALUES(?,?)", [
+            employmentNumber,
+            foapaNumber,
+          ]);
+        }
+
+        connection.query(
+          "INSERT INTO possesses VALUES(?,?)",
+          [employmentNumber, foapaNumber],
+          (err) => {
+            res.status(200).send("success");
+            connection.commit();
+          }
+        );
+      }
+    );
+  }
+}
+//Deleteing the foapa
+function deleteFoapaNumber(req, res) {
+  const employmentNumber = req.body.empNo2;
+  const foapaNumber = req.body.foapaNumber2;
+  console.log(employmentNumber + "+" + foapaNumber);
+
+  connection.query(
+    "DELETE FROM possesses WHERE employmentNumber = ? AND foapaNumber = ?",
+    [employmentNumber, foapaNumber],
+    (err) => {
+      if (err) {
+        console.log("the error is" + err);
+      }
+    }
+  );
+
+  connection.query(
+    "Delete from foapa where foapaNumber = ?",
+    [foapaNumber],
+    (err) => {
+      res.status(200).send("success");
+      connection.commit();
+    }
+  );
 }
 
 //APIs
@@ -257,6 +314,8 @@ app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
 app.post("/api/register", registerUser);
 app.post("/api/updateAccountInfo", updateAccountInfo);
 app.post("/api/addReimbursement", addReimbursement);
+app.post("/api/addFoapaNumber", addFoapaNumber);
+app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 
 app.get("/close", () => {
   connection.end();
