@@ -237,6 +237,18 @@ function retrieveAccountInfo(req, res) {
   );
 }
 
+function addReimbursement(req, res) {
+  //   reimbursementId: 'reimbursementId',
+  //   employmentNumber: 0,
+  //   eventName: 'eventName',
+  //   totalAmount: 20,
+  //   reimbursementStatus: 0,
+  //   reimbursementDate: '12/12/2022'
+
+  console.log(req.body.reimbursementData);
+  connection.query("INSERT INTO reimbursementticket ");
+}
+
 //APIs
 
 app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
@@ -244,6 +256,7 @@ app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
 app.post("/api/register", registerUser);
 app.post("/api/updateAccountInfo", updateAccountInfo);
+app.post("/api/addReimbursement", addReimbursement);
 
 app.get("/close", () => {
   connection.end();
