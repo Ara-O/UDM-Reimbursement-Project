@@ -48,10 +48,6 @@
   justify-content: center;
 }
 
-.reimbursement-title {
-  font-size: 25px;
-}
-
 .help-icon {
   width: 20px;
 }
@@ -199,4 +195,28 @@
   gap: 20px;
   width: 300px;
   display: flex;
+}
+
+.edit-icon-button {
+  width: 25px;
+  cursor: pointer;
+}
+
+.reimbursement-title {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.reimbursement-title-text {
+  font-size: 25px;
+  border: 0px;
+  outline: none;
+  border-bottom: solid 1px rgb(224, 224, 224);
+  font-weight: 500;
+}
+
+.reimbursement-title-text:disabled {
+  background-color: white;
 }

@@ -3,9 +3,9 @@
     <section class="all-activities-section">
       <h3>All Activities</h3>
       <div class="activity" v-for="activity in allActivities">
-        <h3>{{ activity.chosenExpense }}</h3>
+        <h3>{{ activity.activityName }}</h3>
         <h4>
-          Date: {{ activity.activityDate }} || Cost: {{ activity.expenseCost }}
+          Date: {{ activity.activityDate }} || Cost: {{ activity.amount }}
         </h4>
         <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
         <div class="delete-option">
@@ -27,7 +27,18 @@
       </div>
     </section>
     <section class="reimbursement-section">
-      <h3 class="reimbursement-title">Reimbursement #1</h3>
+      <div class="reimbursement-title">
+        <input
+          class="reimbursement-title-text"
+          v-model="reimbursementTitle"
+          placeholder="Reimbursement Title"
+        />
+        <img
+          src="../assets/edit-icon.png"
+          class="edit-icon-button"
+          alt="Edit icon"
+        />
+      </div>
       <div style="display: flex; align-items: center; gap: 20px; height: 20px">
         <img
           src="../assets/user-help-icon.png"
@@ -80,7 +91,6 @@
         <div>
           <h3>FOAPA Number to use:</h3>
           <select
-            type="text"
             placeholder="Select FOAPA to pay for activity with"
             class="input-field"
             v-model="foapaNumber"
@@ -129,6 +139,7 @@
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { stringifyExpression } from "@vue/compiler-core";
 
 const router = useRouter();
 
@@ -137,10 +148,12 @@ function goToHomePage() {
 }
 
 type Activity = {
-  chosenExpense: string;
-  expenseCost: number;
+  activityId: number;
+  activityName: string;
+  amount: number;
   foapaNumber: string;
   activityDate: string;
+  activityReceipt: string;
 };
 
 let chosenExpense = ref<string>("");
@@ -148,15 +161,12 @@ let chosenExpenseOther = ref<string>("");
 let expenseCost = ref<number>(0);
 let activityDate = ref<string>("");
 let foapaNumber = ref<string>("");
-let allActivities = ref<Array<Activity>>([
-  {
-    chosenExpense: "Lodging",
-    expenseCost: 3000,
-    foapaNumber: "200-011-011",
-    activityDate: "12/21/2020",
-  },
-]);
+let reimbursementTitle = ref<string>("testing");
+
+let allActivities = ref<Array<Activity>>([]);
+
 watch(chosenExpenseOther, (newVal) => {
+  console.log("test");
   if (newVal.length >= 0) {
     chosenExpense.value = chosenExpenseOther.value;
   }
@@ -194,10 +204,12 @@ let foapaNumbersToSelectFrom = ref([
 
 function addReimbursement() {
   allActivities.value.push({
-    chosenExpense: chosenExpense.value,
-    expenseCost: expenseCost.value,
+    activityName: chosenExpense.value,
+    amount: expenseCost.value,
     foapaNumber: foapaNumber.value,
     activityDate: activityDate.value,
+    activityId: Number(generateRandomId()),
+    activityReceipt: "Activity Receipt",
   });
 
   chosenExpense.value = foapaNumber.value = activityDate.value = "";
@@ -210,9 +222,7 @@ axios
     params: { employmentNumber: storedEmploymentNumber },
   })
   .then((res) => {
-    console.log(res.data);
     foapaNumbersToSelectFrom.value = res.data;
-    console.log(res);
   })
   .catch((err) => {
     console.log(err);
@@ -221,31 +231,44 @@ axios
 function generateRandomId(): string {
   const chars: string = "1234567890";
   let result: string = "";
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 9; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
 
   return result;
 }
 
-function parseReimbursementDate(dateString: string) {
-  const parts = dateString.split("/");
-  const year = parts[2];
-  const month = parts[0].padStart(2, "0");
-  const day = parts[1].padStart(2, "0");
-  const newDateString = `${year}-${month}-${day}`;
+function getAllActivitiesAmount(): number {
+  let sum: number = 0;
+  allActivities.value.forEach((activity) => {
+    sum += Number(activity.amount);
+  });
+
+  return sum;
+}
+
+function getCurrentDate(): string {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1; // add 1 because getMonth() returns 0-11
+  const day = today.getDate();
+  const formattedDate = `${year}-${month < 10 ? "0" + month : month}-${
+    day < 10 ? "0" + day : day
+  }`;
+
+  return formattedDate;
 }
 
 function saveReimbursement() {
   let randomId: string = generateRandomId();
-  let parsedDate = parseReimbursementDate("04/05/2023");
   let reimbursementData = {
-    reimbursementId: 32322,
-    employmentNumber: 11,
-    eventName: "eventName",
-    totalAmount: 20,
+    reimbursementId: Number(randomId),
+    employmentNumber: storedEmploymentNumber,
+    eventName: reimbursementTitle.value,
+    totalAmount: getAllActivitiesAmount(),
     reimbursementStatus: 0,
-    reimbursementDate: parsedDate,
+    reimbursementDate: getCurrentDate(),
+    allActivities: allActivities.value,
   };
 
   axios

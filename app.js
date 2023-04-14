@@ -245,24 +245,81 @@ function addReimbursement(req, res) {
     totalAmount,
     reimbursementStatus,
     reimbursementDate,
+    allActivities,
   } = req.body.reimbursementData;
-  // DATA FORMAT
-  // -------------
-  //   reimbursementId: 'reimbursementId',
-  //   employmentNumber: 0,
-  //   eventName: 'eventName',
-  //   totalAmount: 20,
-  //   reimbursementStatus: 0,
-  //   reimbursementDate: '12/12/2022'
 
-  //STEP 1
-  // INSERT INTO REIMBURSEMENT
+  let promises = [];
 
-  //STEP 2
-  //INSERT INTO ACTIVITIES
+  promises.push(
+    new Promise((resolve, reject) => {
+      connection.query(
+        "INSERT INTO reimbursementticket VALUES(?,?,?,?,?,?)",
+        [
+          reimbursementId,
+          employmentNumber,
+          eventName,
+          totalAmount,
+          reimbursementStatus,
+          reimbursementDate,
+        ],
+        (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        }
+      );
+    })
+  );
+  allActivities.forEach((activity) => {
+    const insertQuery = `INSERT INTO activity VALUES (?,?,?,?,?,?)`;
+    const values = [
+      activity.activityId,
+      activity.foapaNumber,
+      activity.activityName,
+      activity.activityReceipt,
+      "2002-03-02",
+      activity.amount,
+    ];
 
-  // STEP 3
-  //INSERT INTO CONTAINS
+    promises.push(
+      new Promise((resolve, reject) => {
+        connection.query(insertQuery, values, function (err) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      })
+    );
+
+    promises.push(
+      new Promise((resolve, reject) => {
+        connection.query(
+          "INSERT INTO contains VALUES(?, ?)",
+          [reimbursementId, activity.activityId],
+          function (err) {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          }
+        );
+      })
+    );
+  });
+
+  Promise.all(promises)
+    .then(() => {
+      res.status(200).send("Data inserted successfully");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    });
 }
 
 function addFoapaNumber(req, res) {
@@ -297,7 +354,7 @@ function addFoapaNumber(req, res) {
   );
 }
 
-//Deleteing the foapa
+//Deleting the foapa
 function deleteFoapaNumber(req, res) {
   const employmentNumber = req.body.empNo2;
   const foapaNumber = req.body.foapaNumber2;
