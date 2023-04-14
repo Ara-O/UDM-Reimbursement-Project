@@ -12,19 +12,40 @@
       <br />
       <h3 class="login-title">Detroit Mercy Reimbursement System</h3>
       <br />
+      <form @submit.prevent="userLoginInfo" class="login-form">
       <div class="input-field">
         <label for="work-email">Work Email: </label>
-        <input type="email" name="Work Email" id="work-email" />
+        <input v-model="userInfo.workEmail" type="email" name="Work Email" id="work-email" />
       </div>
       <div class="input-field">
         <label for="password">Password:</label>
-        <input type="text" name="Password" id="password" />
+        <input v-model="userInfo.password" type="text" name="Password" id="password" />
       </div>
       <button class="login-button">Login</button>
+    </form>
     </section>
   </template>
   
-  <script lang="ts" setup></script>
+  <script lang="ts" setup>
+import axios from 'axios';
+import { routeLocationKey } from 'vue-router';
+import router from '../router';
+import {ref} from "vue"
+let userInfo = ref<any>({workEmail: "", passsword: ""})
+  function userLoginInfo() {
+    axios
+    .post("/api/login", userLoginInfo)
+    .then(() => {
+      alert("User Login successful");
+      router.push("/dashboard");
+    })
+    .catch((err) => {
+      console.log(err);
+      alert(err.response.data.message);
+    });
+  }
+
+  </script>
   
   <style scoped>
   input {
@@ -59,6 +80,12 @@
     align-items: center;
     box-shadow: 0px 4px 9px rgba(184, 184, 184, 0.38);
   }
+
+  .login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
   
   .input-field {
     margin-bottom: 30px;

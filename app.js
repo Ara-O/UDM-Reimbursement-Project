@@ -367,6 +367,20 @@ function deleteFoapaNumber(req, res) {
   );
 }
 
+function userLoginInfo(req, res) {
+  const password = req.query.password;
+  const email = req.query.workEmail;
+  connection.query("SELECT password FROM FACULTY WHERE workEmail = ?"),
+    [workEmail],
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+        res.status(500).son({ message: "Login information is incorrect" });
+      } else {
+        res.status(200).send("success");
+      }
+    };
+}
 //APIs
 
 app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
@@ -377,7 +391,7 @@ app.post("/api/updateAccountInfo", updateAccountInfo);
 app.post("/api/addReimbursement", addReimbursement);
 app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
-
+app.post("/api/userLoginInfo", userLoginInfo);
 app.get("/close", () => {
   connection.end();
 });
