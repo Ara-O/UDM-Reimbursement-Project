@@ -16,10 +16,15 @@
           />
         </div>
       </div>
-      <button class="go-back-button">Go Back</button>
-      <button class="go-back-button" @click="saveReimbursement">
-        Save to PDF
-      </button>
+      <div class="cta-buttons">
+        <button class="go-back-button" @click="goToHomePage">Go Back</button>
+        <button class="go-back-button" @click="saveReimbursement">
+          Save for Later
+        </button>
+        <button class="go-back-button" @click="saveReimbursement">
+          Save to PDF
+        </button>
+      </div>
     </section>
     <section class="reimbursement-section">
       <h3 class="reimbursement-title">Reimbursement #1</h3>
@@ -122,8 +127,14 @@
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
-import "../assets/styles/add-reimbursement-page.css";
+
+const router = useRouter();
+
+function goToHomePage() {
+  router.push("/dashboard");
+}
 
 type Activity = {
   chosenExpense: string;
@@ -251,198 +262,5 @@ function saveReimbursement() {
 </script>
 
 <style scoped>
-.add-reimbursement-section {
-  display: grid;
-  height: 100vh;
-  align-items: center;
-  gap: 50px;
-  grid-template-columns: 25% 70%;
-}
-
-.all-activities-section::-webkit-scrollbar {
-  display: none;
-}
-
-.all-activities-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 25px;
-  height: 100vh;
-  box-sizing: border-box;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  overflow: auto;
-  border-radius: 30px;
-}
-
-.all-activities-section h3 {
-  font-weight: 600;
-}
-
-.go-back-button {
-  background-color: var(--udmercy-red);
-  border-radius: 30px;
-  display: flex;
-  align-items: center;
-  color: white;
-  font-size: 12px;
-  height: 40px;
-  width: auto;
-  cursor: pointer;
-  border: solid 1px var(--udmercy-red);
-  padding: 8px 20px;
-}
-
-.reimbursement-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.reimbursement-title {
-  font-size: 25px;
-}
-
-.help-icon {
-  width: 20px;
-}
-
-.expenses-section {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  /* heheh */
-  width: 69vw;
-}
-
-.expenses-section div {
-  background-color: var(--udmercy-blue);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 300;
-  cursor: pointer;
-  width: auto;
-  border-radius: 7px;
-  height: 43px;
-  padding: 0px 25px;
-  transition: all 250ms ease-in;
-}
-
-.expenses-section div:hover {
-  background-color: #001d48;
-}
-
-.input-field {
-  padding-left: 20px;
-  width: 300px;
-  height: 45px;
-  background: #ffffff;
-  padding-right: 21px;
-  border: 1px solid #f7f7f7;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
-  border-radius: 5px;
-}
-
-.cost-and-other-section {
-  display: flex;
-  gap: 20px;
-}
-
-.cost-and-other-section h3 {
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.selected-option span {
-  font-weight: 400;
-  font-size: 14.5px;
-}
-
-.foapa-and-date-section {
-  display: flex;
-  gap: 40px;
-}
-
-.foapa-and-date-section h3 {
-  font-size: 14.5px;
-  font-weight: 500;
-}
-
-.add-receipt-text {
-  font-size: 14.5px;
-}
-
-.add-receipt {
-  display: flex;
-  gap: 20px;
-  margin-top: 40px;
-}
-
-.terms-and-conditions {
-  font-weight: 300;
-  color: gray;
-  width: 500px;
-  font-size: 13px;
-  line-height: 25px;
-}
-
-.add-reimbursement-button {
-  background-color: var(--udmercy-red);
-  border-radius: 30px;
-  display: flex;
-  align-items: center;
-  color: white;
-  font-size: 12px;
-  height: 45px;
-  justify-content: center;
-  width: 250px;
-  cursor: pointer;
-  border: solid 1px var(--udmercy-red);
-  padding: 8px 20px;
-}
-
-.activity {
-  background: var(--udmercy-blue);
-  color: white;
-  width: 320px;
-  height: auto;
-  border-radius: 20px;
-  box-sizing: border-box;
-  padding-left: 30px;
-  padding-top: 10px;
-  padding-bottom: 15px;
-  position: relative;
-}
-
-.activity h3 {
-  font-weight: 500;
-  font-size: 15px;
-}
-
-.activity h4 {
-  font-weight: 300;
-  font-size: 12px;
-}
-.delete-option {
-  position: absolute;
-  background-color: var(--udmercy-red);
-  right: 30px;
-  bottom: 30px;
-  padding: 14px 15px;
-  display: flex;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-}
-
-.activity .delete-option .trash-icon {
-  filter: brightness(1);
-  width: 15px;
-}
+@import url("../assets/styles/add-reimbursement-page.css");
 </style>

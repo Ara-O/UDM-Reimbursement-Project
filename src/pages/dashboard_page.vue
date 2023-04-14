@@ -4,7 +4,11 @@
       <h3>Foapa Numbers</h3>
       <br />
       <div class="foapa-number-wrapper">
-        <div class="foapa-number" v-for="foapa in userFoapaNumbers" :key="foapa.foapaNumber">
+        <div
+          class="foapa-number"
+          v-for="foapa in userFoapaNumbers"
+          :key="foapa.foapaNumber"
+        >
           <h3>{{ foapa.foapaNumber }}</h3>
           <img
             src="../assets/trash-icon.png"
@@ -63,7 +67,7 @@
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
         All Reimbursements -
-        <router-link to="/add-reimbursement"
+        <router-link to="/add-reimbursement" class="add-reimbursement-link"
           >Click here to add reimbursement ticket</router-link
         >
       </h3>
@@ -127,7 +131,7 @@
 import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref } from "vue";
-import { routerKey, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 const storedEmploymentNumber = localStorage.getItem("employmentNumber");
@@ -138,15 +142,14 @@ type FoapaNumbers = {
 };
 
 let obj = ref({
-    empNo:localStorage.getItem("employmentNumber"),
-    foapaNumber:""
-  }
-)
+  empNo: localStorage.getItem("employmentNumber"),
+  foapaNumber: "",
+});
 
 let obj2 = ref({
-  empNo2:localStorage.getItem("employmentNumber"),
-  foapaNumber2:""
-})
+  empNo2: localStorage.getItem("employmentNumber"),
+  foapaNumber2: "",
+});
 
 function closeConnection() {
   axios.get("/close").catch((err) => {
@@ -157,28 +160,27 @@ function closeConnection() {
 function add() {
   axios
     .post("/api/addFoapaNumber", obj.value)
-    .then(()=>{
+    .then(() => {
       alert("Foapa Number Added");
       retrieveUserFoapaNumbers();
-      obj.value.foapaNumber="";
+      obj.value.foapaNumber = "";
     })
-    .catch((err)=>{
+    .catch((err) => {
       console.log(err);
       alert(err.response.data.message);
     });
-    
 }
 
-function deleteFoapa(fNum:string) {
-  obj2.value.foapaNumber2=fNum;
+function deleteFoapa(fNum: string) {
+  obj2.value.foapaNumber2 = fNum;
   axios
     .post("/api/deleteFoapaNumber", obj2.value)
-    .then(()=>{
+    .then(() => {
       console.log("The thing that was deleted: " + obj2.value);
       alert("Foapa Number Deleted");
       retrieveUserFoapaNumbers();
     })
-    .catch((err)=>{
+    .catch((err) => {
       console.log(err);
       alert(err.response.data.message);
     });
@@ -244,14 +246,14 @@ function retrieveUserInformation() {
 function addReimbursement() {
   router.push("/add-reimbursement");
 }
-onMounted(() => {
-  if (localStorage.getItem("employmentNumber") === null) {
-    console.log("no local storage item");
-    // Commenting out cau
-    router.push("/");
-  } else {
-    retrieveUserFoapaNumbers();
-    retrieveUserInformation();
-  }
-});
+// onMounted(() => {
+//   if (localStorage.getItem("employmentNumber") === null) {
+//     console.log("no local storage item");
+//     // Commenting out cau
+//     router.push("/");
+//   } else {
+//     retrieveUserFoapaNumbers();
+//     retrieveUserInformation();
+//   }
+// });
 </script>
