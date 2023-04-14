@@ -10,6 +10,7 @@ import {
   activityTable,
   reimbursementTable,
   containsTable,
+  updateAccount,
 } from "./queries.js";
 
 const app = express();
@@ -30,7 +31,7 @@ const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   port: 3306,
-  password: "1234",
+  password: "password",
   database: "reimbursement_db",
 });
 
@@ -142,21 +143,7 @@ function updateAccountInfo(req, res) {
   console.log("Teehee Ethan Employment Numba: " + req.body.employmentNumber);
 
   connection.query(
-    `UPDATE Faculty 
-    SET 
-        fName = ?,
-        lName = ?,
-        workEmail = ?,
-        department = ?,
-        streetAddress = ?,
-        phoneNumber = ?,
-        password = ?,
-        zipCode = ?,
-        city = ?,
-        state = ?
-    WHERE
-        employmentNumber = ?;
-    `,
+    updateAccount,
     [
       req.body.fName,
       req.body.lName,

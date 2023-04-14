@@ -13,6 +13,22 @@ let facultyTable = `CREATE TABLE IF NOT EXISTS Faculty (
     PRIMARY KEY (employmentNumber)
   );`;
 
+let updateAccount = `UPDATE Faculty 
+SET 
+    fName = ?,
+    lName = ?,
+    workEmail = ?,
+    department = ?,
+    streetAddress = ?,
+    phoneNumber = ?,
+    password = ?,
+    zipCode = ?,
+    city = ?,
+    state = ?
+WHERE
+    employmentNumber = ?;
+`;
+
 let foapaTable = `CREATE TABLE IF NOT EXISTS FOAPA (
     foapaName varchar(45) NOT NULL,
     foapaNumber varchar(45) NOT NULL,
@@ -65,4 +81,5 @@ export {
   activityTable,
   reimbursementTable,
   containsTable,
+  updateAccount,
 };
