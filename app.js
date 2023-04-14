@@ -232,6 +232,20 @@ function retrieveAccountInfo(req, res) {
   );
 }
 
+function userLoginInfo(req, res){
+  const password = req.query.password;
+  const email =req.query.workEmail;
+  connection.query("SELECT password FROM FACULTY WHERE workEmail = ?"),
+  [workEmail],
+  (err, rows) => {
+    if (err){
+      console.log(err);
+      res.status(500).son({message: "Login information is incorrect"});
+    }else{
+      res.status(200).send("success");
+    }
+  }
+}
 //APIs
 
 app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
@@ -239,7 +253,7 @@ app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
 app.post("/api/register", registerUser);
 app.post("/api/updateAccountInfo", updateAccountInfo);
-
+app.post("/api/userLoginInfo", userLoginInfo);
 app.get("/close", () => {
   connection.end();
 });
