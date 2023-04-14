@@ -212,6 +212,8 @@ function addReimbursement() {
     activityReceipt: "Activity Receipt",
   });
 
+  console.log(allActivities.value);
+
   chosenExpense.value = foapaNumber.value = activityDate.value = "";
   expenseCost.value = 0;
 }
