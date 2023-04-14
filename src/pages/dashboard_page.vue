@@ -58,10 +58,10 @@
           <h3>Sort by Date</h3>
         </div>
         <div class="filter">
-          <h3>Sort by Date</h3>
+          <h3>Sort by Status</h3>
         </div>
         <div class="filter">
-          <h3>Sort by Date</h3>
+          <h3>Sort by Cost</h3>
         </div>
       </div>
       <br />

@@ -283,6 +283,8 @@ function saveReimbursement() {
     .catch((err) => {
       console.log(err);
     });
+
+    router.push("/dashboard");
 }
 </script>
 
