@@ -217,15 +217,15 @@ input {
 }
 
 .profile-logo {
-  width: 147px;
+  width: 100px;
   padding: 40px 20px;
 }
 
 .profile-logo-wrapper {
   border: 1px solid #ffffff;
   border-radius: 9999px;
-  height: 141px;
-  width: 145px;
+  height: 140px;
+  padding: 30px;
   display: flex;
   justify-content: center;
   align-items: center;

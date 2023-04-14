@@ -67,7 +67,7 @@
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
         All Reimbursements -
-        <router-link to="/account" class="add-reimbursement-link"
+        <router-link to="/add-reimbursement" class="add-reimbursement-link"
           >Click here to add reimbursement ticket</router-link
         >
       </h3>
@@ -120,7 +120,7 @@
           <h3>Phone Number: {{ userInfo.phoneNumber }}</h3>
         </div>
       </div>
-      <button>Sign Out</button>
+      <button @click="signOut">Sign Out</button>
     </section>
     <!-- <h3>hi</h3>
     <button @click="closeConnection">Close server connection</button> -->
@@ -155,6 +155,12 @@ function closeConnection() {
   axios.get("/close").catch((err) => {
     console.log(err);
   });
+}
+
+function signOut() {
+  localStorage.setItem("employmentNumber", "")
+  router.push("/login")
+  alert("Successfully signed out!");
 }
 
 function add() {
