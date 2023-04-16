@@ -133,6 +133,10 @@
           required
         />
       </div>
+      <router-link to="/login" style="font-size: 14px"
+        >Already have an Account</router-link
+      >
+      <br />
       <button class="signup-button" type="submit">Continue</button>
     </form>
   </section>

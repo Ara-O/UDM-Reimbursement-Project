@@ -367,19 +367,48 @@ function deleteFoapaNumber(req, res) {
   );
 }
 
-function userLoginInfo(req, res) {
-  const password = req.query.password;
-  const email = req.query.workEmail;
-  connection.query("SELECT password FROM FACULTY WHERE workEmail = ?"),
+function loginUser(req, res) {
+  const { workEmail, password } = req.body;
+  console.log(workEmail);
+  connection.query(
+    "SELECT password, employmentNumber FROM FACULTY WHERE workEmail = ?",
     [workEmail],
     (err, rows) => {
+      console.log(rows);
+      if (rows.length === 0) {
+        res.status(401).send({
+          message:
+            "Login unsuccessful; No email/Password combination was found",
+        });
+      } else {
+        let dbPassword = rows[0].password;
+        console.log(dbPassword);
+        if (dbPassword === password) {
+          res
+            .status(200)
+            .send({
+              message: "Login successful",
+              employmentNumber: rows[0].employmentNumber,
+            });
+        } else {
+          res.status(401).send({
+            message:
+              "Login unsuccessful; No email/Password combination was found",
+          });
+        }
+      }
       if (err) {
         console.log(err);
-        res.status(500).son({ message: "Login information is incorrect" });
-      } else {
-        res.status(200).send("success");
       }
-    };
+    }
+  );
+  //     if (err) {
+  //       console.log(err);
+  //       res.status(500).son({ message: "Login information is incorrect" });
+  //     } else {
+  //       res.status(200).send("success");
+  //     }
+  //   };
 }
 //APIs
 
@@ -391,7 +420,7 @@ app.post("/api/updateAccountInfo", updateAccountInfo);
 app.post("/api/addReimbursement", addReimbursement);
 app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
-app.post("/api/userLoginInfo", userLoginInfo);
+app.post("/api/login", loginUser);
 app.get("/close", () => {
   connection.end();
 });
