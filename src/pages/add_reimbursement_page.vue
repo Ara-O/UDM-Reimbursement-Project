@@ -136,17 +136,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { stringifyExpression } from "@vue/compiler-core";
-
 const router = useRouter();
-
-function goToHomePage() {
-  router.push("/dashboard");
-}
-
 type Activity = {
   activityId: number;
   activityName: string;
@@ -155,6 +148,10 @@ type Activity = {
   activityDate: string;
   activityReceipt: string;
 };
+
+function goToHomePage() {
+  router.push("/dashboard");
+}
 
 let chosenExpense = ref<string>("");
 let chosenExpenseOther = ref<string>("");
@@ -213,22 +210,25 @@ function addReimbursement() {
   });
 
   console.log(allActivities.value);
-
   chosenExpense.value = foapaNumber.value = activityDate.value = "";
   expenseCost.value = 0;
 }
 
 const storedEmploymentNumber = localStorage.getItem("employmentNumber");
-axios
-  .get(`/api/retrieveFoapaNumbers`, {
-    params: { employmentNumber: storedEmploymentNumber },
-  })
-  .then((res) => {
-    foapaNumbersToSelectFrom.value = res.data;
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+
+function retrieveFoapaNumbers() {
+  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+  axios
+    .get(`/api/retrieveFoapaNumbers`, {
+      params: { employmentNumber: storedEmploymentNumber },
+    })
+    .then((res) => {
+      foapaNumbersToSelectFrom.value = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
 function generateRandomId(): string {
   const chars: string = "1234567890";
@@ -261,6 +261,31 @@ function getCurrentDate(): string {
   return formattedDate;
 }
 
+// CODE TO SAVE REIMBURSEMENT
+// --------------------------
+// let randomId: string = generateRandomId();
+// let reimbursementData = {
+//   reimbursementId: Number(randomId),
+//   employmentNumber: storedEmploymentNumber,
+//   eventName: reimbursementTitle.value,
+//   totalAmount: getAllActivitiesAmount(),
+//   reimbursementStatus: 0,
+//   reimbursementDate: getCurrentDate(),
+//   allActivities: allActivities.value,
+// };
+
+// axios
+//   .post(`/api/addReimbursement`, {
+//     reimbursementData,
+//   })
+//   .then((res) => {
+//     console.log(res);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+
+// router.push("/dashboard");
 function saveReimbursement() {
   let randomId: string = generateRandomId();
   let reimbursementData = {
@@ -273,19 +298,37 @@ function saveReimbursement() {
     allActivities: allActivities.value,
   };
 
-  axios
-    .post(`/api/addReimbursement`, {
-      reimbursementData,
-    })
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  //First check if localstorage exists
 
-    router.push("/dashboard");
+  const allReimbursementIds = localStorage.getItem("allReimbursementIds");
+
+  //if no id has been found, add an id
+  if (allReimbursementIds === null) {
+    localStorage.setItem(
+      "allReimbursementIds",
+      String(reimbursementData.reimbursementId) + ","
+    );
+  } else {
+    let combinedIds =
+      allReimbursementIds + reimbursementData.reimbursementId + ",";
+
+    localStorage.setItem("allReimbursementIds", combinedIds);
+    console.log(combinedIds);
+  }
+
+  localStorage.setItem(
+    `Reimbursement-${reimbursementData.reimbursementId}`,
+    JSON.stringify(reimbursementData)
+  );
+
+  alert("Reimbursement saved successfully");
+  router.push("/dashboard");
+  console.log(reimbursementData);
 }
+
+onMounted(() => {
+  retrieveFoapaNumbers();
+});
 </script>
 
 <style scoped>

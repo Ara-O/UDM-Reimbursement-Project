@@ -73,28 +73,10 @@
       </h3>
       <br />
       <div class="reimbursement-wrapper">
-        <div class="reimbursement">
-          <h3>University Conference</h3>
-          <h4>Status: Accepted</h4>
-          <h5>12/12/2032</h5>
-          <div class="reimbursement-buttons">
-            <button>Delete</button>
-            <button>View</button>
-          </div>
-        </div>
-        <div class="reimbursement">
-          <h3>University Conference</h3>
-          <h4>Status: Accepted</h4>
-          <h5>12/12/2032</h5>
-          <div class="reimbursement-buttons">
-            <button>Delete</button>
-            <button>View</button>
-          </div>
-        </div>
-        <div class="reimbursement">
-          <h3>University Conference</h3>
-          <h4>Status: Accepted</h4>
-          <h5>12/12/2032</h5>
+        <div class="reimbursement" v-for="ticket in storedReimbursementTickets">
+          <h3>{{ ticket.eventName }}</h3>
+          <h4>Status: Pending</h4>
+          <h5>{{ ticket.reimbursementDate }}</h5>
           <div class="reimbursement-buttons">
             <button>Delete</button>
             <button>View</button>
@@ -158,8 +140,8 @@ function closeConnection() {
 }
 
 function signOut() {
-  localStorage.setItem("employmentNumber", "")
-  router.push("/login")
+  localStorage.setItem("employmentNumber", "");
+  router.push("/login");
   alert("Successfully signed out!");
 }
 
@@ -253,14 +235,33 @@ function addReimbursement() {
   router.push("/add-reimbursement");
 }
 
+let storedReimbursementTickets = ref<any>([]);
+
 onMounted(() => {
   if (localStorage.getItem("employmentNumber") === null) {
     console.log("no local storage item");
-    // Commenting out cau
-    router.push("/");
+    // router.push("/");
   } else {
     retrieveUserFoapaNumbers();
     retrieveUserInformation();
+
+    const allReimbursementIds = localStorage.getItem("allReimbursementIds");
+
+    if (allReimbursementIds === null || allReimbursementIds === "") {
+      console.log("no reimbursemnet id");
+    } else {
+      console.log("reimbursemnet id");
+      const parsedIds = allReimbursementIds
+        .split(",")
+        .filter((el) => el !== "");
+
+      parsedIds.forEach((id) => {
+        storedReimbursementTickets.value.push(
+          JSON.parse(localStorage.getItem(`Reimbursement-${id}`) as string)
+        );
+      });
+      console.log(storedReimbursementTickets.value);
+    }
   }
 });
 </script>
