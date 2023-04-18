@@ -266,7 +266,7 @@ function addReimbursement(req, res) {
       activity.foapaNumber,
       activity.activityName,
       activity.activityReceipt,
-      "2002-03-02",
+      activity.activityDate,
       activity.amount,
     ];
 
