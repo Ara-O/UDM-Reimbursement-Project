@@ -8,7 +8,7 @@
           Date: {{ activity.activityDate }} || Cost: {{ activity.amount }}
         </h4>
         <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
-        <div class="delete-option">
+        <div class="delete-option" @click="deleteActivity(activity.activityId)">
           <img
             src="../assets/trash-icon-white.png"
             alt="Trash icon"
@@ -261,6 +261,12 @@ function getCurrentDate(): string {
   return formattedDate;
 }
 
+function deleteActivity(activityId: number) {
+  allActivities.value = allActivities.value.filter(
+    (activity) => activity.activityId != activityId
+  );
+}
+
 // CODE TO SAVE REIMBURSEMENT
 // --------------------------
 // let randomId: string = generateRandomId();
@@ -286,6 +292,7 @@ function getCurrentDate(): string {
 //   });
 
 // router.push("/dashboard");
+
 function saveReimbursement() {
   let randomId: string = generateRandomId();
   let reimbursementData = {
