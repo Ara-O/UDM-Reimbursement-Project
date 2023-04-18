@@ -102,6 +102,9 @@
           <h3>Phone Number: {{ userInfo.phoneNumber }}</h3>
         </div>
       </div>
+      <router-link to="/account" style="font-size: 14px"
+        >View Account Information</router-link
+      >
       <button @click="signOut">Sign Out</button>
     </section>
     <!-- <h3>hi</h3>
