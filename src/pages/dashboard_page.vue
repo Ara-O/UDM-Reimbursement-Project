@@ -44,14 +44,6 @@
             class="search-icon"
           />
         </div>
-        <div class="add-button">
-          <img
-            src="../assets/add-icon.png"
-            alt="Add icon"
-            class="add-icon"
-            @click="addReimbursement"
-          />
-        </div>
       </div>
       <div class="search-filters">
         <div class="filter selected">
@@ -63,13 +55,22 @@
         <div class="filter">
           <h3>Sort by Cost</h3>
         </div>
+        <div class="add-button filter">
+          <img
+            src="../assets/add-icon.png"
+            alt="Add icon"
+            class="add-icon"
+            @click="addReimbursement"
+          />
+        </div>
       </div>
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
-        All Reimbursements -
+        All Reimbursements 
+        <!-- -
         <router-link to="/add-reimbursement" class="add-reimbursement-link"
           >Click here to add reimbursement ticket</router-link
-        >
+        > -->
       </h3>
       <br />
       <div class="reimbursement-wrapper">

@@ -198,9 +198,9 @@
   overflow: auto;
 }
 
-.reimbursement-wrapper::-webkit-scrollbar {
+/* .reimbursement-wrapper::-webkit-scrollbar {
   display: none;
-}
+} */
 
 /* USER INFORMATION PORTION */
 .user-information-section {
