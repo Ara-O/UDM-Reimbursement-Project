@@ -86,7 +86,7 @@
   height: auto;
   border-radius: 5px;
   cursor: pointer;
-  width: 65px;
+  width: 61px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -153,7 +153,7 @@
 
 .reimbursement h4 {
   font-weight: 400;
-  font-size: 15px;
+  font-size: 14.5px;
 }
 .reimbursement h5 {
   font-weight: 300;
@@ -193,6 +193,13 @@
   flex-wrap: wrap;
   justify-content: space-between;
   row-gap: 20px;
+  height: auto;
+  max-height: 590px;
+  overflow: auto;
+}
+
+.reimbursement-wrapper::-webkit-scrollbar {
+  display: none;
 }
 
 /* USER INFORMATION PORTION */

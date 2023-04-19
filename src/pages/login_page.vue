@@ -1,41 +1,57 @@
 <template>
-    <section class="login-page">
-      <!-- Img is a way you can embed images to your site,
+  <section class="login-page">
+    <!-- Img is a way you can embed images to your site,
       the ../ before the folder means that we are traversing file systems -->
-      <div class="udmercy-logo-wrapper">
-        <img
-          src="../assets/detroit-mercy-logo.png"
-          alt="Detroit mercy logo"
-          class="udmercy-logo"
-        />
-      </div>
-      <br />
-      <h3 class="login-title">Detroit Mercy Reimbursement System</h3>
-      <br />
-      <form @submit.prevent="userLoginInfo" class="login-form">
+    <div class="udmercy-logo-wrapper">
+      <img
+        src="../assets/detroit-mercy-logo.png"
+        alt="Detroit mercy logo"
+        class="udmercy-logo"
+      />
+    </div>
+    <br />
+    <h3 class="login-title">Detroit Mercy Reimbursement System</h3>
+    <br />
+    <form @submit.prevent="loginUser" class="login-form">
       <div class="input-field">
         <label for="work-email">Work Email: </label>
-        <input v-model="userInfo.workEmail" type="email" name="Work Email" id="work-email" />
+        <input
+          v-model="userInfo.workEmail"
+          type="email"
+          name="Work Email"
+          id="work-email"
+        />
       </div>
       <div class="input-field">
         <label for="password">Password:</label>
-        <input v-model="userInfo.password" type="text" name="Password" id="password" />
+        <input
+          v-model="userInfo.password"
+          type="password"
+          name="Password"
+          id="password"
+        />
       </div>
+      <router-link to="/" style="font-size: 14px"
+        >Create an Account</router-link
+      >
       <button class="login-button">Login</button>
     </form>
-    </section>
-  </template>
-  
-  <script lang="ts" setup>
-import axios from 'axios';
-import { routeLocationKey } from 'vue-router';
-import router from '../router';
-import {ref} from "vue"
-let userInfo = ref<any>({workEmail: "", passsword: ""})
-  function userLoginInfo() {
-    axios
-    .post("/api/login", userLoginInfo)
-    .then(() => {
+  </section>
+</template>
+
+<script lang="ts" setup>
+import axios from "axios";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+let userInfo = ref<any>({ workEmail: "", password: "" });
+
+const router = useRouter();
+function loginUser() {
+  axios
+    .post("/api/login", userInfo.value)
+    .then((res) => {
+      localStorage.setItem("employmentNumber", res.data.employmentNumber);
+      console.log(res);
       alert("User Login successful");
       router.push("/dashboard");
     })
@@ -43,118 +59,117 @@ let userInfo = ref<any>({workEmail: "", passsword: ""})
       console.log(err);
       alert(err.response.data.message);
     });
-  }
+}
+</script>
 
-  </script>
-  
-  <style scoped>
-  input {
-    outline: none;
-  }
-  
-  .login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-  }
-  
-  .login-title {
-    font-weight: 600;
-    font-size: 25px;
-  }
-  
-  .udmercy-logo {
-    width: 100px;
-    padding: 40px 20px;
-  }
-  
-  .udmercy-logo-wrapper {
-    border: 1px solid #ffffff;
-    border-radius: 9999px;
-    height: 140px;
-    padding: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0px 4px 9px rgba(184, 184, 184, 0.38);
-  }
+<style scoped>
+input {
+  outline: none;
+}
 
-  .login-form {
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.login-title {
+  font-weight: 600;
+  font-size: 25px;
+}
+
+.udmercy-logo {
+  width: 100px;
+  padding: 40px 20px;
+}
+
+.udmercy-logo-wrapper {
+  border: 1px solid #ffffff;
+  border-radius: 9999px;
+  height: 140px;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 9px rgba(184, 184, 184, 0.38);
+}
+
+.login-form {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-  
+
+.input-field {
+  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 450px;
+  justify-content: space-between;
+}
+
+.input-field input {
+  margin-left: 30px;
+  padding-left: 20px;
+  width: 224px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #f7f7f7;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
+  border-radius: 5px;
+}
+
+.input-field label {
+  width: 140px;
+  font-size: 14px;
+}
+
+.login-button {
+  background-color: var(--udmercy-blue);
+  color: white;
+  padding: 10px 70px;
+  border: solid 1px;
+  width: 232px;
+  height: 50px;
+  margin-top: 20px;
+  cursor: pointer;
+  background: #a5093e;
+  border-radius: 26px;
+}
+
+@media (max-width: 610px) {
   .input-field {
-    margin-bottom: 30px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    width: 450px;
-    justify-content: space-between;
+    flex-direction: column;
   }
-  
+
   .input-field input {
-    margin-left: 30px;
-    padding-left: 20px;
-    width: 224px;
-    height: 36px;
-    background: #ffffff;
-    border: 1px solid #f7f7f7;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
-    border-radius: 5px;
+    margin-left: 0px;
+    text-align: center;
+    padding-left: 0px;
   }
-  
   .input-field label {
-    width: 140px;
+    width: auto;
+    margin-bottom: 10px;
   }
-  
-  .login-button {
-    background-color: var(--udmercy-blue);
-    color: white;
-    padding: 10px 70px;
-    border: solid 1px;
-    width: 232px;
-    height: 50px;
-    margin-top: 20px;
-    cursor: pointer;
-    background: #a5093e;
-    border-radius: 26px;
+
+  .udmercy-logo {
+    width: 70px;
+    padding: 40px 20px;
   }
-  
-  @media (max-width: 610px) {
-    .input-field {
-      flex-direction: column;
-    }
-  
-    .input-field input {
-      margin-left: 0px;
-      text-align: center;
-      padding-left: 0px;
-    }
-    .input-field label {
-      width: auto;
-      margin-bottom: 10px;
-    }
-  
-    .udmercy-logo {
-      width: 70px;
-      padding: 40px 20px;
-    }
-  
-    .udmercy-logo-wrapper {
-      border: 1px solid #ffffff;
-      border-radius: 9999px;
-      height: 110px;
-      padding: 30px;
-    }
-    .login-page {
-      height: auto;
-      padding-top: 30px;
-      padding-bottom: 30px;
-    }
+
+  .udmercy-logo-wrapper {
+    border: 1px solid #ffffff;
+    border-radius: 9999px;
+    height: 110px;
+    padding: 30px;
   }
-  </style>
-  
+  .login-page {
+    height: auto;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+</style>
