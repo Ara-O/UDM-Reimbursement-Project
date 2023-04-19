@@ -129,7 +129,7 @@
       </h5>
       <br />
       <button class="add-reimbursement-button" @click="addReimbursement">
-        Add Reimbursement
+        Add Activity
       </button>
     </section>
   </section>
