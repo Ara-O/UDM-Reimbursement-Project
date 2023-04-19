@@ -4,15 +4,32 @@
       <h3>Foapa Numbers</h3>
       <br />
       <div class="foapa-number-wrapper">
-        <div class="foapa-number" v-for="foapa in userFoapaNumbers">
+        <div
+          class="foapa-number"
+          v-for="foapa in userFoapaNumbers"
+          :key="foapa.foapaNumber"
+        >
           <h3>{{ foapa.foapaNumber }}</h3>
-          <img src="../assets/trash-icon.png" alt="Trash" />
+          <img
+            src="../assets/trash-icon.png"
+            alt="Trash"
+            @click="deleteFoapa(foapa.foapaNumber)"
+          />
+        </div>
+        <div class="foapa-number">
+          <input
+            type="text"
+            name="Foapa Number"
+            placeholder="New FOAPA Number"
+            v-model="obj.foapaNumber"
+          />
+          <img src="../assets/add-icon2.png" alt="add-icon2" @click="add" />
         </div>
       </div>
     </section>
 
     <section class="reimbursement-section">
-      <h3>Welcome Mina</h3>
+      <h3>Welcome {{ userInfo.firstName }}</h3>
       <br />
       <div class="reimbursement-search-input">
         <input
@@ -28,7 +45,12 @@
           />
         </div>
         <div class="add-button">
-          <img src="../assets/add-icon.png" alt="Add icon" class="add-icon" />
+          <img
+            src="../assets/add-icon.png"
+            alt="Add icon"
+            class="add-icon"
+            @click="addReimbursement"
+          />
         </div>
       </div>
       <div class="search-filters">
@@ -36,16 +58,17 @@
           <h3>Sort by Date</h3>
         </div>
         <div class="filter">
-          <h3>Sort by Date</h3>
+          <h3>Sort by Status</h3>
         </div>
         <div class="filter">
-          <h3>Sort by Date</h3>
+          <h3>Sort by Cost</h3>
         </div>
       </div>
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
         All Reimbursements -
-        <router-link to="/account">Click here to add reimbursement ticket</router-link
+        <router-link to="/add-reimbursement" class="add-reimbursement-link"
+          >Click here to add reimbursement ticket</router-link
         >
       </h3>
       <br />
@@ -97,7 +120,7 @@
           <h3>Phone Number: {{ userInfo.phoneNumber }}</h3>
         </div>
       </div>
-      <button>Sign Out</button>
+      <button @click="signOut">Sign Out</button>
     </section>
     <!-- <h3>hi</h3>
     <button @click="closeConnection">Close server connection</button> -->
@@ -111,15 +134,62 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+
 type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
 };
 
+let obj = ref({
+  empNo: localStorage.getItem("employmentNumber"),
+  foapaNumber: "",
+});
+
+let obj2 = ref({
+  empNo2: localStorage.getItem("employmentNumber"),
+  foapaNumber2: "",
+});
+
 function closeConnection() {
   axios.get("/close").catch((err) => {
     console.log(err);
   });
+}
+
+function signOut() {
+  localStorage.setItem("employmentNumber", "")
+  router.push("/login")
+  alert("Successfully signed out!");
+}
+
+function add() {
+  axios
+    .post("/api/addFoapaNumber", obj.value)
+    .then(() => {
+      alert("Foapa Number Added");
+      retrieveUserFoapaNumbers();
+      obj.value.foapaNumber = "";
+    })
+    .catch((err) => {
+      console.log(err);
+      alert(err.response.data.message);
+    });
+}
+
+function deleteFoapa(fNum: string) {
+  obj2.value.foapaNumber2 = fNum;
+  axios
+    .post("/api/deleteFoapaNumber", obj2.value)
+    .then(() => {
+      console.log("The thing that was deleted: " + obj2.value);
+      alert("Foapa Number Deleted");
+      retrieveUserFoapaNumbers();
+    })
+    .catch((err) => {
+      console.log(err);
+      alert(err.response.data.message);
+    });
 }
 
 let userFoapaNumbers = ref<FoapaNumbers[]>([
@@ -177,6 +247,10 @@ function retrieveUserInformation() {
     .catch((err) => {
       console.log(err);
     });
+}
+
+function addReimbursement() {
+  router.push("/add-reimbursement");
 }
 
 onMounted(() => {
