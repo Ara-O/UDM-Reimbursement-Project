@@ -82,6 +82,7 @@ function registerUser(req, res) {
     city,
     state,
     foapaNumber,
+    foapaName,
   } = req.body;
 
   connection.beginTransaction();
@@ -119,7 +120,7 @@ function registerUser(req, res) {
 
             if (rows.length <= 0) {
               connection.query("INSERT INTO foapa VALUES(?,?)", [
-                employmentNumber,
+                foapaName,
                 foapaNumber,
               ]);
             }
@@ -326,7 +327,7 @@ function addFoapaNumber(req, res) {
 
       if (rows.length <= 0) {
         connection.query("INSERT INTO foapa VALUES(?,?)", [
-          employmentNumber,
+          foapaNumber,
           foapaNumber,
         ]);
       }
