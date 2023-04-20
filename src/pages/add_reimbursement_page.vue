@@ -317,13 +317,20 @@ function saveReimbursement() {
   }
 }
 
+function downloadPDF(pdfData: string) {
+  const linkSource = pdfData;
+  const downloadLink = document.createElement("a");
+  const fileName = "reimbursement.pdf";
+  downloadLink.href = linkSource;
+  downloadLink.download = fileName;
+  downloadLink.click();
+}
+
 function createPdf() {
   axios
     .get("/api/generatePdf")
     .then((res) => {
-      console.log(res);
-      // router.push(res.data);
-      window.location.href = res.data;
+      downloadPDF(res.data);
     })
     .catch((err) => {
       console.log(err);

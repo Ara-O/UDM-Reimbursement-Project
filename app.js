@@ -704,6 +704,8 @@ app.get("/api/generatePdf", function (req, res) {
   generatePdf(
     docDefinition,
     function (base64String) {
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", "attachment; filename=product.pdf");
       res.send(base64String);
     },
     function (error) {
