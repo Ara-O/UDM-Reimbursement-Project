@@ -225,6 +225,7 @@ function retrieveAccountInfo(req, res) {
 }
 
 function addReimbursement(req, res) {
+  console.log(req.body);
   const {
     reimbursementId,
     employmentNumber,
@@ -233,8 +234,9 @@ function addReimbursement(req, res) {
     reimbursementStatus,
     reimbursementDate,
     allActivities,
-  } = req.body.reimbursementData;
+  } = req.body;
 
+  console.log(reimbursementId);
   let promises = [];
 
   promises.push(
@@ -384,12 +386,10 @@ function loginUser(req, res) {
         let dbPassword = rows[0].password;
         console.log(dbPassword);
         if (dbPassword === password) {
-          res
-            .status(200)
-            .send({
-              message: "Login successful",
-              employmentNumber: rows[0].employmentNumber,
-            });
+          res.status(200).send({
+            message: "Login successful",
+            employmentNumber: rows[0].employmentNumber,
+          });
         } else {
           res.status(401).send({
             message:
@@ -402,16 +402,249 @@ function loginUser(req, res) {
       }
     }
   );
-  //     if (err) {
-  //       console.log(err);
-  //       res.status(500).son({ message: "Login information is incorrect" });
-  //     } else {
-  //       res.status(200).send("success");
-  //     }
-  //   };
 }
-//APIs
 
+function retrieveReimbursements(req, res) {
+  const employmentNumber = req.query.employmentNumber;
+  console.log("empl num :" + employmentNumber);
+  connection.query(
+    "SELECT * FROM reimbursementticket WHERE employmentNumber =  ?",
+    employmentNumber,
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(404)
+          .send({ message: "Error retrieving reimbursement tickets" });
+      } else {
+        res.status(200).send(rows);
+        console.log(rows);
+      }
+    }
+  );
+}
+
+function retrieveTicketInformation(req, res) {
+  const promises = [];
+  const employmentNumber = req.query.employmentNumber;
+  const reimbursementId = req.query.reimbursementId;
+  console.log("empl num :" + employmentNumber);
+  promises.push(
+    new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM reimbursementticket WHERE employmentNumber =  ? AND reimbursementId = ?",
+        [employmentNumber, reimbursementId],
+        (err, rows) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            resolve(rows);
+            console.log(rows);
+          }
+        }
+      );
+    })
+  );
+
+  promises.push(
+    new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT activityId FROM contains WHERE reimbursementId = ?",
+        reimbursementId,
+        (err, rows) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            let allActivities = [];
+            rows.forEach((activity) => {
+              allActivities.push(activity.activityId);
+            });
+
+            connection.query(
+              "SELECT * FROM activity WHERE activityId IN (?)",
+              [allActivities],
+              (err, rows) => {
+                if (err) {
+                  console.log(err);
+                  reject(err);
+                } else {
+                  resolve(rows);
+                }
+              }
+            );
+          }
+        }
+      );
+    })
+  );
+
+  const allPromises = Promise.all(promises);
+
+  allPromises
+    .then((response) => {
+      console.log(response);
+      console.log("promise success");
+      res.status(200).send(response);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(401).send(err);
+    });
+}
+
+// UPDATE
+function updateReimbursementTicket(req, res) {
+  console.log("potato");
+  const {
+    reimbursementId,
+    employmentNumber,
+    allActivities,
+    eventName,
+    totalAmount,
+    reimbursementStatus,
+    reimbursementDate,
+  } = req.body;
+  const promises = [];
+
+  // promises.push(
+  //   new Promise((resolve, reject) => {
+  //     connection.query(
+  //       "DELETE FROM contains WHERE reimbursementId IN (SELECT reimbursementId FROM reimbursementticket WHERE reimbursementId = ?)",
+  //       [reimbursementId],
+  //       (err, rows) => {
+  //         if (err) {
+  //           console.log(err);
+  //           reject(err);
+  //         } else {
+  //           resolve();
+  //           console.log("promsie");
+  //           console.log(rows);
+  //         }
+  //       }
+  //     );
+  //   })
+  // );
+
+  promises.push(
+    new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT activityId FROM contains WHERE reimbursementId = ?",
+        [reimbursementId],
+        (err, rows) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            resolve();
+            console.log(rows);
+            connection.query(
+              "DELETE FROM contains WHERE reimbursementId = ?",
+              [reimbursementId],
+              (err, rows) => {
+                if (err) {
+                  reject(err);
+                }
+              }
+            );
+
+            let allActivitiesId = rows.map((row) => row.activityId);
+            connection.query(
+              "DELETE FROM activity WHERE activityId IN (?)",
+              [allActivitiesId],
+              (err, rows) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  connection.query(
+                    "DELETE FROM reimbursementticket WHERE reimbursementId = ?",
+                    [reimbursementId],
+                    (err, rows) => {
+                      if (err) {
+                        console.log(err);
+                        reject(err);
+                      } else {
+                        console.log("removed reimbursementtickets");
+                        console.log("promsie");
+                        // resolve();
+                        connection.query(
+                          "INSERT INTO reimbursementticket VALUES(?,?,?,?,?,?)",
+                          [
+                            reimbursementId,
+                            employmentNumber,
+                            eventName,
+                            totalAmount,
+                            reimbursementStatus,
+                            reimbursementDate,
+                          ],
+                          (err) => {
+                            if (err) {
+                              reject(err);
+                            }
+                          }
+                        );
+
+                        allActivities.forEach((activity) => {
+                          const insertQuery = `INSERT INTO activity VALUES (?,?,?,?,?,?)`;
+                          const values = [
+                            activity.activityId,
+                            activity.foapaNumber,
+                            activity.activityName,
+                            activity.activityReceipt,
+                            activity.activityDate,
+                            activity.amount,
+                          ];
+
+                          connection.query(insertQuery, values, function (err) {
+                            if (err) {
+                              reject(err);
+                            }
+                          });
+
+                          connection.query(
+                            "INSERT INTO contains VALUES(?, ?)",
+                            [reimbursementId, activity.activityId],
+                            function (err) {
+                              if (err) {
+                                reject(err);
+                              } else {
+                                resolve();
+                              }
+                            }
+                          );
+                        });
+                      }
+                    }
+                  );
+                }
+              }
+            );
+          }
+        }
+      );
+    })
+  );
+
+  Promise.all(promises)
+    .then(() => {
+      res.status(200).send("Data inserted successfully");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    });
+
+  Promise.all(promises)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+//APIs
 app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
 app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
@@ -428,6 +661,9 @@ app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 >>>>>>> 6957dcd52be36000defb99e8ef10adc1f89ab8ad
 =======
 app.post("/api/addReimbursement", addReimbursement);
+app.get("/api/retrieveReimbursements", retrieveReimbursements);
+app.get("/api/retrieveTicketInformation", retrieveTicketInformation);
+app.post("/api/updateReimbursement", updateReimbursementTicket);
 app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 app.post("/api/login", loginUser);

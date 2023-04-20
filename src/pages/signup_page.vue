@@ -83,6 +83,16 @@
         required
         />
       </div>
+      <div class="input-field">
+        <label for="reenter-password">Re-enter password:</label>
+        <input
+          type="password"
+          name="reenter-password"
+          id="reenter-password"
+          v-model="reEnteredPassword"
+          required
+        />
+      </div>
       <!-- Store foapa numbers in their own table -->
       <div class="input-field">
         <label for="street-address">Street Address:</label>
@@ -162,7 +172,7 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
 type UserData = {
@@ -180,6 +190,8 @@ type UserData = {
   foapaNumber: string;
   foapaName: string;
 };
+
+let reEnteredPassword = ref<string>("");
 
 const router = useRouter();
 
@@ -202,21 +214,33 @@ let userSignupData = reactive<UserData>({
 function registerUser() {
   //Calls the api/register function and passes the user data, if it was successful, push to the dashboard page
   //or else, alert the user of an error
-  axios
-    .post("/api/register", userSignupData)
-    .then(() => {
-      alert("User registration successful");
-      localStorage.setItem(
-        "employmentNumber",
-        userSignupData.employmentNumber.toString()
-      );
-      router.push("/dashboard");
-    })
-    .catch((err) => {
-      console.log(err);
-      alert(err.response.data.message);
-    });
+
+  if (reEnteredPassword.value === userSignupData.password) {
+    axios
+      .post("/api/register", userSignupData)
+      .then(() => {
+        alert("User registration successful");
+        localStorage.setItem(
+          "employmentNumber",
+          userSignupData.employmentNumber.toString()
+        );
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err.response.data.message);
+      });
+  } else {
+    alert("Passwords do not match, please try again");
+  }
 }
+
+onMounted(() => {
+  if (localStorage.getItem("employmentNumber")?.length ?? 0 >= 0) {
+    console.log("user is already signed in");
+    router.push("/dashboard");
+  }
+});
 </script>
 
 <style scoped>
@@ -236,6 +260,7 @@ input {
 .signup-title {
   font-weight: 600;
   font-size: 25px;
+  text-align: center;
 }
 
 .udmercy-logo {
@@ -309,6 +334,12 @@ input {
 @media (max-width: 610px) {
   .input-field {
     flex-direction: column;
+  }
+
+  .signup-title {
+    font-size: 20px;
+    width: 350px;
+    line-height: 45px;
   }
 
   .input-field input {

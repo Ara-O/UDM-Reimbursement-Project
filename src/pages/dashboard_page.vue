@@ -77,10 +77,13 @@
         <div class="reimbursement" v-for="ticket in storedReimbursementTickets">
           <h3>{{ ticket.eventName }}</h3>
           <h4>Status: Pending</h4>
-          <h5>{{ ticket.reimbursementDate }}</h5>
+          <h5>
+            {{ parseDate(ticket.reimbursementDate) }} | Total Amount:
+            {{ ticket.totalAmount }}
+          </h5>
           <div class="reimbursement-buttons">
             <button>Delete</button>
-            <button>View</button>
+            <button @click="viewTicket(ticket.reimbursementId)">View</button>
           </div>
         </div>
       </div>
@@ -137,6 +140,24 @@ let obj2 = ref({
   foapaNumber2: "",
 });
 
+type UserData = {
+  firstName: string;
+  lastName: string;
+  workEmail: string;
+  employmentNumber: number;
+  phoneNumber: string;
+};
+
+let userInfo = ref<UserData>({
+  employmentNumber: 0,
+  firstName: "",
+  lastName: "",
+  phoneNumber: "",
+  workEmail: "",
+});
+
+let storedReimbursementTickets = ref<any>([]);
+
 function closeConnection() {
   axios.get("/close").catch((err) => {
     console.log(err);
@@ -178,16 +199,7 @@ function deleteFoapa(fNum: string) {
     });
 }
 
-let userFoapaNumbers = ref<FoapaNumbers[]>([
-  {
-    employmentNumber: 200,
-    foapaNumber: "100-10001-101-01",
-  },
-  {
-    employmentNumber: 200,
-    foapaNumber: "100-13201-101-01",
-  },
-]);
+let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 function retrieveUserFoapaNumbers() {
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
@@ -204,22 +216,6 @@ function retrieveUserFoapaNumbers() {
     });
 }
 
-type UserData = {
-  firstName: string;
-  lastName: string;
-  workEmail: string;
-  employmentNumber: number;
-  phoneNumber: string;
-};
-
-let userInfo = ref<UserData>({
-  employmentNumber: 0,
-  firstName: "",
-  lastName: "",
-  phoneNumber: "",
-  workEmail: "",
-});
-
 function retrieveUserInformation() {
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
@@ -235,37 +231,40 @@ function retrieveUserInformation() {
     });
 }
 
+function parseDate(dateString: string) {
+  const dateObj = new Date(dateString);
+  const formattedDate = dateObj.toISOString().slice(0, 10);
+  return formattedDate;
+}
+
 function addReimbursement() {
   router.push("/add-reimbursement");
 }
 
-let storedReimbursementTickets = ref<any>([]);
+function viewTicket(reimbursementId: string) {
+  console.log(reimbursementId);
+  router.push({ path: "/add-reimbursement", query: { reimbursementId } });
+}
 
 onMounted(() => {
   if (localStorage.getItem("employmentNumber") === null) {
     console.log("no local storage item");
-    // router.push("/");
+    router.push("/");
   } else {
-    retrieveUserFoapaNumbers();
     retrieveUserInformation();
+    retrieveUserFoapaNumbers();
 
-    const allReimbursementIds = localStorage.getItem("allReimbursementIds");
-
-    if (allReimbursementIds === null || allReimbursementIds === "") {
-      console.log("no reimbursemnet id");
-    } else {
-      console.log("reimbursemnet id");
-      const parsedIds = allReimbursementIds
-        .split(",")
-        .filter((el) => el !== "");
-
-      parsedIds.forEach((id) => {
-        storedReimbursementTickets.value.push(
-          JSON.parse(localStorage.getItem(`Reimbursement-${id}`) as string)
-        );
+    axios
+      .get("/api/retrieveReimbursements", {
+        params: { employmentNumber: localStorage.getItem("employmentNumber") },
+      })
+      .then((res) => {
+        console.log(res);
+        storedReimbursementTickets.value = res.data;
+      })
+      .catch((err) => {
+        alert(err);
       });
-      console.log(storedReimbursementTickets.value);
-    }
   }
 });
 </script>

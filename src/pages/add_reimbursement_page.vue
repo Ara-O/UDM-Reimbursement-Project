@@ -5,7 +5,8 @@
       <div class="activity" v-for="activity in allActivities">
         <h3>{{ activity.activityName }}</h3>
         <h4>
-          Date: {{ activity.activityDate }} || Cost: {{ activity.amount }}
+          Date: {{ parseDate(activity.activityDate) }} || Cost:
+          {{ activity.amount }}
         </h4>
         <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
         <div class="delete-option" @click="deleteActivity(activity.activityId)">
@@ -22,7 +23,7 @@
           Save for Later
         </button>
         <button class="go-back-button" @click="saveReimbursement">
-          Save to PDF
+          Export to PDF
         </button>
       </div>
     </section>
@@ -52,13 +53,26 @@
       </div>
       <h4 style="font-weight: 500">Expenses</h4>
       <div class="expenses-section">
-        <div
+        <!-- <div
           v-for="expense in expensesDefaults"
           @click="chosenExpense = expense"
           class="expense"
         >
           {{ expense }}
-        </div>
+        </div> -->
+
+        <input
+          list="defaults"
+          name="defaultOptions"
+          v-model="chosenExpense"
+          class="input-field"
+        />
+
+        <datalist id="defaults">
+          <option :value="expense" v-for="expense in expensesDefaults">
+            {{ expense }}
+          </option>
+        </datalist>
       </div>
       <br />
       <div class="cost-and-other-section">
@@ -76,7 +90,7 @@
           <h3>Cost:</h3>
           <input
             v-model="expenseCost"
-            type="text"
+            type="number"
             placeholder="$ Cost"
             class="input-field"
           />
@@ -128,7 +142,7 @@
         reimbursable under published travel expense Policies & Procedures of UDM
       </h5>
       <br />
-      <button class="add-reimbursement-button" @click="addReimbursement">
+      <button class="add-reimbursement-button" @click="addActivity">
         Add Activity
       </button>
     </section>
@@ -137,9 +151,18 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
+import exp from "constants";
+
+// import * as pdfMake from "pdfmake/build/pdfmake";
+// import * as pdfFonts from "pdfmake/build/vfs_fonts";
+
+//@ts-ignore
+// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+
 const router = useRouter();
+const route = useRoute();
 type Activity = {
   activityId: number;
   activityName: string;
@@ -158,30 +181,29 @@ let chosenExpenseOther = ref<string>("");
 let expenseCost = ref<number>(0);
 let activityDate = ref<string>("");
 let foapaNumber = ref<string>("");
-let reimbursementTitle = ref<string>("testing");
-
+let reimbursementTitle = ref<string>("");
+let userIsEditingReimbursement = ref<boolean>(false);
 let allActivities = ref<Array<Activity>>([]);
+let reimbursementDataFromDb = ref<any>([]);
 
 watch(chosenExpenseOther, (newVal) => {
-  console.log("test");
   if (newVal.length >= 0) {
     chosenExpense.value = chosenExpenseOther.value;
   }
 });
 
 const expensesDefaults = [
-  "Lodging",
-  "Breakfast",
-  "Lunch",
-  "Dinner",
-  "Other",
-  "Business Guest Meals",
   "Air/Train",
-  "Parking",
+  "Breakfast",
+  "Business Guest Meals",
+  "Dinner",
+  "Lodging",
+  "Lunch",
   "Mileage",
-  "Taxi/Bus/Car Rental",
+  "Other",
   "Parking",
   "Registration",
+  "Taxi/Bus/Car Rental",
 ];
 
 let foapaNumbersToSelectFrom = ref([
@@ -199,7 +221,7 @@ let foapaNumbersToSelectFrom = ref([
   },
 ]);
 
-function addReimbursement() {
+function addActivity() {
   allActivities.value.push({
     activityName: chosenExpense.value,
     amount: expenseCost.value,
@@ -240,6 +262,12 @@ function generateRandomId(): string {
   return result;
 }
 
+function parseDate(dateString: string) {
+  const dateObj = new Date(dateString);
+  const formattedDate = dateObj.toISOString().slice(0, 10);
+  return formattedDate;
+}
+
 function getAllActivitiesAmount(): number {
   let sum: number = 0;
   allActivities.value.forEach((activity) => {
@@ -267,73 +295,73 @@ function deleteActivity(activityId: number) {
   );
 }
 
-// CODE TO SAVE REIMBURSEMENT
-// --------------------------
-// let randomId: string = generateRandomId();
-// let reimbursementData = {
-//   reimbursementId: Number(randomId),
-//   employmentNumber: storedEmploymentNumber,
-//   eventName: reimbursementTitle.value,
-//   totalAmount: getAllActivitiesAmount(),
-//   reimbursementStatus: 0,
-//   reimbursementDate: getCurrentDate(),
-//   allActivities: allActivities.value,
-// };
-
-// axios
-//   .post(`/api/addReimbursement`, {
-//     reimbursementData,
-//   })
-//   .then((res) => {
-//     console.log(res);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-
-// router.push("/dashboard");
-
 function saveReimbursement() {
-  let randomId: string = generateRandomId();
-  let reimbursementData = {
-    reimbursementId: Number(randomId),
-    employmentNumber: storedEmploymentNumber,
-    eventName: reimbursementTitle.value,
-    totalAmount: getAllActivitiesAmount(),
-    reimbursementStatus: 0,
-    reimbursementDate: getCurrentDate(),
-    allActivities: allActivities.value,
-  };
+  if (userIsEditingReimbursement.value === true) {
+    reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
+    allActivities.value.forEach((activity) => {
+      activity.activityDate = parseDate(activity.activityDate);
+    });
+    reimbursementDataFromDb.value.allActivities = allActivities.value;
+    reimbursementDataFromDb.value.totalAmount = getAllActivitiesAmount();
+    reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
+    console.log(reimbursementDataFromDb.value);
 
-  //First check if localstorage exists
-
-  const allReimbursementIds = localStorage.getItem("allReimbursementIds");
-
-  //if no id has been found, add an id
-  if (allReimbursementIds === null) {
-    localStorage.setItem(
-      "allReimbursementIds",
-      String(reimbursementData.reimbursementId) + ","
-    );
+    axios
+      .post("/api/updateReimbursement", reimbursementDataFromDb.value)
+      .then((res) => {
+        console.log(res);
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    alert("Reimbursement saved successfully");
   } else {
-    let combinedIds =
-      allReimbursementIds + reimbursementData.reimbursementId + ",";
+    let randomId: string = generateRandomId();
+    let reimbursementData = {
+      reimbursementId: Number(randomId),
+      employmentNumber: storedEmploymentNumber,
+      eventName: reimbursementTitle.value,
+      totalAmount: getAllActivitiesAmount(),
+      reimbursementStatus: 0,
+      reimbursementDate: getCurrentDate(),
+      allActivities: allActivities.value,
+    };
 
-    localStorage.setItem("allReimbursementIds", combinedIds);
-    console.log(combinedIds);
+    axios
+      .post("/api/addReimbursement", reimbursementData)
+      .then((res) => {
+        console.log(res);
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    alert("Reimbursement saved successfully");
   }
-
-  localStorage.setItem(
-    `Reimbursement-${reimbursementData.reimbursementId}`,
-    JSON.stringify(reimbursementData)
-  );
-
-  alert("Reimbursement saved successfully");
-  router.push("/dashboard");
-  console.log(reimbursementData);
 }
 
 onMounted(() => {
+  console.log(route.query.reimbursementId);
+  if (route.query.reimbursementId) {
+    userIsEditingReimbursement.value = true;
+    axios
+      .get("/api/retrieveTicketInformation", {
+        params: {
+          employmentNumber: storedEmploymentNumber,
+          reimbursementId: route.query.reimbursementId,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        reimbursementDataFromDb.value = res.data[0][0];
+        reimbursementTitle.value = res.data[0][0].eventName;
+        allActivities.value = res.data[1];
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   retrieveFoapaNumbers();
 });
 </script>
