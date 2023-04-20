@@ -677,9 +677,6 @@ function generatePdf(docDefinition, callback) {
   } catch (err) {
     console.log(err);
   }
-  // pdfDoc.pipe(fs.createWriteStream("pdfs/test.pdf"));
-  // pdfDoc.end();
-  // console.log(Pdfmake);
 }
 
 //APIs
