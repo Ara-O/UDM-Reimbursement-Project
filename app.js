@@ -650,7 +650,6 @@ app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
 app.post("/api/register", registerUser);
 app.post("/api/updateAccountInfo", updateAccountInfo);
-app.post("/api/userLoginInfo", userLoginInfo);
 app.post("/api/addReimbursement", addReimbursement);
 app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
