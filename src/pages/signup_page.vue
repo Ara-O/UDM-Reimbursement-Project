@@ -64,77 +64,77 @@
         />
       </div>
       <div class="input-field">
-        <label for="street-address">Street Address:</label>
-        <input
-          type="text"
-          name="Street Address"
-          id="street-address"
-          v-model="userSignupData.mailingAddress"
-          required
-        />
-      </div>
-      <div class="input-field">
         <label for="phone-number">Phone Number:</label>
         <input
-          type="text"
-          name="Phone Number"
-          id="phone-number"
-          v-model="userSignupData.phoneNumber"
-          required
+        type="text"
+        name="Phone Number"
+        id="phone-number"
+        v-model="userSignupData.phoneNumber"
+        required
         />
       </div>
       <div class="input-field">
         <label for="password">Password:</label>
         <input
-          type="password"
-          name="Password"
-          id="password"
-          v-model="userSignupData.password"
-          required
+        type="password"
+        name="Password"
+        id="password"
+        v-model="userSignupData.password"
+        required
         />
       </div>
       <!-- Store foapa numbers in their own table -->
       <div class="input-field">
-        <label for="foapa-numbers">FOAPA Numbers:</label>
+        <label for="street-address">Street Address:</label>
         <input
-          type="text"
-          name="FOAPA Numbers"
-          id="foapa-numbers"
-          v-model="userSignupData.foapaNumber"
-        />
-      </div>
-      <div class="input-field">
-        <label for="zip-code">Zip Code:</label>
-        <input
-          type="number"
-          name="Zip Code"
-          id="zip-code"
-          v-model="userSignupData.zipCode"
-          required
+        type="text"
+        name="Street Address"
+        id="street-address"
+        v-model="userSignupData.mailingAddress"
+        required
         />
       </div>
       <div class="input-field">
         <label for="city">City:</label>
         <input
-          type="text"
-          name="City"
-          id="city"
-          v-model="userSignupData.city"
-          required
+        type="text"
+        name="City"
+        id="city"
+        v-model="userSignupData.city"
+        required
         />
       </div>
       <div class="input-field">
         <label for="state">State:</label>
         <input
-          type="text"
-          name="State"
-          id="state"
-          v-model="userSignupData.state"
-          required
+        type="text"
+        name="State"
+        id="state"
+        v-model="userSignupData.state"
+        required
+        />
+      </div>
+      <div class="input-field">
+        <label for="zip-code">Zip Code:</label>
+        <input
+        type="number"
+        name="Zip Code"
+        id="zip-code"
+        v-model="userSignupData.zipCode"
+        required
+        />
+      </div>
+      <div class="input-field">
+        <label for="foapa-numbers">FOAPA Numbers:</label>
+        <input
+        type="text"
+        name="FOAPA Numbers"
+        id="foapa-numbers"
+        v-model="userSignupData.foapaNumber"
         />
       </div>
       <router-link to="/login" style="font-size: 14px"
-        >Already have an Account</router-link
+      >Already have an Account</router-link
       >
       <br />
       <button class="signup-button" type="submit">Continue</button>
