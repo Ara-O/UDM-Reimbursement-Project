@@ -12,6 +12,8 @@ import {
   containsTable,
   updateAccount,
 } from "./queries.js";
+import Pdfmake from "pdfmake";
+// import { font } from "pdfkit";
 
 const app = express();
 
@@ -645,6 +647,41 @@ function updateReimbursementTicket(req, res) {
     });
 }
 
+function generatePdf(docDefinition, callback) {
+  try {
+    let fonts = {
+      Roboto: {
+        normal: "./fonts/Roboto-Black.ttf",
+        bold: "./fonts/Roboto-Black.ttf",
+        italics: "./fonts/Roboto-Black.ttf",
+        bolditalics: "./fonts/Roboto-Black.ttf",
+      },
+    };
+
+    let pdfmake = new Pdfmake(fonts);
+
+    let pdfDoc = pdfmake.createPdfKitDocument(docDefinition, {});
+    let chunks = [];
+    let result;
+
+    pdfDoc.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+
+    pdfDoc.on("end", () => {
+      result = Buffer.concat(chunks);
+      callback("data:application/pdf;base64," + result.toString("base64"));
+    });
+
+    pdfDoc.end();
+  } catch (err) {
+    console.log(err);
+  }
+  // pdfDoc.pipe(fs.createWriteStream("pdfs/test.pdf"));
+  // pdfDoc.end();
+  // console.log(Pdfmake);
+}
+
 //APIs
 app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
 app.get("/api/retrieveUserInformation", retrieveUserInformation);
@@ -661,6 +698,19 @@ app.post("/api/updateReimbursement", updateReimbursementTicket);
 app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 app.post("/api/login", loginUser);
+app.get("/api/generatePdf", function (req, res) {
+  const docDefinition = { content: "Dummy content" };
+
+  generatePdf(
+    docDefinition,
+    function (base64String) {
+      res.send(base64String);
+    },
+    function (error) {
+      res.send("ERROR:" + error);
+    }
+  );
+});
 app.get("/close", () => {
   connection.end();
 });

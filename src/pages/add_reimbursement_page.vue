@@ -22,9 +22,7 @@
         <button class="go-back-button" @click="saveReimbursement">
           Save for Later
         </button>
-        <button class="go-back-button" @click="saveReimbursement">
-          Export to PDF
-        </button>
+        <button class="go-back-button" @click="createPdf">Export to PDF</button>
       </div>
     </section>
     <section class="reimbursement-section">
@@ -51,16 +49,9 @@
           another type of expense
         </h4>
       </div>
+      <br />
       <h4 style="font-weight: 500">Expenses</h4>
       <div class="expenses-section">
-        <!-- <div
-          v-for="expense in expensesDefaults"
-          @click="chosenExpense = expense"
-          class="expense"
-        >
-          {{ expense }}
-        </div> -->
-
         <input
           list="defaults"
           name="defaultOptions"
@@ -76,15 +67,6 @@
       </div>
       <br />
       <div class="cost-and-other-section">
-        <span>
-          <h3>Other:</h3>
-          <input
-            v-model="chosenExpenseOther"
-            type="text"
-            placeholder="Select Expense name"
-            class="input-field"
-          />
-        </span>
         <br />
         <span>
           <h3>Cost:</h3>
@@ -154,13 +136,6 @@
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-import exp from "constants";
-
-// import * as pdfMake from "pdfmake/build/pdfmake";
-// import * as pdfFonts from "pdfmake/build/vfs_fonts";
-
-//@ts-ignore
-// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 const router = useRouter();
 const route = useRoute();
@@ -340,6 +315,19 @@ function saveReimbursement() {
       });
     alert("Reimbursement saved successfully");
   }
+}
+
+function createPdf() {
+  axios
+    .get("/api/generatePdf")
+    .then((res) => {
+      console.log(res);
+      // router.push(res.data);
+      window.location.href = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 onMounted(() => {
