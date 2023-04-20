@@ -125,14 +125,31 @@
         />
       </div>
       <div class="input-field">
-        <label for="foapa-numbers">FOAPA Numbers:</label>
-        <input
-        type="text"
-        name="FOAPA Numbers"
-        id="foapa-numbers"
-        v-model="userSignupData.foapaNumber"
-        />
+        <label for="foapa-numbers">FOAPA:</label>
       </div>
+      <span style="display:flex; width:500px; margin-left: -31px;">
+        <div class="input-field">
+          <input
+          type="text"
+          name="FOAPA Name"
+          id="foapa-name"
+          v-model="userSignupData.foapaName"
+          style="width:125px"
+          />
+        </div>
+        <div class="input-field">
+          <input
+          type="text"
+          name="FOAPA Numbers"
+          id="foapa-numbers"
+          v-model="userSignupData.foapaNumber"
+          />
+        </div>
+      </span>
+      <button class="signup-button">
+          Add FOAPA
+      </button>
+      <br>
       <router-link to="/login" style="font-size: 14px"
       >Already have an Account</router-link
       >
@@ -160,6 +177,7 @@ type UserData = {
   city: string;
   state: string;
   foapaNumber: string;
+  foapaName: string;
 };
 
 const router = useRouter();
@@ -177,6 +195,7 @@ let userSignupData = reactive<UserData>({
   city: "detroit",
   state: "mi",
   foapaNumber: "100-1101-0111-0111",
+  foapaName: "UDMP",
 });
 
 function registerUser() {
@@ -259,7 +278,15 @@ input {
   font-size: 14px;
 }
 
-.signup-button {
+/* .add-foapa-button{
+  background-color: var(--udmercy-red);
+  color: white;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 20px;
+} */
+
+.add-foapa-button, .signup-button {
   background-color: var(--udmercy-blue);
   color: white;
   padding: 10px 70px;
