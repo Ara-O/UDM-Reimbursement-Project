@@ -70,11 +70,11 @@
       <br />
       <div class="reimbursement-wrapper">
         <div class="reimbursement" v-for="ticket in storedReimbursementTickets">
+          <div class="total-amount">${{ ticket.totalAmount }}</div>
           <h3>{{ ticket.eventName }}</h3>
           <h4>Status: Pending</h4>
           <h5>
-            {{ parseDate(ticket.reimbursementDate) }} | Total Amount:
-            {{ ticket.totalAmount }}
+            {{ parseDate(ticket.reimbursementDate) }}
           </h5>
           <div class="reimbursement-buttons">
             <button>Delete</button>

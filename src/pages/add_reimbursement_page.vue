@@ -92,6 +92,7 @@
             v-model="expenseCost"
             type="number"
             placeholder="$ Cost"
+            min="0"
             class="input-field"
           />
         </span>

@@ -66,21 +66,21 @@
       <div class="input-field">
         <label for="phone-number">Phone Number:</label>
         <input
-        type="text"
-        name="Phone Number"
-        id="phone-number"
-        v-model="userSignupData.phoneNumber"
-        required
+          type="text"
+          name="Phone Number"
+          id="phone-number"
+          v-model="userSignupData.phoneNumber"
+          required
         />
       </div>
       <div class="input-field">
         <label for="password">Password:</label>
         <input
-        type="password"
-        name="Password"
-        id="password"
-        v-model="userSignupData.password"
-        required
+          type="password"
+          name="Password"
+          id="password"
+          v-model="userSignupData.password"
+          required
         />
       </div>
       <div class="input-field">
@@ -97,73 +97,72 @@
       <div class="input-field">
         <label for="street-address">Street Address:</label>
         <input
-        type="text"
-        name="Street Address"
-        id="street-address"
-        v-model="userSignupData.mailingAddress"
-        required
+          type="text"
+          name="Street Address"
+          id="street-address"
+          v-model="userSignupData.mailingAddress"
+          required
         />
       </div>
       <div class="input-field">
         <label for="city">City:</label>
         <input
-        type="text"
-        name="City"
-        id="city"
-        v-model="userSignupData.city"
-        required
+          type="text"
+          name="City"
+          id="city"
+          v-model="userSignupData.city"
+          required
         />
       </div>
       <div class="input-field">
         <label for="state">State:</label>
         <input
-        type="text"
-        name="State"
-        id="state"
-        v-model="userSignupData.state"
-        required
+          type="text"
+          name="State"
+          id="state"
+          v-model="userSignupData.state"
+          required
         />
       </div>
       <div class="input-field">
         <label for="zip-code">Zip Code:</label>
         <input
-        type="number"
-        name="Zip Code"
-        id="zip-code"
-        v-model="userSignupData.zipCode"
-        required
+          type="number"
+          name="Zip Code"
+          id="zip-code"
+          v-model="userSignupData.zipCode"
+          required
         />
       </div>
       <div class="input-field">
         <label for="foapa-numbers">FOAPA:</label>
       </div>
-      <span style="display:flex; width:500px; margin-left: -31px;">
-        <div class="input-field">
-          <input
+      <span class="input-field foapa-field">
+        <input
           type="text"
+          placeholder="FOAPA Name"
           name="FOAPA Name"
           id="foapa-name"
           v-model="userSignupData.foapaName"
-          style="width:125px"
-          />
-        </div>
-        <div class="input-field">
-          <input
+          style="width: 171px; margin-left: 0px"
+        />
+        <input
           type="text"
           name="FOAPA Numbers"
           id="foapa-numbers"
           v-model="userSignupData.foapaNumber"
-          />
-        </div>
+          placeholder="FOAPA Number"
+          style="margin-left: 0px"
+        />
       </span>
-      <button class="signup-button">
-          Add FOAPA
+      <button class="signup-button" type="button">Add FOAPA</button>
+      <br /><br />
+      <button class="signup-button" type="submit" style="margin-top: 0px">
+        Continue
       </button>
-      <br><br>
-      <button class="signup-button" type="submit">Continue</button>
-      <br>
+      <br />
       <router-link to="/login" style="font-size: 14px"
-      >Already have an Account</router-link
+        >Already have an Account</router-link
       >
       <br />
     </form>
@@ -244,129 +243,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-input {
-  outline: none;
-}
-
-.signup-page {
-  padding: 70px 0px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: auto;
-  flex-direction: column;
-}
-
-.signup-title {
-  font-weight: 600;
-  font-size: 25px;
-  text-align: center;
-}
-
-.udmercy-logo {
-  width: 100px;
-  padding: 40px 20px;
-}
-
-.udmercy-logo-wrapper {
-  border: 1px solid #ffffff;
-  border-radius: 9999px;
-  height: 140px;
-  padding: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 4px 9px rgba(184, 184, 184, 0.38);
-}
-
-.input-field {
-  margin-bottom: 30px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  width: 470px;
-  justify-content: space-between;
-}
-
-.input-field input {
-  margin-left: 30px;
-  padding-left: 20px;
-  width: 224px;
-  height: 36px;
-  background: #ffffff;
-  border: 1px solid #f7f7f7;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
-  border-radius: 5px;
-}
-
-.input-field label {
-  width: 175px;
-  font-size: 14px;
-}
-
-/* .add-foapa-button{
-  background-color: var(--udmercy-red);
-  color: white;
-  border-radius: 30px;
-  cursor: pointer;
-  margin-top: 20px;
-} */
-
-.add-foapa-button, .signup-button {
-  background-color: var(--udmercy-blue);
-  color: white;
-  padding: 10px 70px;
-  border: solid 1px;
-  width: 232px;
-  height: 50px;
-  margin-top: 20px;
-  cursor: pointer;
-  background: #a5093e;
-  border-radius: 26px;
-}
-
-.signup-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-@media (max-width: 610px) {
-  .input-field {
-    flex-direction: column;
-  }
-
-  .signup-title {
-    font-size: 20px;
-    width: 350px;
-    line-height: 45px;
-  }
-
-  .input-field input {
-    margin-left: 0px;
-    text-align: center;
-    padding-left: 0px;
-  }
-  .input-field label {
-    width: auto;
-    margin-bottom: 10px;
-  }
-
-  .udmercy-logo {
-    width: 70px;
-    padding: 40px 20px;
-  }
-
-  .udmercy-logo-wrapper {
-    border: 1px solid #ffffff;
-    border-radius: 9999px;
-    height: 110px;
-    padding: 30px;
-  }
-  .signup-page {
-    height: auto;
-    padding-top: 30px;
-    padding-bottom: 30px;
-  }
-}
+@import url("../assets/styles/signup-page.css");
 </style>

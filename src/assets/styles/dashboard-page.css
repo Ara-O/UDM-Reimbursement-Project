@@ -130,7 +130,7 @@
 .reimbursement {
   width: 49%;
   padding: 0px 30px;
-  height: 180px;
+  height: 190px;
   box-sizing: border-box;
   color: white;
   background: #002d72;
@@ -163,7 +163,7 @@
 .reimbursement-buttons {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  width: auto;
   position: absolute;
   gap: 10px;
   bottom: 20px;
@@ -266,6 +266,20 @@
 .add-reimbursement-prompt {
   font-weight: 400;
   text-decoration: underline;
+}
+
+.total-amount {
+  position: absolute;
+  bottom: 20px;
+  background-color: #a5093e;
+  border-radius: 19px;
+  width: 50px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 300;
 }
 
 @media (max-width: 1400px) {

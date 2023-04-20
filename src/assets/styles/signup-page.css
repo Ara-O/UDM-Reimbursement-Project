@@ -1,0 +1,130 @@
+input {
+  outline: none;
+}
+
+.signup-page {
+  padding: 70px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  flex-direction: column;
+}
+
+.signup-title {
+  font-weight: 600;
+  font-size: 25px;
+  text-align: center;
+}
+
+.udmercy-logo {
+  width: 100px;
+  padding: 40px 20px;
+}
+
+.udmercy-logo-wrapper {
+  border: 1px solid #ffffff;
+  border-radius: 9999px;
+  height: 140px;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 9px rgba(184, 184, 184, 0.38);
+}
+
+.input-field {
+  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 470px;
+  justify-content: space-between;
+}
+
+.input-field input {
+  margin-left: 30px;
+  padding-left: 20px;
+  width: 224px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #f7f7f7;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
+  border-radius: 5px;
+}
+
+.input-field label {
+  width: 175px;
+  font-size: 14px;
+}
+
+/* .add-foapa-button{
+    background-color: var(--udmercy-red);
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-top: 20px;
+  } */
+
+.add-foapa-button,
+.signup-button {
+  background-color: var(--udmercy-blue);
+  color: white;
+  padding: 10px 70px;
+  border: solid 1px;
+  width: 232px;
+  height: 50px;
+  margin-top: 20px;
+  cursor: pointer;
+  background: #a5093e;
+  border-radius: 26px;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 610px) {
+  .input-field {
+    flex-direction: column;
+  }
+
+  .signup-title {
+    font-size: 20px;
+    width: 350px;
+    line-height: 45px;
+  }
+
+  .input-field input {
+    margin-left: 0px;
+    text-align: center;
+    padding-left: 0px;
+  }
+  .input-field label {
+    width: auto;
+    margin-bottom: 10px;
+  }
+
+  .udmercy-logo {
+    width: 70px;
+    padding: 40px 20px;
+  }
+
+  .udmercy-logo-wrapper {
+    border: 1px solid #ffffff;
+    border-radius: 9999px;
+    height: 110px;
+    padding: 30px;
+  }
+  .signup-page {
+    height: auto;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .foapa-field {
+    gap: 40px;
+  }
+}
