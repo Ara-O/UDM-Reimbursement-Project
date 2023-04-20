@@ -650,16 +650,10 @@ app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
 app.post("/api/register", registerUser);
 app.post("/api/updateAccountInfo", updateAccountInfo);
-<<<<<<< HEAD
-<<<<<<< HEAD
 app.post("/api/userLoginInfo", userLoginInfo);
-=======
 app.post("/api/addReimbursement", addReimbursement);
 app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
-
->>>>>>> 6957dcd52be36000defb99e8ef10adc1f89ab8ad
-=======
 app.post("/api/addReimbursement", addReimbursement);
 app.get("/api/retrieveReimbursements", retrieveReimbursements);
 app.get("/api/retrieveTicketInformation", retrieveTicketInformation);
@@ -667,7 +661,6 @@ app.post("/api/updateReimbursement", updateReimbursementTicket);
 app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 app.post("/api/login", loginUser);
->>>>>>> 0d2952a5235a8f2a87ea697eb5f4614e8fdc2812
 app.get("/close", () => {
   connection.end();
 });
