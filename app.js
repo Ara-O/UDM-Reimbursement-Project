@@ -12,6 +12,7 @@ import {
   containsTable,
   updateAccount,
 } from "./queries.js";
+import createPdfDefinition from "./pdfGenerator.js";
 import Pdfmake from "pdfmake";
 // import { font } from "pdfkit";
 
@@ -651,10 +652,10 @@ function generatePdf(docDefinition, callback) {
   try {
     let fonts = {
       Roboto: {
-        normal: "./fonts/Roboto-Black.ttf",
-        bold: "./fonts/Roboto-Black.ttf",
-        italics: "./fonts/Roboto-Black.ttf",
-        bolditalics: "./fonts/Roboto-Black.ttf",
+        normal: "./fonts/Arial.ttf",
+        bold: "./fonts/Arial-Bold-Italics.ttf",
+        italics: "./fonts/Arial-Bold-Italics.ttf",
+        bolditalics: "./fonts/Arial.ttf",
       },
     };
 
@@ -696,8 +697,14 @@ app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 app.post("/api/login", loginUser);
 app.get("/api/generatePdf", function (req, res) {
-  const docDefinition = { content: "Dummy content" };
+  const docDefinition = {
+    content: createPdfDefinition(),
+    defaultStyle: {
+      fontSize: 10,
+    },
 
+    pageMargins: [20, 40, 0, 0],
+  };
   generatePdf(
     docDefinition,
     function (base64String) {
