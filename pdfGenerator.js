@@ -12,6 +12,7 @@ export default function createPdfDefinition() {
       text: "***FORM MUST BE SUBMITTED WITHIN 30 CALENDAR DAYS AFTER THE EXPENSE(S) HAS OCCURRED OR TRIP COMPLETED***\n\n\n",
       color: "red",
       alignment: "center",
+      fontSize: 8,
     },
     {
       text: "Date Submitted ________________\n\n",
@@ -301,28 +302,28 @@ export default function createPdfDefinition() {
           body: [
             [
               {
-                text: "A. Total Actual Expenses $_____________",
+                text: "A. Total Actual Expenses $________",
                 border: [false, false, false, false],
                 bold: false,
               },
             ],
             [
               {
-                text: "B. Less advance _______________________",
+                text: "B. Less advance __________",
                 border: [false, false, false, false],
                 bold: false,
               },
             ],
             [
               {
-                text: "C. Due Employee (A > B) _N/A__________",
+                text: "C. Due Employee (A > B) _N/A_______",
                 border: [false, false, false, false],
                 bold: false,
               },
             ],
             [
               {
-                text: "D. Due UDM (B > A) _N/A_______________",
+                text: "D. Due UDM (B > A) _N/A__________",
                 border: [false, false, false, false],
                 bold: false,
               },
@@ -387,13 +388,15 @@ export default function createPdfDefinition() {
     {
       text: "I hereby certify that this claim is correct and reimbursable",
       bold: false,
+      fontSize: 8,
     },
     {
       text: "under published travel expense Policies & Procedures of UDM",
+      fontSize: 8,
       bold: false,
     },
 
-    { text: "\n" },
+    { text: "\n\n" },
 
     {
       table: {
@@ -433,7 +436,10 @@ export default function createPdfDefinition() {
       },
     },
     { text: "\n" },
-    { text: "Budget ____________  A/P ___________  Audit ___________" }
+    {
+      text: "Budget ____________  A/P ___________  Audit ___________",
+      fontSize: 9,
+    }
   );
 
   return content;

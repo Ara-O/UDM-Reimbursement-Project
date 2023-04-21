@@ -652,10 +652,10 @@ function generatePdf(docDefinition, callback) {
   try {
     let fonts = {
       Roboto: {
-        normal: "./fonts/Arial.ttf",
-        bold: "./fonts/Arial-Bold-Italics.ttf",
+        normal: "./fonts/Arial-Light.ttf",
+        bold: "./fonts/Arial-Bold.ttf",
         italics: "./fonts/Arial-Bold-Italics.ttf",
-        bolditalics: "./fonts/Arial.ttf",
+        bolditalics: "./fonts/Arial-Bold-Italics.ttf",
       },
     };
 
@@ -701,9 +701,10 @@ app.get("/api/generatePdf", function (req, res) {
     content: createPdfDefinition(),
     defaultStyle: {
       fontSize: 10,
+      bold: true,
     },
 
-    pageMargins: [20, 40, 0, 0],
+    pageMargins: [20, 30, 0, 0],
   };
   generatePdf(
     docDefinition,
