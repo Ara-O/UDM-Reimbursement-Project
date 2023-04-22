@@ -24,7 +24,11 @@
             placeholder="New FOAPA Number"
             v-model="obj.foapaNumber"
           />
-          <img src="../assets/add-icon2.png" alt="add-icon2" @click="add" />
+          <img
+            src="../assets/add-icon2.png"
+            alt="add-icon2"
+            @click="addFoapaNumber"
+          />
         </div>
       </div>
     </section>
@@ -68,6 +72,13 @@
           @click="sortBy('Cost')"
         >
           <h3>Sort by Cost</h3>
+        </div>
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === '' }"
+          @click="sortBy('')"
+        >
+          <h3>Remove filter</h3>
         </div>
         <div class="add-button filter" @click="addReimbursement">
           <img src="../assets/add-icon.png" alt="Add icon" class="add-icon" />
@@ -197,18 +208,23 @@ function signOut() {
   alert("Successfully signed out!");
 }
 
-function add() {
-  axios
-    .post("/api/addFoapaNumber", obj.value)
-    .then(() => {
-      alert("Foapa Number Added");
-      retrieveUserFoapaNumbers();
-      obj.value.foapaNumber = "";
-    })
-    .catch((err) => {
-      console.log(err);
-      alert(err.response.data.message);
-    });
+function addFoapaNumber() {
+  console.log(obj.value.foapaNumber);
+  if (obj.value.foapaNumber.trim().length !== 0) {
+    axios
+      .post("/api/addFoapaNumber", obj.value)
+      .then(() => {
+        alert("Foapa Number Added");
+        retrieveUserFoapaNumbers();
+        obj.value.foapaNumber = "";
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err.response.data.message);
+      });
+  } else {
+    alert("Please enter a number");
+  }
 }
 
 function deleteFoapa(fNum: string) {
@@ -293,17 +309,42 @@ let sortParameter = ref("");
 function sortBy(parameter: String) {
   if (parameter === "Date") {
     sortParameter.value = "Date";
+    storedReimbursementTickets.value = storedReimbursementTickets.value.sort(
+      (ticketA, ticketB) => {
+        return (
+          //@ts-ignore
+          new Date(ticketA.reimbursementDate) -
+          //@ts-ignore
+          new Date(ticketB.reimbursementDate)
+        );
+      }
+    );
+  }
+  if (parameter === "") {
+    sortParameter.value = "";
+    storedReimbursementTickets.value = storedReimbursementTickets.value.sort(
+      (ticketA, ticketB) => {
+        return (
+          //@ts-ignore
+          new Date(ticketB.reimbursementDate) -
+          //@ts-ignore
+          new Date(ticketA.reimbursementDate)
+        );
+      }
+    );
   }
   if (parameter === "Cost") {
     sortParameter.value = "Cost";
-    let filteredStoredReimbursementTickets = computed(() => {
-      return storedReimbursementTickets.value.filter((ticket) =>
-        ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
-      );
-    });
+    storedReimbursementTickets.value = storedReimbursementTickets.value.sort(
+      (ticketA, ticketB) => ticketA.totalAmount - ticketB.totalAmount
+    );
   }
   if (parameter === "Status") {
     sortParameter.value = "Status";
+    storedReimbursementTickets.value = storedReimbursementTickets.value.sort(
+      (ticketA, ticketB) =>
+        ticketA.reimbursementStatus - ticketB.reimbursementStatus
+    );
   }
 }
 

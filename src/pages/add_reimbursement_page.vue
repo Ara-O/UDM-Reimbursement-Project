@@ -270,6 +270,7 @@ function deleteActivity(activityId: number) {
     (activity) => activity.activityId != activityId
   );
 }
+let reimbursementData = {};
 
 function saveReimbursement() {
   if (userIsEditingReimbursement.value === true) {
@@ -294,7 +295,7 @@ function saveReimbursement() {
     alert("Reimbursement saved successfully");
   } else {
     let randomId: string = generateRandomId();
-    let reimbursementData = {
+    reimbursementData = {
       reimbursementId: Number(randomId),
       employmentNumber: storedEmploymentNumber,
       eventName: reimbursementTitle.value,
@@ -327,10 +328,59 @@ function downloadPDF(pdfData: string) {
 }
 
 function createPdf() {
+  //Send user information
+  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
-    .get("/api/generatePdf")
-    .then((res) => {
-      downloadPDF(res.data);
+    .get(`/api/retrieveAccountInfo`, {
+      params: { employmentNumber: storedEmploymentNumber },
+    })
+    .then((response) => {
+      if (userIsEditingReimbursement.value === true) {
+        reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
+        allActivities.value.forEach((activity) => {
+          activity.activityDate = parseDate(activity.activityDate);
+        });
+        reimbursementDataFromDb.value.allActivities = allActivities.value;
+        reimbursementDataFromDb.value.totalAmount = getAllActivitiesAmount();
+        reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
+        axios
+          .get("/api/generatePdf", {
+            params: {
+              reimbursementData: reimbursementDataFromDb.value,
+              userInfo: response.data[0],
+            },
+          })
+          .then((res) => {
+            downloadPDF(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        let randomId: string = generateRandomId();
+        reimbursementData = {
+          reimbursementId: Number(randomId),
+          employmentNumber: storedEmploymentNumber,
+          eventName: reimbursementTitle.value,
+          totalAmount: getAllActivitiesAmount(),
+          reimbursementStatus: 0,
+          reimbursementDate: getCurrentDate(),
+          allActivities: allActivities.value,
+        };
+        axios
+          .get("/api/generatePdf", {
+            params: {
+              reimbursementData: reimbursementData,
+              userInfo: response.data[0],
+            },
+          })
+          .then((res) => {
+            downloadPDF(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     })
     .catch((err) => {
       console.log(err);

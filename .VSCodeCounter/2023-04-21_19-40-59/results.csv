@@ -1,0 +1,27 @@
+"filename", "language", "HTML", "JSON", "JavaScript", "TypeScript", "Markdown", "JSON with Comments", "CSS", "XML", "Vue.js", "comment", "blank", "total"
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\README.md", "Markdown", 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 4
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\app.js", "JavaScript", 0, 0, 662, 0, 0, 0, 0, 0, 0, 26, 64, 752
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\index.html", "HTML", 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 14
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\package-lock.json", "JSON", 0, 5319, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5320
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\package.json", "JSON", 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 1, 30
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\pdfGenerator.js", "JavaScript", 0, 0, 428, 0, 0, 0, 0, 0, 0, 11, 10, 449
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\public\vite.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\queries.js", "JavaScript", 0, 0, 78, 0, 0, 0, 0, 0, 0, 0, 8, 86
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\App.vue", "Vue.js", 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 4
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\assets\styles\add-reimbursement-page.css", "CSS", 0, 0, 0, 0, 0, 0, 222, 0, 0, 1, 35, 258
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\assets\styles\dashboard-page.css", "CSS", 0, 0, 0, 0, 0, 0, 292, 0, 0, 6, 48, 346
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\assets\styles\signup-page.css", "CSS", 0, 0, 0, 0, 0, 0, 107, 0, 0, 7, 17, 131
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\assets\vue.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\main.ts", "TypeScript", 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 2, 7
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\pages\account_page.vue", "Vue.js", 0, 0, 0, 0, 0, 0, 0, 0, 285, 3, 23, 311
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\pages\add_reimbursement_page.vue", "Vue.js", 0, 0, 0, 0, 0, 0, 0, 0, 357, 0, 29, 386
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\pages\dashboard_page.vue", "Vue.js", 0, 0, 0, 0, 0, 0, 0, 0, 319, 10, 24, 353
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\pages\login_page.vue", "Vue.js", 0, 0, 0, 0, 0, 0, 0, 0, 157, 2, 17, 176
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\pages\signup_page.vue", "Vue.js", 0, 0, 0, 0, 0, 0, 0, 0, 233, 5, 10, 248
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\router\index.ts", "TypeScript", 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 1, 32
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\style.css", "CSS", 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 4, 16
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\src\vite-env.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 1, 22
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\tsconfig.node.json", "JSON", 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"c:\Users\oladi\Test\UDM-Reimbursement-Project\vite.config.ts", "TypeScript", 0, 0, 0, 5, 0, 0, 0, 0, 0, 1, 2, 8
+"Total", "-", 13, 5357, 1168, 41, 2, 21, 633, 2, 1354, 73, 303, 8967

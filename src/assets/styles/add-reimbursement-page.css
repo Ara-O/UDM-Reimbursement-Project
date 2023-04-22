@@ -246,6 +246,9 @@
   .add-reimbursement-section {
     display: flex;
     flex-direction: column-reverse;
+    align-items: self-start;
+    padding-left: 10%;
+    padding-top: 30px;
   }
 
   .reimbursement-section {
