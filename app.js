@@ -143,34 +143,6 @@ function registerUser(req, res) {
                   }
                   )
                 })
-            
-  
-            // connection.query(
-            //   "SELECT * from foapa WHERE foapaNumber = ?",
-            //   [foapaNumber],
-            //   (err, rows) => {
-            //     if (err) {
-            //       res.status(409).send({ message: "FOAPA already exists" });
-            //       connection.rollback();
-            //     }
-  
-            //     if (rows.length <= 0) {
-            //       connection.query("INSERT INTO foapa VALUES(?,?)", [
-            //         foapaName,
-            //         foapaNumber,
-            //       ]);
-            //     }
-  
-            //     connection.query(
-            //       "INSERT INTO possesses VALUES(?,?)",
-            //       [employmentNumber, foapaNumber],
-            //       (err) => {
-            //         res.status(200).send("success");
-            //         connection.commit();
-            //       }
-            //     );
-            //   }
-            // );
           }
         }
       )
