@@ -209,7 +209,6 @@ function retrieveFoapaNumbers(req, res) {
   );
 }
 
-<<<<<<< HEAD
 // function retrieveFoapaName(req,res){
 //   const {
 //     userFoapas,
@@ -231,29 +230,6 @@ function retrieveFoapaNumbers(req, res) {
 // })
 // }
 
-=======
-// function sortReimbursementByTotalAmount(req, res) {
-//   const employmentNumber = req.query.employmentNumber;
-//   connection.query(
-//     `SELECT totalAmount, COUNT(*) FROM reimbursementticket
-//     WHERE employmentnumber = ?
-//     GROUP BY totalAmount
-//     ORDER BY totalAmount DESC`,
-//     [employmentNumber],
-//     (err, rows) => {
-//       if (err) {
-//         console.log(err);
-//         res.status(500).json({ message: "Error retrieving data" });
-//       } else {
-//         res.json(rows);
-//       }
-//     }
-//   );
-// }
-
-// sortReimbursementByTotalAmount();
-
->>>>>>> da38fe6c6f9311001a91824a60d04476b427f6dc
 function retrieveUserInformation(req, res) {
   const employmentNumber = req.query.employmentNumber;
   connection.query(
