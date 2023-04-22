@@ -84,63 +84,80 @@ function registerUser(req, res) {
     zipCode,
     city,
     state,
-    foapaNumber,
-    foapaName,
+    userFoapas,
   } = req.body;
+  const promises = [];
+
+  console.log(userFoapas);
 
   connection.beginTransaction();
 
   // Insert into faculty
-  connection.query(
-    "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-    [
-      employmentNumber,
-      firstName,
-      lastName,
-      workEmail,
-      phoneNumber,
-      password,
-      mailingAddress,
-      department,
-      zipCode,
-      city,
-      state,
-    ],
-    (err) => {
-      if (err) {
-        console.log(err);
-        res.status(409).send({ message: "User already exists" });
-        connection.rollback();
-      } else {
-        connection.query(
-          "SELECT * from foapa WHERE foapaNumber = ?",
-          [foapaNumber],
-          (err, rows) => {
-            if (err) {
-              res.status(409).send({ message: "FOAPA already exists" });
-              connection.rollback();
-            }
-
-            if (rows.length <= 0) {
-              connection.query("INSERT INTO foapa VALUES(?,?)", [
-                foapaName,
-                foapaNumber,
-              ]);
-            }
-
-            connection.query(
-              "INSERT INTO possesses VALUES(?,?)",
-              [employmentNumber, foapaNumber],
-              (err) => {
-                res.status(200).send("success");
-                connection.commit();
-              }
-            );
+  promises.push(
+    new Promise((resolve, reject) => {
+      connection.query(
+        "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+        [
+          employmentNumber,
+          firstName,
+          lastName,
+          workEmail,
+          phoneNumber,
+          password,
+          mailingAddress,
+          department,
+          zipCode,
+          city,
+          state,
+        ],
+        (err) => {
+          if (err) {
+            console.log(err);
+            reject(err)
+          } else {  
+            userFoapas.forEach((userFoapa)=>{
+              let concatFoapa = userFoapa.fNumber + "-" + userFoapa.oNumber + "-" + userFoapa.aNumber + "-" + userFoapa.pNumber + "-" + userFoapa.a2Number
+              console.log(concatFoapa)
+              
+              connection.query(
+                "SELECT * FROM foapa WHERE foapaNumber = ?",
+                [concatFoapa],
+                (err, rows)=>{
+                  if(err){
+                    reject(err)
+                  }
+  
+                  if(rows.length <= 0){
+                    connection.query("INSERT INTO foapa VALUES(?,?)",
+                    [userFoapa.foapaName, concatFoapa]
+                    );
+                  }
+  
+                  connection.query(
+                    "INSERT INTO possesses VALUES(?,?)",
+                    [employmentNumber, concatFoapa],
+                    (err) => {
+                      resolve(err)
+                    }
+                    );
+                  }
+                  )
+                })
           }
-        );
-      }
-    }
+        }
+      )
+    })
+    
   );
+
+  Promise.all(promises)
+    .then(() =>{
+      res.status(200).send("success");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(409).send("FOAPA already exists");
+    })
 }
 
 function updateAccountInfo(req, res) {
@@ -660,13 +677,13 @@ function updateReimbursementTicket(req, res) {
       res.status(500).send("Internal Server Error");
     });
 
-  Promise.all(promises)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  // Promise.all(promises)
+  //   .then((res) => {
+  //     console.log(res);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 }
 
 function generatePdf(docDefinition, callback) {
