@@ -328,10 +328,6 @@
     display: none;
   }
 
-  .add-button {
-    display: none;
-  }
-
   .dashboard-page {
     grid-template-columns: 100%;
     padding: 0px 40px;
