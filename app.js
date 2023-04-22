@@ -192,6 +192,27 @@ function retrieveFoapaNumbers(req, res) {
   );
 }
 
+// function sortReimbursementByTotalAmount(req, res) {
+//   const employmentNumber = req.query.employmentNumber;
+//   connection.query(
+//     `SELECT totalAmount, COUNT(*) FROM reimbursementticket
+//     WHERE employmentnumber = ?
+//     GROUP BY totalAmount
+//     ORDER BY totalAmount DESC`,
+//     [employmentNumber],
+//     (err, rows) => {
+//       if (err) {
+//         console.log(err);
+//         res.status(500).json({ message: "Error retrieving data" });
+//       } else {
+//         res.json(rows);
+//       }
+//     }
+//   );
+// }
+
+// sortReimbursementByTotalAmount();
+
 function retrieveUserInformation(req, res) {
   const employmentNumber = req.query.employmentNumber;
   connection.query(
@@ -697,8 +718,12 @@ app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 app.post("/api/login", loginUser);
 app.get("/api/generatePdf", function (req, res) {
+  console.log(req.query);
   const docDefinition = {
-    content: createPdfDefinition(),
+    content: createPdfDefinition(
+      req.query.reimbursementData,
+      req.query.userInfo
+    ),
     defaultStyle: {
       fontSize: 10,
       bold: true,
@@ -718,6 +743,7 @@ app.get("/api/generatePdf", function (req, res) {
     }
   );
 });
+
 app.get("/close", () => {
   connection.end();
 });

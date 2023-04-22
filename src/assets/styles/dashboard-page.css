@@ -92,6 +92,10 @@
   align-items: center;
 }
 
+.add-button {
+  height: 44px;
+}
+
 .search-icon {
   width: 25px;
 }
@@ -103,6 +107,8 @@
 .search-filters {
   display: flex;
   gap: 25px;
+  margin-top: 25px;
+  flex-wrap: wrap;
 }
 
 .filter {
@@ -110,7 +116,10 @@
   border-radius: 30px;
   color: white;
   cursor: pointer;
-  margin-top: 20px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .add-reimbursement-link {
@@ -143,6 +152,10 @@
   padding-top: 35px;
   justify-content: flex-start;
   align-items: flex-start;
+}
+
+.reimbursement-wrapper::-webkit-scrollbar {
+  display: none;
 }
 
 .reimbursement h3,

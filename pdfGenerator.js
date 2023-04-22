@@ -1,4 +1,6 @@
-export default function createPdfDefinition() {
+export default function createPdfDefinition(reimbursementData, userInfo) {
+  console.log("generate pdf");
+  console.log(reimbursementData, userInfo);
   let content = [];
   //Top section
   content.push(
@@ -15,7 +17,10 @@ export default function createPdfDefinition() {
       fontSize: 8,
     },
     {
-      text: "Date Submitted ________________\n\n",
+      text: `Date Submitted ___${reimbursementData.reimbursementDate.slice(
+        0,
+        10
+      )}___\n\n`,
       italics: true,
     }
   );
@@ -35,7 +40,7 @@ export default function createPdfDefinition() {
           {},
           { text: "Employee #", colSpan: 2, italics: true },
           {},
-          { text: " ", colSpan: 2 },
+          { text: `${userInfo.employmentNumber}`, colSpan: 2 },
           {},
           { text: "Reimbursement", colSpan: 3, italics: true },
           {},
@@ -45,12 +50,12 @@ export default function createPdfDefinition() {
           {},
         ],
         [
-          { text: "", colSpan: 3 },
+          { text: `${userInfo.fName} ${userInfo.lName}`, colSpan: 3 },
           {},
           {},
           { text: "Email", colSpan: 2, italics: true },
           {},
-          { text: " ", colSpan: 2 },
+          { text: `${userInfo.workEmail}`, colSpan: 2 },
           {},
           {
             text: "Hold for Pickup",
@@ -69,12 +74,12 @@ export default function createPdfDefinition() {
           },
         ],
         [
-          { text: "", colSpan: 3 },
+          { text: `${userInfo.streetAddress}`, colSpan: 3 },
           {},
           {},
           { text: "Phone", colSpan: 2, italics: true },
           {},
-          { text: " ", colSpan: 2 },
+          { text: `${userInfo.phoneNumber}`, colSpan: 2 },
           {},
           {
             text: "Check if using UDMPU 11.6 voucher (please attach voucher/log)",
@@ -93,12 +98,15 @@ export default function createPdfDefinition() {
           },
         ],
         [
-          { text: "", colSpan: 3 },
+          {
+            text: `${userInfo.city}, ${userInfo.state}, ${userInfo.zipCode}`,
+            colSpan: 3,
+          },
           {},
           {},
           { text: "Department", colSpan: 2, italics: true },
           {},
-          { text: " ", colSpan: 2 },
+          { text: `${userInfo.department}`, colSpan: 2 },
           {},
           { text: "", colSpan: 3, italics: true },
           {},
