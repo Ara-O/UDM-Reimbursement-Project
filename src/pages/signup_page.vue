@@ -137,25 +137,88 @@
       <div class="input-field">
         <label for="foapa-numbers">FOAPA:</label>
       </div>
-      <span class="input-field foapa-field">
+      <span class="input-FOAPA-field" style="display: inline-flexbox; gap:10px">
         <input
           type="text"
           placeholder="FOAPA Name"
           name="FOAPA Name"
           id="foapa-name"
-          v-model="userSignupData.foapaName"
-          style="width: 171px; margin-left: 0px"
+          v-model="userFoapaStuff.foapaName"
+          style="width: 171px; margin-left: -189px;"
         />
-        <input
-          type="text"
-          name="FOAPA Numbers"
-          id="foapa-numbers"
-          v-model="userSignupData.foapaNumber"
-          placeholder="FOAPA Number"
-          style="margin-left: 0px"
-        />
+        <div class="input-FOAPA-field">
+          <input
+            type="text"
+            name="F input"
+            id="f-input"
+            placeholder="xxxx"
+            v-model="userFoapaStuff.fNumber"
+            style="margin-left: 0px;"
+          />
+        </div>
+        -
+        <div class="input-FOAPA-field">
+          <input
+            type="text"
+            name="O input"
+            id="o-input"
+            placeholder="xxxx"
+            v-model="userFoapaStuff.oNumber"
+            style="margin-left: 0px"
+          />
+        </div>
+        -
+        <div class="input-FOAPA-field">
+          <input
+            type="text"
+            name="A input"
+            id="a-input"
+            placeholder="xxxx"
+            v-model="userFoapaStuff.aNumber"
+            style="margin-left: 0px"
+          />
+        </div>
+        -
+        <div class="input-FOAPA-field">
+          <input
+            type="text"
+            name="P input"
+            id="p-input"
+            placeholder="xxxx"
+            v-model="userFoapaStuff.pNumber"
+            style="margin-left: 0px"
+          />
+        </div>
+        -
+        <div class="input-FOAPA-field">
+          <input
+            type="text"
+            name="A2 input"
+            id="a2-input"
+            placeholder="xxxx"
+            v-model="userFoapaStuff.a2Number"
+            style="margin-left: 0px"
+          />
+        </div>
+        <button class="add-foapa-button" type="button" @click="addFoapa">
+          <img 
+            src="../assets/add-icon.png"
+            alt="add-icon"
+            style="width:15px;"
+          />
+        </button>
       </span>
-      <button class="signup-button" type="button">Add FOAPA</button>
+      <div v-for="foapa in foapaList" style="display:inline-flex;">
+        <h3>{{ foapa.foapaName }} : {{ foapa.fNumber }}</h3>
+        <h3>-</h3>
+        <h3>{{ foapa.oNumber }}</h3>
+        <h3>-</h3>
+        <h3>{{ foapa.aNumber }}</h3>
+        <h3>-</h3>
+        <h3>{{ foapa.pNumber }}</h3>
+        <h3>-</h3>
+        <h3>{{ foapa.a2Number }}</h3>
+      </div>
       <br /><br />
       <button class="signup-button" type="submit" style="margin-top: 0px">
         Continue
@@ -186,11 +249,21 @@ type UserData = {
   zipCode: number;
   city: string;
   state: string;
-  foapaNumber: string;
-  foapaName: string;
+  userFoapas:Array<FoapaStuff>;
 };
 
+type FoapaStuff = {
+  fNumber: string;
+  oNumber:string;
+  aNumber:string;
+  pNumber:string;
+  a2Number:string;
+  foapaName: string;
+}
+
 let reEnteredPassword = ref<string>("");
+
+let foapaList = ref<FoapaStuff[]>([]);
 
 const router = useRouter();
 
@@ -206,15 +279,38 @@ let userSignupData = reactive<UserData>({
   zipCode: 32422,
   city: "detroit",
   state: "mi",
-  foapaNumber: "100-1101-0111-0111",
-  foapaName: "UDMP",
+  userFoapas:[],
 });
+
+let userFoapaStuff = reactive<FoapaStuff>({
+  fNumber: "1",
+  oNumber: "2",
+  aNumber: "3",
+  pNumber: "4",
+  a2Number: "5",
+  foapaName: "udmp",
+});
+
+function addFoapa(){
+  let currentFoapa = reactive<FoapaStuff>({
+  fNumber: userFoapaStuff.fNumber,
+  oNumber: userFoapaStuff.oNumber,
+  aNumber: userFoapaStuff.aNumber,
+  pNumber: userFoapaStuff.pNumber,
+  a2Number: userFoapaStuff.a2Number,
+  foapaName: userFoapaStuff.foapaName,
+  });
+  foapaList.value.push(currentFoapa);  
+}
 
 function registerUser() {
   //Calls the api/register function and passes the user data, if it was successful, push to the dashboard page
   //or else, alert the user of an error
 
   if (reEnteredPassword.value === userSignupData.password) {
+
+    userSignupData.userFoapas=foapaList.value;
+
     axios
       .post("/api/register", userSignupData)
       .then(() => {
