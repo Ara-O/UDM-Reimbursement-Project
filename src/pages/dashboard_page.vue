@@ -9,6 +9,7 @@
           v-for="foapa in userFoapaNumbers"
           :key="foapa.foapaNumber"
         >
+          <h3>{{ userFoapaName }} :</h3>
           <h3>{{ foapa.foapaNumber }}</h3>
           <img
             src="../assets/trash-icon.png"
@@ -142,6 +143,9 @@ type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
 };
+type FoapaName = {
+  foapaName: string;
+}
 
 let obj = ref({
   empNo: localStorage.getItem("employmentNumber"),
@@ -223,6 +227,7 @@ function deleteFoapa(fNum: string) {
 }
 
 let userFoapaNumbers = ref<FoapaNumbers[]>([]);
+let userFoapaName = ref<FoapaName>;
 
 function retrieveUserFoapaNumbers() {
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
@@ -238,6 +243,21 @@ function retrieveUserFoapaNumbers() {
       console.log(err);
     });
 }
+
+// function retrieveFoapaName(){
+//   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+//   axios
+//     .get(`/api/retrieveFoapaName`,{
+//       params: {employmentNumber: storedEmploymentNumber},
+//     })
+//     .then((res) => {
+//       userFoapaName = res.data;
+//       console.log(res);
+//     })
+//     .catch((err)=>{
+//       console.log(err);
+//     })
+// }
 
 function retrieveUserInformation() {
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");

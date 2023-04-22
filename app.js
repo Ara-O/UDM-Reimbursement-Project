@@ -209,6 +209,27 @@ function retrieveFoapaNumbers(req, res) {
   );
 }
 
+// function retrieveFoapaName(req,res){
+//   const {
+//     userFoapas,
+//   } = req.body;
+//   userFoapas.forEach((userFoapa)=>{
+//     let concatFoapa = userFoapa.fNumber + "-" + userFoapa.oNumber + "-" + userFoapa.aNumber + "-" + userFoapa.pNumber + "-" + userFoapa.a2Number
+  
+//   connection.query(
+//     "SELECT foapaName, foapaNumber FROM foapa WHERE foapaNumber = ?",
+//     [concatFoapa],
+//     (err, rows) => {
+//       if(err){
+//         res.status(500).json({message: "Error retrieving data"});
+//       } else{
+//         res.json(rows);
+//       }
+//     }
+//   )
+// })
+// }
+
 function retrieveUserInformation(req, res) {
   const employmentNumber = req.query.employmentNumber;
   connection.query(
@@ -699,6 +720,7 @@ function generatePdf(docDefinition, callback) {
 
 //APIs
 app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
+// app.get("/api/retriveFoapaName", retrieveFoapaName);
 app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
 app.post("/api/register", registerUser);
