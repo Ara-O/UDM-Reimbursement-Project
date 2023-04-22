@@ -113,51 +113,60 @@ function registerUser(req, res) {
         (err) => {
           if (err) {
             console.log(err);
-            reject(err)
-          } else {  
-            userFoapas.forEach((userFoapa)=>{
-              let concatFoapa = userFoapa.fNumber + "-" + userFoapa.oNumber + "-" + userFoapa.aNumber + "-" + userFoapa.pNumber + "-" + userFoapa.a2Number
-              console.log(concatFoapa)
-              
+            reject(err);
+          } else {
+            userFoapas.forEach((userFoapa) => {
+              let concatFoapa =
+                userFoapa.fNumber +
+                "-" +
+                userFoapa.oNumber +
+                "-" +
+                userFoapa.aNumber +
+                "-" +
+                userFoapa.pNumber +
+                "-" +
+                userFoapa.a2Number;
+              console.log(concatFoapa);
+
               connection.query(
                 "SELECT * FROM foapa WHERE foapaNumber = ?",
                 [concatFoapa],
-                (err, rows)=>{
-                  if(err){
-                    reject(err)
+                (err, rows) => {
+                  if (err) {
+                    reject(err);
                   }
-  
-                  if(rows.length <= 0){
-                    connection.query("INSERT INTO foapa VALUES(?,?)",
-                    [userFoapa.foapaName, concatFoapa]
-                    );
+
+                  if (rows.length <= 0) {
+                    connection.query("INSERT INTO foapa VALUES(?,?)", [
+                      userFoapa.foapaName,
+                      concatFoapa,
+                    ]);
                   }
-  
+
                   connection.query(
                     "INSERT INTO possesses VALUES(?,?)",
                     [employmentNumber, concatFoapa],
                     (err) => {
-                      resolve(err)
+                      resolve(err);
                     }
-                    );
-                  }
-                  )
-                })
+                  );
+                }
+              );
+            });
           }
         }
-      )
+      );
     })
-    
   );
 
   Promise.all(promises)
-    .then(() =>{
-      res.status(200).send("success");
+    .then(() => {
+      res.status(200).send({ message: "success" });
     })
     .catch((err) => {
       console.error(err);
-      res.status(409).send("FOAPA already exists");
-    })
+      res.status(409).send({ message: "Error inserting into table" });
+    });
 }
 
 function updateAccountInfo(req, res) {
@@ -209,14 +218,13 @@ function retrieveFoapaNumbers(req, res) {
   );
 }
 
-<<<<<<< HEAD
 // function retrieveFoapaName(req,res){
 //   const {
 //     userFoapas,
 //   } = req.body;
 //   userFoapas.forEach((userFoapa)=>{
 //     let concatFoapa = userFoapa.fNumber + "-" + userFoapa.oNumber + "-" + userFoapa.aNumber + "-" + userFoapa.pNumber + "-" + userFoapa.a2Number
-  
+
 //   connection.query(
 //     "SELECT foapaName, foapaNumber FROM foapa WHERE foapaNumber = ?",
 //     [concatFoapa],
@@ -231,29 +239,6 @@ function retrieveFoapaNumbers(req, res) {
 // })
 // }
 
-=======
-// function sortReimbursementByTotalAmount(req, res) {
-//   const employmentNumber = req.query.employmentNumber;
-//   connection.query(
-//     `SELECT totalAmount, COUNT(*) FROM reimbursementticket
-//     WHERE employmentnumber = ?
-//     GROUP BY totalAmount
-//     ORDER BY totalAmount DESC`,
-//     [employmentNumber],
-//     (err, rows) => {
-//       if (err) {
-//         console.log(err);
-//         res.status(500).json({ message: "Error retrieving data" });
-//       } else {
-//         res.json(rows);
-//       }
-//     }
-//   );
-// }
-
-// sortReimbursementByTotalAmount();
-
->>>>>>> da38fe6c6f9311001a91824a60d04476b427f6dc
 function retrieveUserInformation(req, res) {
   const employmentNumber = req.query.employmentNumber;
   connection.query(
