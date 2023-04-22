@@ -9,7 +9,7 @@
           v-for="foapa in userFoapaNumbers"
           :key="foapa.foapaNumber"
         >
-          <h3>{{ userFoapaName }} :</h3>
+          <!-- <h3>{{ userFoapaName }} :</h3> -->
           <h3>{{ foapa.foapaNumber }}</h3>
           <img
             src="../assets/trash-icon.png"

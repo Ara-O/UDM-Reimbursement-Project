@@ -268,27 +268,27 @@ let foapaList = ref<FoapaStuff[]>([]);
 const router = useRouter();
 
 let userSignupData = reactive<UserData>({
-  firstName: "Bob",
-  lastName: "Bobbington",
-  workEmail: "Bob@gmail.com",
-  employmentNumber: 11010,
-  department: "Comp sci",
-  mailingAddress: "123 Fakt",
-  phoneNumber: "313-313-3133",
-  password: "bobby",
-  zipCode: 32422,
-  city: "detroit",
-  state: "mi",
+  firstName: "",
+  lastName: "",
+  workEmail: "",
+  employmentNumber: 0,
+  department: "",
+  mailingAddress: "",
+  phoneNumber: "",
+  password: "",
+  zipCode: 0,
+  city: "",
+  state: "",
   userFoapas:[],
 });
 
 let userFoapaStuff = reactive<FoapaStuff>({
-  fNumber: "1",
-  oNumber: "2",
-  aNumber: "3",
-  pNumber: "4",
-  a2Number: "5",
-  foapaName: "udmp",
+  fNumber: "",
+  oNumber: "",
+  aNumber: "",
+  pNumber: "",
+  a2Number: "",
+  foapaName: "",
 });
 
 function addFoapa(){
