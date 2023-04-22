@@ -94,7 +94,6 @@
 .cost-and-other-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
 }
 
 .cost-and-other-section h3 {
@@ -239,7 +238,7 @@
     height: auto;
     margin-bottom: 63px;
 
-    margin-top: 50px;
+    margin-top: 20px;
   }
 }
 

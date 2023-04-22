@@ -12,6 +12,9 @@ import {
   containsTable,
   updateAccount,
 } from "./queries.js";
+import createPdfDefinition from "./pdfGenerator.js";
+import Pdfmake from "pdfmake";
+// import { font } from "pdfkit";
 
 const app = express();
 
@@ -690,6 +693,38 @@ function updateReimbursementTicket(req, res) {
   //   });
 }
 
+function generatePdf(docDefinition, callback) {
+  try {
+    let fonts = {
+      Roboto: {
+        normal: "./fonts/Arial-Light.ttf",
+        bold: "./fonts/Arial-Bold.ttf",
+        italics: "./fonts/Arial-Bold-Italics.ttf",
+        bolditalics: "./fonts/Arial-Bold-Italics.ttf",
+      },
+    };
+
+    let pdfmake = new Pdfmake(fonts);
+
+    let pdfDoc = pdfmake.createPdfKitDocument(docDefinition, {});
+    let chunks = [];
+    let result;
+
+    pdfDoc.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+
+    pdfDoc.on("end", () => {
+      result = Buffer.concat(chunks);
+      callback("data:application/pdf;base64," + result.toString("base64"));
+    });
+
+    pdfDoc.end();
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 //APIs
 app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
 app.get("/api/retrieveUserInformation", retrieveUserInformation);
@@ -706,6 +741,28 @@ app.post("/api/updateReimbursement", updateReimbursementTicket);
 app.post("/api/addFoapaNumber", addFoapaNumber);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 app.post("/api/login", loginUser);
+app.get("/api/generatePdf", function (req, res) {
+  const docDefinition = {
+    content: createPdfDefinition(),
+    defaultStyle: {
+      fontSize: 10,
+      bold: true,
+    },
+
+    pageMargins: [20, 30, 0, 0],
+  };
+  generatePdf(
+    docDefinition,
+    function (base64String) {
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", "attachment; filename=product.pdf");
+      res.send(base64String);
+    },
+    function (error) {
+      res.send("ERROR:" + error);
+    }
+  );
+});
 app.get("/close", () => {
   connection.end();
 });

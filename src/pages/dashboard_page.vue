@@ -34,6 +34,7 @@
       <div class="reimbursement-search-input">
         <input
           type="text"
+          v-model="searchValue"
           class="reimbusement-search"
           placeholder="Search Reimbursement"
         />
@@ -46,13 +47,25 @@
         </div>
       </div>
       <div class="search-filters">
-        <div class="filter selected">
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Date' }"
+          @click="sortBy('Date')"
+        >
           <h3>Sort by Date</h3>
         </div>
-        <div class="filter">
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Status' }"
+          @click="sortBy('Status')"
+        >
           <h3>Sort by Status</h3>
         </div>
-        <div class="filter">
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Cost' }"
+          @click="sortBy('Cost')"
+        >
           <h3>Sort by Cost</h3>
         </div>
         <div class="add-button filter" @click="addReimbursement">
@@ -69,7 +82,10 @@
       </h3>
       <br />
       <div class="reimbursement-wrapper">
-        <div class="reimbursement" v-for="ticket in storedReimbursementTickets">
+        <div
+          class="reimbursement"
+          v-for="ticket in filteredStoredReimbursementTickets"
+        >
           <div class="total-amount">${{ ticket.totalAmount }}</div>
           <h3>{{ ticket.eventName }}</h3>
           <h4>Status: Pending</h4>
@@ -116,9 +132,11 @@ import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { computed } from "@vue/reactivity";
 
 const router = useRouter();
 const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+const searchValue = ref<string>("");
 
 type FoapaNumbers = {
   employmentNumber: number;
@@ -152,6 +170,16 @@ let userInfo = ref<UserData>({
 });
 
 let storedReimbursementTickets = ref<any>([]);
+
+let filteredStoredReimbursementTickets = computed(() => {
+  if (searchValue.value === "") {
+    return storedReimbursementTickets.value;
+  } else {
+    return storedReimbursementTickets.value.filter((ticket) =>
+      ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
+    );
+  }
+});
 
 function closeConnection() {
   axios.get("/close").catch((err) => {
@@ -239,6 +267,24 @@ function addReimbursement() {
 function viewTicket(reimbursementId: string) {
   console.log(reimbursementId);
   router.push({ path: "/add-reimbursement", query: { reimbursementId } });
+}
+
+let sortParameter = ref("");
+function sortBy(parameter: String) {
+  if (parameter === "Date") {
+    sortParameter.value = "Date";
+  }
+  if (parameter === "Cost") {
+    sortParameter.value = "Cost";
+    let filteredStoredReimbursementTickets = computed(() => {
+      return storedReimbursementTickets.value.filter((ticket) =>
+        ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
+      );
+    });
+  }
+  if (parameter === "Status") {
+    sortParameter.value = "Status";
+  }
 }
 
 onMounted(() => {
