@@ -36,13 +36,14 @@ let foapaTable = `CREATE TABLE IF NOT EXISTS FOAPA (
   );`;
 
 let possessesTable = `
- CREATE TABLE IF NOT EXISTS Possesses (
-   employmentNumber int NOT NULL,
-   foapaNumber varchar(45) NOT NULL,
-   PRIMARY KEY (employmentNumber, foapaNumber),
-   FOREIGN KEY (employmentNumber) REFERENCES Faculty(employmentNumber),
-   FOREIGN KEY (foapaNumber) REFERENCES FOAPA(foapaNumber)
- );`;
+CREATE TABLE IF NOT EXISTS Possesses (
+  employmentNumber int NOT NULL,
+  foapaNumber varchar(45) NOT NULL,
+  PRIMARY KEY (employmentNumber, foapaNumber)
+  );`;
+
+// FOREIGN KEY (employmentNumber) REFERENCES Faculty(employmentNumber),
+// FOREIGN KEY (foapaNumber) REFERENCES FOAPA(foapaNumber)
 
 let activityTable = `CREATE TABLE IF NOT EXISTS Activity (
     activityId int NOT NULL,
@@ -51,9 +52,9 @@ let activityTable = `CREATE TABLE IF NOT EXISTS Activity (
     activityReceipt varchar(45) NOT NULL,
     activityDate date NOT NULL,
     amount float NOT NULL,
-    PRIMARY KEY (activityId),
-    FOREIGN KEY (foapaNumber) REFERENCES FOAPA(foapaNumber)
-  );`;
+    PRIMARY KEY (activityId)
+    );`;
+// FOREIGN KEY (foapaNumber) REFERENCES FOAPA(foapaNumber)
 
 let reimbursementTable = `CREATE TABLE IF NOT EXISTS ReimbursementTicket (
     reimbursementId int NOT NULL,
@@ -62,17 +63,17 @@ let reimbursementTable = `CREATE TABLE IF NOT EXISTS ReimbursementTicket (
     totalAmount float NOT NULL,
     reimbursementStatus bool NOT NULL,
     reimbursementDate date NOT NULL,
-    PRIMARY KEY (reimbursementId),
-    FOREIGN KEY (employmentNumber) REFERENCES Faculty(employmentNumber)
-  );`;
+    PRIMARY KEY (reimbursementId)
+    );`;
+// FOREIGN KEY (employmentNumber) REFERENCES Faculty(employmentNumber)
 
 let containsTable = `CREATE TABLE IF NOT EXISTS Contains (
     reimbursementId int NOT NULL,
     activityId int NOT NULL,
-    PRIMARY KEY (reimbursementId, activityId),
-    FOREIGN KEY (reimbursementId) REFERENCES ReimbursementTicket(reimbursementId),
-    FOREIGN KEY (activityId) REFERENCES Activity(activityId)
-  );`;
+    PRIMARY KEY (reimbursementId, activityId)
+    );`;
+// FOREIGN KEY (reimbursementId) REFERENCES ReimbursementTicket(reimbursementId),
+// FOREIGN KEY (activityId) REFERENCES Activity(activityId)
 
 export {
   facultyTable,

@@ -3,6 +3,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import bodyParser from "body-parser";
 import mysql from "mysql";
+import * as dotenv from "dotenv";
+dotenv.config();
 import {
   facultyTable,
   foapaTable,
@@ -30,13 +32,15 @@ app.listen(8080, () => {
   console.log("Server started on port 8080");
 });
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  port: 3306,
-  password: "password",
-  database: "reimbursement_db",
-});
+// const connection = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   port: 3306,
+//   password: "password",
+//   database: "reimbursement_db",
+// });
+
+const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 connection.connect(function (err) {
   if (err) throw err;
