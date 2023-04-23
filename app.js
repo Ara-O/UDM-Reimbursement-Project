@@ -139,12 +139,14 @@ function registerUser(req, res) {
                   if (err) {
                     reject(err);
                   }
-
-                  if (rows.length <= 0) {
-                    connection.query("INSERT INTO foapa VALUES(?,?)", [
-                      userFoapa.foapaName,
-                      concatFoapa,
-                    ]);
+                  console.log("rows" + rows);
+                  if (rows !== undefined) {
+                    if (rows.length <= 0) {
+                      connection.query("INSERT INTO foapa VALUES(?,?)", [
+                        userFoapa.foapaName,
+                        concatFoapa,
+                      ]);
+                    }
                   }
 
                   connection.query(

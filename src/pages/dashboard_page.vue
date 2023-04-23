@@ -156,7 +156,7 @@ type FoapaNumbers = {
 };
 type FoapaName = {
   foapaName: string;
-}
+};
 
 let obj = ref({
   empNo: localStorage.getItem("employmentNumber"),
@@ -349,7 +349,10 @@ function sortBy(parameter: String) {
 }
 
 onMounted(() => {
-  if (localStorage.getItem("employmentNumber") === null) {
+  if (
+    localStorage.getItem("employmentNumber") === null ||
+    localStorage.getItem("employmentNumber") === ""
+  ) {
     console.log("no local storage item");
     router.push("/");
   } else {
