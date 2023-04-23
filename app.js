@@ -133,7 +133,7 @@ function registerUser(req, res) {
               console.log(concatFoapa);
 
               connection.query(
-                "SELECT * FROM foapa WHERE foapaNumber = ?",
+                "SELECT * FROM FOAPA WHERE foapaNumber = ?",
                 [concatFoapa],
                 (err, rows) => {
                   if (err) {
@@ -142,7 +142,7 @@ function registerUser(req, res) {
                   console.log("rows" + rows);
                   if (rows !== undefined) {
                     if (rows.length <= 0) {
-                      connection.query("INSERT INTO foapa VALUES(?,?)", [
+                      connection.query("INSERT INTO FOAPA VALUES(?,?)", [
                         userFoapa.foapaName,
                         concatFoapa,
                       ]);
@@ -150,7 +150,7 @@ function registerUser(req, res) {
                   }
 
                   connection.query(
-                    "INSERT INTO possesses VALUES(?,?)",
+                    "INSERT INTO Possesses VALUES(?,?)",
                     [employmentNumber, concatFoapa],
                     (err) => {
                       resolve(err);
@@ -211,7 +211,7 @@ function retrieveFoapaNumbers(req, res) {
   const employmentNumber = req.query.employmentNumber;
   console.log("this is the employment number " + employmentNumber);
   connection.query(
-    "SELECT * FROM possesses WHERE employmentNumber = ?",
+    "SELECT * FROM Possesses WHERE employmentNumber = ?",
     [employmentNumber],
     (err, rows) => {
       if (err) {
@@ -248,7 +248,7 @@ function retrieveFoapaNumbers(req, res) {
 function retrieveUserInformation(req, res) {
   const employmentNumber = req.query.employmentNumber;
   connection.query(
-    "SELECT fName as firstName, lName as lastName, workEmail, phoneNumber, employmentNumber FROM faculty WHERE employmentNumber = ?",
+    "SELECT fName as firstName, lName as lastName, workEmail, phoneNumber, employmentNumber FROM Faculty WHERE employmentNumber = ?",
     [employmentNumber],
     (err, rows) => {
       if (err) {
@@ -265,7 +265,7 @@ function retrieveUserInformation(req, res) {
 function retrieveAccountInfo(req, res) {
   const employmentNumber = req.query.employmentNumber;
   connection.query(
-    "SELECT * FROM FACULTY WHERE employmentNumber = ?",
+    "SELECT * FROM Faculty WHERE employmentNumber = ?",
     [employmentNumber],
     (err, rows) => {
       if (err) {
@@ -299,7 +299,7 @@ function addReimbursement(req, res) {
   promises.push(
     new Promise((resolve, reject) => {
       connection.query(
-        "INSERT INTO reimbursementticket VALUES(?,?,?,?,?,?)",
+        "INSERT INTO ReimbursementTicket VALUES(?,?,?,?,?,?)",
         [
           reimbursementId,
           employmentNumber,
@@ -319,7 +319,7 @@ function addReimbursement(req, res) {
     })
   );
   allActivities.forEach((activity) => {
-    const insertQuery = `INSERT INTO activity VALUES (?,?,?,?,?,?)`;
+    const insertQuery = `INSERT INTO Activity VALUES (?,?,?,?,?,?)`;
     const values = [
       activity.activityId,
       activity.foapaNumber,
@@ -344,7 +344,7 @@ function addReimbursement(req, res) {
     promises.push(
       new Promise((resolve, reject) => {
         connection.query(
-          "INSERT INTO contains VALUES(?, ?)",
+          "INSERT INTO Contains VALUES(?, ?)",
           [reimbursementId, activity.activityId],
           function (err) {
             if (err) {
@@ -373,7 +373,7 @@ function addFoapaNumber(req, res) {
   const foapaNumber = req.body.foapaNumber;
 
   connection.query(
-    "SELECT * from foapa WHERE foapaNumber = ?",
+    "SELECT * from FOAPA WHERE foapaNumber = ?",
     [foapaNumber],
     (err, rows) => {
       if (err) {
@@ -389,7 +389,7 @@ function addFoapaNumber(req, res) {
       }
 
       connection.query(
-        "INSERT INTO possesses VALUES(?,?)",
+        "INSERT INTO Possesses VALUES(?,?)",
         [employmentNumber, foapaNumber],
         (err) => {
           res.status(200).send("success");
@@ -407,7 +407,7 @@ function deleteFoapaNumber(req, res) {
   console.log(employmentNumber + "+" + foapaNumber);
 
   connection.query(
-    "DELETE FROM possesses WHERE employmentNumber = ? AND foapaNumber = ?",
+    "DELETE FROM Possesses WHERE employmentNumber = ? AND foapaNumber = ?",
     [employmentNumber, foapaNumber],
     (err) => {
       if (err) {
@@ -417,7 +417,7 @@ function deleteFoapaNumber(req, res) {
   );
 
   connection.query(
-    "Delete from foapa where foapaNumber = ?",
+    "Delete from FOAPA where foapaNumber = ?",
     [foapaNumber],
     (err) => {
       res.status(200).send("success");
@@ -430,7 +430,7 @@ function loginUser(req, res) {
   const { workEmail, password } = req.body;
   console.log(workEmail);
   connection.query(
-    "SELECT password, employmentNumber FROM FACULTY WHERE workEmail = ?",
+    "SELECT password, employmentNumber FROM Faculty WHERE workEmail = ?",
     [workEmail],
     (err, rows) => {
       console.log(rows);
@@ -465,7 +465,7 @@ function retrieveReimbursements(req, res) {
   const employmentNumber = req.query.employmentNumber;
   console.log("empl num :" + employmentNumber);
   connection.query(
-    "SELECT * FROM reimbursementticket WHERE employmentNumber =  ?",
+    "SELECT * FROM ReimbursementTicket WHERE employmentNumber =  ?",
     employmentNumber,
     (err, rows) => {
       if (err) {
@@ -489,7 +489,7 @@ function retrieveTicketInformation(req, res) {
   promises.push(
     new Promise((resolve, reject) => {
       connection.query(
-        "SELECT * FROM reimbursementticket WHERE employmentNumber =  ? AND reimbursementId = ?",
+        "SELECT * FROM ReimbursementTicket WHERE employmentNumber =  ? AND reimbursementId = ?",
         [employmentNumber, reimbursementId],
         (err, rows) => {
           if (err) {
@@ -507,7 +507,7 @@ function retrieveTicketInformation(req, res) {
   promises.push(
     new Promise((resolve, reject) => {
       connection.query(
-        "SELECT activityId FROM contains WHERE reimbursementId = ?",
+        "SELECT activityId FROM Contains WHERE reimbursementId = ?",
         reimbursementId,
         (err, rows) => {
           if (err) {
@@ -520,7 +520,7 @@ function retrieveTicketInformation(req, res) {
             });
 
             connection.query(
-              "SELECT * FROM activity WHERE activityId IN (?)",
+              "SELECT * FROM Activity WHERE activityId IN (?)",
               [allActivities],
               (err, rows) => {
                 if (err) {
@@ -587,7 +587,7 @@ function updateReimbursementTicket(req, res) {
   promises.push(
     new Promise((resolve, reject) => {
       connection.query(
-        "SELECT activityId FROM contains WHERE reimbursementId = ?",
+        "SELECT activityId FROM Contains WHERE reimbursementId = ?",
         [reimbursementId],
         (err, rows) => {
           if (err) {
@@ -597,7 +597,7 @@ function updateReimbursementTicket(req, res) {
             resolve();
             console.log(rows);
             connection.query(
-              "DELETE FROM contains WHERE reimbursementId = ?",
+              "DELETE FROM Contains WHERE reimbursementId = ?",
               [reimbursementId],
               (err, rows) => {
                 if (err) {
@@ -608,14 +608,14 @@ function updateReimbursementTicket(req, res) {
 
             let allActivitiesId = rows.map((row) => row.activityId);
             connection.query(
-              "DELETE FROM activity WHERE activityId IN (?)",
+              "DELETE FROM Activity WHERE activityId IN (?)",
               [allActivitiesId],
               (err, rows) => {
                 if (err) {
                   reject(err);
                 } else {
                   connection.query(
-                    "DELETE FROM reimbursementticket WHERE reimbursementId = ?",
+                    "DELETE FROM ReimbursementTicket WHERE reimbursementId = ?",
                     [reimbursementId],
                     (err, rows) => {
                       if (err) {
@@ -626,7 +626,7 @@ function updateReimbursementTicket(req, res) {
                         console.log("promsie");
                         // resolve();
                         connection.query(
-                          "INSERT INTO reimbursementticket VALUES(?,?,?,?,?,?)",
+                          "INSERT INTO ReimbursementTicket VALUES(?,?,?,?,?,?)",
                           [
                             reimbursementId,
                             employmentNumber,
@@ -643,7 +643,7 @@ function updateReimbursementTicket(req, res) {
                         );
 
                         allActivities.forEach((activity) => {
-                          const insertQuery = `INSERT INTO activity VALUES (?,?,?,?,?,?)`;
+                          const insertQuery = `INSERT INTO Activity VALUES (?,?,?,?,?,?)`;
                           const values = [
                             activity.activityId,
                             activity.foapaNumber,
@@ -660,7 +660,7 @@ function updateReimbursementTicket(req, res) {
                           });
 
                           connection.query(
-                            "INSERT INTO contains VALUES(?, ?)",
+                            "INSERT INTO Contains VALUES(?, ?)",
                             [reimbursementId, activity.activityId],
                             function (err) {
                               if (err) {
