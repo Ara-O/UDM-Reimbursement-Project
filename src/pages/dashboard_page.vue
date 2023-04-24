@@ -204,7 +204,7 @@ function closeConnection() {
 
 function signOut() {
   localStorage.setItem("employmentNumber", "");
-  router.push("/login");
+  router.push("/");
   alert("Successfully signed out!");
 }
 

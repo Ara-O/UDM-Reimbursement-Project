@@ -227,7 +227,7 @@
         Continue
       </button>
       <br />
-      <router-link to="/login" style="font-size: 14px"
+      <router-link to="/" style="font-size: 14px"
         >Already have an Account</router-link
       >
       <br />

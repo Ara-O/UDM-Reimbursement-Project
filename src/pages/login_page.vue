@@ -31,7 +31,7 @@
           id="password"
         />
       </div>
-      <router-link to="/" style="font-size: 14px"
+      <router-link to="/signup" style="font-size: 14px"
         >Create an Account</router-link
       >
       <button class="login-button">Login</button>
@@ -41,7 +41,7 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 let userInfo = ref<any>({ workEmail: "", password: "" });
 
@@ -60,6 +60,13 @@ function loginUser() {
       alert(err.response.data.message);
     });
 }
+
+onMounted(() => {
+  if (localStorage.getItem("employmentNumber")?.length ?? 0 > 0) {
+    console.log("user is already signed in");
+    router.push("/dashboard");
+  }
+});
 </script>
 
 <style scoped>
