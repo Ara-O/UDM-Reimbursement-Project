@@ -137,14 +137,17 @@
       <div class="input-field">
         <label for="foapa-numbers">FOAPA:</label>
       </div>
-      <span class="input-FOAPA-field" style="display: inline-flexbox; gap:10px">
+      <span
+        class="input-FOAPA-field"
+        style="display: inline-flexbox; gap: 10px"
+      >
         <input
           type="text"
           placeholder="FOAPA Name"
           name="FOAPA Name"
           id="foapa-name"
           v-model="userFoapaStuff.foapaName"
-          style="width: 171px; margin-left: -189px;"
+          style="width: 171px; margin-left: -189px"
         />
         <div class="input-FOAPA-field">
           <input
@@ -153,7 +156,7 @@
             id="f-input"
             placeholder="xxxx"
             v-model="userFoapaStuff.fNumber"
-            style="margin-left: 0px;"
+            style="margin-left: 0px"
           />
         </div>
         -
@@ -201,14 +204,14 @@
           />
         </div>
         <button class="add-foapa-button" type="button" @click="addFoapa">
-          <img 
+          <img
             src="../assets/add-icon.png"
             alt="add-icon"
-            style="width:15px;"
+            style="width: 15px"
           />
         </button>
       </span>
-      <div v-for="foapa in foapaList" style="display:inline-flex;">
+      <div v-for="foapa in foapaList" style="display: inline-flex">
         <h3>{{ foapa.foapaName }} : {{ foapa.fNumber }}</h3>
         <h3>-</h3>
         <h3>{{ foapa.oNumber }}</h3>
@@ -249,17 +252,17 @@ type UserData = {
   zipCode: number;
   city: string;
   state: string;
-  userFoapas:Array<FoapaStuff>;
+  userFoapas: Array<FoapaStuff>;
 };
 
 type FoapaStuff = {
   fNumber: string;
-  oNumber:string;
-  aNumber:string;
-  pNumber:string;
-  a2Number:string;
+  oNumber: string;
+  aNumber: string;
+  pNumber: string;
+  a2Number: string;
   foapaName: string;
-}
+};
 
 let reEnteredPassword = ref<string>("");
 
@@ -279,7 +282,7 @@ let userSignupData = reactive<UserData>({
   zipCode: 0,
   city: "",
   state: "",
-  userFoapas:[],
+  userFoapas: [],
 });
 
 let userFoapaStuff = reactive<FoapaStuff>({
@@ -291,16 +294,16 @@ let userFoapaStuff = reactive<FoapaStuff>({
   foapaName: "",
 });
 
-function addFoapa(){
+function addFoapa() {
   let currentFoapa = reactive<FoapaStuff>({
-  fNumber: userFoapaStuff.fNumber,
-  oNumber: userFoapaStuff.oNumber,
-  aNumber: userFoapaStuff.aNumber,
-  pNumber: userFoapaStuff.pNumber,
-  a2Number: userFoapaStuff.a2Number,
-  foapaName: userFoapaStuff.foapaName,
+    fNumber: userFoapaStuff.fNumber,
+    oNumber: userFoapaStuff.oNumber,
+    aNumber: userFoapaStuff.aNumber,
+    pNumber: userFoapaStuff.pNumber,
+    a2Number: userFoapaStuff.a2Number,
+    foapaName: userFoapaStuff.foapaName,
   });
-  foapaList.value.push(currentFoapa);  
+  foapaList.value.push(currentFoapa);
 }
 
 function registerUser() {
@@ -308,8 +311,7 @@ function registerUser() {
   //or else, alert the user of an error
 
   if (reEnteredPassword.value === userSignupData.password) {
-
-    userSignupData.userFoapas=foapaList.value;
+    userSignupData.userFoapas = foapaList.value;
 
     axios
       .post("/api/register", userSignupData)
@@ -331,7 +333,7 @@ function registerUser() {
 }
 
 onMounted(() => {
-  if (localStorage.getItem("employmentNumber")?.length ?? 0 >= 0) {
+  if (localStorage.getItem("employmentNumber")?.length ?? 0 > 0) {
     console.log("user is already signed in");
     router.push("/dashboard");
   }

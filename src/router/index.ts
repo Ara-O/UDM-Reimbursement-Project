@@ -9,7 +9,7 @@ export default createRouter({
   routes: [
     {
       path: "/",
-      component: SignupPage,
+      component: LoginPage,
     },
     {
       path: "/login",
