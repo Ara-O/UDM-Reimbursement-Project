@@ -1,6 +1,7 @@
 export default function createPdfDefinition(reimbursementData, userInfo) {
   console.log("generate pdf");
-  console.log(reimbursementData, userInfo);
+  // console.log(reimbursementData, userInfo);
+  const { allActivities } = reimbursementData;
   let content = [];
   //Top section
   content.push(
@@ -162,6 +163,98 @@ export default function createPdfDefinition(reimbursementData, userInfo) {
   //Divider
   content.push({ text: " " }, { text: " " });
 
+  //Calculate activities section
+
+  let activitiesClassification = {
+    Lodging: {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    Breakfast: {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    Lunch: {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    Dinner: {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    "Business Guest Meals": {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    "Air/Train": {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    "Taxi/Bus/Car Rental": {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    Parking: {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    Registration: {
+      dates: [],
+      total: 0,
+      finalData: [],
+    },
+    Other: {
+      explanation: "",
+      total: 0,
+      finalData: [],
+    },
+  };
+
+  allActivities.forEach((activity) => {
+    console.log(activity);
+    let arrayField = activitiesClassification[`${activity.activityName}`];
+
+    if (arrayField === undefined) {
+      console.log("prolly an other field");
+      arrayField = activitiesClassification[`Other`];
+      arrayField.explanation += activity.activityName + " ";
+    } else {
+      arrayField.dates.push({ text: activity.activityDate, fontSize: 7.5 });
+    }
+    arrayField.total += Number(activity.amount);
+  });
+
+  //Put data in right format
+  for (const property in activitiesClassification) {
+    if (property !== "Other") {
+      activitiesClassification[property].finalData = [
+        property,
+        ...activitiesClassification[property].dates,
+      ];
+    }
+
+    for (let i = 0; i < 9; i++) {
+      if (activitiesClassification[property].finalData[i] === undefined) {
+        activitiesClassification[property].finalData[i] = "";
+      }
+
+      activitiesClassification[property].finalData[8] = {
+        text: `$ ${activitiesClassification[property].total}`,
+        fontSize: 7.5,
+      };
+    }
+  }
+
+  console.log(activitiesClassification);
+
   //Expenses section
   content.push({
     table: {
@@ -189,44 +282,64 @@ export default function createPdfDefinition(reimbursementData, userInfo) {
           "",
           "",
         ],
-        ["Lodging", "", "", "", "", "", "", "", "0.00"],
-        ["Breakfast", "", "", "", "", "", "", "", "0.00"],
-        ["Lunch", "", "", "", "", "", "", "", "0.00"],
-        ["Dinner", "", "", "", "", "", "", "", "0.00"],
-        ["Business Guest Meals **", "", "", "", "", "", "", "", "0.00"],
-        ["Air/Train", "", "", "", "", "", "", "", "0.00"],
-        ["Taxi/Bus/Car Rental", "", "", "", "", "", "", "", "0.00"],
-        ["Parking", "", "", "", "", "", "", "", "0.00"],
-        ["Registration", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Lodging"].finalData,
+        // ["Lodging", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Breakfast"].finalData,
+        // ["Breakfast", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Lunch"].finalData,
+        // ["Lunch", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Dinner"].finalData,
+        // ["Dinner", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Business Guest Meals"].finalData,
+        // ["Business Guest Meals **", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Air/Train"].finalData,
+        // ["Air/Train", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Taxi/Bus/Car Rental"].finalData,
+        // ["Taxi/Bus/Car Rental", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Parking"].finalData,
+        // ["Parking", "", "", "", "", "", "", "", "0.00"],
+        activitiesClassification["Registration"].finalData,
+        // ["Registration", "", "", "", "", "", "", "", "0.00"],
         [
           "Mileage (Include destination)",
-          { text: "", colSpan: 6 },
+          { text: "", colSpan: 7 },
           "",
           "",
           "",
           "",
           "",
-          { text: "", colSpan: 2 },
+          "",
+          { text: "", colSpan: 1 },
         ],
         [
           "Other (Explain what expense is for )",
-          { text: "", colSpan: 6 },
+          {
+            text: activitiesClassification["Other"].explanation,
+            colSpan: 7,
+            fontSize: 7.5,
+          },
           "",
           "",
           "",
           "",
           "",
-          { text: "", colSpan: 2 },
+          "",
+          {
+            text: `$ ${activitiesClassification["Other"].total}`,
+            colSpan: 1,
+            fontSize: 7.5,
+          },
         ],
         [
           "Other (Explain what expense is for )",
-          { text: "", colSpan: 6 },
+          { text: "", colSpan: 7 },
           "",
           "",
           "",
           "",
           "",
-          { text: "", colSpan: 2 },
+          "",
+          { text: "", colSpan: 1 },
         ],
       ],
     },
