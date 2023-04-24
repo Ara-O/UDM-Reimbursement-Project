@@ -94,8 +94,6 @@ function registerUser(req, res) {
 
   console.log(userFoapas);
 
-  connection.beginTransaction();
-
   // Insert into faculty
   promises.push(
     new Promise((resolve, reject) => {
@@ -378,11 +376,10 @@ function addFoapaNumber(req, res) {
     (err, rows) => {
       if (err) {
         res.status(409).send({ message: "FOAPA already exists" });
-        connection.rollback();
       }
 
       if (rows.length <= 0) {
-        connection.query("INSERT INTO foapa VALUES(?,?)", [
+        connection.query("INSERT INTO FOAPA VALUES(?,?)", [
           foapaNumber,
           foapaNumber,
         ]);
@@ -393,7 +390,6 @@ function addFoapaNumber(req, res) {
         [employmentNumber, foapaNumber],
         (err) => {
           res.status(200).send("success");
-          connection.commit();
         }
       );
     }
@@ -421,7 +417,6 @@ function deleteFoapaNumber(req, res) {
     [foapaNumber],
     (err) => {
       res.status(200).send("success");
-      connection.commit();
     }
   );
 }
