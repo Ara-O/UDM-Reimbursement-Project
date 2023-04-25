@@ -135,6 +135,16 @@
         />
       </div>
       <div class="input-field">
+        <label for="country">Country:</label>
+        <input
+          type="text"
+          name="Country"
+          id="country"
+          v-model="userSignupData.country"
+          required
+        />
+      </div>
+      <div class="input-field">
         <label for="foapa-numbers">FOAPA:</label>
       </div>
       <span
@@ -252,6 +262,7 @@ type UserData = {
   zipCode: number;
   city: string;
   state: string;
+  country: string;
   userFoapas: Array<FoapaStuff>;
 };
 
@@ -282,6 +293,7 @@ let userSignupData = reactive<UserData>({
   zipCode: 0,
   city: "",
   state: "",
+  country: "",
   userFoapas: [],
 });
 

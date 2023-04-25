@@ -88,6 +88,7 @@ function registerUser(req, res) {
     zipCode,
     city,
     state,
+    country,
     userFoapas,
   } = req.body;
   const promises = [];
@@ -98,7 +99,7 @@ function registerUser(req, res) {
   promises.push(
     new Promise((resolve, reject) => {
       connection.query(
-        "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO Faculty VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
         [
           employmentNumber,
           firstName,
@@ -111,6 +112,7 @@ function registerUser(req, res) {
           zipCode,
           city,
           state,
+          country,
         ],
         (err) => {
           if (err) {
@@ -189,6 +191,7 @@ function updateAccountInfo(req, res) {
       req.body.zipCode,
       req.body.city,
       req.body.state,
+      req.body.country,
       req.body.employmentNumber,
     ],
     (err) => {
