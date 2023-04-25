@@ -100,7 +100,7 @@
         >
           <div class="total-amount">${{ ticket.totalAmount }}</div>
           <h3>{{ ticket.eventName }}</h3>
-          <h4>Status: Pending</h4>
+          <h4>Status: In Progress</h4>
           <h5>
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
