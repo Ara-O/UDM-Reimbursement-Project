@@ -3,48 +3,66 @@ input {
 }
 
 .signup-page {
-  padding: 70px 0px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: auto;
-  flex-direction: column;
+  height: 100vh;
+  gap: 130px;
 }
 
 .signup-title {
   font-weight: 600;
-  font-size: 25px;
-  text-align: center;
+
+  font-size: 32px;
+  width: 400px;
+  margin-top: 0px;
+  margin-bottom: 37px;
+  text-align: left;
+}
+
+.input-field-wrapper {
+  display: flex;
+  width: 850px;
+  gap: 44px;
+  justify-content: space-between;
+}
+
+.input-field-foapa-wrapper {
+  display: flex;
+  width: 850px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  row-gap: 30px;
+  justify-content: flex-start;
 }
 
 .udmercy-logo {
-  width: 100px;
+  width: 70%;
+  max-width: 14rem;
   padding: 40px 20px;
 }
 
 .udmercy-logo-wrapper {
   border: 1px solid #ffffff;
-  border-radius: 9999px;
-  height: 140px;
   padding: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0px 4px 9px rgba(184, 184, 184, 0.38);
 }
 
-.input-FOAPA-field{
-  margin-bottom: 30px;
-  display: inline-flex;
-  align-items: baseline;
-  width: 94px;
-  justify-content: space-between;
+.right-section {
+  height: auto;
 }
+
+.foapa-section label {
+  font-size: 14px;
+}
+
 .input-FOAPA-field input {
-  margin-left: 30px;
-  padding-left: 20px;
-  width: 44.8px;
+  width: 100px;
   height: 36px;
+  text-align: center;
   background: #ffffff;
   border: 1px solid #f7f7f7;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
@@ -53,44 +71,47 @@ input {
 }
 
 .input-field {
-  margin-bottom: 30px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  width: 470px;
+  width: auto;
   justify-content: space-between;
 }
 
 .input-field input {
-  margin-left: 30px;
   padding-left: 20px;
-  width: 224px;
+  width: 124px;
   height: 36px;
   background: #ffffff;
+  margin-left: 20px;
   border: 1px solid #f7f7f7;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
   border-radius: 5px;
 }
 
+.input-address-data input {
+  width: 130px;
+}
+
 .input-field label {
-  width: 175px;
   font-size: 14px;
 }
 
-.add-foapa-button{
-    background-color: var(--udmercy-red);
-    background: #a5093e;
-    padding: 10px;
-    border: solid 1px;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-top: 2px;
-    margin-bottom: auto;
-    height: 36px;
-    display: inline-flex;
-    /* justify-content: center; */
-    align-items:center;
-  }
+.add-foapa-button {
+  background-color: var(--udmercy-red);
+  background: #a5093e;
+  padding: 10px;
+
+  border: solid 1px var(--udmercy-red);
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 2px;
+  margin-bottom: auto;
+  height: 36px;
+  display: inline-flex;
+  /* justify-content: center; */
+  align-items: center;
+}
 
 .signup-button {
   background-color: var(--udmercy-blue);
@@ -107,8 +128,10 @@ input {
 
 .signup-form {
   display: flex;
+  gap: 7px;
+  row-gap: 30px;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
 @media (max-width: 610px) {
@@ -118,6 +141,7 @@ input {
 
   .signup-title {
     font-size: 20px;
+
     width: 350px;
     line-height: 45px;
   }
@@ -127,6 +151,7 @@ input {
     text-align: center;
     padding-left: 0px;
   }
+
   .input-field label {
     width: auto;
     margin-bottom: 10px;
