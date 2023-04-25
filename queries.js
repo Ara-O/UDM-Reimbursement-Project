@@ -10,6 +10,7 @@ let facultyTable = `CREATE TABLE IF NOT EXISTS Faculty (
     zipCode int NOT NULL,
     city varchar(45) NOT NULL,
     state varchar(2) NOT NULL,
+    country varchar(45) NOT NULL,
     PRIMARY KEY (employmentNumber)
   );`;
 
@@ -24,7 +25,8 @@ SET
     password = ?,
     zipCode = ?,
     city = ?,
-    state = ?
+    state = ?,
+    country = ?
 WHERE
     employmentNumber = ?;
 `;

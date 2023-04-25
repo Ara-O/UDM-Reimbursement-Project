@@ -112,6 +112,16 @@
         required
       />
     </div>
+    <div class="input-field">
+      <label for="country">Country:</label>
+      <input
+        type="text"
+        name="Country"
+        id="country"
+        v-model="accountInfo.country"
+        required
+      />
+    </div>
     <button class="button" @click="save">Save</button>
     <button class="button" @click="back">Back</button>
     <br />
@@ -139,6 +149,7 @@ type UserData = {
   zipCode: number;
   city: string;
   state: string;
+  country: string;
 };
 
 let accountInfo = ref<UserData>({
@@ -152,6 +163,7 @@ let accountInfo = ref<UserData>({
   zipCode: 0,
   city: "",
   state: "",
+  country: "",
 });
 
 function back() {
