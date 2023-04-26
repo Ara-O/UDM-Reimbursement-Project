@@ -1,141 +1,285 @@
 <template>
-  <section class="account-page">
-    <!-- Img is a way you can embed images to your site,
-      the ../ before the folder means that we are traversing file systems -->
-    <div class="profile-logo-wrapper">
-      <img
-        src="../assets/profile-logo.png"
-        alt="Profile picture logo"
-        class="profile-logo"
-      />
-    </div>
-    <br />
-    <h3 class="account-title">Edit Account Information</h3>
-    <br />
-    <div class="input-field">
-      <label for="first-name">First Name: </label>
-      <input
-        type="text"
-        name="First name"
-        id="first-name"
-        v-model="accountInfo.fName"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="last-name">Last Name: </label>
-      <input
-        type="text"
-        name="Last Name"
-        id="last-name"
-        v-model="accountInfo.lName"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="work-email">Work Email: </label>
-      <input
-        type="email"
-        name="Work Email"
-        id="work-email"
-        v-model="accountInfo.workEmail"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="department">Department:</label>
-      <input
-        type="text"
-        name="Department"
-        id="department"
-        v-model="accountInfo.department"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="phone-number">Phone Number:</label>
-      <input
-        type="text"
-        name="Phone Number"
-        id="phone-number"
-        v-model="accountInfo.phoneNumber"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="password">Password:</label>
-      <input
-        type="text"
-        name="Password"
-        id="password"
-        v-model="accountInfo.password"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="street-address">Street Address:</label>
-      <input
-        type="text"
-        name="Street Address"
-        id="street-address"
-        v-model="accountInfo.streetAddress"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="city">City:</label>
-      <input
-        type="text"
-        name="City"
-        id="city"
-        v-model="accountInfo.city"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="state">State:</label>
-      <input
-        type="text"
-        name="State"
-        id="state"
-        v-model="accountInfo.state"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="zip-code">Zip Code:</label>
-      <input
-        type="number"
-        name="Zip Code"
-        id="zip-code"
-        v-model="accountInfo.zipCode"
-        required
-      />
-    </div>
-    <div class="input-field">
-      <label for="country">Country:</label>
-      <input
-        type="text"
-        name="Country"
-        id="country"
-        v-model="accountInfo.country"
-        required
-      />
-    </div>
-    <button class="button" @click="save">Save</button>
-    <button class="button" @click="back">Back</button>
-    <br />
-    <h6 class="trademark-text">Made with love by the Duckateers TM</h6>
-    <br />
+  <section class="signup-page">
+    <section class="left-section">
+      <div class="udmercy-logo-wrapper">
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo"
+        />
+      </div>
+    </section>
+    <section class="right-section">
+      <div class="udmercy-logo-wrapper-mobile">
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo-mobile"
+        />
+      </div>
+      <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
+
+      <form @submit.prevent="save" class="signup-form">
+        <section class="signup-form">
+          <div class="input-field-wrapper">
+            <div class="input-field">
+              <label for="first-name">First Name: </label>
+              <input
+                type="text"
+                name="First name"
+                id="first-name"
+                v-model="accountInfo.fName"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="last-name">Last Name: </label>
+              <input
+                type="text"
+                name="Last Name"
+                id="last-name"
+                v-model="accountInfo.lName"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="work-email">Work Email: </label>
+              <input
+                type="email"
+                name="Work Email"
+                id="work-email"
+                v-model="accountInfo.workEmail"
+                required
+              />
+            </div>
+          </div>
+          <div class="input-field-wrapper">
+            <div class="input-field">
+              <label for="phone-number">Phone:</label>
+              <input
+                type="text"
+                name="Phone Number"
+                id="phone-number"
+                v-model="accountInfo.phoneNumber"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="street-address">Street Address:</label>
+              <input
+                type="text"
+                name="Street Address"
+                id="street-address"
+                v-model="accountInfo.streetAddress"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="department">Department:</label>
+              <input
+                type="text"
+                name="Department"
+                id="department"
+                v-model="accountInfo.department"
+                required
+              />
+            </div>
+          </div>
+          <div class="input-field-wrapper">
+            <div class="input-field">
+              <label for="password">Password:</label>
+              <input
+                type="password"
+                name="Password"
+                id="password"
+                v-model="accountInfo.password"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="reenter-password">Re-enter password:</label>
+              <input
+                type="password"
+                name="reenter-password"
+                id="reenter-password"
+                v-model="reEnteredPassword"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="city">City:</label>
+              <input
+                type="text"
+                name="City"
+                id="city"
+                v-model="accountInfo.city"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="input-field-wrapper">
+            <div class="input-field">
+              <label for="state">State:</label>
+              <input
+                type="text"
+                name="State"
+                id="state"
+                v-model="accountInfo.state"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="zip-code">Zip Code:</label>
+              <input
+                type="number"
+                name="Zip Code"
+                id="zip-code"
+                v-model="accountInfo.zipCode"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="country">Country:</label>
+              <input
+                type="text"
+                name="Country"
+                id="country"
+                v-model="accountInfo.country"
+                required
+              />
+            </div>
+          </div>
+          <!-- IN CASE IN THE FUTURE, WE ADD FOAPA NUMBERS -->
+          <!-- <div class="foapa-section">
+            <div>
+              <label for="foapa-numbers"
+                >FOAPA [ FUND - ORG - ACCT - PROG - ACTV ]:</label
+              >
+            </div>
+            <br />
+            <div class="input-field-foapa-wrapper">
+              <div class="input-FOAPA-field">
+                <input
+                  type="text"
+                  style="width: 150px"
+                  placeholder="FOAPA Name"
+                  name="FOAPA Name"
+                  id="foapa-name"
+                  v-model="userFoapaStuff.foapaName"
+                />
+              </div>
+              :
+              <div class="input-FOAPA-field">
+                <input
+                  type="text"
+                  name="F input"
+                  id="f-input"
+                  placeholder="xxxxxx"
+                  v-model="userFoapaStuff.fNumber"
+                />
+              </div>
+              -
+              <div class="input-FOAPA-field">
+                <input
+                  type="text"
+                  name="O input"
+                  id="o-input"
+                  placeholder="xxxx"
+                  v-model="userFoapaStuff.oNumber"
+                />
+              </div>
+              -
+              <div class="input-FOAPA-field">
+                <input
+                  type="text"
+                  name="A input"
+                  id="a-input"
+                  placeholder="xxxx"
+                  v-model="userFoapaStuff.aNumber"
+                />
+              </div>
+              -
+              <div class="input-FOAPA-field">
+                <input
+                  type="text"
+                  name="P input"
+                  id="p-input"
+                  placeholder="xxxx"
+                  v-model="userFoapaStuff.pNumber"
+                />
+              </div>
+              -
+              <div class="input-FOAPA-field">
+                <input
+                  type="text"
+                  name="A2 input"
+                  id="a2-input"
+                  placeholder="xxxx"
+                  v-model="userFoapaStuff.a2Number"
+                />
+              </div>
+              <button class="add-foapa-button" type="button" @click="addFoapa">
+                <img
+                  src="../assets/add-icon.png"
+                  alt="add-icon"
+                  style="width: 15px"
+                />
+              </button>
+            </div>
+            <br />
+            <div
+              v-for="(foapa, index) in foapaList"
+              style="display: flex"
+              class="added-foapa-number"
+            >
+              <h3 style="margin-right: 15px; font-weight: 500">
+                #{{ index + 1 }}
+              </h3>
+              <h3>{{ foapa.foapaName }} : {{ foapa.fNumber }}</h3>
+              <h3>-</h3>
+              <h3>{{ foapa.oNumber }}</h3>
+              <h3>-</h3>
+              <h3>{{ foapa.aNumber }}</h3>
+              <h3>-</h3>
+              <h3>{{ foapa.pNumber }}</h3>
+              <h3>-</h3>
+              <h3>{{ foapa.a2Number }}</h3>
+            </div>
+          </div> -->
+          <div class="continue-buttons">
+            <button
+              class="signup-button"
+              type="button"
+              @click="back"
+              style="margin-top: 0px"
+            >
+              Go Back
+            </button>
+            <button class="signup-button" type="submit" style="margin-top: 0px">
+              Save
+            </button>
+          </div>
+          <!-- <h6 class="trademark-text">Made with love by the Duckateers TM</h6> -->
+        </section>
+      </form>
+    </section>
   </section>
 </template>
 
 <script lang="ts" setup>
 import axios from "axios";
-import { reactive } from "vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 
+type FoapaStuff = {
+  fNumber: string;
+  oNumber: string;
+  aNumber: string;
+  pNumber: string;
+  a2Number: string;
+  foapaName: string;
+};
 const router = useRouter();
 
 type UserData = {
@@ -151,6 +295,18 @@ type UserData = {
   state: string;
   country: string;
 };
+let foapaList = ref<FoapaStuff[]>([]);
+function addFoapa() {
+  let currentFoapa = reactive<FoapaStuff>({
+    fNumber: userFoapaStuff.fNumber,
+    oNumber: userFoapaStuff.oNumber,
+    aNumber: userFoapaStuff.aNumber,
+    pNumber: userFoapaStuff.pNumber,
+    a2Number: userFoapaStuff.a2Number,
+    foapaName: userFoapaStuff.foapaName,
+  });
+  foapaList.value.push(currentFoapa);
+}
 
 let accountInfo = ref<UserData>({
   fName: "",
@@ -164,6 +320,16 @@ let accountInfo = ref<UserData>({
   city: "",
   state: "",
   country: "",
+});
+
+let reEnteredPassword = ref<string>("");
+let userFoapaStuff = reactive<FoapaStuff>({
+  fNumber: "",
+  oNumber: "",
+  aNumber: "",
+  pNumber: "",
+  a2Number: "",
+  foapaName: "",
 });
 
 function back() {
@@ -210,113 +376,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-input {
-  outline: none;
-}
-
-.account-page {
-  padding: 70px 0px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: auto;
-  flex-direction: column;
-}
-
-.account-title {
-  font-weight: 600;
-  font-size: 25px;
-}
-
-.profile-logo {
-  width: 100px;
-  padding: 40px 20px;
-}
-
-.profile-logo-wrapper {
-  border: 1px solid #ffffff;
-  border-radius: 9999px;
-  height: 140px;
-  padding: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 4px 9px rgba(184, 184, 184, 0.38);
-}
-
-.input-field {
-  margin-bottom: 30px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  width: 450px;
-  justify-content: space-between;
-}
-
-.input-field input {
-  margin-left: 30px;
-  padding-left: 20px;
-  width: 224px;
-  height: 36px;
-  background: #ffffff;
-  border: 1px solid #f7f7f7;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
-  border-radius: 5px;
-}
-
-.input-field label {
-  width: 140px;
-  font-size: 14px;
-}
-
-.button {
-  background-color: var(--udmercy-blue);
-  color: white;
-  padding: 10px 70px;
-  border: solid 1px;
-  width: 232px;
-  height: 50px;
-  margin-top: 20px;
-  cursor: pointer;
-  background: #a5093e;
-  border-radius: 26px;
-}
-
-.trademark-text {
-  font-family: "Poppins";
-  font-weight: 400;
-}
-
-@media (max-width: 610px) {
-  .input-field {
-    flex-direction: column;
-  }
-
-  .input-field input {
-    margin-left: 0px;
-    text-align: center;
-    padding-left: 0px;
-  }
-  .input-field label {
-    width: auto;
-    margin-bottom: 10px;
-  }
-
-  .profile-logo {
-    width: 70px;
-    padding: 40px 20px;
-  }
-
-  .profile-logo-wrapper {
-    border: 1px solid #ffffff;
-    border-radius: 9999px;
-    height: 110px;
-    padding: 30px;
-  }
-  .account-page {
-    height: auto;
-    padding-top: 30px;
-    padding-bottom: 30px;
-  }
-}
+@import url("../assets/styles/account-page.css");
 </style>

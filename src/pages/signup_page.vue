@@ -20,10 +20,10 @@
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
 
       <form @submit.prevent="registerUser" class="signup-form">
-        <section v-if="surveyProgress === 0" class="signup-form">
+        <section v-show="surveyProgress === 0" class="signup-form">
           <div class="input-field-wrapper">
             <div class="input-field">
-              <label for="first-name">First Name: </label>
+              <label for="first-name">First Name:*</label>
               <input
                 type="text"
                 name="First name"
@@ -33,7 +33,7 @@
               />
             </div>
             <div class="input-field">
-              <label for="last-name">Last Name: </label>
+              <label for="last-name">Last Name:*</label>
               <input
                 type="text"
                 name="Last Name"
@@ -43,11 +43,12 @@
               />
             </div>
             <div class="input-field">
-              <label for="work-email">Work Email: </label>
+              <label for="work-email">Work Email: *</label>
               <input
                 type="email"
                 name="Work Email"
                 id="work-email"
+                placeholder="@udmercy.edu"
                 v-model="userSignupData.workEmail"
                 required
               />
@@ -55,7 +56,7 @@
           </div>
           <div class="input-field-wrapper">
             <div class="input-field">
-              <label for="employment-number">Employment Number: </label>
+              <label for="employment-number">Employment Number: *</label>
               <input
                 type="number"
                 name="Employment Number"
@@ -66,7 +67,7 @@
               />
             </div>
             <div class="input-field">
-              <label for="phone-number">Phone:</label>
+              <label for="phone-number">Phone: *</label>
               <input
                 type="text"
                 name="Phone Number"
@@ -76,7 +77,7 @@
               />
             </div>
             <div class="input-field">
-              <label for="street-address">Street Address:</label>
+              <label for="street-address">Street Address: *</label>
               <input
                 type="text"
                 name="Street Address"
@@ -88,7 +89,7 @@
           </div>
           <div class="input-field-wrapper">
             <div class="input-field">
-              <label for="department">Department:</label>
+              <label for="department">Department: *</label>
               <input
                 type="text"
                 name="Department"
@@ -98,7 +99,7 @@
               />
             </div>
             <div class="input-field">
-              <label for="password">Password:</label>
+              <label for="password">Password: *</label>
               <input
                 type="password"
                 name="Password"
@@ -108,7 +109,7 @@
               />
             </div>
             <div class="input-field">
-              <label for="reenter-password">Re-enter password:</label>
+              <label for="reenter-password">Re-enter password: *</label>
               <input
                 type="password"
                 name="reenter-password"
@@ -129,10 +130,10 @@
         </section>
 
         <!-- SECTION 2 -->
-        <section v-if="surveyProgress === 1" class="signup-form">
+        <section v-show="surveyProgress === 1" class="signup-form">
           <div class="input-field-wrapper">
             <div class="input-field">
-              <label for="city">City:</label>
+              <label for="city">City: *</label>
               <input
                 type="text"
                 name="City"
@@ -142,7 +143,7 @@
               />
             </div>
             <div class="input-field">
-              <label for="state">State:</label>
+              <label for="state">State: *</label>
               <input
                 type="text"
                 name="State"
@@ -154,7 +155,7 @@
           </div>
           <div class="input-field-wrapper">
             <div class="input-field">
-              <label for="zip-code">Zip Code:</label>
+              <label for="zip-code">Zip Code: *</label>
               <input
                 type="number"
                 name="Zip Code"
@@ -164,7 +165,7 @@
               />
             </div>
             <div class="input-field">
-              <label for="country">Country:</label>
+              <label for="country">Country: *</label>
               <input
                 type="text"
                 name="Country"
@@ -198,7 +199,7 @@
                   type="text"
                   name="F input"
                   id="f-input"
-                  placeholder="xxxx"
+                  placeholder="xxxxxx"
                   v-model="userFoapaStuff.fNumber"
                 />
               </div>
@@ -287,10 +288,13 @@
 
         <router-link
           to="/"
-          style="font-size: 14px; margin-top: 10px"
+          style="font-size: 14px; margin-top: -15px"
           class="already-has-account"
           >Already have an Account</router-link
         >
+        <h5 style="font-weight: 300; margin: 0px; margin-top: -25px">
+          Note: All required fields must be filled
+        </h5>
       </form>
     </section>
   </section>
