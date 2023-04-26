@@ -205,7 +205,6 @@
                   name="FOAPA Name"
                   id="foapa-name"
                   v-model="userFoapaStuff.foapaName"
-                  required="false"
                 />
               </div>
               :
@@ -216,7 +215,6 @@
                   id="f-input"
                   placeholder="xxxxxx"
                   v-model="userFoapaStuff.fNumber"
-                  required="false"
                 />
               </div>
               -
@@ -227,7 +225,6 @@
                   id="o-input"
                   placeholder="xxxx"
                   v-model="userFoapaStuff.oNumber"
-                  required="false"
                 />
               </div>
               -
@@ -238,7 +235,6 @@
                   id="a-input"
                   placeholder="xxxx"
                   v-model="userFoapaStuff.aNumber"
-                  required="false"
                 />
               </div>
               -
@@ -249,7 +245,6 @@
                   id="p-input"
                   placeholder="xxxx"
                   v-model="userFoapaStuff.pNumber"
-                  required="false"
                 />
               </div>
               -
@@ -260,7 +255,6 @@
                   id="a2-input"
                   placeholder="xxxx"
                   v-model="userFoapaStuff.a2Number"
-                  required="false"
                 />
               </div>
               <button class="add-foapa-button" type="button" @click="addFoapa">
