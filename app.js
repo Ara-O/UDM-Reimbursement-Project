@@ -119,46 +119,55 @@ function registerUser(req, res) {
             console.log(err);
             reject(err);
           } else {
-            userFoapas.forEach((userFoapa) => {
-              let concatFoapa =
-                userFoapa.fNumber +
-                "-" +
-                userFoapa.oNumber +
-                "-" +
-                userFoapa.aNumber +
-                "-" +
-                userFoapa.pNumber +
-                "-" +
-                userFoapa.a2Number;
-              console.log(concatFoapa);
+            if (userFoapas.length !== 0) {
+              userFoapas.forEach((userFoapa) => {
+                let concatFoapa =
+                  userFoapa.fNumber +
+                  "-" +
+                  userFoapa.oNumber +
+                  "-" +
+                  userFoapa.aNumber +
+                  "-" +
+                  userFoapa.pNumber +
+                  "-" +
+                  userFoapa.a2Number;
+                console.log(concatFoapa);
 
-              connection.query(
-                "SELECT * FROM FOAPA WHERE foapaNumber = ?",
-                [concatFoapa],
-                (err, rows) => {
-                  if (err) {
-                    reject(err);
-                  }
-                  console.log("rows" + rows);
-                  if (rows !== undefined) {
-                    if (rows.length <= 0) {
-                      connection.query("INSERT INTO FOAPA VALUES(?,?)", [
-                        userFoapa.foapaName,
-                        concatFoapa,
-                      ]);
+                connection.query(
+                  "SELECT * FROM FOAPA WHERE foapaNumber = ?",
+                  [concatFoapa],
+                  (err, rows) => {
+                    if (err) {
+                      console.log(err);
+                      reject(err);
                     }
-                  }
+                    console.log("rows" + rows);
+                    if (rows !== undefined) {
+                      if (rows.length <= 0) {
+                        connection.query("INSERT INTO FOAPA VALUES(?,?)", [
+                          userFoapa.foapaName,
+                          concatFoapa,
+                        ]);
+                      }
+                    }
 
-                  connection.query(
-                    "INSERT INTO Possesses VALUES(?,?)",
-                    [employmentNumber, concatFoapa],
-                    (err) => {
-                      resolve(err);
-                    }
-                  );
-                }
-              );
-            });
+                    connection.query(
+                      "INSERT INTO Possesses VALUES(?,?)",
+                      [employmentNumber, concatFoapa],
+                      (err) => {
+                        if (err) {
+                          reject(err);
+                        } else {
+                          resolve();
+                        }
+                      }
+                    );
+                  }
+                );
+              });
+            } else {
+              resolve();
+            }
           }
         }
       );

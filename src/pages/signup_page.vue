@@ -145,12 +145,19 @@
             <div class="input-field">
               <label for="state">State: *</label>
               <input
+                list="states"
                 type="text"
                 name="State"
                 id="state"
                 v-model="userSignupData.state"
                 required
               />
+
+              <datalist id="states">
+                <option :value="state" v-for="state in states">
+                  {{ state }}
+                </option>
+              </datalist>
             </div>
           </div>
           <div class="input-field-wrapper">
@@ -167,12 +174,19 @@
             <div class="input-field">
               <label for="country">Country: *</label>
               <input
+                list="countries"
                 type="text"
                 name="Country"
                 id="country"
                 v-model="userSignupData.country"
                 required
               />
+
+              <datalist id="countries">
+                <option :value="country" v-for="country in countries">
+                  {{ country }}
+                </option>
+              </datalist>
             </div>
           </div>
           <div class="foapa-section">
@@ -191,6 +205,7 @@
                   name="FOAPA Name"
                   id="foapa-name"
                   v-model="userFoapaStuff.foapaName"
+                  required="false"
                 />
               </div>
               :
@@ -201,6 +216,7 @@
                   id="f-input"
                   placeholder="xxxxxx"
                   v-model="userFoapaStuff.fNumber"
+                  required="false"
                 />
               </div>
               -
@@ -211,6 +227,7 @@
                   id="o-input"
                   placeholder="xxxx"
                   v-model="userFoapaStuff.oNumber"
+                  required="false"
                 />
               </div>
               -
@@ -221,6 +238,7 @@
                   id="a-input"
                   placeholder="xxxx"
                   v-model="userFoapaStuff.aNumber"
+                  required="false"
                 />
               </div>
               -
@@ -231,6 +249,7 @@
                   id="p-input"
                   placeholder="xxxx"
                   v-model="userFoapaStuff.pNumber"
+                  required="false"
                 />
               </div>
               -
@@ -241,6 +260,7 @@
                   id="a2-input"
                   placeholder="xxxx"
                   v-model="userFoapaStuff.a2Number"
+                  required="false"
                 />
               </div>
               <button class="add-foapa-button" type="button" @click="addFoapa">
@@ -281,7 +301,7 @@
               Go Back
             </button>
             <button class="signup-button" type="submit" style="margin-top: 0px">
-              Continue
+              Register
             </button>
           </div>
         </section>
@@ -335,6 +355,258 @@ let surveyProgress = ref<number>(0);
 let foapaList = ref<FoapaStuff[]>([]);
 
 const router = useRouter();
+
+const states = [
+  "AL",
+  "AK",
+  "AZ",
+  "AR",
+  "CA",
+  "CO",
+  "CT",
+  "DE",
+  "FL",
+  "GA",
+  "HI",
+  "ID",
+  "IL",
+  "IN",
+  "IA",
+  "KS",
+  "KY",
+  "LA",
+  "ME",
+  "MD",
+  "MA",
+  "MI",
+  "MN",
+  "MS",
+  "MO",
+  "MT",
+  "NE",
+  "NV",
+  "NH",
+  "NJ",
+  "NM",
+  "NY",
+  "NC",
+  "ND",
+  "OH",
+  "OK",
+  "OR",
+  "PA",
+  "RI",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
+  "UT",
+  "VT",
+  "VA",
+  "WA",
+  "WV",
+  "WI",
+  "WY",
+];
+
+const countries = [
+  "Afghanistan",
+  "Albania",
+  "Algeria",
+  "Andorra",
+  "Angola",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Brazil",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Cape Verde",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Colombia",
+  "Comoros",
+  "Congo (Congo-Brazzaville)",
+  "Costa Rica",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czechia (Czech Republic)",
+  "Democratic Republic of the Congo",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Eswatini (fmr. 'Swaziland')",
+  "Ethiopia",
+  "Fiji",
+  "Finland",
+  "France",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Greece",
+  "Grenada",
+  "Guatemala",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Holy See",
+  "Honduras",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Israel",
+  "Italy",
+  "Ivory Coast",
+  "Jamaica",
+  "Japan",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kiribati",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Mauritania",
+  "Mauritius",
+  "Mexico",
+  "Micronesia",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Morocco",
+  "Mozambique",
+  "Myanmar (formerly Burma)",
+  "Namibia",
+  "Nauru",
+  "Nepal",
+  "Netherlands",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "North Korea",
+  "North Macedonia",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Palau",
+  "Palestine",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Qatar",
+  "Romania",
+  "Russia",
+  "Rwanda",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "South Korea",
+  "South Sudan",
+  "Spain",
+  "Sri Lanka",
+  "Sudan",
+  "Suriname",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Timor-Leste (East Timor)",
+  "Togo",
+  "Tonga",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turkmenistan",
+  "Tuvalu",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States of America",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Venezuela",
+  "Vietnam",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe",
+];
 
 let userSignupData = reactive<UserData>({
   firstName: "",
