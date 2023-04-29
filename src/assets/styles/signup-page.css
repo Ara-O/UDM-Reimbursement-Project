@@ -18,8 +18,8 @@ input {
   font-weight: 600;
   font-size: 32px;
   width: 400px;
+  margin-bottom: 0px;
   margin-top: 0px;
-  margin-bottom: 37px;
   text-align: left;
 }
 
@@ -60,6 +60,10 @@ input {
   width: 1050px;
 }
 
+.foapa-section {
+  margin-top: 40px;
+}
+
 .foapa-section label {
   font-size: 14px;
 }
@@ -81,6 +85,9 @@ input {
   align-items: center;
   width: 255px;
   justify-content: space-between;
+}
+
+.span-field {
 }
 
 .input-field input {
@@ -116,10 +123,17 @@ input {
   align-items: center;
 }
 
+.signup-title-description {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
 .signup-button {
   background-color: var(--udmercy-blue);
   color: white;
-  padding: 10px 70px;
+  padding: 10px 40px;
   border: solid 1px;
   width: 232px;
   height: 50px;
@@ -200,7 +214,6 @@ input {
     width: 350px;
     margin: auto;
     line-height: 45px;
-    margin-bottom: 30px;
     margin-top: 50px;
   }
 
@@ -230,7 +243,7 @@ input {
     flex-direction: column;
   }
 
-  .already-has-account {
+  .required-field-note {
     margin-bottom: 60px;
   }
 

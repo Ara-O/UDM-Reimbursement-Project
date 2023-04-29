@@ -784,6 +784,25 @@ app.get("/api/generatePdf", function (req, res) {
   );
 });
 
+connection.query(
+  "ALTER TABLE ReimbursementTicket MODIFY employmentNumber VARCHAR(255)",
+  function (err) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("yay changed");
+    }
+  }
+);
+
+// connection.query("SELECT * FROM Possesses", (err, rows) => {
+//   if (err) {
+//     console.log(err);
+//   } else {
+//     console.log(rows);
+//   }
+// });
+
 app.get("/close", () => {
   connection.end();
 });

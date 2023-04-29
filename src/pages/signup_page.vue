@@ -18,8 +18,17 @@
         />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
+      <h3 class="signup-title-description" v-if="surveyProgress === 0">
+        Basic Questions
+      </h3>
+      <h3 class="signup-title-description" v-if="surveyProgress === 1">
+        Address Information
+      </h3>
+      <h3 class="signup-title-description" v-if="surveyProgress === 2">
+        User Foapa Information (Not Required)
+      </h3>
 
-      <form @submit.prevent="registerUser" class="signup-form">
+      <section class="signup-form">
         <section v-show="surveyProgress === 0" class="signup-form">
           <div class="input-field-wrapper">
             <div class="input-field">
@@ -29,7 +38,6 @@
                 name="First name"
                 id="first-name"
                 v-model="userSignupData.firstName"
-                required
               />
             </div>
             <div class="input-field">
@@ -39,7 +47,6 @@
                 name="Last Name"
                 id="last-name"
                 v-model="userSignupData.lastName"
-                required
               />
             </div>
             <div class="input-field">
@@ -48,23 +55,35 @@
                 type="email"
                 name="Work Email"
                 id="work-email"
-                placeholder="@udmercy.edu"
                 v-model="userSignupData.workEmail"
-                required
               />
             </div>
           </div>
           <div class="input-field-wrapper">
             <div class="input-field">
               <label for="employment-number">Employment Number: *</label>
-              <input
-                type="number"
-                name="Employment Number"
-                style="width: 90px"
-                id="employment-number"
-                v-model="userSignupData.employmentNumber"
-                required
-              />
+              <span style="position: relative">
+                <span
+                  style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-51px, -50%);
+                  "
+                  ><h3
+                    style="font-size: 14px; font-weight: 400; color: #474747"
+                  >
+                    T
+                  </h3></span
+                >
+                <input
+                  type="text"
+                  name="Employment Number"
+                  style="width: 130px; padding-left: 25px"
+                  id="employment-number"
+                  v-model="userSignupData.employmentNumber"
+                />
+              </span>
             </div>
             <div class="input-field">
               <label for="phone-number">Phone: *</label>
@@ -73,31 +92,26 @@
                 name="Phone Number"
                 id="phone-number"
                 v-model="userSignupData.phoneNumber"
-                required
               />
             </div>
-            <div class="input-field">
-              <label for="street-address">Street Address: *</label>
-              <input
-                type="text"
-                name="Street Address"
-                id="street-address"
-                v-model="userSignupData.mailingAddress"
-                required
-              />
-            </div>
-          </div>
-          <div class="input-field-wrapper">
+
             <div class="input-field">
               <label for="department">Department: *</label>
               <input
+                list="departmentList"
                 type="text"
                 name="Department"
                 id="department"
                 v-model="userSignupData.department"
-                required
               />
+              <datalist id="departmentList">
+                <option :value="department" v-for="department in departments">
+                  {{ department }}
+                </option>
+              </datalist>
             </div>
+          </div>
+          <div class="input-field-wrapper">
             <div class="input-field">
               <label for="password">Password: *</label>
               <input
@@ -105,7 +119,6 @@
                 name="Password"
                 id="password"
                 v-model="userSignupData.password"
-                required
               />
             </div>
             <div class="input-field">
@@ -115,14 +128,13 @@
                 name="reenter-password"
                 id="reenter-password"
                 v-model="reEnteredPassword"
-                required
               />
             </div>
           </div>
           <button
             class="signup-button"
             type="button"
-            @click="surveyProgress = 1"
+            @click="finishedBasicQuestionsSection"
             style="margin-top: 0px"
           >
             Continue
@@ -133,13 +145,21 @@
         <section v-show="surveyProgress === 1" class="signup-form">
           <div class="input-field-wrapper">
             <div class="input-field">
+              <label for="street-address">Street Address: *</label>
+              <input
+                type="text"
+                name="Street Address"
+                id="street-address"
+                v-model="userSignupData.mailingAddress"
+              />
+            </div>
+            <div class="input-field">
               <label for="city">City: *</label>
               <input
                 type="text"
                 name="City"
                 id="city"
                 v-model="userSignupData.city"
-                required
               />
             </div>
             <div class="input-field">
@@ -150,7 +170,6 @@
                 name="State"
                 id="state"
                 v-model="userSignupData.state"
-                required
               />
 
               <datalist id="states">
@@ -168,7 +187,6 @@
                 name="Zip Code"
                 id="zip-code"
                 v-model="userSignupData.zipCode"
-                required
               />
             </div>
             <div class="input-field">
@@ -179,7 +197,6 @@
                 name="Country"
                 id="country"
                 v-model="userSignupData.country"
-                required
               />
 
               <datalist id="countries">
@@ -189,7 +206,30 @@
               </datalist>
             </div>
           </div>
-          <div class="foapa-section">
+
+          <div class="continue-buttons">
+            <button
+              class="signup-button"
+              type="button"
+              @click="surveyProgress = 0"
+              style="margin-top: 0px"
+            >
+              Go Back
+            </button>
+            <button
+              class="signup-button"
+              type="button"
+              style="margin-top: 0px"
+              @click="finishedAddressSection"
+            >
+              Continue
+            </button>
+          </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section v-show="surveyProgress === 2" class="signup-form">
+          <div>
             <div>
               <label for="foapa-numbers"
                 >FOAPA [ FUND - ORG - ACCT - PROG - ACTV ]:</label
@@ -284,32 +324,36 @@
               <h3>-</h3>
               <h3>{{ foapa.a2Number }}</h3>
             </div>
-          </div>
-          <div class="continue-buttons">
-            <button
-              class="signup-button"
-              type="button"
-              @click="surveyProgress = 0"
-              style="margin-top: 0px"
-            >
-              Go Back
-            </button>
-            <button class="signup-button" type="submit" style="margin-top: 0px">
-              Register
-            </button>
+            <div class="continue-buttons" style="margin-top: 20px">
+              <button
+                class="signup-button"
+                type="button"
+                @click="surveyProgress--"
+                style="margin-top: 0px"
+              >
+                Go Back
+              </button>
+              <button
+                class="signup-button"
+                @click="registerUser"
+                style="margin-top: 0px"
+              >
+                Create Account
+              </button>
+            </div>
           </div>
         </section>
 
-        <router-link
-          to="/"
-          style="font-size: 14px; margin-top: -15px"
-          class="already-has-account"
+        <router-link to="/" style="font-size: 14px; margin-top: -15px"
           >Already have an Account</router-link
         >
-        <h5 style="font-weight: 300; margin: 0px; margin-top: -25px">
+        <h5
+          class="required-field-note"
+          style="font-weight: 300; margin-top: -25px"
+        >
           Note: All required fields must be filled
         </h5>
-      </form>
+      </section>
     </section>
   </section>
 </template>
@@ -323,7 +367,7 @@ type UserData = {
   firstName: string;
   lastName: string;
   workEmail: string;
-  employmentNumber: number;
+  employmentNumber: string;
   department: string;
   mailingAddress: string;
   phoneNumber: string;
@@ -602,19 +646,64 @@ const countries = [
   "Zimbabwe",
 ];
 
+const departments = [
+  "Computer Science",
+  "Electrical Engineering",
+  "Mechanical Engineering",
+  "Civil Engineering",
+  "Chemical Engineering",
+  "Biology",
+  "Chemistry",
+  "Physics",
+  "Mathematics",
+  "Statistics",
+  "Psychology",
+  "Sociology",
+  "Anthropology",
+  "History",
+  "Philosophy",
+  "English",
+  "Foreign Languages",
+  "Business",
+  "Economics",
+  "Political Science",
+  "Law",
+  "Education",
+  "Journalism",
+  "Fine Arts",
+  "Music",
+  "Theater",
+  "Architecture",
+];
+
+// let userSignupData = reactive<UserData>({
+//   firstName: "",
+//   lastName: "",
+//   workEmail: "@udmercy.edu",
+//   employmentNumber: "",
+//   department: "",
+//   mailingAddress: "",
+//   phoneNumber: "",
+//   password: "",
+//   zipCode: 0,
+//   city: "",
+//   state: "",
+//   country: "",
+//   userFoapas: [],
+// });
 let userSignupData = reactive<UserData>({
-  firstName: "",
-  lastName: "",
-  workEmail: "",
-  employmentNumber: 0,
-  department: "",
-  mailingAddress: "",
-  phoneNumber: "",
-  password: "",
+  firstName: "Ara",
+  lastName: "ee",
+  workEmail: "@udmercy.edu",
+  employmentNumber: "232",
+  department: "comp sci",
+  mailingAddress: "something adress something",
+  phoneNumber: "322-323-232-",
+  password: "bob",
   zipCode: 0,
-  city: "",
-  state: "",
-  country: "",
+  city: "Detroit",
+  state: "Mi",
+  country: "USA",
   userFoapas: [],
 });
 
@@ -628,41 +717,100 @@ let userFoapaStuff = reactive<FoapaStuff>({
 });
 
 function addFoapa() {
-  let currentFoapa = reactive<FoapaStuff>({
-    fNumber: userFoapaStuff.fNumber,
-    oNumber: userFoapaStuff.oNumber,
-    aNumber: userFoapaStuff.aNumber,
-    pNumber: userFoapaStuff.pNumber,
-    a2Number: userFoapaStuff.a2Number,
-    foapaName: userFoapaStuff.foapaName,
-  });
-  foapaList.value.push(currentFoapa);
+  const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber", "a2Number"];
+  for (let i = 0; i < foapaFields.length; i++) {
+    if (userFoapaStuff[foapaFields[i]] === "") {
+      alert("Can't have empty foapa fields");
+      break;
+    }
+
+    if (i === foapaFields.length - 1) {
+      let currentFoapa = reactive<FoapaStuff>({
+        fNumber: userFoapaStuff.fNumber,
+        oNumber: userFoapaStuff.oNumber,
+        aNumber: userFoapaStuff.aNumber,
+        pNumber: userFoapaStuff.pNumber,
+        a2Number: userFoapaStuff.a2Number,
+        foapaName: userFoapaStuff.foapaName,
+      });
+      foapaList.value.push(currentFoapa);
+    }
+  }
+}
+
+function finishedAddressSection() {
+  let dataShown = ["mailingAddress", "city", "state", "zipCode", "country"];
+  for (let i = 0; i < dataShown.length; i++) {
+    if (userSignupData[dataShown[i]] === "") {
+      console.log("field empty");
+      alert(
+        `The ${dataShown[i]
+          .replace(/([A-Z])/g, " $1")
+          .toLowerCase()} field is empty`
+      );
+      break;
+    }
+
+    if (i === dataShown.length - 1) {
+      surveyProgress.value++;
+    }
+  }
+}
+
+function finishedBasicQuestionsSection() {
+  //Manually doing it, going to use a better validation library next semester
+  let dataShown = [
+    "firstName",
+    "lastName",
+    "workEmail",
+    "employmentNumber",
+    "phoneNumber",
+    "department",
+    "password",
+  ];
+
+  for (let i = 0; i < dataShown.length; i++) {
+    if (userSignupData[dataShown[i]] === "") {
+      console.log("field empty");
+      alert(
+        `The ${dataShown[i]
+          .replace(/([A-Z])/g, " $1")
+          .toLowerCase()} field is empty`
+      );
+      break;
+    }
+
+    if (i === dataShown.length - 1) {
+      if (reEnteredPassword.value !== userSignupData.password) {
+        alert("Passwords do not match, please try again");
+      } else {
+        surveyProgress.value++;
+      }
+    }
+  }
 }
 
 function registerUser() {
   //Calls the api/register function and passes the user data, if it was successful, push to the dashboard page
   //or else, alert the user of an error
 
-  if (reEnteredPassword.value === userSignupData.password) {
-    userSignupData.userFoapas = foapaList.value;
+  userSignupData.userFoapas = foapaList.value;
+  userSignupData.employmentNumber = "T" + userSignupData.employmentNumber;
 
-    axios
-      .post("/api/register", userSignupData)
-      .then(() => {
-        alert("User registration successful");
-        localStorage.setItem(
-          "employmentNumber",
-          userSignupData.employmentNumber.toString()
-        );
-        router.push("/dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-        alert(err.response.data.message);
-      });
-  } else {
-    alert("Passwords do not match, please try again");
-  }
+  axios
+    .post("/api/register", userSignupData)
+    .then(() => {
+      alert("User registration successful");
+      localStorage.setItem(
+        "employmentNumber",
+        userSignupData.employmentNumber.toString()
+      );
+      router.push("/dashboard");
+    })
+    .catch((err) => {
+      console.log(err);
+      alert(err.response.data.message);
+    });
 }
 
 onMounted(() => {

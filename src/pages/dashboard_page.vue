@@ -80,17 +80,13 @@
         >
           <h3>Remove filter</h3>
         </div>
-        <div class="add-button filter" @click="addReimbursement">
-          <img src="../assets/add-icon.png" alt="Add icon" class="add-icon" />
-        </div>
       </div>
       <br />
       <h3 style="font-weight: 500; font-size: 14.5px">
-        All Reimbursements
-        <!-- -
+        All Reimbursements -
         <router-link to="/add-reimbursement" class="add-reimbursement-link"
           >Click here to add reimbursement ticket</router-link
-        > -->
+        >
       </h3>
       <br />
       <div class="reimbursement-wrapper">
