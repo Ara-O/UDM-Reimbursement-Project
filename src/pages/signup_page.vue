@@ -692,18 +692,18 @@ const departments = [
 //   userFoapas: [],
 // });
 let userSignupData = reactive<UserData>({
-  firstName: "Ara",
-  lastName: "ee",
+  firstName: "",
+  lastName: "",
   workEmail: "@udmercy.edu",
-  employmentNumber: "232",
-  department: "comp sci",
-  mailingAddress: "something adress something",
-  phoneNumber: "322-323-232-",
-  password: "bob",
+  employmentNumber: "",
+  department: "",
+  mailingAddress: "",
+  phoneNumber: "",
+  password: "",
   zipCode: 0,
-  city: "Detroit",
-  state: "Mi",
-  country: "USA",
+  city: "",
+  state: "",
+  country: "",
   userFoapas: [],
 });
 
