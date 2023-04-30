@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import bodyParser from "body-parser";
 import mysql from "mysql";
 import * as dotenv from "dotenv";
+
 dotenv.config();
 import {
   facultyTable,

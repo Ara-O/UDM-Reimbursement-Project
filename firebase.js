@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getDatabase } from "firebase/database";
+import { getDatabase, ref, set } from "firebase/database";
 import { getAuth } from "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -10,15 +10,15 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAFGzSMVZ9R1XcJ1QGR1DpTlzeUgd3qZ08",
-  authDomain: "reimbursementsystem.firebaseapp.com",
-  projectId: "reimbursementsystem",
-  storageBucket: "reimbursementsystem.appspot.com",
-  messagingSenderId: "773086410004",
-  appId: "1:773086410004:web:5c8fceb0ac1a848f4dbe01",
-  measurementId: "G-VEP9M9C5C8",
-  databaseURL: "https://reimbursementsystem-default-rtdb.firebaseio.com.firebaseio.com",
-};
+    apiKey: process.env.FB_API_KEY,
+    authDomain: process.env.FB_AUTH_DOMAIN,
+    projectId: process.env.FB_PROJECT_ID,
+    storageBucket: process.env.FB_STORAGE_BUCKET,
+    messagingSenderId: process.env.FB_MESSAGING_SENDER_ID,
+    appId: process.env.FB_APP_ID,
+    measurementId: process.env.FB_MEASUREMENT_ID,
+    databaseURL: process.env.FB_DATABASE_URL,
+  };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
