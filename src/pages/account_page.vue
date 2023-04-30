@@ -43,6 +43,25 @@
               />
             </div>
             <div class="input-field">
+              <label for="country">Country:</label>
+              <input
+                list="countries"
+                type="text"
+                name="Country"
+                id="country"
+                v-model="accountInfo.country"
+                required
+              />
+
+              <datalist id="countries">
+                <option :value="country" v-for="country in countries">
+                  {{ country }}
+                </option>
+              </datalist>
+            </div>
+          </div>
+          <div class="input-field-wrapper">
+            <div class="input-field">
               <label for="work-email">Work Email: </label>
               <input
                 type="email"
@@ -51,6 +70,34 @@
                 v-model="accountInfo.workEmail"
                 required
               />
+            </div>
+
+            <div class="input-field">
+              <label for="department">Department:</label>
+              <input
+                type="text"
+                name="Department"
+                id="department"
+                v-model="accountInfo.department"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="state">State:</label>
+              <input
+                list="states"
+                type="text"
+                name="State"
+                id="state"
+                v-model="accountInfo.state"
+                required
+              />
+
+              <datalist id="states">
+                <option :value="state" v-for="state in states">
+                  {{ state }}
+                </option>
+              </datalist>
             </div>
           </div>
           <div class="input-field-wrapper">
@@ -64,6 +111,7 @@
                 required
               />
             </div>
+
             <div class="input-field">
               <label for="street-address">Street Address:</label>
               <input
@@ -74,17 +122,19 @@
                 required
               />
             </div>
+
             <div class="input-field">
-              <label for="department">Department:</label>
+              <label for="city">City:</label>
               <input
                 type="text"
-                name="Department"
-                id="department"
-                v-model="accountInfo.department"
+                name="City"
+                id="city"
+                v-model="accountInfo.city"
                 required
               />
             </div>
           </div>
+
           <div class="input-field-wrapper">
             <div class="input-field">
               <label for="password">Password:</label>
@@ -107,36 +157,6 @@
               />
             </div>
             <div class="input-field">
-              <label for="city">City:</label>
-              <input
-                type="text"
-                name="City"
-                id="city"
-                v-model="accountInfo.city"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="input-field-wrapper">
-            <div class="input-field">
-              <label for="state">State:</label>
-              <input
-                list="states"
-                type="text"
-                name="State"
-                id="state"
-                v-model="accountInfo.state"
-                required
-              />
-
-              <datalist id="states">
-                <option :value="state" v-for="state in states">
-                  {{ state }}
-                </option>
-              </datalist>
-            </div>
-            <div class="input-field">
               <label for="zip-code">Zip Code:</label>
               <input
                 type="number"
@@ -145,23 +165,6 @@
                 v-model="accountInfo.zipCode"
                 required
               />
-            </div>
-            <div class="input-field">
-              <label for="country">Country:</label>
-              <input
-                list="countries"
-                type="text"
-                name="Country"
-                id="country"
-                v-model="accountInfo.country"
-                required
-              />
-
-              <datalist id="countries">
-                <option :value="country" v-for="country in countries">
-                  {{ country }}
-                </option>
-              </datalist>
             </div>
           </div>
           <!-- IN CASE IN THE FUTURE, WE ADD FOAPA NUMBERS -->
