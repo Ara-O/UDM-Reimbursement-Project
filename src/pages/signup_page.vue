@@ -362,6 +362,8 @@
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getDatabase, ref as reference, set } from "firebase/database";
 
 type UserData = {
   firstName: string;
@@ -715,6 +717,24 @@ let userFoapaStuff = reactive<FoapaStuff>({
   a2Number: "",
   foapaName: "",
 });
+
+// // Initialize Firebase Authentication and get a reference to the service
+// const auth = getAuth(app);
+// let password = userSignupData.password.toString()
+// let email = userSignupData.workEmail.toString()
+// const firebaseDatabase = getDatabase(app);
+
+// createUserWithEmailAndPassword(auth, email, password)
+//   .then((userCredential) => {
+//     const userId = userCredential.user.uid;
+//     set(reference(firebaseDatabase, 'users/' + userId), {
+//     email: email,
+//     password: password 
+//   });
+//   })
+//   .catch((error) => {
+//     console.error("Error creating user: ", error);
+//   });
 
 function addFoapa() {
   const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber", "a2Number"];

@@ -114,9 +114,9 @@
       <div class="add-receipt">
         <div class="add-receipt-text">Add Receipt:</div>
         <input
+         ref="receiptRef"
           type="file"
-          id="avatar"
-          name="avatar"
+           name="avatar"
           accept="image/png, image/jpeg"
         />
       </div>
@@ -133,9 +133,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
+// import { getDatabase, ref as reference, set } from "firebase/database";
 
 const router = useRouter();
 const route = useRoute();
@@ -147,6 +148,44 @@ type Activity = {
   activityDate: string;
   activityReceipt: string;
 };
+
+const receiptArray: any[] = [];
+const receiptRef = ref<any>(null);
+  watchEffect(() => {
+    // note: this doesnt add the base64 url, just the input element to the array
+    console.log("ooog booga", receiptRef.value)
+    // Initialize Realtime Database and get a reference to the service
+    // const firebaseDatabase = getDatabase();
+if (receiptRef.value) {
+  console.log("there is a file input")
+  receiptRef.value.addEventListener('change', (event) => {
+    const file = (event.target as HTMLInputElement)?.files?.[0];
+    console.log("file: " + file)
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const imageUrl = event.target?.result as string;
+        if (imageUrl) {
+          receiptArray.push(imageUrl)
+          console.log(receiptArray)
+          console.log(imageUrl)
+          // writeImageReceipt(localStorage.getItem("employmentNumber"), imageUrl);
+        }
+      };
+    }
+  });
+}else{
+  console.log("there is no file input")
+  
+}
+})
+
+function writeImageReceipt(userId, imageUrl) {
+  // set(reference(firebaseDatabase, 'users/' + userId), {
+  //   image_receipt : imageUrl
+  // });
+}
 
 function goToHomePage() {
   router.push("/dashboard");
@@ -204,7 +243,7 @@ function addActivity() {
     foapaNumber: foapaNumber.value,
     activityDate: activityDate.value,
     activityId: Number(generateRandomId()),
-    activityReceipt: "Activity Receipt",
+    activityReceipt: receiptArray.join("%%%%%"),
   });
 
   console.log(allActivities.value);
