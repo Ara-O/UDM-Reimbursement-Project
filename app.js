@@ -755,12 +755,12 @@ const firebaseConfig = {
 
 initializeApp(firebaseConfig);
 
+app.post("/api/register", registerUser);
 //APIs
 app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
 // app.get("/api/retriveFoapaName", retrieveFoapaName);
 app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
-app.post("/api/register", registerUser);
 app.post("/api/updateAccountInfo", updateAccountInfo);
 app.post("/api/addReimbursement", addReimbursement);
 app.post("/api/addFoapaNumber", addFoapaNumber);
