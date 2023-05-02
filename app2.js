@@ -742,22 +742,25 @@ function generatePdf(docDefinition, callback) {
 }
 
 //APIs
-app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
-// app.get("/api/retriveFoapaName", retrieveFoapaName);
+
+//DONE APIS
+app.post("/api/register", registerUser);
 app.get("/api/retrieveUserInformation", retrieveUserInformation);
 app.get("/api/retrieveAccountInfo", retrieveAccountInfo);
-app.post("/api/register", registerUser);
 app.post("/api/updateAccountInfo", updateAccountInfo);
-app.post("/api/addReimbursement", addReimbursement);
 app.post("/api/addFoapaNumber", addFoapaNumber);
+app.get("/api/retrieveFoapaNumbers", retrieveFoapaNumbers);
 app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
 app.post("/api/addReimbursement", addReimbursement);
+app.post("/api/addReimbursement", addReimbursement);
+app.post("/api/login", loginUser);
 app.get("/api/retrieveReimbursements", retrieveReimbursements);
 app.get("/api/retrieveTicketInformation", retrieveTicketInformation);
 app.post("/api/updateReimbursement", updateReimbursementTicket);
-app.post("/api/addFoapaNumber", addFoapaNumber);
-app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
-app.post("/api/login", loginUser);
+// app.post("/api/deleteFoapaNumber", deleteFoapaNumber);
+//UNDONE
+// app.get("/api/retriveFoapaName", retrieveFoapaName);
+// app.post("/api/addFoapaNumber", addFoapaNumber);
 app.get("/api/generatePdf", function (req, res) {
   console.log(req.query);
   const docDefinition = {

@@ -16,6 +16,7 @@
     "firebase": "^9.21.0",
     "mongodb": "^5.3.0",
     "mysql": "^2.18.1",
+    "mysql2": "^3.2.4",
     "pdfmake": "^0.2.7",
     "pdfmake-unicode": "^0.0.1",
     "vue": "^3.2.47",

@@ -1,5 +1,5 @@
 let facultyTable = `CREATE TABLE IF NOT EXISTS Faculty (
-    employmentNumber int NOT NULL,
+    employmentNumber varchar(255) NOT NULL,
     fName varchar(45) NOT NULL,
     lName varchar(45) NOT NULL,
     workEmail varchar(45) NOT NULL,
@@ -39,19 +39,21 @@ let foapaTable = `CREATE TABLE IF NOT EXISTS FOAPA (
 
 let possessesTable = `
 CREATE TABLE IF NOT EXISTS Possesses (
-  employmentNumber int NOT NULL,
+  employmentNumber varchar(255) NOT NULL,
   foapaNumber varchar(45) NOT NULL,
   PRIMARY KEY (employmentNumber, foapaNumber)
   );`;
 
-// FOREIGN KEY (employmentNumber) REFERENCES Faculty(employmentNumber),
+// FOREIGN KEY (employmentNumber) REFERENCES Faculty(employmentNumber)
+//ON DELETE CASCADE,
 // FOREIGN KEY (foapaNumber) REFERENCES FOAPA(foapaNumber)
+//ON DELETE CASCADE
 
 let activityTable = `CREATE TABLE IF NOT EXISTS Activity (
     activityId int NOT NULL,
     foapaNumber varchar(45) NOT NULL,
     activityName varchar(45) NOT NULL,
-    activityReceipt varchar(45) NOT NULL,
+    activityReceipt text NOT NULL,
     activityDate date NOT NULL,
     amount float NOT NULL,
     PRIMARY KEY (activityId)
@@ -60,7 +62,7 @@ let activityTable = `CREATE TABLE IF NOT EXISTS Activity (
 
 let reimbursementTable = `CREATE TABLE IF NOT EXISTS ReimbursementTicket (
     reimbursementId int NOT NULL,
-    employmentNumber int NOT NULL,
+    employmentNumber varchar(255) NOT NULL,
     eventName varchar(45) NOT NULL,
     totalAmount float NOT NULL,
     reimbursementStatus bool NOT NULL,

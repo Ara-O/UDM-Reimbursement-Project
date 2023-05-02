@@ -692,18 +692,18 @@ const departments = [
 //   userFoapas: [],
 // });
 let userSignupData = reactive<UserData>({
-  firstName: "",
-  lastName: "",
-  workEmail: "@udmercy.edu",
-  employmentNumber: "",
-  department: "",
-  mailingAddress: "",
-  phoneNumber: "",
-  password: "",
-  zipCode: 0,
-  city: "",
-  state: "",
-  country: "",
+  firstName: "Ara",
+  lastName: "Ob",
+  workEmail: "bob@udmercy.edu",
+  employmentNumber: "3222",
+  department: "Comp sci",
+  mailingAddress: "120 fake street",
+  phoneNumber: "313-33-133",
+  password: "bob",
+  zipCode: 32233,
+  city: "det",
+  state: "mi",
+  country: "usa",
   userFoapas: [],
 });
 
@@ -795,7 +795,9 @@ function registerUser() {
   //or else, alert the user of an error
 
   userSignupData.userFoapas = foapaList.value;
-  userSignupData.employmentNumber = "T" + userSignupData.employmentNumber;
+  if (!userSignupData.employmentNumber.toUpperCase().includes("T")) {
+    userSignupData.employmentNumber = "T" + userSignupData.employmentNumber;
+  }
 
   axios
     .post("/api/register", userSignupData)
