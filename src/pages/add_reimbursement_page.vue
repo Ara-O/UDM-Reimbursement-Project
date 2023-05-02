@@ -10,11 +10,7 @@
         </h4>
         <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
         <div class="delete-option" @click="deleteActivity(activity.activityId)">
-          <img
-            src="../assets/trash-icon-white.png"
-            alt="Trash icon"
-            class="trash-icon"
-          />
+          <img src="../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon" />
         </div>
       </div>
       <div class="cta-buttons">
@@ -27,23 +23,11 @@
     </section>
     <section class="reimbursement-section">
       <div class="reimbursement-title">
-        <input
-          class="reimbursement-title-text"
-          v-model="reimbursementTitle"
-          placeholder="Reimbursement Title"
-        />
-        <img
-          src="../assets/edit-icon.png"
-          class="edit-icon-button"
-          alt="Edit icon"
-        />
+        <input class="reimbursement-title-text" v-model="reimbursementTitle" placeholder="Reimbursement Title" />
+        <img src="../assets/edit-icon.png" class="edit-icon-button" alt="Edit icon" />
       </div>
       <div style="display: flex; align-items: center; gap: 20px; height: 20px">
-        <img
-          src="../assets/user-help-icon.png"
-          alt="Help icon"
-          class="help-icon"
-        />
+        <img src="../assets/user-help-icon.png" alt="Help icon" class="help-icon" />
         <h4 style="font-weight: 300; font-size: 14px">
           Choose from one of the default options below or select other to create
           another type of expense
@@ -52,12 +36,7 @@
       <br />
       <h4 style="font-weight: 500">Expenses</h4>
       <div class="expenses-section">
-        <input
-          list="defaults"
-          name="defaultOptions"
-          v-model="chosenExpense"
-          class="input-field"
-        />
+        <input list="defaults" name="defaultOptions" v-model="chosenExpense" class="input-field" />
 
         <datalist id="defaults">
           <option :value="expense" v-for="expense in expensesDefaults">
@@ -70,13 +49,7 @@
         <br />
         <span>
           <h3>Cost:</h3>
-          <input
-            v-model="expenseCost"
-            type="number"
-            placeholder="$ Cost"
-            min="0"
-            class="input-field"
-          />
+          <input v-model="expenseCost" type="number" placeholder="$ Cost" min="0" class="input-field" />
         </span>
       </div>
       <br />
@@ -87,38 +60,21 @@
       <div class="foapa-and-date-section">
         <div>
           <h3>FOAPA Number to use:</h3>
-          <select
-            placeholder="Select FOAPA to pay for activity with"
-            class="input-field"
-            v-model="foapaNumber"
-          >
-            <option
-              :value="foapaNumber.foapaNumber"
-              v-for="foapaNumber in foapaNumbersToSelectFrom"
-            >
+          <select placeholder="Select FOAPA to pay for activity with" class="input-field" v-model="foapaNumber">
+            <option :value="foapaNumber.foapaNumber" v-for="foapaNumber in foapaNumbersToSelectFrom">
               {{ foapaNumber.foapaNumber }}
             </option>
           </select>
         </div>
         <div>
           <h3>Date Of Activity:</h3>
-          <input
-            type="date"
-            v-model="activityDate"
-            placeholder="Date of Activity"
-            class="input-field"
-          />
+          <input type="date" v-model="activityDate" placeholder="Date of Activity" class="input-field" />
         </div>
       </div>
 
       <div class="add-receipt">
         <div class="add-receipt-text">Add Receipt:</div>
-        <input
-         ref="receiptRef"
-          type="file"
-           name="avatar"
-          accept="image/png, image/jpeg"
-        />
+        <input ref="receiptRef" type="file" @change="handleFileUpload" name="avatar" accept="image/png, image/jpeg" multiple />
       </div>
       <h5 class="terms-and-conditions">
         By adding an activity; I hereby certify that this claim is correct and
@@ -140,6 +96,8 @@ import axios from "axios";
 
 const router = useRouter();
 const route = useRoute();
+const receiptArray: any[] = [];
+
 type Activity = {
   activityId: number;
   activityName: string;
@@ -148,44 +106,6 @@ type Activity = {
   activityDate: string;
   activityReceipt: string;
 };
-
-const receiptArray: any[] = [];
-const receiptRef = ref<any>(null);
-  watchEffect(() => {
-    // note: this doesnt add the base64 url, just the input element to the array
-    console.log("ooog booga", receiptRef.value)
-    // Initialize Realtime Database and get a reference to the service
-    // const firebaseDatabase = getDatabase();
-if (receiptRef.value) {
-  console.log("there is a file input")
-  receiptRef.value.addEventListener('change', (event) => {
-    const file = (event.target as HTMLInputElement)?.files?.[0];
-    console.log("file: " + file)
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const imageUrl = event.target?.result as string;
-        if (imageUrl) {
-          receiptArray.push(imageUrl)
-          console.log(receiptArray)
-          console.log(imageUrl)
-          // writeImageReceipt(localStorage.getItem("employmentNumber"), imageUrl);
-        }
-      };
-    }
-  });
-}else{
-  console.log("there is no file input")
-  
-}
-})
-
-function writeImageReceipt(userId, imageUrl) {
-  // set(reference(firebaseDatabase, 'users/' + userId), {
-  //   image_receipt : imageUrl
-  // });
-}
 
 function goToHomePage() {
   router.push("/dashboard");
@@ -236,6 +156,23 @@ let foapaNumbersToSelectFrom = ref([
   },
 ]);
 
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  const filePath = URL.createObjectURL(file);
+  receiptArray.push(filePath); // Add the new file path to receiptArray
+  console.log("This is the filePath: " + filePath)
+}
+
+// Combine all file paths in receiptArray into a single string with "%%%%%" delimiter
+function getReceiptString() {
+  return receiptArray.join("|||||");
+}
+
+// Split the activityReceipt string and return an array of file paths
+function getReceiptArray(activityReceipt) {
+  return activityReceipt.split("|||||");
+}
+
 function addActivity() {
   allActivities.value.push({
     activityName: chosenExpense.value,
@@ -243,9 +180,11 @@ function addActivity() {
     foapaNumber: foapaNumber.value,
     activityDate: activityDate.value,
     activityId: Number(generateRandomId()),
-    activityReceipt: receiptArray.join("%%%%%"),
+    activityReceipt: getReceiptString(),
   });
 
+  console.log(receiptArray)
+  console.log(receiptArray.length)
   console.log(allActivities.value);
   chosenExpense.value = foapaNumber.value = activityDate.value = "";
   expenseCost.value = 0;
@@ -297,9 +236,8 @@ function getCurrentDate(): string {
   const year = today.getFullYear();
   const month = today.getMonth() + 1; // add 1 because getMonth() returns 0-11
   const day = today.getDate();
-  const formattedDate = `${year}-${month < 10 ? "0" + month : month}-${
-    day < 10 ? "0" + day : day
-  }`;
+  const formattedDate = `${year}-${month < 10 ? "0" + month : month}-${day < 10 ? "0" + day : day
+    }`;
 
   return formattedDate;
 }

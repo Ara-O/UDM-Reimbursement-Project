@@ -811,7 +811,7 @@ app.get("/api/generatePdf", function (req, res) {
 // );
 
 connection.query(
-  "ALTER TABLE Activity MODIFY activityReceipt TEXT",
+  "ALTER TABLE Activity MODIFY activityReceipt BLOB",
   function (err) {
     if (err) {
       console.log(err);
