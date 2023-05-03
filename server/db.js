@@ -10,14 +10,14 @@ import {
 
 //Related to connections with mysql database
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  port: 3306,
-  password: "password",
-  database: "reimbursement_db",
-});
-// const connection = mysql.createConnection(process.env.DATABASE_URL);
+// const connection = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   port: 3306,
+//   password: "password",
+//   database: "reimbursement_db",
+// });
+const connection = mysql.createConnection(process.env.DATABASE_URL);
 
 connection.connect(function (err) {
   if (err) {
