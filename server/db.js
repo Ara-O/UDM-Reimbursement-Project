@@ -1,4 +1,4 @@
-import mysql from "mysql2";
+import mysql from "mysql";
 import {
   facultyTable,
   foapaTable,
@@ -28,9 +28,9 @@ connection.connect(function (err) {
   }
 });
 
-connection.on("error", function (err) {
-  console.log("[mysql error]", err.code);
-});
+// connection.on("error", function (err) {
+//   console.log("[mysql error]", err.code);
+// });
 //Creating all the necessary tables
 export function createTables() {
   connection.query(facultyTable, (err) => {

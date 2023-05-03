@@ -9,6 +9,7 @@ import reimbursementInformation from "./routes/reimbursementInformation.js";
 import pdfInformation from "./routes/pdfInformation.js";
 import { createTables } from "./db.js";
 import multer from "multer";
+import fs from "fs";
 
 dotenv.config();
 
