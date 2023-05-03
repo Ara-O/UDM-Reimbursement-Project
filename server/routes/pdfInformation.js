@@ -63,4 +63,5 @@ router.get("/generatePdf", (req, res) => {
   );
 });
 
+router.get("/storeActivityImages", (req, res) => {});
 export default router;

@@ -116,8 +116,10 @@
         <input
           type="file"
           id="avatar"
+          ref="receiptRef"
           name="avatar"
           accept="image/png, image/jpeg"
+          multiple
         />
       </div>
       <h5 class="terms-and-conditions">
@@ -137,6 +139,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 
+const receiptRef = ref(null);
 const router = useRouter();
 const route = useRoute();
 type Activity = {
@@ -197,14 +200,16 @@ let foapaNumbersToSelectFrom = ref([
   },
 ]);
 
-function addActivity() {
+async function addActivity() {
+  let storedImages = await storeActivityImage();
+  //TODO: Delete acivity image when they delete an activity
   allActivities.value.push({
     activityName: chosenExpense.value,
     amount: expenseCost.value,
     foapaNumber: foapaNumber.value,
     activityDate: activityDate.value,
     activityId: Number(generateRandomId()),
-    activityReceipt: "Activity Receipt",
+    activityReceipt: storedImages,
   });
 
   console.log(allActivities.value);
@@ -272,7 +277,34 @@ function deleteActivity(activityId: number) {
 }
 let reimbursementData = {};
 
-function saveReimbursement() {
+async function storeActivityImage() {
+  // FORM DATA
+  const formData = new FormData();
+
+  // Get the file inputs
+  //@ts-ignore
+  const files = receiptRef.value.files;
+  console.log(files);
+  for (let i = 0; i < files.length; i++) {
+    console.log(files);
+    formData.append("receipt-images", files[i]);
+  }
+
+  try {
+    // Send the FormData object to the server using axios
+    let res = await axios.post("/profile-upload-multiple", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // Set the content type header
+      },
+    });
+
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function saveReimbursement() {
   if (userIsEditingReimbursement.value === true) {
     reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
     allActivities.value.forEach((activity) => {
@@ -283,15 +315,17 @@ function saveReimbursement() {
     reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
     console.log(reimbursementDataFromDb.value);
 
-    axios
-      .post("/api/updateReimbursement", reimbursementDataFromDb.value)
-      .then((res) => {
-        console.log(res);
-        router.push("/dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    let updatingReimbursement = await axios.post(
+      "/api/updateReimbursement",
+      reimbursementDataFromDb.value
+    );
+    // .then((res) => {
+    //   console.log(res);
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
+    console.log(updatingReimbursement);
     alert("Reimbursement saved successfully");
   } else {
     let randomId: string = generateRandomId();
