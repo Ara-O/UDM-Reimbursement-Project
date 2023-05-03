@@ -104,7 +104,7 @@ type Activity = {
   amount: number;
   foapaNumber: string;
   activityDate: string;
-  activityReceipt: string;
+  activityReceipt: any;
 };
 
 function goToHomePage() {
@@ -171,6 +171,34 @@ function getReceiptString() {
 // Split the activityReceipt string and return an array of file paths
 function getReceiptArray(activityReceipt) {
   return activityReceipt.split("|||||");
+}
+
+function arrayBufferToBase64( buffer ) {
+    var binary = '';
+    let arr = new Uint8Array()
+    console.log("this is the buffer")
+    console.log(buffer.data)
+    console.log("this is the bytes")
+    var bytes = new Uint8Array( buffer.data );
+    console.log(bytes)
+    // console.log("bytes", bytes)
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
+function retrieveActivityReceipt() {
+  allActivities.value.forEach((activity)=> {
+
+    // Ara named this variable ; easter egg :)
+    let potatoe: any = activity.activityReceipt
+    const base64String = arrayBufferToBase64(potatoe)
+    console.log(base64String)
+    console.log("hello there")
+    console.log(activity.activityReceipt.data)
+  })
 }
 
 function addActivity() {
@@ -265,6 +293,7 @@ function saveReimbursement() {
       .then((res) => {
         console.log(res);
         router.push("/dashboard");
+        retrieveActivityReceipt()
       })
       .catch((err) => {
         console.log(err);

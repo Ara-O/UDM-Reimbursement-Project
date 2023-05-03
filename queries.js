@@ -1,5 +1,5 @@
 let facultyTable = `CREATE TABLE IF NOT EXISTS Faculty (
-    employmentNumber int NOT NULL,
+    employmentNumber varchar(255) NOT NULL,
     fName varchar(45) NOT NULL,
     lName varchar(45) NOT NULL,
     workEmail varchar(45) NOT NULL,
@@ -39,7 +39,7 @@ let foapaTable = `CREATE TABLE IF NOT EXISTS FOAPA (
 
 let possessesTable = `
 CREATE TABLE IF NOT EXISTS Possesses (
-  employmentNumber int NOT NULL,
+  employmentNumber varchar(255) NOT NULL,
   foapaNumber varchar(45) NOT NULL,
   PRIMARY KEY (employmentNumber, foapaNumber)
   );`;
@@ -60,7 +60,7 @@ let activityTable = `CREATE TABLE IF NOT EXISTS Activity (
 
 let reimbursementTable = `CREATE TABLE IF NOT EXISTS ReimbursementTicket (
     reimbursementId int NOT NULL,
-    employmentNumber int NOT NULL,
+    employmentNumber varchar(255) NOT NULL,
     eventName varchar(45) NOT NULL,
     totalAmount float NOT NULL,
     reimbursementStatus bool NOT NULL,
