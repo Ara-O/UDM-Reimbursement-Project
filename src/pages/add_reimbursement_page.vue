@@ -158,6 +158,8 @@ let foapaNumbersToSelectFrom = ref([
 
 function handleFileUpload(event) {
   const file = event.target.files[0];
+  console.log('this is for file')
+  console.log(file)
   const filePath = URL.createObjectURL(file);
   receiptArray.push(filePath); // Add the new file path to receiptArray
   console.log("This is the filePath: " + filePath)
@@ -197,9 +199,55 @@ function retrieveActivityReceipt() {
     const base64String = arrayBufferToBase64(potatoe)
     console.log(base64String)
     console.log("hello there")
+    downloadBase64File(base64String, "AraPotatoe.png")
     console.log(activity.activityReceipt.data)
   })
 }
+
+// function base64toFile(base64String, fileName) {
+//   const byteString = atob(base64String);
+//   const ab = new ArrayBuffer(byteString.length);
+//   const ia = new Uint8Array(ab);
+//   for (let i = 0; i < byteString.length; i++) {
+//     ia[i] = byteString.charCodeAt(i);
+//   }
+//   const blob = new Blob([ab], { type: 'application/octet-stream' });
+//   const file = new File([blob], fileName, { type: 'application/octet-stream' });
+//   console.log(file)
+//   return file;
+// }
+
+function downloadBase64File(base64Data, fileName) {
+  const fileExtension = fileName.split('.').pop().toLowerCase();
+  let mimeType;
+  switch (fileExtension) {
+    case 'png':
+      mimeType = 'image/png';
+      break;
+    case 'jpg':
+    case 'jpeg':
+      mimeType = 'image/jpeg';
+      break;
+    case 'pdf':
+      mimeType = 'application/pdf';
+      break;
+    default:
+      mimeType = 'application/octet-stream';
+  }
+  console.log('fileExtension:', fileExtension);
+  console.log('mimeType:', mimeType);
+  console.log('base64Data:', base64Data);
+  const linkSource = `data:${mimeType};base64,${base64Data}`;
+  console.log('linkSource:', linkSource);
+  const downloadLink = document.createElement("a");
+  downloadLink.href = linkSource;
+  downloadLink.download = fileName;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}
+
+
 
 function addActivity() {
   allActivities.value.push({
@@ -208,7 +256,7 @@ function addActivity() {
     foapaNumber: foapaNumber.value,
     activityDate: activityDate.value,
     activityId: Number(generateRandomId()),
-    activityReceipt: getReceiptString(),
+    activityReceipt: receiptArray,
   });
 
   console.log(receiptArray)
