@@ -292,7 +292,7 @@ async function storeActivityImage() {
 
   try {
     // Send the FormData object to the server using axios
-    let res = await axios.post("/profile-upload-multiple", formData, {
+    let res = await axios.post("/upload-activity-receipts", formData, {
       headers: {
         "Content-Type": "multipart/form-data", // Set the content type header
       },

@@ -45,14 +45,13 @@ app.use(express.static(__dirname + "/public"));
 app.use("/uploads", express.static("uploads"));
 
 app.post(
-  "/profile-upload-multiple",
+  "/upload-activity-receipts",
   upload.array("receipt-images", 12),
   function (req, res, next) {
-    // req.files is array of `profile-files` files
-    // req.body will contain the text fields, if there were any
     console.log(JSON.stringify(req.file));
     let response = "";
     for (let i = 0; i < req.files.length; i++) {
+      //XxXxXx is the delimeter cause i cant be bothered to think of sth better
       response += `${req.files[i].path}XxXxXx`;
     }
 
