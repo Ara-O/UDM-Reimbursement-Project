@@ -41,6 +41,11 @@ let storage = multer.diskStorage({
 });
 
 let upload = multer({ storage: storage });
+var dir = "/uploads";
+
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
+}
 app.use(express.static(__dirname + "/public"));
 app.use("/uploads", express.static("uploads"));
 
