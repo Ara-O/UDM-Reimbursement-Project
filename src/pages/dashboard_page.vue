@@ -8,14 +8,19 @@
           class="foapa-number"
           v-for="foapa in userFoapaNumbers"
           :key="foapa.foapaNumber"
-        >
-          <!-- <h3>{{ userFoapaName }} :</h3> -->
+          style="display:flex; flex-direction:column; align-items: start">
+
+          <h3 style="margin-top: 8px;"> {{ foapa.foapaName }} </h3>
+          <div style="display:flex; flex-direction: row; align-items: center; justify-content: space-around;">
           <h3>{{ foapa.foapaNumber }}</h3>
+          </div>
           <img
-            src="../assets/trash-icon.png"
-            alt="Trash"
-            @click="deleteFoapa(foapa.foapaNumber)"
-          />
+          src="../assets/trash-icon.png"
+          alt="Trash"
+          @click="deleteFoapa(foapa.foapaNumber)"
+          style="transform: translate(221px, -24px)"
+        />
+          
         </div>
         <div class="foapa-number">
           <input
@@ -149,14 +154,16 @@ const searchValue = ref<string>("");
 type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
-};
-type FoapaName = {
   foapaName: string;
 };
+// type FoapaName = {
+//   foapaName: string;
+// };
 
 let obj = ref({
   empNo: localStorage.getItem("employmentNumber"),
   foapaNumber: "",
+  foapaName: "",
 });
 
 let obj2 = ref({
@@ -239,12 +246,12 @@ function deleteFoapa(fNum: string) {
 }
 
 let userFoapaNumbers = ref<FoapaNumbers[]>([]);
-let userFoapaName = ref<FoapaName>;
+// let userFoapaName = ref<FoapaName>;
 
 function retrieveUserFoapaNumbers() {
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
-    .get(`/api/retrieveFoapaNumbers`, {
+    .get(`/api/retrieveFoapaNumbers2`, {
       params: { employmentNumber: storedEmploymentNumber },
     })
     .then((res) => {

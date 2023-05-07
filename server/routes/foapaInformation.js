@@ -48,6 +48,25 @@ router.get("/retrieveFoapaNumbers", (req, res) => {
   );
 });
 
+router.get("/retrieveFoapaNumbers2", (req, res) => {
+  const employmentNumber = req.query.employmentNumber;
+  connection.query(
+    "SELECT foa.foapaName, foa.foapaNumber" +
+    " FROM Foapa foa NATURAL JOIN Possesses pos"+
+    " WHERE pos.employmentNumber = ?",
+    [employmentNumber],
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error retrieving data" });
+      } else {
+        console.log("This" + rows);
+        res.json(rows);
+      }
+    }
+  );
+});
+
 router.post("/deleteFoapaNumber", (req, res) => {
   const employmentNumber = req.body.empNo2;
   const foapaNumber = req.body.foapaNumber2;
