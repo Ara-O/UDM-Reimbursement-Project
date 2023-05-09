@@ -52,7 +52,7 @@ router.get("/retrieveFoapaNumbers2", (req, res) => {
   const employmentNumber = req.query.employmentNumber;
   connection.query(
     "SELECT foa.foapaName, foa.foapaNumber" +
-    " FROM Foapa foa NATURAL JOIN Possesses pos"+
+    " FROM FOAPA foa JOIN Possesses pos ON foa.foapaNumber = pos.foapaNumber"+
     " WHERE pos.employmentNumber = ?",
     [employmentNumber],
     (err, rows) => {
