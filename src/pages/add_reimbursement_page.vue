@@ -94,9 +94,9 @@
           >
             <option
               :value="foapaNumber.foapaNumber"
-              v-for="foapaNumber in foapaNumbersToSelectFrom"
+              v-for="foapaNumber in userFoapaNumbers"
             >
-              {{ foapaNumber.foapaNumber }}
+              {{ foapaNumber.foapaName + ":\t" + foapaNumber.foapaNumber }}
             </option>
           </select>
         </div>
@@ -165,6 +165,18 @@ let userIsEditingReimbursement = ref<boolean>(false);
 let allActivities = ref<Array<Activity>>([]);
 let reimbursementDataFromDb = ref<any>([]);
 
+type FoapaNumbers={
+  employmentNumber: number;
+  foapaNumber: string;
+  foapaName: string;
+};
+
+let obj = ref({
+  empNo:localStorage.getItem("employmentNumber"),
+  foapaNumber: "",
+  foapaName: "",
+})
+
 watch(chosenExpenseOther, (newVal) => {
   if (newVal.length >= 0) {
     chosenExpense.value = chosenExpenseOther.value;
@@ -219,19 +231,37 @@ async function addActivity() {
 
 const storedEmploymentNumber = localStorage.getItem("employmentNumber");
 
+let userFoapaNumbers = ref<FoapaNumbers[]>([]);
+
 function retrieveFoapaNumbers() {
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
-    .get(`/api/retrieveFoapaNumbers`, {
+    .get(`/api/retrieveFoapaNumbers2`, {
       params: { employmentNumber: storedEmploymentNumber },
     })
     .then((res) => {
-      foapaNumbersToSelectFrom.value = res.data;
+      userFoapaNumbers.value = res.data;
     })
     .catch((err) => {
       console.log(err);
     });
 }
+
+// function retrieveFoapaNumbers() {
+//   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+//   axios
+//     .get(`/api/retrieveFoapaNumbers`, {
+//       params: { employmentNumber: storedEmploymentNumber },
+//     })
+//     .then((res) => {
+//       foapaNumbersToSelectFrom.value = res.data;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// }
+
+
 
 function generateRandomId(): string {
   const chars: string = "1234567890";
