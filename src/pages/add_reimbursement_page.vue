@@ -155,10 +155,10 @@ function goToHomePage() {
   router.push("/dashboard");
 }
 
-let chosenExpense = ref<string>("");
+let chosenExpense = ref<string>("Something");
 let chosenExpenseOther = ref<string>("");
-let expenseCost = ref<number>(0);
-let activityDate = ref<string>("");
+let expenseCost = ref<number>(2110);
+let activityDate = ref<string>("02/02/2022");
 let foapaNumber = ref<string>("");
 let reimbursementTitle = ref<string>("");
 let userIsEditingReimbursement = ref<boolean>(false);
@@ -213,7 +213,7 @@ let foapaNumbersToSelectFrom = ref([
 ]);
 
 async function addActivity() {
-  let storedImages = await storeActivityImage();
+  let storedImagesURL = await storeActivityImage();
   //TODO: Delete acivity image when they delete an activity
   allActivities.value.push({
     activityName: chosenExpense.value,
@@ -221,7 +221,7 @@ async function addActivity() {
     foapaNumber: foapaNumber.value,
     activityDate: activityDate.value,
     activityId: Number(generateRandomId()),
-    activityReceipt: storedImages,
+    activityReceipt: storedImagesURL,
   });
 
   console.log(allActivities.value);
@@ -306,28 +306,19 @@ function deleteActivity(activityId: number) {
   );
 }
 let reimbursementData = {};
-
 async function storeActivityImage() {
-  // FORM DATA
-  const formData = new FormData();
+  let formData = new FormData();
 
-  // Get the file inputs
   //@ts-ignore
   const files = receiptRef.value.files;
-  console.log(files);
   for (let i = 0; i < files.length; i++) {
-    console.log(files);
-    formData.append("receipt-images", files[i]);
+    const file = files[i];
+    formData.append("receipts", file);
   }
 
   try {
     // Send the FormData object to the server using axios
-    let res = await axios.post("/upload-activity-receipts", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data", // Set the content type header
-      },
-    });
-
+    let res = await axios.post("/api/storeActivityImages", formData);
     return res.data;
   } catch (err) {
     console.log(err);

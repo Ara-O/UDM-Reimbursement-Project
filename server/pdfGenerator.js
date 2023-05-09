@@ -1,6 +1,8 @@
-import fs from "fs";
-
-export default function createPdfDefinition(reimbursementData, userInfo) {
+export default function createPdfDefinition(
+  reimbursementData,
+  userInfo,
+  allImageIds
+) {
   console.log("generate pdf");
   // console.log(reimbursementData, userInfo);
   const { allActivities } = reimbursementData;
@@ -565,29 +567,12 @@ export default function createPdfDefinition(reimbursementData, userInfo) {
     }
   );
 
-  //Get content
-  allActivities.forEach((activity) => {
-    let receipts = [...activity.activityReceipt.split("XxXxXx")];
-    receipts.pop();
-    console.log(activity.activityReceipt.split("XxXxXx"));
-    receipts.forEach((receipt) => {
-      console.log("receipt", receipt);
-      content.push({
-        image: receipt.replace("\\\\", "/"),
-        width: 550,
-        height: 550,
-      });
-      // fs.readFile(receipt, function (err, data) {
-      //   console.log(receipt);
-      //   if (err) {
-      //     console.log(err);
-      //   } else {
-      // console.log(data);
-      // let base64 = Buffer.from(data).toString("base64");
-      //   }
-      // });
+  allImageIds.forEach((imgid) => {
+    content.push({
+      image: imgid,
+      width: 550,
+      height: 550,
     });
   });
-
   return content;
 }
