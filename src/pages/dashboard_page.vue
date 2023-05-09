@@ -10,7 +10,9 @@
           :key="foapa.foapaNumber"
           style="display: flex; flex-direction: column; align-items: start"
         >
-          <h3 style="margin-top: 8px">{{ foapa.foapaName }}</h3>
+          <h3 style="margin-top: 8px; font-weight: 500">
+            {{ foapa.foapaName }}
+          </h3>
           <div
             style="
               display: flex;
@@ -19,7 +21,7 @@
               justify-content: space-around;
             "
           >
-            <h3>{{ foapa.foapaNumber }}</h3>
+            <h3 style="margin-top: 10px">{{ foapa.foapaNumber }}</h3>
           </div>
           <img
             src="../assets/trash-icon.png"
@@ -28,7 +30,10 @@
             style="transform: translate(221px, -24px)"
           />
         </div>
-        <div class="foapa-number">
+        <div class="filter" @click="goToFoapaPage">
+          <h3>Add Foapa Number</h3>
+        </div>
+        <!-- <div class="foapa-number">
           <input
             type="text"
             name="Foapa Number"
@@ -40,7 +45,7 @@
             alt="add-icon2"
             @click="addFoapaNumber"
           />
-        </div>
+        </div> -->
       </div>
     </section>
 
@@ -217,25 +222,6 @@ function signOut() {
   alert("Successfully signed out!");
 }
 
-function addFoapaNumber() {
-  console.log(obj.value.foapaNumber);
-  if (obj.value.foapaNumber.trim().length !== 0) {
-    axios
-      .post("/api/addFoapaNumber", obj.value)
-      .then(() => {
-        alert("Foapa Number Added");
-        retrieveUserFoapaNumbers();
-        obj.value.foapaNumber = "";
-      })
-      .catch((err) => {
-        console.log(err);
-        alert(err.response.data.message);
-      });
-  } else {
-    alert("Please enter a number");
-  }
-}
-
 function deleteFoapa(fNum: string) {
   obj2.value.foapaNumber2 = fNum;
   axios
@@ -357,13 +343,17 @@ function sortBy(parameter: String) {
   }
 }
 
+function goToFoapaPage() {
+  router.push("/add-foapa");
+}
+
 onMounted(() => {
   if (
     localStorage.getItem("employmentNumber") === null ||
     localStorage.getItem("employmentNumber") === ""
   ) {
     console.log("no local storage item");
-    router.push("/");
+    // router.push("/");
   } else {
     retrieveUserInformation();
     retrieveUserFoapaNumbers();
