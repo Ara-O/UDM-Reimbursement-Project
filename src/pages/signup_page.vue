@@ -238,6 +238,7 @@
             <br />
             <div class="input-field-foapa-wrapper">
               <div class="input-FOAPA-field">
+                <label for="foapa-name">FOAPA Name</label>
                 <input
                   type="text"
                   style="width: 150px"
@@ -247,8 +248,11 @@
                   v-model="userFoapaStuff.foapaName"
                 />
               </div>
-              :
+              <h5>-</h5>
+
               <div class="input-FOAPA-field">
+                <label for="foapa-name">FUND</label>
+
                 <input
                   type="text"
                   name="F input"
@@ -257,8 +261,11 @@
                   v-model="userFoapaStuff.fNumber"
                 />
               </div>
-              -
+              <h5>-</h5>
+
               <div class="input-FOAPA-field">
+                <label for="foapa-name">ORG</label>
+
                 <input
                   type="text"
                   name="O input"
@@ -267,8 +274,10 @@
                   v-model="userFoapaStuff.oNumber"
                 />
               </div>
-              -
+              <h5>-</h5>
               <div class="input-FOAPA-field">
+                <label for="foapa-name">ACCT</label>
+
                 <input
                   type="text"
                   name="A input"
@@ -277,8 +286,11 @@
                   v-model="userFoapaStuff.aNumber"
                 />
               </div>
-              -
+              <h5>-</h5>
+
               <div class="input-FOAPA-field">
+                <label for="foapa-name">PROG</label>
+
                 <input
                   type="text"
                   name="P input"
@@ -287,8 +299,10 @@
                   v-model="userFoapaStuff.pNumber"
                 />
               </div>
-              -
+              <h5>-</h5>
               <div class="input-FOAPA-field">
+                <label for="foapa-name">ACTV</label>
+
                 <input
                   type="text"
                   name="A2 input"
@@ -395,25 +409,56 @@ let foapaList = ref<FoapaStuff[]>([]);
 const router = useRouter();
 
 const states = [
-  "AL", "AK", "AZ", "AR",
-  "CA", "CO", "CT",
+  "AL",
+  "AK",
+  "AZ",
+  "AR",
+  "CA",
+  "CO",
+  "CT",
   "DE",
   "FL",
   "GA",
   "HI",
-  "ID", "IL", "IN", "IA",
-  "KS", "KY",
+  "ID",
+  "IL",
+  "IN",
+  "IA",
+  "KS",
+  "KY",
   "LA",
-  "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT",
-  "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND",
-  "OH", "OK", "OR",
+  "ME",
+  "MD",
+  "MA",
+  "MI",
+  "MN",
+  "MS",
+  "MO",
+  "MT",
+  "NE",
+  "NV",
+  "NH",
+  "NJ",
+  "NM",
+  "NY",
+  "NC",
+  "ND",
+  "OH",
+  "OK",
+  "OR",
   "PA",
   "RI",
-  "SC", "SD",
-  "TN", "TX",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
   "UT",
-  "VT", "VA",
-  "WA", "WV", "WI", "WY",
+  "VT",
+  "VA",
+  "WA",
+  "WV",
+  "WI",
+  "WY",
 ];
 
 const countries = [
@@ -645,36 +690,36 @@ const departments = [
   "Architecture",
 ];
 
-// let userSignupData = reactive<UserData>({
-//   firstName: "",
-//   lastName: "",
-//   workEmail: "@udmercy.edu",
-//   employmentNumber: "",
-//   department: "",
-//   mailingAddress: "",
-//   phoneNumber: "",
-//   password: "",
-//   zipCode: 0,
-//   city: "",
-//   state: "",
-//   country: "",
-//   userFoapas: [],
-// });
 let userSignupData = reactive<UserData>({
-  firstName: "Ara",
-  lastName: "Ob",
-  workEmail: "bob@udmercy.edu",
-  employmentNumber: "3222",
-  department: "Comp sci",
-  mailingAddress: "120 fake street",
-  phoneNumber: "313-33-133",
-  password: "bob",
-  zipCode: 32233,
-  city: "det",
-  state: "mi",
-  country: "usa",
+  firstName: "",
+  lastName: "",
+  workEmail: "@udmercy.edu",
+  employmentNumber: "",
+  department: "",
+  mailingAddress: "",
+  phoneNumber: "",
+  password: "",
+  zipCode: 0,
+  city: "",
+  state: "",
+  country: "",
   userFoapas: [],
 });
+// let userSignupData = reactive<UserData>({
+//   firstName: "Ara",
+//   lastName: "Ob",
+//   workEmail: "bob@udmercy.edu",
+//   employmentNumber: "3222",
+//   department: "Comp sci",
+//   mailingAddress: "120 fake street",
+//   phoneNumber: "313-33-133",
+//   password: "bob",
+//   zipCode: 32233,
+//   city: "det",
+//   state: "mi",
+//   country: "usa",
+//   userFoapas: [],
+// });
 
 let userFoapaStuff = reactive<FoapaStuff>({
   fNumber: "",
@@ -689,7 +734,7 @@ function addFoapa() {
   const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber", "a2Number"];
   for (let i = 0; i < foapaFields.length; i++) {
     if (userFoapaStuff[foapaFields[i]] === "") {
-      alert("Can't have empty foapa fields");
+      alert("Some FOAPA information is missing, please try again.");
       break;
     }
 
@@ -703,7 +748,13 @@ function addFoapa() {
         foapaName: userFoapaStuff.foapaName,
       });
       foapaList.value.push(currentFoapa);
-      userFoapaStuff.foapaName = userFoapaStuff.fNumber = userFoapaStuff.oNumber = userFoapaStuff.aNumber = userFoapaStuff.pNumber = userFoapaStuff.a2Number = "";
+      userFoapaStuff.foapaName =
+        userFoapaStuff.fNumber =
+        userFoapaStuff.oNumber =
+        userFoapaStuff.aNumber =
+        userFoapaStuff.pNumber =
+        userFoapaStuff.a2Number =
+          "";
     }
   }
 }
@@ -723,6 +774,7 @@ function finishedAddressSection() {
 
     if (i === dataShown.length - 1) {
       surveyProgress.value++;
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
   }
 }
@@ -755,6 +807,7 @@ function finishedBasicQuestionsSection() {
         alert("Passwords do not match, please try again");
       } else {
         surveyProgress.value++;
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
       }
     }
   }

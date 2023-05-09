@@ -63,6 +63,7 @@ router.get("/generatePdf", (req, res) => {
   console.log(allActivities);
   let promises = [];
   allActivities.forEach((activity) => {
+    if (!activity.activityReceipt) return;
     let receipts = [...activity.activityReceipt.split("%%%%%")];
     receipts.pop();
     receipts.forEach((receipt) => {

@@ -85,6 +85,7 @@ input {
 .login-title {
   font-weight: 600;
   font-size: 25px;
+  margin-bottom: 4px;
 }
 
 .udmercy-logo {
@@ -148,6 +149,14 @@ input {
 }
 
 @media (max-width: 610px) {
+  .login-title {
+    font-size: 20px;
+    text-align: center;
+    width: 350px;
+    margin: 0px;
+    line-height: 45px;
+    margin-top: 0px;
+  }
   .input-field {
     flex-direction: column;
   }
@@ -174,9 +183,10 @@ input {
     padding: 30px;
   }
   .login-page {
-    height: auto;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    height: 95vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>

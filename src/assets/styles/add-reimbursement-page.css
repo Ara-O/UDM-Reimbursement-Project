@@ -177,7 +177,7 @@
   position: absolute;
   background-color: var(--udmercy-red);
   right: 30px;
-  bottom: 30px;
+  bottom: 75px;
   padding: 14px 15px;
   display: flex;
   cursor: pointer;
@@ -251,7 +251,16 @@
     padding-top: 30px;
   }
 
+  .all-activities-section {
+    height: auto;
+    align-items: start;
+  }
+
   .reimbursement-section {
     width: 80vw;
+  }
+
+  .cta-buttons {
+    justify-content: flex-start;
   }
 }

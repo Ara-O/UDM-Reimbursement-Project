@@ -38,7 +38,7 @@
 .foapa-number h3 {
   font-size: 14.5px;
   font-weight: 400;
-  margin-top: 0px; 
+  margin-top: 0px;
   margin-bottom: 0px;
 }
 
@@ -125,6 +125,7 @@
 
 .add-reimbursement-link {
   font-weight: 400;
+  color: var(--udmercy-blue);
 }
 
 .selected {
@@ -336,7 +337,12 @@
 }
 
 @media (max-width: 500px) {
-  .filter {
-    display: none;
+  .filter h3 {
+    font-size: 11.5px;
+  }
+
+  .search-filters {
+    gap: 14px;
+    column-gap: 9px;
   }
 }

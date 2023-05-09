@@ -18,12 +18,21 @@ function storeUserFoapaNumber(employmentNumber, userFoapas) {
           "-" +
           userFoapa.a2Number;
 
+        console.log("concat foapa", concatFoapa, userFoapa);
+
         connection.query(
-          "INSERT IGNORE INTO Foapa VALUES(?,?)",
+          "INSERT IGNORE INTO FOAPA VALUES(?,?)",
           [userFoapa.foapaName, concatFoapa],
           (err) => {
             if (err) {
-              reject("Error with Foapa");
+              if (err.code === "ER_NO_SUCH_TABLE") {
+                reject("A FOAPA table does not exist");
+              } else {
+                reject(
+                  "There has been an error inserting data into the FOAPA table"
+                );
+              }
+              console.log(err);
               return;
             } else {
               console.log("foapa success");
@@ -88,10 +97,18 @@ router.post("/register", (req, res) => {
       ],
       (err) => {
         if (err) {
-          reject("error");
-          res.status(409).send({ message: "Another user already exists" });
+          console.log(err.code);
+          if (err.code === "ER_DUP_ENTRY") {
+            reject("Another user already exists");
+          } else if (err.code === "ER_DATA_TOO_LONG") {
+            reject(
+              "A field exceeds the maximum length. Check to make sure the state field has only two 2 letters"
+            );
+          } else {
+            reject("There has been an error, please revise your data");
+          }
         } else {
-          resolve("success");
+          resolve("Success");
           console.log("no error");
         }
       }
@@ -100,16 +117,17 @@ router.post("/register", (req, res) => {
 
   facultyInsertion
     .then(() => {
+      console.log("Faculty table inserted successfully");
       storeUserFoapaNumber(employmentNumber, userFoapas)
         .then(() => {
           res.status(200).send({ message: "Successful registration!" });
         })
         .catch((err) => {
-          res.status(400).send({ message: "Error" });
+          res.status(400).send({ message: err });
         });
     })
     .catch((err) => {
-      console.log(err);
+      res.status(400).send({ message: err });
     });
 });
 

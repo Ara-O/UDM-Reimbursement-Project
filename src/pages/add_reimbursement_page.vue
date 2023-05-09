@@ -23,6 +23,12 @@
           Save for Later
         </button>
         <button class="go-back-button" @click="createPdf">Export to PDF</button>
+        <h5
+          style="font-weight: 400; margin-top: 2px"
+          v-show="currentlyAddingPDF"
+        >
+          Exporting to PDF, please wait...
+        </h5>
       </div>
     </section>
     <section class="reimbursement-section">
@@ -127,9 +133,16 @@
         reimbursable under published travel expense Policies & Procedures of UDM
       </h5>
       <br />
-      <button class="add-reimbursement-button" @click="addActivity">
+      <button
+        class="add-reimbursement-button"
+        @click="addActivity"
+        :disabled="currentlyAddingActivity"
+      >
         Add Activity
       </button>
+      <h5 style="font-weight: 400" v-show="currentlyAddingActivity">
+        Adding activity, please wait...
+      </h5>
     </section>
   </section>
 </template>
@@ -155,27 +168,28 @@ function goToHomePage() {
   router.push("/dashboard");
 }
 
-let chosenExpense = ref<string>("Something");
+let chosenExpense = ref<string>("");
 let chosenExpenseOther = ref<string>("");
-let expenseCost = ref<number>(2110);
-let activityDate = ref<string>("02/02/2022");
+let expenseCost = ref<number>(0);
+let activityDate = ref<string>("");
 let foapaNumber = ref<string>("");
 let reimbursementTitle = ref<string>("");
 let userIsEditingReimbursement = ref<boolean>(false);
 let allActivities = ref<Array<Activity>>([]);
 let reimbursementDataFromDb = ref<any>([]);
-
-type FoapaNumbers={
+let currentlyAddingActivity = ref<boolean>(false);
+let currentlyAddingPDF = ref<boolean>(false);
+type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
   foapaName: string;
 };
 
 let obj = ref({
-  empNo:localStorage.getItem("employmentNumber"),
+  empNo: localStorage.getItem("employmentNumber"),
   foapaNumber: "",
   foapaName: "",
-})
+});
 
 watch(chosenExpenseOther, (newVal) => {
   if (newVal.length >= 0) {
@@ -197,36 +211,32 @@ const expensesDefaults = [
   "Taxi/Bus/Car Rental",
 ];
 
-let foapaNumbersToSelectFrom = ref([
-  {
-    foapaNumber: "100-100",
-    employmentNumber: 201,
-  },
-  {
-    foapaNumber: "johny",
-    employmentNumber: 201,
-  },
-  {
-    foapaNumber: "busy",
-    employmentNumber: 201,
-  },
-]);
-
 async function addActivity() {
-  let storedImagesURL = await storeActivityImage();
-  //TODO: Delete acivity image when they delete an activity
-  allActivities.value.push({
-    activityName: chosenExpense.value,
-    amount: expenseCost.value,
-    foapaNumber: foapaNumber.value,
-    activityDate: activityDate.value,
-    activityId: Number(generateRandomId()),
-    activityReceipt: storedImagesURL,
-  });
+  if (
+    chosenExpense.value !== "" &&
+    expenseCost.value !== 0 &&
+    foapaNumber.value !== "" &&
+    activityDate.value !== ""
+  ) {
+    currentlyAddingActivity.value = true;
+    let storedImagesURL = await storeActivityImage();
+    //TODO: Delete acivity image when they delete an activity
+    allActivities.value.push({
+      activityName: chosenExpense.value,
+      amount: expenseCost.value,
+      foapaNumber: foapaNumber.value,
+      activityDate: activityDate.value,
+      activityId: Number(generateRandomId()),
+      activityReceipt: storedImagesURL,
+    });
 
-  console.log(allActivities.value);
-  chosenExpense.value = foapaNumber.value = activityDate.value = "";
-  expenseCost.value = 0;
+    console.log(allActivities.value);
+    chosenExpense.value = foapaNumber.value = activityDate.value = "";
+    expenseCost.value = 0;
+    currentlyAddingActivity.value = false;
+  } else {
+    alert("Missing field, please check to make sure all fields are filled");
+  }
 }
 
 const storedEmploymentNumber = localStorage.getItem("employmentNumber");
@@ -260,8 +270,6 @@ function retrieveFoapaNumbers() {
 //       console.log(err);
 //     });
 // }
-
-
 
 function generateRandomId(): string {
   const chars: string = "1234567890";
@@ -316,12 +324,14 @@ async function storeActivityImage() {
     formData.append("receipts", file);
   }
 
-  try {
-    // Send the FormData object to the server using axios
-    let res = await axios.post("/api/storeActivityImages", formData);
-    return res.data;
-  } catch (err) {
-    console.log(err);
+  if (files.length > 0) {
+    try {
+      // Send the FormData object to the server using axios
+      let res = await axios.post("/api/storeActivityImages", formData);
+      return res.data;
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 
@@ -383,6 +393,7 @@ function downloadPDF(pdfData: string) {
 }
 
 function createPdf() {
+  currentlyAddingPDF.value = true;
   //Send user information
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
@@ -407,6 +418,7 @@ function createPdf() {
           })
           .then((res) => {
             downloadPDF(res.data);
+            currentlyAddingPDF.value = false;
           })
           .catch((err) => {
             console.log(err);
@@ -431,6 +443,7 @@ function createPdf() {
           })
           .then((res) => {
             downloadPDF(res.data);
+            currentlyAddingPDF.value = false;
           })
           .catch((err) => {
             console.log(err);

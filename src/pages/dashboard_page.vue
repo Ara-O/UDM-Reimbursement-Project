@@ -8,19 +8,25 @@
           class="foapa-number"
           v-for="foapa in userFoapaNumbers"
           :key="foapa.foapaNumber"
-          style="display:flex; flex-direction:column; align-items: start">
-
-          <h3 style="margin-top: 8px;"> {{ foapa.foapaName }} </h3>
-          <div style="display:flex; flex-direction: row; align-items: center; justify-content: space-around;">
-          <h3>{{ foapa.foapaNumber }}</h3>
+          style="display: flex; flex-direction: column; align-items: start"
+        >
+          <h3 style="margin-top: 8px">{{ foapa.foapaName }}</h3>
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              justify-content: space-around;
+            "
+          >
+            <h3>{{ foapa.foapaNumber }}</h3>
           </div>
           <img
-          src="../assets/trash-icon.png"
-          alt="Trash"
-          @click="deleteFoapa(foapa.foapaNumber)"
-          style="transform: translate(221px, -24px)"
-        />
-          
+            src="../assets/trash-icon.png"
+            alt="Trash"
+            @click="deleteFoapa(foapa.foapaNumber)"
+            style="transform: translate(221px, -24px)"
+          />
         </div>
         <div class="foapa-number">
           <input
