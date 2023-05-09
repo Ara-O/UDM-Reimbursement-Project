@@ -114,13 +114,13 @@
         <h3>{{ foapa.pNumber }}</h3>
         <h3>-</h3>
         <h3>{{ foapa.a2Number }}</h3>
-        <img
+        <!-- <img
           src="../assets/trash-icon.png"
           alt="Trash"
           class="delete-icon"
           @click="deleteFoapa(foapa.foapaName, foapa.fNumber)"
           style="width: 15px; margin-left: 15px; cursor: pointer"
-        />
+        /> -->
       </div>
       <div style="display: flex; gap: 22px">
         <button class="add-foapa-button" @click="updateFoapa">
@@ -159,11 +159,19 @@ let userFoapaStuff = reactive<FoapaStuff>({
   foapaName: "",
 });
 
-function deleteFoapa(foapaName, fNumber) {
-  foapaList.value = foapaList.value.filter(
-    (foapa) => foapa.foapaName !== foapaName || foapa.fNumber !== fNumber
-  );
-}
+// function deleteFoapa(foapaName, fNumber) {
+//   axios
+//     .post("/api/deleteFoapaNumber")
+//     .then(() => {
+//       foapaList.value = foapaList.value.filter(
+//         (foapa) => foapa.foapaName !== foapaName || foapa.fNumber !== fNumber
+//       );
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       alert(err.response.data.message);
+//     });
+// }
 
 function addFoapa() {
   const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber", "a2Number"];
