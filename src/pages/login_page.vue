@@ -50,9 +50,11 @@ function loginUser() {
   axios
     .post("/api/login", userInfo.value)
     .then((res) => {
-      localStorage.setItem("employmentNumber", res.data.employmentNumber);
       console.log(res);
-      alert("User Login successful");
+      alert(res.data.message);
+      localStorage.setItem("token", res.data.token);
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
       router.push("/dashboard");
     })
     .catch((err) => {

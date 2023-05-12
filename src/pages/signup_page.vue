@@ -824,12 +824,11 @@ function registerUser() {
 
   axios
     .post("/api/register", userSignupData)
-    .then(() => {
-      alert("User registration successful");
-      localStorage.setItem(
-        "employmentNumber",
-        userSignupData.employmentNumber.toString()
-      );
+    .then((res) => {
+      alert(res.data.message);
+      localStorage.setItem("token", res.data.token);
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
       router.push("/dashboard");
     })
     .catch((err) => {
