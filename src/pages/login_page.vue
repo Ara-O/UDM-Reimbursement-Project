@@ -64,8 +64,10 @@ function loginUser() {
 }
 
 onMounted(() => {
-  if (localStorage.getItem("employmentNumber")?.length ?? 0 > 0) {
+  if (localStorage.getItem("token")?.length ?? 0 > 0) {
     console.log("user is already signed in");
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
     router.push("/dashboard");
   }
 });

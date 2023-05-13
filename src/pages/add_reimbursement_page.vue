@@ -397,7 +397,7 @@ function createPdf() {
   //Send user information
   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
-    .get(`/api/retrieveAccountInfo`, {
+    .get(`/api/retrieveAccountInformation`, {
       params: { employmentNumber: storedEmploymentNumber },
     })
     .then((response) => {

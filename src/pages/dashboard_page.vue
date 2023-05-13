@@ -217,7 +217,7 @@ function closeConnection() {
 }
 
 function signOut() {
-  localStorage.setItem("employmentNumber", "");
+  localStorage.setItem("token", "");
   router.push("/");
   alert("Successfully signed out!");
 }
@@ -270,18 +270,21 @@ function retrieveUserFoapaNumbers() {
 //     })
 // }
 
-function retrieveUserInformation() {
-  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+function retrieveUserInformationSummary() {
   axios
-    .get(`/api/retrieveUserInformation`, {
-      params: { employmentNumber: storedEmploymentNumber },
-    })
+    .get(`/api/retrieveUserInformationSummary`)
     .then((res) => {
-      userInfo.value = res.data[0];
+      userInfo.value = res.data;
       console.log(res);
     })
     .catch((err) => {
       console.log(err);
+      if (err.response.status === 401 || err.response.status === 403) {
+        //If JWT is expired, clear the token and go back to signup page
+        alert(err.response.data.message);
+        localStorage.setItem("token", "");
+        router.push("/");
+      }
     });
 }
 
@@ -349,13 +352,13 @@ function goToFoapaPage() {
 
 onMounted(() => {
   if (
-    localStorage.getItem("employmentNumber") === null ||
-    localStorage.getItem("employmentNumber") === ""
+    localStorage.getItem("token") === null ||
+    localStorage.getItem("token") === ""
   ) {
-    console.log("no local storage item");
+    console.log("User not signed in");
     // router.push("/");
   } else {
-    retrieveUserInformation();
+    retrieveUserInformationSummary();
     retrieveUserFoapaNumbers();
 
     axios

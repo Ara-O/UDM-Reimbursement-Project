@@ -28,7 +28,7 @@
                 type="text"
                 name="First name"
                 id="first-name"
-                v-model="accountInfo.fName"
+                v-model="accountInfo.firstName"
                 required
               />
             </div>
@@ -38,7 +38,7 @@
                 type="text"
                 name="Last Name"
                 id="last-name"
-                v-model="accountInfo.lName"
+                v-model="accountInfo.lastName"
                 required
               />
             </div>
@@ -113,12 +113,12 @@
             </div>
 
             <div class="input-field">
-              <label for="street-address">Street Address:</label>
+              <label for="mailing-address">Mailing Address:</label>
               <input
                 type="text"
-                name="Street Address"
-                id="street-address"
-                v-model="accountInfo.streetAddress"
+                name="Mailing Address"
+                id="mailing-address"
+                v-model="accountInfo.mailingAddress"
                 required
               />
             </div>
@@ -136,7 +136,7 @@
           </div>
 
           <div class="input-field-wrapper">
-            <div class="input-field">
+            <!-- <div class="input-field">
               <label for="password">Password:</label>
               <input
                 type="password"
@@ -145,8 +145,8 @@
                 v-model="accountInfo.password"
                 required
               />
-            </div>
-            <div class="input-field">
+            </div> -->
+            <!-- <div class="input-field">
               <label for="reenter-password">Re-enter password:</label>
               <input
                 type="password"
@@ -155,7 +155,7 @@
                 v-model="reEnteredPassword"
                 required
               />
-            </div>
+            </div> -->
             <div class="input-field">
               <label for="zip-code">Zip Code:</label>
               <input
@@ -300,54 +300,33 @@ type FoapaStuff = {
 const router = useRouter();
 
 type UserData = {
-  fName: string;
-  lName: string;
+  firstName: string;
+  lastName: string;
   workEmail: string;
   department: string;
-  streetAddress: string;
+  mailingAddress: string;
   phoneNumber: string;
-  password: string;
   zipCode: number;
   city: string;
   state: string;
   country: string;
 };
+
 let foapaList = ref<FoapaStuff[]>([]);
-function addFoapa() {
-  let currentFoapa = reactive<FoapaStuff>({
-    fNumber: userFoapaStuff.fNumber,
-    oNumber: userFoapaStuff.oNumber,
-    aNumber: userFoapaStuff.aNumber,
-    pNumber: userFoapaStuff.pNumber,
-    a2Number: userFoapaStuff.a2Number,
-    foapaName: userFoapaStuff.foapaName,
-  });
-  foapaList.value.push(currentFoapa);
-}
 
 let accountInfo = ref<UserData>({
-  fName: "",
-  lName: "",
+  firstName: "",
+  lastName: "",
   workEmail: "",
   department: "",
-  streetAddress: "",
+  mailingAddress: "",
   phoneNumber: "",
-  password: "",
   zipCode: 0,
   city: "",
   state: "",
   country: "",
 });
 
-let reEnteredPassword = ref<string>("");
-let userFoapaStuff = reactive<FoapaStuff>({
-  fNumber: "",
-  oNumber: "",
-  aNumber: "",
-  pNumber: "",
-  a2Number: "",
-  foapaName: "",
-});
 const states = [
   "AL",
   "AK",
@@ -618,13 +597,10 @@ function save() {
 }
 
 function retrieveAccountInformation() {
-  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
-    .get(`/api/retrieveAccountInfo`, {
-      params: { employmentNumber: storedEmploymentNumber },
-    })
+    .get(`/api/retrieveAccountInformation`)
     .then((res) => {
-      accountInfo.value = res.data[0];
+      accountInfo.value = res.data;
       console.log(res);
     })
     .catch((err) => {
@@ -633,13 +609,7 @@ function retrieveAccountInformation() {
 }
 
 onMounted(() => {
-  if (localStorage.getItem("employmentNumber") === null) {
-    console.log("no local storage item");
-    // Commenting out cau
-    router.push("/");
-  } else {
-    retrieveAccountInformation();
-  }
+  retrieveAccountInformation();
 });
 </script>
 

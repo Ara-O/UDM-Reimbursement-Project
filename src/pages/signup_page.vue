@@ -838,7 +838,9 @@ function registerUser() {
 }
 
 onMounted(() => {
-  if (localStorage.getItem("employmentNumber")?.length ?? 0 > 0) {
+  if (localStorage.getItem("token")?.length ?? 0 > 0) {
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
     console.log("user is already signed in");
     router.push("/dashboard");
   }
