@@ -146,6 +146,7 @@
 </template>
 
 <script lang="ts" setup>
+import "../assets/styles/add-foapa-page.css";
 import axios from "axios";
 import { reactive, ref, onMounted } from "vue";
 import router from "../router";
@@ -221,12 +222,11 @@ function addFoapa() {
 
 function updateFoapa() {
   axios
-    .post("/api/addFoapaNumber", {
+    .post("/api/updateFoapaDetails", {
       foapaData: foapaList.value,
-      employmentNumber: localStorage.getItem("employmentNumber"),
     })
-    .then(() => {
-      alert("Foapa numbers updated");
+    .then((res) => {
+      alert(res.data.message);
       router.push("/dashboard");
     })
     .catch((err) => {
@@ -235,12 +235,9 @@ function updateFoapa() {
     });
 }
 
-function retrieveFoapaNumbers() {
-  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+function retrieveFoapaDetails() {
   axios
-    .get(`/api/retrieveFoapaNumbers2`, {
-      params: { employmentNumber: storedEmploymentNumber },
-    })
+    .get(`/api/retrieveFoapaDetails`)
     .then((res) => {
       res.data.forEach((foapa) => {
         let foapaEdited: FoapaStuff = {
@@ -272,191 +269,6 @@ function retrieveFoapaNumbers() {
 }
 
 onMounted(() => {
-  retrieveFoapaNumbers();
+  retrieveFoapaDetails();
 });
 </script>
-
-<style scoped>
-input {
-  outline: none;
-}
-
-.add-foapa-title {
-  font-weight: 600;
-  font-size: 25px;
-}
-
-.input-field-foapa-wrapper {
-  display: flex;
-  width: auto;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 20px;
-  row-gap: 30px;
-  justify-content: flex-start;
-  align-items: flex-end;
-}
-
-.input-FOAPA-field {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.input-FOAPA-field label {
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.input-FOAPA-field input {
-  width: 90px;
-  height: 36px;
-  text-align: center;
-  background: #ffffff;
-  border: 1px solid #f7f7f7;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
-  border-radius: 5px;
-  display: inline-flex;
-}
-
-.update-foapa-button {
-  background-color: var(--udmercy-red);
-  background: #a5093e;
-  padding: 10px;
-  border: solid 1px var(--udmercy-red);
-  border-radius: 30px;
-  cursor: pointer;
-  margin-top: 2px;
-  height: 36px;
-  margin-bottom: 0px;
-  display: inline-flex;
-  /* justify-content: center; */
-  align-items: center;
-}
-
-.add-foapa-button {
-  background-color: var(--udmercy-red);
-  background: #a5093e;
-  padding: 10px;
-  border: solid 1px var(--udmercy-red);
-  border-radius: 30px;
-  cursor: pointer;
-  margin-top: 2px;
-  height: 36px;
-  margin-bottom: 0px;
-  display: inline-flex;
-  /* justify-content: center; */
-  align-items: center;
-}
-.input-field-foapa-wrapper h5 {
-  margin-bottom: 10px;
-}
-
-.add-foapa-button {
-  background-color: var(--udmercy-red);
-  border-radius: 30px;
-  display: flex;
-  align-items: center;
-  margin-top: 20px;
-  color: white;
-  font-size: 12px;
-  height: 45px;
-  justify-content: center;
-  width: 150px;
-  cursor: pointer;
-  border: solid 1px var(--udmercy-red);
-  padding: 8px 20px;
-}
-
-.add-foapa-page {
-  height: 100vh;
-  display: flex;
-  column-gap: 130px;
-  row-gap: 50px;
-  justify-content: center;
-  align-items: center;
-}
-
-.continue-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-}
-
-.added-foapa-number {
-  display: flex;
-
-  align-items: center;
-}
-
-.added-foapa-number h3 {
-  font-weight: 400;
-  font-size: 15px;
-}
-
-@media (max-width: 1350px) {
-  .udmercy-logo {
-    display: none;
-  }
-  .left-section {
-    display: none;
-  }
-}
-
-@media (max-width: 900px) {
-  .input-field-wrapper {
-    width: auto;
-  }
-
-  .left-section {
-    display: none;
-  }
-
-  .right-section {
-    width: 100%;
-  }
-}
-
-@media (max-width: 920px) {
-  .add-foapa-page {
-    column-gap: 60px;
-  }
-}
-
-@media (max-width: 750px) {
-  .add-foapa-page {
-    column-gap: 20px;
-    height: auto;
-    padding: 40px 0px;
-  }
-
-  .add-foapa-title {
-    text-align: center;
-  }
-
-  .added-foapa-number {
-    justify-content: center;
-  }
-
-  .input-FOAPA-field label {
-    text-align: center;
-  }
-
-  .input-field-foapa-wrapper h5 {
-    margin: 0px;
-    display: none;
-  }
-
-  .input-field-foapa-wrapper {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .continue-buttons {
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-}
-</style>

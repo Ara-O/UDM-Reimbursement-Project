@@ -3,7 +3,7 @@ export default function createPdfDefinition(
   userInfo,
   allImageIds
 ) {
-  console.log("generate pdf");
+  console.log("generate pdf", userInfo);
   // console.log(reimbursementData, userInfo);
   const { allActivities } = reimbursementData;
   let content = [];
@@ -55,7 +55,7 @@ export default function createPdfDefinition(
           {},
         ],
         [
-          { text: `${userInfo.fName} ${userInfo.lName}`, colSpan: 3 },
+          { text: `${userInfo.firstName} ${userInfo.lastName}`, colSpan: 3 },
           {},
           {},
           { text: "Email", colSpan: 2, italics: true },
@@ -79,7 +79,7 @@ export default function createPdfDefinition(
           },
         ],
         [
-          { text: `${userInfo.streetAddress}`, colSpan: 3 },
+          { text: `${userInfo.mailingAddress}`, colSpan: 3 },
           {},
           {},
           { text: "Phone", colSpan: 2, italics: true },

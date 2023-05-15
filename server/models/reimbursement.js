@@ -10,6 +10,20 @@ const reimbursementSchema = new Schema({
   totalAmount: Number,
   reimbursementStatus: Boolean,
   reimbursementDate: Date,
+  activities: [
+    {
+      activityId: {
+        type: Number,
+        unique: true,
+      },
+      reimbursementId: String,
+      foapaNumber: String,
+      activityName: String,
+      activityReceipt: String,
+      activityDate: String,
+      amount: Number,
+    },
+  ],
 });
 
 //reimbursements

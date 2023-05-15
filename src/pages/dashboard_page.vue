@@ -163,7 +163,6 @@ import { useRouter } from "vue-router";
 import { computed } from "@vue/reactivity";
 
 const router = useRouter();
-const storedEmploymentNumber = localStorage.getItem("employmentNumber");
 const searchValue = ref<string>("");
 
 type FoapaNumbers = {
@@ -171,20 +170,6 @@ type FoapaNumbers = {
   foapaNumber: string;
   foapaName: string;
 };
-// type FoapaName = {
-//   foapaName: string;
-// };
-
-let obj = ref({
-  empNo: localStorage.getItem("employmentNumber"),
-  foapaNumber: "",
-  foapaName: "",
-});
-
-let obj2 = ref({
-  empNo2: localStorage.getItem("employmentNumber"),
-  foapaNumber2: "",
-});
 
 type UserData = {
   firstName: string;
@@ -226,13 +211,12 @@ function signOut() {
   alert("Successfully signed out!");
 }
 
-function deleteFoapa(fNum: string) {
-  obj2.value.foapaNumber2 = fNum;
+function deleteFoapa(foapaNumber: string) {
   axios
-    .post("/api/deleteFoapaNumber", obj2.value)
+    .post("/api/deleteFoapaDetail", { foapaNumber })
     .then(() => {
-      console.log("The thing that was deleted: " + obj2.value);
-      alert("Foapa Number Deleted");
+      console.log("The thing that was deleted: " + foapaNumber);
+      alert("Foapa Deleted Successfully");
       retrieveUserFoapaNumbers();
     })
     .catch((err) => {
@@ -242,14 +226,10 @@ function deleteFoapa(fNum: string) {
 }
 
 let userFoapaNumbers = ref<FoapaNumbers[]>([]);
-// let userFoapaName = ref<FoapaName>;
 
 function retrieveUserFoapaNumbers() {
-  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
-    .get(`/api/retrieveFoapaNumbers2`, {
-      params: { employmentNumber: storedEmploymentNumber },
-    })
+    .get(`/api/retrieveFoapaDetails`)
     .then((res) => {
       userFoapaNumbers.value = res.data;
       console.log(res);
@@ -258,21 +238,6 @@ function retrieveUserFoapaNumbers() {
       console.log(err);
     });
 }
-
-// function retrieveFoapaName(){
-//   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
-//   axios
-//     .get(`/api/retrieveFoapaName`,{
-//       params: {employmentNumber: storedEmploymentNumber},
-//     })
-//     .then((res) => {
-//       userFoapaName = res.data;
-//       console.log(res);
-//     })
-//     .catch((err)=>{
-//       console.log(err);
-//     })
-// }
 
 function retrieveUserInformationSummary() {
   axios
@@ -366,9 +331,7 @@ onMounted(() => {
     retrieveUserFoapaNumbers();
 
     axios
-      .get("/api/retrieveReimbursements", {
-        params: { employmentNumber: localStorage.getItem("employmentNumber") },
-      })
+      .get("/api/retrieveReimbursements")
       .then((res) => {
         console.log(res);
         storedReimbursementTickets.value = res.data;

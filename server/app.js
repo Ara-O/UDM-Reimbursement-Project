@@ -5,7 +5,9 @@ import bodyParser from "body-parser";
 import * as dotenv from "dotenv";
 import connectToDB from "./db.js";
 import userInformationRouter from "./routes/userInformation.js";
-
+import foapaInformationRouter from "./routes/foapaInformation.js";
+import reimbursementInformation from "./routes/reimbursementInformation.js";
+import pdfInformation from "./routes/pdfInformation.js";
 dotenv.config();
 
 const app = express();
@@ -27,6 +29,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", userInformationRouter);
-// app.use("/api", foapaInformationRouter);
-// app.use("/api", reimbursementInformation);
-// app.use("/api", pdfInformation);
+app.use("/api", foapaInformationRouter);
+app.use("/api", reimbursementInformation);
+app.use("/api", pdfInformation);

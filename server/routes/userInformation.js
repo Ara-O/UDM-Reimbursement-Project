@@ -1,7 +1,6 @@
 import { Router } from "express";
 import mongoose from "mongoose";
 import Faculty from "../models/faculty.js";
-import Foapa from "../models/foapa.js";
 import {
   encryptPassword,
   decryptPassword,
@@ -216,7 +215,7 @@ router.post("/updateAccountInfo", async (req, res) => {
         message: "Unable to modify account information.",
       });
     } else {
-      console.log("updated faculty");
+      console.log("updated table");
       res.status(200).send({ message: "Account updated successfully" });
     }
   } catch (error) {

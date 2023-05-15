@@ -1,12 +1,12 @@
 import { Router } from "express";
 const router = Router();
-import connection from "../db.js";
+import Faculty from "../models/faculty.js";
+import { verifyToken } from "../middleware/auth.js";
 
-router.post("/addFoapaNumber", (req, res) => {
-  console.log(req.body);
-  let error = false;
+router.post("/updateFoapaDetails", verifyToken, async (req, res) => {
+  console.log(req.body.foapaData, req.user);
 
-  let employmentNumber = req.body.employmentNumber;
+  let foapaDetails = [];
   req.body.foapaData.forEach((foapa) => {
     let concatFoapa =
       foapa.fNumber +
@@ -18,86 +18,53 @@ router.post("/addFoapaNumber", (req, res) => {
       foapa.pNumber +
       "-" +
       foapa.a2Number;
-    connection.query(
-      "INSERT IGNORE INTO FOAPA VALUES(?,?)",
-      [foapa.foapaName, concatFoapa],
-      (err, rows) => {
-        if (err) {
-          error = true;
-        } else {
-          connection.query(
-            "INSERT IGNORE INTO Possesses VALUES(?,?)",
-            [employmentNumber, concatFoapa],
-            (err) => {
-              if (err) {
-                error = true;
-              }
-            }
-          );
-        }
-      }
-    );
+
+    foapaDetails.push({
+      foapaName: foapa.foapaName,
+      foapaNumber: concatFoapa,
+    });
   });
 
-  if (error === false) {
-    res.status(200).send({ message: "FOAPA numbers successfully added" });
-  } else {
-    res.status(401).send({ message: "Error inserting Foapa" });
+  try {
+    await Faculty.updateOne(
+      { employmentNumber: req.user.employmentNumber },
+      { foapaDetails }
+    );
+    res.status(200).send({ message: "FOAPA details updated successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: error.message });
   }
 });
 
-router.get("/retrieveFoapaNumbers", (req, res) => {
-  const employmentNumber = req.query.employmentNumber;
-  connection.query(
-    "SELECT * FROM Possesses WHERE employmentNumber = ?",
-    [employmentNumber],
-    (err, rows) => {
-      if (err) {
-        console.log(err);
-        res.status(500).json({ message: "Error retrieving data" });
-      } else {
-        res.json(rows);
-      }
-    }
-  );
+router.get("/retrieveFoapaDetails", verifyToken, async (req, res) => {
+  try {
+    let foapaDetails = await Faculty.findOne({
+      employmentNumber: req.user.employmentNumber,
+    }).select("foapaDetails");
+    res.status(200).send(foapaDetails.foapaDetails);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: error.message });
+  }
 });
 
-router.get("/retrieveFoapaNumbers2", (req, res) => {
-  const employmentNumber = req.query.employmentNumber;
-  connection.query(
-    "SELECT foa.foapaName, foa.foapaNumber" +
-      " FROM FOAPA foa JOIN Possesses pos ON foa.foapaNumber = pos.foapaNumber" +
-      " WHERE pos.employmentNumber = ?",
-    [employmentNumber],
-    (err, rows) => {
-      if (err) {
-        console.log(err);
-        res.status(500).json({ message: "Error retrieving data" });
-      } else {
-        console.log("This" + rows);
-        res.json(rows);
-      }
-    }
-  );
-});
+router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
+  console.log(req.body);
+  const foapaNumber = req.body.foapaNumber;
 
-router.post("/deleteFoapaNumber", (req, res) => {
-  const employmentNumber = req.body.empNo2;
-  const foapaNumber = req.body.foapaNumber2;
-  console.log(employmentNumber + "+" + foapaNumber);
-
-  connection.query(
-    "DELETE FROM Possesses WHERE employmentNumber = ? AND foapaNumber = ?",
-    [employmentNumber, foapaNumber],
-    (err) => {
-      if (err) {
-        res.status(404).send("Error deleting foapa number!");
-        console.log("the error is" + err);
-      } else {
-        res.status(200).send("Success!");
-      }
-    }
-  );
+  try {
+    let userInfo = await Faculty.findOne({
+      employmentNumber: req.user.employmentNumber,
+    });
+    await userInfo.foapaDetails.pull({ foapaNumber });
+    await userInfo.save();
+    res.status(200).send({ message: "Foapa deleted successfully" });
+    console.log(userInfo);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: error.message });
+  }
 });
 
 export default router;
