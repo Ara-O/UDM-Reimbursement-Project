@@ -1,303 +1,103 @@
 import { Router } from "express";
+import { verifyToken } from "../middleware/auth.js";
+import Faculty from "../models/faculty.js";
 const router = Router();
-import connection from "../db.js";
 
-router.post("/addReimbursement", (req, res) => {
+router.post("/addReimbursement", verifyToken, async (req, res) => {
   const {
     reimbursementId,
-    employmentNumber,
     eventName,
     totalAmount,
     reimbursementStatus,
     reimbursementDate,
     allActivities,
   } = req.body;
+  try {
+    let userInfo = await Faculty.findOne({
+      employmentNumber: req.user.employmentNumber,
+    });
 
-  let promises = [];
+    await userInfo.reimbursementTickets.push({
+      eventName,
+      reimbursementId,
+      totalAmount,
+      reimbursementStatus,
+      reimbursementDate,
+      activities: allActivities,
+    });
+    await userInfo.save();
+    res
+      .status(200)
+      .send({ message: "Reimbursement ticket added successfully" });
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
+});
 
-  promises.push(
-    new Promise((resolve, reject) => {
-      connection.query(
-        "INSERT INTO ReimbursementTicket VALUES(?,?,?,?,?,?)",
-        [
-          reimbursementId,
-          employmentNumber,
-          eventName,
-          totalAmount,
-          reimbursementStatus,
-          reimbursementDate,
-        ],
-        (err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        }
-      );
-    })
-  );
+//GET /api/retrieveReimbursements
+router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
+  try {
+    let reimbursements = await Faculty.findOne({
+      employmentNumber: req.user.employmentNumber,
+    }).select("reimbursementTickets");
 
-  allActivities.forEach((activity) => {
-    const insertQuery = `INSERT INTO Activity VALUES (?,?,?,?,?,?)`;
-    const values = [
-      activity.activityId,
-      activity.foapaNumber,
-      activity.activityName,
-      activity.activityReceipt,
-      activity.activityDate,
-      activity.amount,
-    ];
+    res.status(200).send(reimbursements.reimbursementTickets);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: err.message });
+  }
+});
 
-    promises.push(
-      new Promise((resolve, reject) => {
-        connection.query(insertQuery, values, function (err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-      })
+router.get("/retrieveTicketInformation", verifyToken, async (req, res) => {
+  try {
+    const reimbursementId = req.query.reimbursementId;
+    let ticketInfo = await Faculty.findOne(
+      {
+        employmentNumber: req.user.employmentNumber,
+        "reimbursementTickets.reimbursementId": reimbursementId,
+      },
+      { "reimbursementTickets.$": 1 }
+    );
+    res.status(200).send(ticketInfo.reimbursementTickets[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: err.message });
+  }
+});
+
+router.post("/updateReimbursement", verifyToken, async (req, res) => {
+  //REFACTOR
+  try {
+    const {
+      reimbursementId,
+      allActivities,
+      eventName,
+      totalAmount,
+      reimbursementDate,
+    } = req.body;
+
+    const result = await Faculty.findOneAndUpdate(
+      {
+        employmentNumber: req.user.employmentNumber,
+        reimbursementTickets: { $elemMatch: { reimbursementId } },
+      },
+      {
+        $set: {
+          "reimbursementTickets.$.activities": allActivities,
+          "reimbursementTickets.$.eventName": eventName,
+          "reimbursementTickets.$.totalAmount": totalAmount,
+          "reimbursementTickets.$.reimbursementDate": reimbursementDate,
+        },
+      },
+      { new: true }
     );
 
-    promises.push(
-      new Promise((resolve, reject) => {
-        connection.query(
-          "INSERT INTO Contains VALUES(?, ?)",
-          [reimbursementId, activity.activityId],
-          function (err) {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          }
-        );
-      })
-    );
-  });
+    console.log("up", result);
 
-  Promise.all(promises)
-    .then(() => {
-      res.status(200).send("Data inserted successfully");
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Internal Server Error");
-    });
-});
-
-router.get("/retrieveReimbursements", (req, res) => {
-  const employmentNumber = req.query.employmentNumber;
-  console.log("empl num :" + employmentNumber);
-  connection.query(
-    "SELECT * FROM ReimbursementTicket WHERE employmentNumber =  ?",
-    employmentNumber,
-    (err, rows) => {
-      if (err) {
-        console.log(err);
-        res
-          .status(404)
-          .send({ message: "Error retrieving reimbursement tickets" });
-      } else {
-        res.status(200).send(rows);
-        console.log(rows);
-      }
-    }
-  );
-});
-
-router.get("/retrieveTicketInformation", (req, res) => {
-  console.log("retrieve called");
-  const promises = [];
-  const employmentNumber = req.query.employmentNumber;
-  const reimbursementId = req.query.reimbursementId;
-  console.log("empl num :" + employmentNumber);
-  promises.push(
-    new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT * FROM ReimbursementTicket WHERE employmentNumber =  ? AND reimbursementId = ?",
-        [employmentNumber, reimbursementId],
-        (err, rows) => {
-          if (err) {
-            console.log(err);
-            reject(err);
-          } else {
-            resolve(rows);
-            console.log(rows);
-          }
-        }
-      );
-    })
-  );
-
-  promises.push(
-    new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT activityId FROM Contains WHERE reimbursementId = ?",
-        reimbursementId,
-        (err, rows) => {
-          if (err) {
-            console.log(err);
-            reject(err);
-          } else {
-            let allActivities = [];
-            rows.forEach((activity) => {
-              allActivities.push(activity.activityId);
-            });
-
-            connection.query(
-              "SELECT * FROM Activity WHERE activityId IN (?)",
-              [allActivities],
-              (err, rows) => {
-                if (err) {
-                  console.log(err);
-                  reject(err);
-                } else {
-                  resolve(rows);
-                }
-              }
-            );
-          }
-        }
-      );
-    })
-  );
-
-  const allPromises = Promise.all(promises);
-
-  allPromises
-    .then((response) => {
-      console.log(response);
-      console.log("promise success");
-      res.status(200).send(response);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(401).send(err);
-    });
-});
-
-router.post("/updateReimbursement", (req, res) => {
-  //TODO: temporary, till we figure out a way to host with foreign key support
-  const {
-    reimbursementId,
-    employmentNumber,
-    allActivities,
-    eventName,
-    totalAmount,
-    reimbursementStatus,
-    reimbursementDate,
-  } = req.body;
-  const promises = [];
-
-  promises.push(
-    new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT activityId FROM Contains WHERE reimbursementId = ?",
-        [reimbursementId],
-        (err, rows) => {
-          if (err) {
-            console.log(err);
-            reject(err);
-          } else {
-            resolve();
-            console.log(rows);
-            connection.query(
-              "DELETE FROM Contains WHERE reimbursementId = ?",
-              [reimbursementId],
-              (err, rows) => {
-                if (err) {
-                  reject(err);
-                }
-              }
-            );
-
-            let allActivitiesId = rows.map((row) => row.activityId);
-            connection.query(
-              "DELETE FROM Activity WHERE activityId IN (?)",
-              [allActivitiesId],
-              (err, rows) => {
-                if (err) {
-                  reject(err);
-                } else {
-                  connection.query(
-                    "DELETE FROM ReimbursementTicket WHERE reimbursementId = ?",
-                    [reimbursementId],
-                    (err, rows) => {
-                      if (err) {
-                        console.log(err);
-                        reject(err);
-                      } else {
-                        console.log("removed reimbursementtickets");
-                        console.log("promsie");
-                        // resolve();
-                        connection.query(
-                          "INSERT INTO ReimbursementTicket VALUES(?,?,?,?,?,?)",
-                          [
-                            reimbursementId,
-                            employmentNumber,
-                            eventName,
-                            totalAmount,
-                            reimbursementStatus,
-                            reimbursementDate,
-                          ],
-                          (err) => {
-                            if (err) {
-                              reject(err);
-                            }
-                          }
-                        );
-
-                        allActivities.forEach((activity) => {
-                          const insertQuery = `INSERT INTO Activity VALUES (?,?,?,?,?,?)`;
-                          const values = [
-                            activity.activityId,
-                            activity.foapaNumber,
-                            activity.activityName,
-                            activity.activityReceipt,
-                            activity.activityDate,
-                            activity.amount,
-                          ];
-
-                          connection.query(insertQuery, values, function (err) {
-                            if (err) {
-                              reject(err);
-                            }
-                          });
-
-                          connection.query(
-                            "INSERT INTO Contains VALUES(?, ?)",
-                            [reimbursementId, activity.activityId],
-                            function (err) {
-                              if (err) {
-                                reject(err);
-                              } else {
-                                resolve();
-                              }
-                            }
-                          );
-                        });
-                      }
-                    }
-                  );
-                }
-              }
-            );
-          }
-        }
-      );
-    })
-  );
-
-  Promise.all(promises)
-    .then(() => {
-      res.status(200).send("Data inserted successfully");
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Internal Server Error");
-    });
+    res.status(200).send({ message: "Reimbursement updated successfully!" });
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: err.message });
+  }
 });
 export default router;

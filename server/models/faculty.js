@@ -19,6 +19,32 @@ const facultySchema = new Schema({
       foapaNumber: String,
     },
   ],
+  reimbursementTickets: [
+    {
+      reimbursementId: {
+        type: Number,
+        unique: true,
+      },
+      eventName: String,
+      totalAmount: Number,
+      reimbursementStatus: Boolean,
+      reimbursementDate: Date,
+      activities: [
+        {
+          activityId: {
+            type: Number,
+            unique: true,
+          },
+          reimbursementId: String,
+          foapaNumber: String,
+          activityName: String,
+          activityReceipt: String,
+          activityDate: String,
+          amount: Number,
+        },
+      ],
+    },
+  ],
 });
 
 const Faculty = mongoose.model("Faculty", facultySchema);

@@ -1,13 +1,12 @@
 import { Router } from "express";
 const router = Router();
 import https from "https";
-
-import connection from "../db.js";
 import createPdfDefinition from "../pdfGenerator.js";
 import Pdfmake from "pdfmake";
 import multer from "multer";
 import ImageKit from "imagekit";
 import fs from "fs";
+import { verifyToken } from "../middleware/auth.js";
 const upload = multer({ dest: "uploads/" });
 
 let imagekit = new ImageKit({
@@ -58,7 +57,7 @@ function generatePdf(docDefinition, callback) {
   }
 }
 
-router.get("/generatePdf", (req, res) => {
+router.get("/generatePdf", verifyToken, (req, res) => {
   let allActivities = req.query.reimbursementData.allActivities;
   console.log(allActivities);
   let promises = [];
@@ -100,7 +99,7 @@ router.get("/generatePdf", (req, res) => {
     const docDefinition = {
       content: createPdfDefinition(
         req.query.reimbursementData,
-        req.query.userInfo,
+        { ...req.query.userInfo, employmentNumber: req.user.employmentNumber },
         allImageIds
       ),
       defaultStyle: {
@@ -126,53 +125,6 @@ router.get("/generatePdf", (req, res) => {
       }
     );
   });
-
-  // https.get(
-  //   "https://caganer.com/6845-large_default/homer-simpson.jpg",
-  //   (response) => {
-  //     let imageData = [];
-
-  //     response.on("data", (chunk) => {
-  //       imageData.push(chunk);
-  //     });
-
-  //     response.on("end", () => {
-  //       imageData = Buffer.concat(imageData);
-  //       const base64Image = imageData.toString("base64");
-  //       console.log(base64Image); // log the Base64 encoded image data
-
-  //       const docDefinition = {
-  //         content: createPdfDefinition(
-  //           req.query.reimbursementData,
-  //           req.query.userInfo
-  //         ),
-  //         defaultStyle: {
-  //           fontSize: 10,
-  //           bold: true,
-  //         },
-  //         images: {
-  //           test: "data:image/png;base64," + base64Image,
-  //         },
-
-  //         pageMargins: [20, 30, 0, 0],
-  //       };
-  //       generatePdf(
-  //         docDefinition,
-  //         function (base64String) {
-  //           res.setHeader("Content-Type", "application/pdf");
-  //           res.setHeader(
-  //             "Content-Disposition",
-  //             "attachment; filename=product.pdf"
-  //           );
-  //           res.send(base64String);
-  //         },
-  //         function (error) {
-  //           res.send("ERROR:" + error);
-  //         }
-  //       );
-  //     });
-  //   }
-  // );
 });
 
 router.post("/storeActivityImages", upload.array("receipts"), (req, res) => {

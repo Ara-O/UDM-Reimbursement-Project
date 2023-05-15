@@ -164,9 +164,11 @@ type Activity = {
   activityReceipt: string;
 };
 
-function goToHomePage() {
-  router.push("/dashboard");
-}
+type FoapaNumbers = {
+  employmentNumber: number;
+  foapaNumber: string;
+  foapaName: string;
+};
 
 let chosenExpense = ref<string>("");
 let chosenExpenseOther = ref<string>("");
@@ -176,20 +178,9 @@ let foapaNumber = ref<string>("");
 let reimbursementTitle = ref<string>("");
 let userIsEditingReimbursement = ref<boolean>(false);
 let allActivities = ref<Array<Activity>>([]);
-let reimbursementDataFromDb = ref<any>([]);
+let reimbursementDataFromDb = ref<any>({});
 let currentlyAddingActivity = ref<boolean>(false);
 let currentlyAddingPDF = ref<boolean>(false);
-type FoapaNumbers = {
-  employmentNumber: number;
-  foapaNumber: string;
-  foapaName: string;
-};
-
-let obj = ref({
-  empNo: localStorage.getItem("employmentNumber"),
-  foapaNumber: "",
-  foapaName: "",
-});
 
 watch(chosenExpenseOther, (newVal) => {
   if (newVal.length >= 0) {
@@ -210,6 +201,10 @@ const expensesDefaults = [
   "Registration",
   "Taxi/Bus/Car Rental",
 ];
+
+function goToHomePage() {
+  router.push("/dashboard");
+}
 
 async function addActivity() {
   if (
@@ -239,16 +234,11 @@ async function addActivity() {
   }
 }
 
-const storedEmploymentNumber = localStorage.getItem("employmentNumber");
-
 let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
-function retrieveFoapaNumbers() {
-  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
+function retrieveFoapaDetails() {
   axios
-    .get(`/api/retrieveFoapaNumbers2`, {
-      params: { employmentNumber: storedEmploymentNumber },
-    })
+    .get(`/api/retrieveFoapaDetails`)
     .then((res) => {
       userFoapaNumbers.value = res.data;
     })
@@ -256,20 +246,6 @@ function retrieveFoapaNumbers() {
       console.log(err);
     });
 }
-
-// function retrieveFoapaNumbers() {
-//   const storedEmploymentNumber = localStorage.getItem("employmentNumber");
-//   axios
-//     .get(`/api/retrieveFoapaNumbers`, {
-//       params: { employmentNumber: storedEmploymentNumber },
-//     })
-//     .then((res) => {
-//       foapaNumbersToSelectFrom.value = res.data;
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// }
 
 function generateRandomId(): string {
   const chars: string = "1234567890";
@@ -313,7 +289,9 @@ function deleteActivity(activityId: number) {
     (activity) => activity.activityId != activityId
   );
 }
+
 let reimbursementData = {};
+
 async function storeActivityImage() {
   let formData = new FormData();
 
@@ -332,6 +310,8 @@ async function storeActivityImage() {
     } catch (err) {
       console.log(err);
     }
+  } else {
+    return "";
   }
 }
 
@@ -350,19 +330,13 @@ async function saveReimbursement() {
       "/api/updateReimbursement",
       reimbursementDataFromDb.value
     );
-    // .then((res) => {
-    //   console.log(res);
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
+
     console.log(updatingReimbursement);
     alert("Reimbursement saved successfully");
   } else {
     let randomId: string = generateRandomId();
     reimbursementData = {
       reimbursementId: Number(randomId),
-      employmentNumber: storedEmploymentNumber,
       eventName: reimbursementTitle.value,
       totalAmount: getAllActivitiesAmount(),
       reimbursementStatus: 0,
@@ -395,11 +369,8 @@ function downloadPDF(pdfData: string) {
 function createPdf() {
   currentlyAddingPDF.value = true;
   //Send user information
-  const storedEmploymentNumber = localStorage.getItem("employmentNumber");
   axios
-    .get(`/api/retrieveAccountInformation`, {
-      params: { employmentNumber: storedEmploymentNumber },
-    })
+    .get(`/api/retrieveAccountInformation`)
     .then((response) => {
       if (userIsEditingReimbursement.value === true) {
         reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
@@ -413,7 +384,7 @@ function createPdf() {
           .get("/api/generatePdf", {
             params: {
               reimbursementData: reimbursementDataFromDb.value,
-              userInfo: response.data[0],
+              userInfo: response.data,
             },
           })
           .then((res) => {
@@ -427,7 +398,6 @@ function createPdf() {
         let randomId: string = generateRandomId();
         reimbursementData = {
           reimbursementId: Number(randomId),
-          employmentNumber: storedEmploymentNumber,
           eventName: reimbursementTitle.value,
           totalAmount: getAllActivitiesAmount(),
           reimbursementStatus: 0,
@@ -438,7 +408,7 @@ function createPdf() {
           .get("/api/generatePdf", {
             params: {
               reimbursementData: reimbursementData,
-              userInfo: response.data[0],
+              userInfo: response.data,
             },
           })
           .then((res) => {
@@ -462,21 +432,23 @@ onMounted(() => {
     axios
       .get("/api/retrieveTicketInformation", {
         params: {
-          employmentNumber: storedEmploymentNumber,
           reimbursementId: route.query.reimbursementId,
         },
       })
       .then((res) => {
+        // reimbursementDataFromDb.value = res.data;
+        reimbursementTitle.value = res.data.eventName;
+        allActivities.value = res.data.activities;
+        reimbursementDataFromDb.value.reimbursementId =
+          res.data.reimbursementId;
+
         console.log(res);
-        reimbursementDataFromDb.value = res.data[0][0];
-        reimbursementTitle.value = res.data[0][0].eventName;
-        allActivities.value = res.data[1];
       })
       .catch((err) => {
         console.log(err);
       });
   }
-  retrieveFoapaNumbers();
+  retrieveFoapaDetails();
 });
 </script>
 
