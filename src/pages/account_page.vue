@@ -157,10 +157,10 @@
               />
             </div> -->
             <div class="input-field">
-              <label for="zip-code">Zip Code:</label>
+              <label for="zip-code">Postal Code:</label>
               <input
                 type="number"
-                name="Zip Code"
+                name="Postal Code"
                 id="zip-code"
                 v-model="accountInfo.zipCode"
                 required

@@ -22,7 +22,7 @@ export default function createPdfDefinition(
       fontSize: 8,
     },
     {
-      text: `Date Submitted ___${reimbursementData.reimbursementDate.slice(
+      text: `Date Submitted ___${reimbursementData.slice(
         0,
         10
       )}___\n\n`,
@@ -529,6 +529,12 @@ export default function createPdfDefinition(
         heights: [10],
         body: [
           [
+            {
+              text: `${userInfo.fName} ${userInfo.lName}`,
+              border: [false, true, false, false],
+              italics: false,
+              fontSize: 9,
+            },
             {
               text: "Signature of Employee",
               border: [false, true, false, false],

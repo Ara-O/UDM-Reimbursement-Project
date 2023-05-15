@@ -86,12 +86,11 @@
                     left: 50%;
                     transform: translate(-51px, -50%);
                   "
-                  ><h3
-                    style="font-size: 14px; font-weight: 400; color: #474747"
-                  >
-                    T
-                  </h3></span
                 >
+                  <h3 style="font-size: 14px; font-weight: 400; color: #474747">
+                    T
+                  </h3>
+                </span>
                 <input
                   type="text"
                   name="Employment Number"
@@ -197,10 +196,10 @@
           </div>
           <div class="input-field-wrapper">
             <div class="input-field">
-              <label for="zip-code">Zip Code: *</label>
+              <label for="zip-code">Postal Code: *</label>
               <input
                 type="number"
-                name="Zip Code"
+                name="Postal Code"
                 id="zip-code"
                 v-model="userSignupData.zipCode"
               />
@@ -252,19 +251,30 @@
               >
             </div>
             <br />
-            <div class="input-field-foapa-wrapper">
+            <div class="input-field-foapa-wrapper" style="text-align: center">
               <div class="input-FOAPA-field">
                 <label for="foapa-name">FOAPA Name</label>
                 <input
                   type="text"
                   style="width: 150px"
-                  placeholder="FOAPA Name"
+                  placeholder="Name"
                   name="FOAPA Name"
                   id="foapa-name"
                   v-model="userFoapaStuff.foapaName"
                 />
               </div>
-              <h5>-</h5>
+              <div class="input-FOAPA-field">
+                <label for="foapa-name">Amount</label>
+                <input
+                  type="text"
+                  style="width: 150px"
+                  placeholder="Amount"
+                  name="Amount"
+                  id="foapa-amount"
+                  v-model="userFoapaStuff.foapaAmount"
+                />
+              </div>
+              <h5>:</h5>
 
               <div class="input-FOAPA-field">
                 <label for="foapa-name">FUND</label>
@@ -352,7 +362,7 @@
               <h3>-</h3>
               <h3>{{ foapa.pNumber }}</h3>
               <h3>-</h3>
-              <h3>{{ foapa.a2Number }}</h3>
+              <h3>{{ foapa.a2Number }}, ${{ foapa.foapaAmount }}</h3>
             </div>
             <div class="continue-buttons" style="margin-top: 20px">
               <button
@@ -416,6 +426,7 @@ type FoapaStuff = {
   pNumber: string;
   a2Number: string;
   foapaName: string;
+  foapaAmount: string;
 };
 
 let reEnteredPassword = ref<string>("");
@@ -677,33 +688,18 @@ const countries = [
 ];
 
 const departments = [
+  "Architectural Engineering",
+  "Biochemistry",
+  "Civil Engineering",
   "Computer Science",
   "Electrical Engineering",
-  "Mechanical Engineering",
-  "Civil Engineering",
-  "Chemical Engineering",
-  "Biology",
-  "Chemistry",
-  "Physics",
+  "Environmental Engineering",
   "Mathematics",
-  "Statistics",
-  "Psychology",
-  "Sociology",
-  "Anthropology",
-  "History",
-  "Philosophy",
-  "English",
-  "Foreign Languages",
-  "Business",
-  "Economics",
-  "Political Science",
-  "Law",
-  "Education",
-  "Journalism",
-  "Fine Arts",
-  "Music",
-  "Theater",
-  "Architecture",
+  "Mechanical Engineering",
+  "Office of the Dean",
+  "Physics",
+  "Chemistry",
+  "Robotics and Mechatronic Systems Engineering",
 ];
 
 let userSignupData = reactive<UserData>({
@@ -744,6 +740,7 @@ let userFoapaStuff = reactive<FoapaStuff>({
   pNumber: "",
   a2Number: "",
   foapaName: "",
+  foapaAmount: "",
 });
 
 function addFoapa() {
@@ -762,9 +759,11 @@ function addFoapa() {
         pNumber: userFoapaStuff.pNumber,
         a2Number: userFoapaStuff.a2Number,
         foapaName: userFoapaStuff.foapaName,
+        foapaAmount: userFoapaStuff.foapaAmount,
       });
       foapaList.value.push(currentFoapa);
       userFoapaStuff.foapaName =
+        userFoapaStuff.foapaAmount =
         userFoapaStuff.fNumber =
         userFoapaStuff.oNumber =
         userFoapaStuff.aNumber =

@@ -5,6 +5,8 @@ import AccountPage from "../pages/account_page.vue";
 import DashboardPage from "../pages/dashboard_page.vue";
 import AddReimbursementPage from "../pages/add_reimbursement_page.vue";
 import AddFoapaPage from "../pages/add_foapa_page.vue";
+import PasswordPage from "../pages/password_page.vue";
+
 export default createRouter({
   history: createWebHistory(),
   routes: [
@@ -31,6 +33,10 @@ export default createRouter({
     {
       path: "/add-foapa",
       component: AddFoapaPage,
+    },
+    {
+      path: "/password",
+      component: PasswordPage,
     },
   ],
 });
