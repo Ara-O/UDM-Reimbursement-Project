@@ -141,13 +141,18 @@
               <label for="foapa-numbers">FOAPA [ FUND - ORG - ACCT - PROG - ACTV ]:</label>
             </div>
             <br />
-            <div class="input-field-foapa-wrapper">
+            <div class="input-field-foapa-wrapper" style="text-align: center;">
               <div class="input-FOAPA-field">
                 <label for="foapa-name">FOAPA Name</label>
-                <input type="text" style="width: 150px" placeholder="FOAPA Name" name="FOAPA Name" id="foapa-name"
+                <input type="text" style="width: 150px" placeholder="Name" name="FOAPA Name" id="foapa-name"
                   v-model="userFoapaStuff.foapaName" />
               </div>
-              <h5>-</h5>
+              <div class="input-FOAPA-field">
+                <label for="foapa-name">Amount</label>
+                <input type="text" style="width: 150px" placeholder="Amount" name="Amount" id="foapa-amount"
+                  v-model="userFoapaStuff.foapaAmount" />
+              </div>
+              <h5>:</h5>
 
               <div class="input-FOAPA-field">
                 <label for="foapa-name">FUND</label>
@@ -197,7 +202,7 @@
               <h3>-</h3>
               <h3>{{ foapa.pNumber }}</h3>
               <h3>-</h3>
-              <h3>{{ foapa.a2Number }}</h3>
+              <h3>{{ foapa.a2Number }}, ${{ foapa.foapaAmount }}</h3>
             </div>
             <div class="continue-buttons" style="margin-top: 20px">
               <button class="signup-button" type="button" @click="surveyProgress--" style="margin-top: 0px">
@@ -247,6 +252,7 @@ type FoapaStuff = {
   pNumber: string;
   a2Number: string;
   foapaName: string;
+  foapaAmount: string;
 };
 
 let reEnteredPassword = ref<string>("");
@@ -560,6 +566,7 @@ let userFoapaStuff = reactive<FoapaStuff>({
   pNumber: "",
   a2Number: "",
   foapaName: "",
+  foapaAmount: "",
 });
 
 function addFoapa() {
@@ -578,9 +585,11 @@ function addFoapa() {
         pNumber: userFoapaStuff.pNumber,
         a2Number: userFoapaStuff.a2Number,
         foapaName: userFoapaStuff.foapaName,
+        foapaAmount: userFoapaStuff.foapaAmount,
       });
       foapaList.value.push(currentFoapa);
       userFoapaStuff.foapaName =
+        userFoapaStuff.foapaAmount =
         userFoapaStuff.fNumber =
         userFoapaStuff.oNumber =
         userFoapaStuff.aNumber =
