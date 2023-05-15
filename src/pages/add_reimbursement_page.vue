@@ -86,10 +86,6 @@
         </span>
       </div>
       <br />
-      <h3 class="selected-option">
-        <span style="font-weight: 500"> Selected - </span>
-        <span style="font-weight: 400"> {{ chosenExpense }}</span>
-      </h3>
       <div class="foapa-and-date-section">
         <div>
           <h3>FOAPA Number to use:</h3>
