@@ -142,7 +142,7 @@
         </div>
       </div>
       <router-link to="/account" style="font-size: 14px"
-        >Manage Account Information</router-link
+        >Manage account information</router-link
       >
 
       <router-link to="/password" style="font-size: 14px"
