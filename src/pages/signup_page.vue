@@ -22,9 +22,12 @@
         Basic Questions
       </h3>
       <h3 class="signup-title-description" v-if="surveyProgress === 1">
-        Address Information
+        Password Information
       </h3>
       <h3 class="signup-title-description" v-if="surveyProgress === 2">
+        Address Information
+      </h3>
+      <h3 class="signup-title-description" v-if="surveyProgress === 3">
         User Foapa Information (Not Required)
       </h3>
 
@@ -126,6 +129,18 @@
               </datalist>
             </div>
           </div>
+          <button
+            class="signup-button"
+            type="button"
+            @click="finishedBasicQuestionsSection"
+            style="margin-top: 0px"
+          >
+            Continue
+          </button>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section v-show="surveyProgress === 1" class="signup-form">
           <div class="input-field-wrapper">
             <div class="input-field">
               <label for="password">Password: *</label>
@@ -146,18 +161,28 @@
               />
             </div>
           </div>
-          <button
-            class="signup-button"
-            type="button"
-            @click="finishedBasicQuestionsSection"
-            style="margin-top: 0px"
-          >
-            Continue
-          </button>
+          <div class="continue-buttons">
+            <button
+              class="signup-button"
+              type="button"
+              @click="surveyProgress = 0"
+              style="margin-top: 0px"
+            >
+              Go Back
+            </button>
+            <button
+              class="signup-button"
+              type="button"
+              style="margin-top: 0px"
+              @click="finishedPasswordSection"
+            >
+              Continue
+            </button>
+          </div>
         </section>
 
-        <!-- SECTION 2 -->
-        <section v-show="surveyProgress === 1" class="signup-form">
+        <!-- SECTION 3 -->
+        <section v-show="surveyProgress === 2" class="signup-form">
           <div class="input-field-wrapper">
             <div class="input-field">
               <label for="street-address">Street Address: *</label>
@@ -226,7 +251,7 @@
             <button
               class="signup-button"
               type="button"
-              @click="surveyProgress = 0"
+              @click="surveyProgress = 1"
               style="margin-top: 0px"
             >
               Go Back
@@ -242,8 +267,8 @@
           </div>
         </section>
 
-        <!-- SECTION 3 -->
-        <section v-show="surveyProgress === 2" class="signup-form">
+        <!-- SECTION 4 -->
+        <section v-show="surveyProgress === 3" class="signup-form">
           <div>
             <div>
               <label for="foapa-numbers"
@@ -803,12 +828,32 @@ function finishedBasicQuestionsSection() {
     "employmentNumber",
     "phoneNumber",
     "department",
-    "password",
   ];
 
   for (let i = 0; i < dataShown.length; i++) {
     if (userSignupData[dataShown[i]] === "") {
       console.log("field empty");
+      alert(
+        `The ${dataShown[i]
+          .replace(/([A-Z])/g, " $1")
+          .toLowerCase()} field is empty`
+      );
+      break;
+    } else {
+      if (i === dataShown.length - 1) {
+        surveyProgress.value++;
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      }
+    }
+  }
+}
+
+function finishedPasswordSection() {
+  let dataShown = ["password"];
+
+  for (let i = 0; i < dataShown.length; i++) {
+    if (userSignupData[dataShown[i]] === "") {
+      console.log("password field empty");
       alert(
         `The ${dataShown[i]
           .replace(/([A-Z])/g, " $1")
