@@ -118,7 +118,7 @@
           </h5>
           <div class="reimbursement-buttons">
             <button>Delete</button>
-            <button @click="viewTicket(ticket.reimbursementId)">View</button>
+            <button @click="viewTicket(ticket.reimbursementId)">Modify</button>
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@
         </div>
       </div>
       <router-link to="/account" style="font-size: 14px"
-        >View Account Information</router-link
+        >Manage Account Information</router-link
       >
       <button @click="signOut">Sign Out</button>
     </section>
