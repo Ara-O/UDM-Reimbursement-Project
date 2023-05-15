@@ -18,16 +18,17 @@
         </div>
       </div>
       <div class="cta-buttons">
-        <button class="go-back-button" @click="goToHomePage">Go Back</button>
-        <button class="go-back-button" @click="saveReimbursement">
-          Save for Later
+        <button class="go-back-button" @click="goToHomePage" style="margin-right: 110px;">Discard</button>
+        <button class="go-back-button" @click="saveReimbursement" style="margin-left: 180px; margin-top: -60px;">
+          Save Ticket
         </button>
-        <button class="go-back-button" @click="createPdf">Export to PDF</button>
+        <button class="go-back-button" @click="createPdf" style="margin-right: 110px; margin-top: -10px;">Preview PDF</button>
+        <button class="go-back-button" @click="createPdf" style="margin-left: 180px; margin-top: -60px;">Attach PDF with Ticket</button>
         <h5
           style="font-weight: 400; margin-top: 2px"
           v-show="currentlyAddingPDF"
         >
-          Exporting to PDF, please wait...
+          Attaching with ticket, please wait ...
         </h5>
       </div>
     </section>
@@ -147,6 +148,7 @@
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
+import { pdfMake } from "pdfmake/build/vfs_fonts";
 
 const receiptRef = ref(null);
 const router = useRouter();
@@ -388,6 +390,11 @@ function downloadPDF(pdfData: string) {
   downloadLink.click();
 }
 
+function previewPDF(pdfData: string) {
+  const linkSource = pdfData;
+  pdfMake
+}
+
 function createPdf() {
   currentlyAddingPDF.value = true;
   //Send user information
@@ -414,6 +421,7 @@ function createPdf() {
           })
           .then((res) => {
             downloadPDF(res.data);
+            previewPDF(res.data);
             currentlyAddingPDF.value = false;
           })
           .catch((err) => {
@@ -439,6 +447,7 @@ function createPdf() {
           })
           .then((res) => {
             downloadPDF(res.data);
+            previewPDF(res.data);
             currentlyAddingPDF.value = false;
           })
           .catch((err) => {
