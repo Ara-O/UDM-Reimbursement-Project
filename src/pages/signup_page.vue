@@ -49,14 +49,30 @@
                 v-model="userSignupData.lastName"
               />
             </div>
-            <div class="input-field">
-              <label for="work-email">Work Email: *</label>
-              <input
-                type="email"
-                name="Work Email"
-                id="work-email"
-                v-model="userSignupData.workEmail"
-              />
+            <div>
+              <label for="work-email" style="font-size: 14px; width: 100px"
+                >Work Email: *</label
+              >
+              <div class="work-email-input-field">
+                <input
+                  type="email"
+                  name="Work Email"
+                  id="work-email"
+                  v-model="userSignupData.workEmail"
+                />
+                <h6
+                  style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(0px, -40px);
+                    font-weight: 400;
+                    font-size: 13px;
+                  "
+                >
+                  @udmercy.edu
+                </h6>
+              </div>
             </div>
           </div>
           <div class="input-field-wrapper">
@@ -693,7 +709,7 @@ const departments = [
 let userSignupData = reactive<UserData>({
   firstName: "",
   lastName: "",
-  workEmail: "@udmercy.edu",
+  workEmail: "",
   employmentNumber: "",
   department: "",
   mailingAddress: "",
@@ -824,11 +840,12 @@ function registerUser() {
 
   axios
     .post("/api/register", userSignupData)
-    .then((res) => {
-      alert(res.data.message);
-      localStorage.setItem("token", res.data.token);
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
+    .then(() => {
+      alert("User registration successful");
+      localStorage.setItem(
+        "employmentNumber",
+        userSignupData.employmentNumber.toString()
+      );
       router.push("/dashboard");
     })
     .catch((err) => {
@@ -838,9 +855,7 @@ function registerUser() {
 }
 
 onMounted(() => {
-  if (localStorage.getItem("token")?.length ?? 0 > 0) {
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
+  if (localStorage.getItem("employmentNumber")?.length ?? 0 > 0) {
     console.log("user is already signed in");
     router.push("/dashboard");
   }
