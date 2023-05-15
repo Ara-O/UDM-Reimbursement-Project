@@ -146,6 +146,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from "vue";
+import pdfjsLib from "pdfjs-dist";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import { pdfMake } from "pdfmake/build/vfs_fonts";
@@ -391,8 +392,7 @@ function downloadPDF(pdfData: string) {
 }
 
 function previewPDF(pdfData: string) {
-  const linkSource = pdfData;
-  pdfMake
+  // TODO: Preview PDF
 }
 
 function createPdf() {
@@ -421,7 +421,6 @@ function createPdf() {
           })
           .then((res) => {
             downloadPDF(res.data);
-            previewPDF(res.data);
             currentlyAddingPDF.value = false;
           })
           .catch((err) => {
@@ -447,7 +446,6 @@ function createPdf() {
           })
           .then((res) => {
             downloadPDF(res.data);
-            previewPDF(res.data);
             currentlyAddingPDF.value = false;
           })
           .catch((err) => {
