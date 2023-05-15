@@ -144,6 +144,10 @@
       <router-link to="/account" style="font-size: 14px"
         >Manage Account Information</router-link
       >
+
+      <router-link to="/password" style="font-size: 14px"
+        >Change password</router-link
+      >
       <button @click="signOut">Sign Out</button>
     </section>
     <!-- <h3>hi</h3>
