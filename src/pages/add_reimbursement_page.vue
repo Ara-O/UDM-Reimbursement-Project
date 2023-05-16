@@ -67,6 +67,7 @@
           alt="Edit icon"
         />
       </div>
+      <br />
       <div style="display: flex; align-items: center; gap: 20px; height: 20px">
         <img
           src="../assets/user-help-icon.png"
@@ -78,7 +79,6 @@
           another type of expense
         </h4>
       </div>
-      <br />
       <h4 style="font-weight: 500">Expenses</h4>
       <div class="expenses-section">
         <input

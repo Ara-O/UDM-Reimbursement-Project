@@ -31,12 +31,12 @@
                         <router-link to="/dashboard" custom v-slot="{ navigate }">
                             <button class="signup-button" type="button" @click="navigate" role="link"
                                 style="margin-top: 0px">
-                                Go Back
+                                Dashboard
                             </button>
                         </router-link>
                         <button class="signup-button" type="button" style="margin-top: 0px"
                             @click="finishedPasswordSection">
-                            Save
+                            Update
                         </button>
                     </div>
                 </section>

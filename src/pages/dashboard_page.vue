@@ -117,8 +117,8 @@
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
           <div class="reimbursement-buttons">
-            <button>Delete</button>
             <button @click="viewTicket(ticket.reimbursementId)">Modify</button>
+            <button>Delete</button>
           </div>
         </div>
       </div>

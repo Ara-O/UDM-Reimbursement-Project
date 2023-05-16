@@ -271,10 +271,10 @@
               @click="back"
               style="margin-top: 0px"
             >
-              Go Back
+              Dashboard
             </button>
             <button class="signup-button" type="submit" style="margin-top: 0px">
-              Save
+              Update
             </button>
           </div>
           <!-- <h6 class="trademark-text">Made with love by the Duckateers TM</h6> -->
