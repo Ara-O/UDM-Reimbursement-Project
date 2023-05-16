@@ -8,6 +8,7 @@ import userInformationRouter from "./routes/userInformation.js";
 import foapaInformationRouter from "./routes/foapaInformation.js";
 import reimbursementInformation from "./routes/reimbursementInformation.js";
 import pdfInformation from "./routes/pdfInformation.js";
+import geographyInformation from "./routes/geographyInformation.js";
 dotenv.config();
 
 const app = express();
@@ -32,3 +33,4 @@ app.use("/api", userInformationRouter);
 app.use("/api", foapaInformationRouter);
 app.use("/api", reimbursementInformation);
 app.use("/api", pdfInformation);
+app.use("/api", geographyInformation);

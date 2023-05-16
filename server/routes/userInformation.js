@@ -1,5 +1,4 @@
 import { Router } from "express";
-import mongoose from "mongoose";
 import Faculty from "../models/faculty.js";
 import {
   encryptPassword,

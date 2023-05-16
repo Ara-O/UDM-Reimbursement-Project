@@ -2,36 +2,30 @@
   <div class="input-field-wrapper">
     <div class="input-field">
       <label for="country">Country: *</label>
-      <input
-        list="countries"
-        type="text"
+      <select
         name="Country"
         id="country"
         v-model="userSignupData.country"
-      />
-
-      <datalist id="countries">
-        <option :value="country" v-for="country in countries">
-          {{ country }}
+        @change="countryChanged"
+      >
+        <option :value="country.name" v-for="country in countries">
+          {{ country.name }}
         </option>
-      </datalist>
+      </select>
     </div>
 
     <div class="input-field">
       <label for="state">State: *</label>
-      <input
-        list="states"
-        type="text"
+      <select
         name="State"
         id="state"
+        :disabled="userSignupData.country === ''"
         v-model="userSignupData.state"
-      />
-
-      <datalist id="states">
-        <option :value="state" v-for="state in states">
-          {{ state }}
+      >
+        <option :value="state.name" v-for="state in states">
+          {{ state.name }}
         </option>
-      </datalist>
+      </select>
     </div>
     <div class="input-field">
       <label for="city">City: *</label>
@@ -80,7 +74,14 @@
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 import { UserData } from "../../types/types";
+import { onMounted, ref, watch } from "vue";
+
+type AddressDetails = {
+  name: String;
+  code: String;
+};
 
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
@@ -88,260 +89,27 @@ const { userSignupData } = defineProps<{
 
 const emits = defineEmits(["continue", "goBack"]);
 
-const states = [
-  "AL",
-  "AK",
-  "AZ",
-  "AR",
-  "CA",
-  "CO",
-  "CT",
-  "DE",
-  "FL",
-  "GA",
-  "HI",
-  "ID",
-  "IL",
-  "IN",
-  "IA",
-  "KS",
-  "KY",
-  "LA",
-  "ME",
-  "MD",
-  "MA",
-  "MI",
-  "MN",
-  "MS",
-  "MO",
-  "MT",
-  "NE",
-  "NV",
-  "NH",
-  "NJ",
-  "NM",
-  "NY",
-  "NC",
-  "ND",
-  "OH",
-  "OK",
-  "OR",
-  "PA",
-  "RI",
-  "SC",
-  "SD",
-  "TN",
-  "TX",
-  "UT",
-  "VT",
-  "VA",
-  "WA",
-  "WV",
-  "WI",
-  "WY",
-];
+const countries = ref<AddressDetails[]>();
+const states = ref<AddressDetails[]>();
 
-const countries = [
-  "Afghanistan",
-  "Albania",
-  "Algeria",
-  "Andorra",
-  "Angola",
-  "Antigua and Barbuda",
-  "Argentina",
-  "Armenia",
-  "Australia",
-  "Austria",
-  "Azerbaijan",
-  "Bahamas",
-  "Bahrain",
-  "Bangladesh",
-  "Barbados",
-  "Belarus",
-  "Belgium",
-  "Belize",
-  "Benin",
-  "Bhutan",
-  "Bolivia",
-  "Bosnia and Herzegovina",
-  "Botswana",
-  "Brazil",
-  "Brunei",
-  "Bulgaria",
-  "Burkina Faso",
-  "Burundi",
-  "Cambodia",
-  "Cameroon",
-  "Canada",
-  "Cape Verde",
-  "Central African Republic",
-  "Chad",
-  "Chile",
-  "China",
-  "Colombia",
-  "Comoros",
-  "Congo (Congo-Brazzaville)",
-  "Costa Rica",
-  "Croatia",
-  "Cuba",
-  "Cyprus",
-  "Czechia (Czech Republic)",
-  "Democratic Republic of the Congo",
-  "Denmark",
-  "Djibouti",
-  "Dominica",
-  "Dominican Republic",
-  "Ecuador",
-  "Egypt",
-  "El Salvador",
-  "Equatorial Guinea",
-  "Eritrea",
-  "Estonia",
-  "Eswatini (fmr. 'Swaziland')",
-  "Ethiopia",
-  "Fiji",
-  "Finland",
-  "France",
-  "Gabon",
-  "Gambia",
-  "Georgia",
-  "Germany",
-  "Ghana",
-  "Greece",
-  "Grenada",
-  "Guatemala",
-  "Guinea",
-  "Guinea-Bissau",
-  "Guyana",
-  "Haiti",
-  "Holy See",
-  "Honduras",
-  "Hungary",
-  "Iceland",
-  "India",
-  "Indonesia",
-  "Iran",
-  "Iraq",
-  "Ireland",
-  "Israel",
-  "Italy",
-  "Ivory Coast",
-  "Jamaica",
-  "Japan",
-  "Jordan",
-  "Kazakhstan",
-  "Kenya",
-  "Kiribati",
-  "Kuwait",
-  "Kyrgyzstan",
-  "Laos",
-  "Latvia",
-  "Lebanon",
-  "Lesotho",
-  "Liberia",
-  "Libya",
-  "Liechtenstein",
-  "Lithuania",
-  "Luxembourg",
-  "Madagascar",
-  "Malawi",
-  "Malaysia",
-  "Maldives",
-  "Mali",
-  "Malta",
-  "Marshall Islands",
-  "Mauritania",
-  "Mauritius",
-  "Mexico",
-  "Micronesia",
-  "Moldova",
-  "Monaco",
-  "Mongolia",
-  "Montenegro",
-  "Morocco",
-  "Mozambique",
-  "Myanmar (formerly Burma)",
-  "Namibia",
-  "Nauru",
-  "Nepal",
-  "Netherlands",
-  "New Zealand",
-  "Nicaragua",
-  "Niger",
-  "Nigeria",
-  "North Korea",
-  "North Macedonia",
-  "Norway",
-  "Oman",
-  "Pakistan",
-  "Palau",
-  "Palestine",
-  "Panama",
-  "Papua New Guinea",
-  "Paraguay",
-  "Peru",
-  "Philippines",
-  "Poland",
-  "Portugal",
-  "Qatar",
-  "Romania",
-  "Russia",
-  "Rwanda",
-  "Saint Kitts and Nevis",
-  "Saint Lucia",
-  "Saint Vincent and the Grenadines",
-  "Samoa",
-  "San Marino",
-  "Sao Tome and Principe",
-  "Saudi Arabia",
-  "Senegal",
-  "Serbia",
-  "Seychelles",
-  "Sierra Leone",
-  "Singapore",
-  "Slovakia",
-  "Slovenia",
-  "Solomon Islands",
-  "Somalia",
-  "South Africa",
-  "South Korea",
-  "South Sudan",
-  "Spain",
-  "Sri Lanka",
-  "Sudan",
-  "Suriname",
-  "Sweden",
-  "Switzerland",
-  "Syria",
-  "Taiwan",
-  "Tajikistan",
-  "Tanzania",
-  "Thailand",
-  "Timor-Leste (East Timor)",
-  "Togo",
-  "Tonga",
-  "Trinidad and Tobago",
-  "Tunisia",
-  "Turkey",
-  "Turkmenistan",
-  "Tuvalu",
-  "Uganda",
-  "Ukraine",
-  "United Arab Emirates",
-  "United Kingdom",
-  "United States of America",
-  "Uruguay",
-  "Uzbekistan",
-  "Vanuatu",
-  "Venezuela",
-  "Vietnam",
-  "Yemen",
-  "Zambia",
-  "Zimbabwe",
-];
+function countryChanged() {
+  let realCountryData = countries.value?.filter(
+    (country) => userSignupData.country === country.name
+  );
+
+  axios
+    .get("/api/getStateFromCountry", { params: { realCountryData } })
+    .then((res) => {
+      console.log(res.data);
+      states.value = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
 function progress() {
-  let dataShown = ["mailingAddress", "city", "state", "zipCode", "country"];
+  let dataShown = ["country", "state", "city", "mailingAddress", "zipCode"];
   for (let i = 0; i < dataShown.length; i++) {
     if (userSignupData[dataShown[i]] === "") {
       console.log("field empty");
@@ -359,6 +127,18 @@ function progress() {
     }
   }
 }
+
+onMounted(() => {
+  axios
+    .get("/api/allCountries")
+    .then((res) => {
+      console.log(res.data);
+      countries.value = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 </script>
 
 <style scoped>

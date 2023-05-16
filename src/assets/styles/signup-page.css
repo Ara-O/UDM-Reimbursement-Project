@@ -137,7 +137,8 @@ input {
   width: 100px;
 }
 
-.input-field input {
+.input-field input,
+.input-field select {
   padding-left: 20px;
   width: 150px;
   box-sizing: border-box;
