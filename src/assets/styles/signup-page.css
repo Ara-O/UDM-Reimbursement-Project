@@ -99,9 +99,22 @@ input {
   justify-content: space-between;
 }
 
+.work-email-descriptor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-13px, -41px);
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.work-email-input-field input {
+  font-size: 13px;
+}
+
 .work-email-input-field {
   padding-left: 20px;
-  width: 250px;
+  width: 210px;
   box-sizing: border-box;
   height: 36px;
   font-size: 13px;
@@ -117,7 +130,7 @@ input {
 
 .work-email-input-field input {
   border: none;
-  width: 95px;
+  width: 65px;
 }
 .work-email-input-field label {
   font-size: 14px;
@@ -228,6 +241,14 @@ input {
   }
 }
 
+.work-email-section {
+  display: flex;
+  justify-content: space-between;
+  width: 316px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 630px) {
   .input-FOAPA-field label {
     text-align: center;
@@ -281,7 +302,8 @@ input {
     align-items: center;
   }
 
-  .input-field {
+  .input-field,
+  .work-email-section {
     flex-direction: column;
     gap: 20px;
   }
@@ -289,6 +311,7 @@ input {
   .input-field-wrapper {
     justify-content: center;
     flex-direction: column;
+    align-items: center;
   }
 
   .required-field-note {
