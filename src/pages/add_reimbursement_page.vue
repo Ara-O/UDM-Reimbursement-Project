@@ -9,12 +9,8 @@
           {{ activity.amount }}
         </h4>
         <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
-        <div class="delete-option" @click="deleteActivity(activity.activityId)">
-          <img
-            src="../assets/trash-icon-white.png"
-            alt="Trash icon"
-            class="trash-icon"
-          />
+        <div class="delete-option" @click="modifyActivity(activity.activityId)">
+          <img src="../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon" />
         </div>
       </div>
       <div class="cta-buttons">
@@ -22,36 +18,23 @@
         <button class="go-back-button" @click="saveReimbursement" style="margin-left: 180px; margin-top: -60px;">
           Save Ticket
         </button>
-        <button class="go-back-button" @click="createPdf" style="margin-right: 110px; margin-top: -10px;">Preview PDF</button>
-        <button class="go-back-button" @click="createPdf" style="margin-left: 180px; margin-top: -60px;">Attach PDF with Ticket</button>
-        <h5
-          style="font-weight: 400; margin-top: 2px"
-          v-show="currentlyAddingPDF"
-        >
+        <button class="go-back-button" @click="createPdf" style="margin-right: 110px; margin-top: -10px;">Preview
+          PDF</button>
+        <button class="go-back-button" @click="createPdf" style="margin-left: 180px; margin-top: -60px;">Attach PDF with
+          Ticket</button>
+        <h5 style="font-weight: 400; margin-top: 2px" v-show="currentlyAddingPDF">
           Attaching with ticket, please wait ...
         </h5>
       </div>
     </section>
     <section class="reimbursement-section">
       <div class="reimbursement-title">
-        <input
-          class="reimbursement-title-text"
-          v-model="reimbursementTitle"
-          placeholder="Reimbursement Title"
-        />
-        <img
-          src="../assets/edit-icon.png"
-          class="edit-icon-button"
-          alt="Edit icon"
-        />
+        <input class="reimbursement-title-text" v-model="reimbursementTitle" placeholder="Reimbursement Title" />
+        <img src="../assets/edit-icon.png" class="edit-icon-button" alt="Edit icon" />
       </div>
       <br />
       <div style="display: flex; align-items: center; gap: 20px; height: 20px">
-        <img
-          src="../assets/user-help-icon.png"
-          alt="Help icon"
-          class="help-icon"
-        />
+        <img src="../assets/user-help-icon.png" alt="Help icon" class="help-icon" />
         <h4 style="font-weight: 300; font-size: 14px">
           Choose from one of the default options below or select other to create
           another type of expense
@@ -59,12 +42,7 @@
       </div>
       <h4 style="font-weight: 500">Expenses</h4>
       <div class="expenses-section">
-        <input
-          list="defaults"
-          name="defaultOptions"
-          v-model="chosenExpense"
-          class="input-field"
-        />
+        <input list="defaults" name="defaultOptions" v-model="chosenExpense" class="input-field" />
 
         <datalist id="defaults">
           <option :value="expense" v-for="expense in expensesDefaults">
@@ -77,64 +55,35 @@
         <br />
         <span>
           <h3>Cost:</h3>
-          <input
-            v-model="expenseCost"
-            type="number"
-            placeholder="$ Cost"
-            min="0"
-            class="input-field"
-          />
+          <input v-model="expenseCost" type="number" placeholder="$ Cost" min="0" class="input-field" />
         </span>
       </div>
       <br />
       <div class="foapa-and-date-section">
         <div>
           <h3>FOAPA Number to use:</h3>
-          <select
-            placeholder="Select FOAPA to pay for activity with"
-            class="input-field"
-            v-model="foapaNumber"
-          >
-            <option
-              :value="foapaNumber.foapaNumber"
-              v-for="foapaNumber in userFoapaNumbers"
-            >
+          <select placeholder="Select FOAPA to pay for activity with" class="input-field" v-model="foapaNumber">
+            <option :value="foapaNumber.foapaNumber" v-for="foapaNumber in userFoapaNumbers">
               {{ foapaNumber.foapaName + ":\t" + foapaNumber.foapaNumber }}
             </option>
           </select>
         </div>
         <div>
           <h3>Date Of Activity:</h3>
-          <input
-            type="date"
-            v-model="activityDate"
-            placeholder="Date of Activity"
-            class="input-field"
-          />
+          <input type="date" v-model="activityDate" placeholder="Date of Activity" class="input-field" />
         </div>
       </div>
 
       <div class="add-receipt">
         <div class="add-receipt-text">Add Receipt:</div>
-        <input
-          type="file"
-          id="avatar"
-          ref="receiptRef"
-          name="avatar"
-          accept="image/png, image/jpeg"
-          multiple
-        />
+        <input type="file" id="avatar" ref="receiptRef" name="avatar" accept="image/png, image/jpeg" multiple />
       </div>
       <h5 class="terms-and-conditions">
         By adding an activity; I hereby certify that this claim is correct and
         reimbursable under published travel expense Policies & Procedures of UDM
       </h5>
       <br />
-      <button
-        class="add-reimbursement-button"
-        @click="addActivity"
-        :disabled="currentlyAddingActivity"
-      >
+      <button class="add-reimbursement-button" @click="addActivity" :disabled="currentlyAddingActivity">
         Add Activity
       </button>
       <h5 style="font-weight: 400" v-show="currentlyAddingActivity">
@@ -275,9 +224,8 @@ function getCurrentDate(): string {
   const year = today.getFullYear();
   const month = today.getMonth() + 1; // add 1 because getMonth() returns 0-11
   const day = today.getDate();
-  const formattedDate = `${year}-${month < 10 ? "0" + month : month}-${
-    day < 10 ? "0" + day : day
-  }`;
+  const formattedDate = `${year}-${month < 10 ? "0" + month : month}-${day < 10 ? "0" + day : day
+    }`;
 
   return formattedDate;
 }
@@ -285,6 +233,12 @@ function getCurrentDate(): string {
 function deleteActivity(activityId: number) {
   allActivities.value = allActivities.value.filter(
     (activity) => activity.activityId != activityId
+  );
+}
+
+function modifyActivity(activityId: number) {
+  allActivities.value = allActivities.value.filter(
+    (activity) => activity.activityId = activityId
   );
 }
 
