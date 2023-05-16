@@ -95,8 +95,18 @@ const { userSignupData } = defineProps<{
 
 const emits = defineEmits(["continue", "goBack"]);
 
-const countries = ref<AddressDetails[]>();
-const states = ref<AddressDetails[]>();
+const countries = ref<AddressDetails[]>([
+  {
+    name: "Default",
+    code: "Default",
+  },
+]);
+const states = ref<AddressDetails[]>([
+  {
+    name: "Default",
+    code: "Default",
+  },
+]);
 
 function countryChanged() {
   let realCountryData = countries.value?.filter(

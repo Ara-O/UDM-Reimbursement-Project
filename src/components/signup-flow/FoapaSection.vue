@@ -92,7 +92,12 @@
           v-model="userFoapaStuff.a2Number"
         />
       </div>
-      <button class="add-foapa-button" type="button" @click="addFoapa">
+      <button
+        class="add-foapa-button"
+        type="button"
+        @click="addFoapa"
+        style="width: auto"
+      >
         <img
           src="../../assets/add-icon.png"
           alt="add-icon"
@@ -116,6 +121,13 @@
       <h3>{{ foapa.pNumber }}</h3>
       <h3>-</h3>
       <h3>{{ foapa.a2Number }}, ${{ foapa.foapaAmount }}</h3>
+      <img
+        src="../../assets/trash-icon.png"
+        alt="Trash"
+        class="delete-icon"
+        @click="deleteFoapa(foapa.foapaName, foapa.fNumber)"
+        style="width: 15px; margin-left: 15px; cursor: pointer"
+      />
     </div>
     <div class="continue-buttons" style="margin-top: 20px">
       <button
@@ -140,8 +152,7 @@
 <script lang="ts" setup>
 import { FoapaStuff } from "../../types/types";
 import { reactive } from "vue";
-
-const { foapaList } = defineProps<{
+let { foapaList } = defineProps<{
   foapaList: FoapaStuff[];
 }>();
 
@@ -157,11 +168,53 @@ let userFoapaStuff = reactive<FoapaStuff>({
 
 const emits = defineEmits(["finish", "goBack"]);
 
+function deleteFoapa(foapaName, fNumber) {
+  let index = foapaList.findIndex(
+    (foapa) => foapa.foapaName === foapaName && foapa.fNumber === fNumber
+  );
+
+  if (index > -1) {
+    foapaList.splice(index, 1);
+  }
+
+  foapaList = foapaList.filter((foapa) => {});
+}
+
 function addFoapa() {
-  const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber", "a2Number"];
+  const foapaFields = [
+    "fNumber",
+    "oNumber",
+    "aNumber",
+    "pNumber",
+    "foapaAmount",
+  ];
+
+  // Refactor later :*)
   for (let i = 0; i < foapaFields.length; i++) {
     if (userFoapaStuff[foapaFields[i]] === "") {
       alert("Some FOAPA information is missing, please try again.");
+      break;
+    }
+
+    if (isNaN(userFoapaStuff[foapaFields[i]])) {
+      alert("FOAPA fields only accept numbers");
+      break;
+    }
+
+    if (userFoapaStuff.fNumber.length !== 6) {
+      alert("FUND value can only accept 6 digits");
+      break;
+    }
+    if (userFoapaStuff.oNumber.length !== 4) {
+      alert("ORG value can only accept 4 digits");
+      break;
+    }
+    if (userFoapaStuff.aNumber.length !== 4) {
+      alert("ACCT value can only accept 4 digits");
+      break;
+    }
+    if (userFoapaStuff.pNumber.length !== 4) {
+      alert("PROG value can only accept 4 digits");
       break;
     }
 

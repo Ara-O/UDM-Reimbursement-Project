@@ -69,21 +69,18 @@
     </div>
   </div>
   <div class="input-field-wrapper">
-    <div class="input-field" style="width: 345px">
+    <div class="input-field" style="width: 320px">
       <label for="department">Department: *</label>
-      <input
-        list="departmentList"
-        type="text"
+      <select
         style="width: 200px"
         name="Department"
         id="department"
         v-model="userSignupData.department"
-      />
-      <datalist id="departmentList">
+      >
         <option :value="department" v-for="department in departments">
           {{ department }}
         </option>
-      </datalist>
+      </select>
     </div>
   </div>
   <button
