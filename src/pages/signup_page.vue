@@ -119,7 +119,7 @@
             @click="finishedBasicQuestionsSection"
             style="margin-top: 0px"
           >
-            Continue
+            Next
           </button>
         </section>
 
@@ -152,7 +152,7 @@
               @click="surveyProgress = 0"
               style="margin-top: 0px"
             >
-              Go Back
+              Previous
             </button>
             <button
               class="signup-button"
@@ -160,7 +160,7 @@
               style="margin-top: 0px"
               @click="finishedPasswordSection"
             >
-              Continue
+              Next
             </button>
           </div>
         </section>
@@ -238,7 +238,7 @@
               @click="surveyProgress = 1"
               style="margin-top: 0px"
             >
-              Go Back
+              Previous
             </button>
             <button
               class="signup-button"
@@ -246,7 +246,7 @@
               style="margin-top: 0px"
               @click="finishedAddressSection"
             >
-              Continue
+              Next
             </button>
           </div>
         </section>
@@ -380,7 +380,7 @@
                 @click="surveyProgress--"
                 style="margin-top: 0px"
               >
-                Go Back
+                Previous
               </button>
               <button
                 class="signup-button"

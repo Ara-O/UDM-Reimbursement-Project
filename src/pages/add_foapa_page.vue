@@ -134,11 +134,11 @@
         /> -->
       </div>
       <div style="display: flex; gap: 22px">
-        <button class="add-foapa-button" @click="updateFoapa">
-          Update
-        </button>
         <button class="add-foapa-button" @click="$router.push('/dashboard')">
-          Go to Dashboard
+          Discard
+        </button>
+        <button class="add-foapa-button" @click="updateFoapa">
+          Add
         </button>
       </div>
     </div>
