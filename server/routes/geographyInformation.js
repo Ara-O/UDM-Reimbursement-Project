@@ -12,8 +12,6 @@ router.get("/allCountries", (req, res) => {
 });
 
 router.get("/getStateFromCountry", (req, res) => {
-  //   console.log(Country.getCountryByCode())
-  console.log(req.query.realCountryData);
   let allStates = State.getAllStates();
   const states = allStates.filter(
     (states) => states.countryCode === req.query.realCountryData[0].code
@@ -24,7 +22,6 @@ router.get("/getStateFromCountry", (req, res) => {
   });
 
   res.status(200).send(formattedStates);
-  console.log(states);
 });
 
 export default router;

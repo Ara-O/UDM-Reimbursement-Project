@@ -29,7 +29,13 @@
     </div>
     <div class="input-field">
       <label for="city">City: *</label>
-      <input type="text" name="City" id="city" v-model="userSignupData.city" />
+      <input
+        type="text"
+        name="City"
+        id="city"
+        v-model="userSignupData.city"
+        :disabled="userSignupData.state === ''"
+      />
     </div>
   </div>
   <div class="input-field-wrapper">
