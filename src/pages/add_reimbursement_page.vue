@@ -9,7 +9,7 @@
           {{ activity.amount }}
         </h4>
         <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
-        <div class="delete-option" @click="modifyActivity(activity.activityId)">
+        <div class="delete-option" @click="deleteActivity(activity.activityId)">
           <img src="../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon" />
         </div>
       </div>
@@ -237,9 +237,8 @@ function deleteActivity(activityId: number) {
 }
 
 function modifyActivity(activityId: number) {
-  allActivities.value = allActivities.value.filter(
-    (activity) => activity.activityId = activityId
-  );
+  let found = allActivities.value.find((activity) => activity.activityId === activityId);
+
 }
 
 let reimbursementData = {};
