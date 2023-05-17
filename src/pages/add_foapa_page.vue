@@ -8,7 +8,7 @@
       />
     </div>
     <div>
-      <h3 class="add-foapa-title">Add FOAPA</h3>
+      <h3 class="add-foapa-title">Manage FOAPA</h3>
       <div>
         <label for="foapa-numbers"
           >FOAPA [ FUND - ORG - ACCT - PROG - ACTV ]:</label
