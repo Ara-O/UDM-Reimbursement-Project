@@ -176,8 +176,6 @@ function deleteFoapa(foapaName, fNumber) {
   if (index > -1) {
     foapaList.splice(index, 1);
   }
-
-  foapaList = foapaList.filter((foapa) => {});
 }
 
 function addFoapa() {

@@ -20,6 +20,7 @@
           type="email"
           name="Work Email"
           id="work-email"
+          required
         />
       </div>
       <div class="input-field">
@@ -28,6 +29,7 @@
           v-model="userInfo.password"
           type="password"
           name="Password"
+          required
           id="password"
         />
       </div>

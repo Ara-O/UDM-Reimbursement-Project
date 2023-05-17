@@ -6,6 +6,7 @@ import {
 } from "../utils/authenticatePassword.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import formatFoapaDetails from "../utils/formatFoapaDetails.js";
 import { verifyToken } from "../middleware/auth.js";
 dotenv.config();
 
@@ -13,62 +14,31 @@ const router = Router();
 
 // Registering user - POST /api/register
 router.post("/register", async (req, res) => {
-  const {
-    employmentNumber,
-    firstName,
-    lastName,
-    workEmail,
-    phoneNumber,
-    password,
-    mailingAddress,
-    department,
-    zipCode,
-    city,
-    state,
-    country,
-    userFoapas,
-  } = req.body;
+  const userData = req.body;
 
   //Formatting the user's foapa information
-  let foapaDetails = [];
-  userFoapas.forEach((userFoapa) => {
-    let concatFoapa =
-      userFoapa.fNumber +
-      "-" +
-      userFoapa.oNumber +
-      "-" +
-      userFoapa.aNumber +
-      "-" +
-      userFoapa.pNumber +
-      "-" +
-      userFoapa.a2Number;
+  userData.userFoapas = formatFoapaDetails(userData.userFoapas);
 
-    foapaDetails.push({
-      foapaName: userFoapa.foapaName,
-      foapaNumber: concatFoapa,
-    });
-  });
+  //Formatting email input
+  if (!userData.workEmail.includes("@udmercy.edu")) {
+    userData.workEmail += "@udmercy.edu";
+  }
+
+  userData.workEmail = userData.workEmail.toLowerCase();
+
+  if (!userData.employmentNumber.includes("T")) {
+    userData.employmentNumber = "T" + userData.employmentNumber;
+  }
 
   try {
-    let encryptedPassword = await encryptPassword(password);
+    let encryptedPassword = await encryptPassword(userData.password);
+    userData.password = encryptedPassword;
 
-    const faculty = new Faculty({
-      employmentNumber,
-      firstName,
-      lastName,
-      workEmail: workEmail.toLowerCase(),
-      phoneNumber,
-      password: encryptedPassword,
-      mailingAddress,
-      department,
-      zipCode,
-      city,
-      state,
-      country,
-      foapaDetails,
+    const faculty = new Faculty(userData);
+
+    let existingUser = await Faculty.findOne({
+      employmentNumber: userData.employmentNumber,
     });
-
-    let existingUser = await Faculty.findOne({ employmentNumber });
 
     if (existingUser) {
       console.log("User already exists");
@@ -77,9 +47,13 @@ router.post("/register", async (req, res) => {
       await faculty.save();
 
       //Creates a token thatll be used to authenticate the user for later api calls
-      let token = await jwt.sign({ employmentNumber }, process.env.JWT_SECRET, {
-        expiresIn: "30d",
-      });
+      let token = await jwt.sign(
+        { employmentNumber: userData.employmentNumber },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "30d",
+        }
+      );
 
       res.status(200).send({ message: "Registration successful!", token });
     }
@@ -180,7 +154,6 @@ router.get("/retrieveAccountInformation", verifyToken, async (req, res) => {
 });
 
 router.post("/updateAccountInfo", async (req, res) => {
-  console.log("updatig body", req.body);
   const {
     firstName,
     lastName,
@@ -220,6 +193,26 @@ router.post("/updateAccountInfo", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(400).send({ message: error.message });
+  }
+});
+
+router.post("/verifyEmploymentNumber", async (req, res) => {
+  try {
+    let facultyFound = await Faculty.findOne({
+      employmentNumber: "T" + req.body.employmentNumber,
+    });
+    console.log(facultyFound);
+    if (facultyFound !== null) {
+      res.status(400).send({
+        message:
+          "An employee with the inputted employment number already exists",
+      });
+    } else {
+      res.status(200).send();
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
   }
 });
 export default router;

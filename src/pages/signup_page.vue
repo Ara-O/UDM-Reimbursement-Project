@@ -97,7 +97,7 @@ let userSignupData = reactive<UserData>({
   firstName: "",
   lastName: "",
   workEmail: "",
-  employmentNumber: "",
+  employmentNumber: 0,
   department: "",
   mailingAddress: "",
   phoneNumber: "",
@@ -113,9 +113,6 @@ let foapaList = ref<FoapaStuff[]>([]);
 
 function registerUser() {
   userSignupData.userFoapas = foapaList.value;
-  if (!userSignupData.employmentNumber.toUpperCase().includes("T")) {
-    userSignupData.employmentNumber = "T" + userSignupData.employmentNumber;
-  }
 
   axios
     .post("/api/register", userSignupData)

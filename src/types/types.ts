@@ -2,7 +2,7 @@ export type UserData = {
   firstName: string;
   lastName: string;
   workEmail: string;
-  employmentNumber: string;
+  employmentNumber: number;
   department: string;
   mailingAddress: string;
   phoneNumber: string;

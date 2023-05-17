@@ -3,6 +3,15 @@ export default function createPdfDefinition(
   userInfo,
   allImageIds
 ) {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  let mm = today.getMonth() + 1; // Months start at 0!
+  let dd = today.getDate();
+
+  if (dd < 10) dd = "0" + dd;
+  if (mm < 10) mm = "0" + mm;
+
+  const formattedToday = dd + "/" + mm + "/" + yyyy;
   console.log("generate pdf", userInfo);
   // console.log(reimbursementData, userInfo);
   const { allActivities } = reimbursementData;
@@ -22,10 +31,7 @@ export default function createPdfDefinition(
       fontSize: 8,
     },
     {
-      text: `Date Submitted ___${reimbursementData.slice(
-        0,
-        10
-      )}___\n\n`,
+      text: `Date Submitted ___${formattedToday}___\n\n`,
       italics: true,
     }
   );
@@ -530,21 +536,21 @@ export default function createPdfDefinition(
         body: [
           [
             {
-              text: `${userInfo.fName} ${userInfo.lName}`,
-              border: [false, true, false, false],
+              text: `${userInfo.firstName} ${userInfo.lastName}`,
+              border: [false, false, false, true],
               italics: false,
               fontSize: 9,
             },
-            {
-              text: "Signature of Employee",
-              border: [false, true, false, false],
-              italics: false,
-              fontSize: 9,
-            },
+            // {
+            //   text: "Signature of Employee",
+            //   border: [false, true, false, false],
+            //   italics: false,
+            //   fontSize: 9,
+            // },
             { text: "", border: [false, false, false, false] },
             {
-              text: "Date",
-              border: [false, true, false, false],
+              text: `${formattedToday}`,
+              border: [false, false, true, false],
               italics: false,
               fontSize: 9,
             },

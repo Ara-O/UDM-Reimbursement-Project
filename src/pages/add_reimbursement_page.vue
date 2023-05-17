@@ -18,34 +18,14 @@
         </div>
       </div>
       <div class="cta-buttons">
-        <button
-          class="go-back-button"
-          @click="goToHomePage"
-          style="margin-right: 110px"
-        >
-          Discard
-        </button>
-        <button
-          class="go-back-button"
-          @click="saveReimbursement"
-          style="margin-left: 180px; margin-top: -60px"
-        >
+        <button class="go-back-button" @click="goToHomePage">Discard</button>
+        <button class="go-back-button" @click="saveReimbursement">
           Save Ticket
         </button>
-        <button
-          class="go-back-button"
-          @click="createPdf"
-          style="margin-right: 110px; margin-top: -10px"
-        >
-          Preview PDF
-        </button>
-        <button
-          class="go-back-button"
-          @click="createPdf"
-          style="margin-left: 180px; margin-top: -60px"
-        >
+        <button class="go-back-button" @click="createPdf">
           Attach PDF with Ticket
         </button>
+        <button class="go-back-button" @click="createPdf">Preview PDF</button>
         <h5
           style="font-weight: 400; margin-top: 2px"
           v-show="currentlyAddingPDF"

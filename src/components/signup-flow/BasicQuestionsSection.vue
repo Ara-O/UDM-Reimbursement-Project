@@ -18,7 +18,7 @@
         v-model="userSignupData.lastName"
       />
     </div>
-    <div class="input-field">
+    <div class="input-field" style="width: 225px">
       <label for="phone-number">Phone: *</label>
       <input
         type="text"
@@ -94,6 +94,7 @@
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 import { UserData } from "../../types/types";
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
@@ -137,12 +138,24 @@ function progress() {
       );
       break;
     } else {
+      if (isNaN(userSignupData.employmentNumber)) {
+        alert("Employment number must be a number");
+        break;
+      }
+
       if (i === dataShown.length - 1) {
-        if (!userSignupData.workEmail.includes("@udmercy.edu")) {
-          userSignupData.workEmail += "@udmercy.edu";
-        }
         window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-        emits("continue");
+        axios
+          .post("/api/verifyEmploymentNumber", {
+            employmentNumber: userSignupData.employmentNumber,
+          })
+          .then((res) => {
+            emits("continue");
+          })
+          .catch((err) => {
+            console.log(err);
+            alert(err.response.data.message);
+          });
       }
     }
   }

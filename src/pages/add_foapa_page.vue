@@ -15,7 +15,7 @@
         >
       </div>
       <br />
-      <div class="input-field-foapa-wrapper" style="text-align: center;">
+      <div class="input-field-foapa-wrapper" style="text-align: center">
         <div class="input-FOAPA-field">
           <label for="foapa-name">FOAPA Name</label>
           <input
@@ -137,9 +137,7 @@
         <button class="add-foapa-button" @click="$router.push('/dashboard')">
           Discard
         </button>
-        <button class="add-foapa-button" @click="updateFoapa">
-          Add
-        </button>
+        <button class="add-foapa-button" @click="updateFoapa">Add</button>
       </div>
     </div>
   </section>
@@ -195,6 +193,28 @@ function addFoapa() {
       break;
     }
 
+    if (isNaN(userFoapaStuff[foapaFields[i]])) {
+      alert("FOAPA fields only accept numbers");
+      break;
+    }
+
+    if (userFoapaStuff.fNumber.length !== 6) {
+      alert("FUND value can only accept 6 digits");
+      break;
+    }
+    if (userFoapaStuff.oNumber.length !== 4) {
+      alert("ORG value can only accept 4 digits");
+      break;
+    }
+    if (userFoapaStuff.aNumber.length !== 4) {
+      alert("ACCT value can only accept 4 digits");
+      break;
+    }
+    if (userFoapaStuff.pNumber.length !== 4) {
+      alert("PROG value can only accept 4 digits");
+      break;
+    }
+
     if (i === foapaFields.length - 1) {
       let currentFoapa = reactive<FoapaStuff>({
         fNumber: userFoapaStuff.fNumber,
@@ -209,7 +229,7 @@ function addFoapa() {
       foapaList.value.push(currentFoapa);
 
       userFoapaStuff.foapaName =
-      userFoapaStuff.foapaAmount =
+        userFoapaStuff.foapaAmount =
         userFoapaStuff.fNumber =
         userFoapaStuff.oNumber =
         userFoapaStuff.aNumber =

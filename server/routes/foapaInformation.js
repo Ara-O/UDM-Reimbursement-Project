@@ -31,9 +31,9 @@ router.post("/updateFoapaDetails", verifyToken, async (req, res) => {
       { foapaDetails }
     );
     res.status(200).send({ message: "FOAPA details updated successfully" });
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({ message: error.message });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
   }
 });
 
@@ -45,7 +45,7 @@ router.get("/retrieveFoapaDetails", verifyToken, async (req, res) => {
     res.status(200).send(foapaDetails.foapaDetails);
   } catch (err) {
     console.error(err);
-    res.status(400).send({ message: error.message });
+    res.status(400).send({ message: err.message });
   }
 });
 
@@ -63,7 +63,7 @@ router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
     console.log(userInfo);
   } catch (err) {
     console.error(err);
-    res.status(400).send({ message: error.message });
+    res.status(400).send({ message: err.message });
   }
 });
 
