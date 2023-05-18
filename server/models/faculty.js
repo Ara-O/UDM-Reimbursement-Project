@@ -23,9 +23,9 @@ const facultySchema = new Schema({
   ],
   reimbursementTickets: [
     {
+      //refactor, make true
       reimbursementId: {
         type: Number,
-        unique: true,
       },
       eventName: String,
       totalAmount: Number,
@@ -33,9 +33,9 @@ const facultySchema = new Schema({
       reimbursementDate: Date,
       activities: [
         {
+          //likewise, id unique here
           activityId: {
             type: Number,
-            unique: true,
           },
           reimbursementId: String,
           foapaNumber: String,
