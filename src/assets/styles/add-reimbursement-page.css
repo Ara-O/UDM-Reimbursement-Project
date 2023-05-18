@@ -28,15 +28,17 @@
   font-weight: 600;
 }
 
-.go-back-button {
+.add-actvities-button {
   background-color: var(--udmercy-red);
   border-radius: 30px;
   display: flex;
   align-items: center;
+  justify-content: center;
   color: white;
   font-size: 12px;
   height: 40px;
-  width: auto;
+  width: 240px;
+  text-align: center;
   cursor: pointer;
   border: solid 1px var(--udmercy-red);
   padding: 8px 20px;

@@ -153,13 +153,12 @@ router.get("/retrieveAccountInformation", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/updateAccountInfo", async (req, res) => {
+router.post("/updateAccountInfo", verifyToken, async (req, res) => {
   const {
     firstName,
     lastName,
     workEmail,
     phoneNumber,
-    password,
     mailingAddress,
     department,
     zipCode,
@@ -169,18 +168,21 @@ router.post("/updateAccountInfo", async (req, res) => {
   } = req.body;
 
   try {
-    let facultyInfo = await Faculty.updateOne({
-      firstName,
-      lastName,
-      workEmail,
-      phoneNumber,
-      mailingAddress,
-      department,
-      zipCode,
-      city,
-      state,
-      country,
-    });
+    let facultyInfo = await Faculty.updateOne(
+      { employmentNumber: req.user.employmentNumber },
+      {
+        firstName,
+        lastName,
+        workEmail,
+        phoneNumber,
+        mailingAddress,
+        department,
+        zipCode,
+        city,
+        state,
+        country,
+      }
+    );
 
     if (facultyInfo === null) {
       res.status(404).send({

@@ -18,7 +18,7 @@
         v-model="userSignupData.lastName"
       />
     </div>
-    <div class="input-field" style="width: 225px">
+    <div class="input-field">
       <label for="phone-number">Phone: *</label>
       <input
         type="text"
@@ -27,12 +27,8 @@
         v-model="userSignupData.phoneNumber"
       />
     </div>
-  </div>
-  <div class="input-field-wrapper">
     <div class="work-email-section">
-      <label for="work-email" style="font-size: 14px; width: 100px"
-        >Work Email: *</label
-      >
+      <label for="work-email">Work Email: *</label>
       <div class="work-email-input-field">
         <input
           type="email"
@@ -43,36 +39,23 @@
         <h6 class="work-email-descriptor">@udmercy.edu</h6>
       </div>
     </div>
-    <div class="input-field" style="width: 322px">
-      <label for="employment-number" style="width: auto"
-        >Employment Number: *</label
-      >
+    <div class="input-field">
+      <label for="employment-number">Employment Number: *</label>
       <span style="position: relative">
-        <span
-          style="
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-51px, -50%);
-          "
-        >
-          <h3 style="font-size: 14px; font-weight: 400; color: #474747">T</h3>
+        <span class="employment-number-section">
+          <h3>T</h3>
         </span>
         <input
           type="text"
           name="Employment Number"
-          style="width: 130px; padding-left: 25px"
           id="employment-number"
           v-model="userSignupData.employmentNumber"
         />
       </span>
     </div>
-  </div>
-  <div class="input-field-wrapper">
-    <div class="input-field" style="width: 320px">
+    <div class="input-field">
       <label for="department">Department: *</label>
       <select
-        style="width: 200px"
         name="Department"
         id="department"
         v-model="userSignupData.department"

@@ -10,7 +10,7 @@ import reimbursementInformation from "./routes/reimbursementInformation.js";
 import pdfInformation from "./routes/pdfInformation.js";
 import geographyInformation from "./routes/geographyInformation.js";
 dotenv.config();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 const app = express();
 

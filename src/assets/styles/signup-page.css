@@ -64,6 +64,18 @@ input {
 .foapa-section {
   margin-top: 40px;
 }
+.employment-number-section h3 {
+  font-size: 14px;
+  font-weight: 400;
+  /* color: #474747; */
+}
+
+.employment-number-section {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-95px, -50%);
+}
 
 .foapa-section label {
   font-size: 14px;
@@ -91,11 +103,12 @@ input {
   display: inline-flex;
 }
 
-.input-field {
+.input-field,
+.work-email-section {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  width: 255px;
+  gap: 14px;
   justify-content: space-between;
 }
 
@@ -103,7 +116,7 @@ input {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-13px, -41px);
+  transform: translate(-20px, -41px);
   font-weight: 400;
   font-size: 13px;
 }
@@ -132,15 +145,11 @@ input {
   border: none;
   width: 65px;
 }
-.work-email-input-field label {
-  font-size: 14px;
-  width: 100px;
-}
 
 .input-field input,
 .input-field select {
   padding-left: 20px;
-  width: 150px;
+  width: 210px;
   box-sizing: border-box;
   height: 36px;
   font-size: 13px;
@@ -151,7 +160,8 @@ input {
   border-radius: 5px;
 }
 
-.input-field label {
+.input-field label,
+.work-email-section label {
   font-size: 14px;
   width: 100px;
 }
@@ -242,15 +252,7 @@ input {
   }
 }
 
-.work-email-section {
-  display: flex;
-  justify-content: space-between;
-  width: 316px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 630px) {
+@media (max-width: 780px) {
   .input-FOAPA-field label {
     text-align: center;
   }
