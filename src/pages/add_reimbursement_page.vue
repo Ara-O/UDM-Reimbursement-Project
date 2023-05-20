@@ -18,17 +18,17 @@
         </div>
       </div>
       <div class="cta-buttons">
-        <button class="add-actvities-button" @click="goToHomePage">
-          Discard
+        <button class="add-actvities-button" @click="createPdf">
+          Submit Ticket
         </button>
         <button class="add-actvities-button" @click="saveReimbursement">
           Save Ticket
         </button>
         <button class="add-actvities-button" @click="createPdf">
-          Attach PDF with Ticket
+          Preview Ticket
         </button>
-        <button class="add-actvities-button" @click="createPdf">
-          Preview PDF
+        <button class="add-actvities-button" @click="goToHomePage">
+          Discard
         </button>
         <h5
           style="font-weight: 400; margin-top: 2px"
