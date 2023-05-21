@@ -33,9 +33,12 @@ input {
   width: 90px;
   height: 36px;
   text-align: center;
-  background: #ffffff;
-  border: 1px solid #f7f7f7;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
+  /* background: #ffffff;
+  border: 1px solid #f7f7f7; */
+  /* box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17); */
+  border-radius: 5px;
+  border: 1px solid rgba(246, 246, 246, 0.44);
+  box-shadow: 0 2px 2px #5353532b;
   border-radius: 5px;
   display: inline-flex;
 }
@@ -105,14 +108,35 @@ input {
 }
 
 .added-foapa-number {
-  display: flex;
-
+  width: auto;
+  padding: 9px 25px;
+  height: auto;
+  padding-left: 0px;
   align-items: center;
+}
+
+.added-foapa-sections {
+  max-width: 1046px;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 21px;
+  width: auto;
+  row-gap: 21px;
+}
+
+.added-foapa-number span {
+  display: flex;
+}
+
+.added-foapa-number h3 {
+  font-size: 52px;
+  font-weight: 400;
 }
 
 .added-foapa-number h3 {
   font-weight: 400;
-  font-size: 15px;
+  font-size: 14.5px;
+  text-align: left;
 }
 
 @media (max-width: 1350px) {

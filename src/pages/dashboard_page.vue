@@ -10,9 +10,16 @@
           :key="foapa.foapaNumber"
           style="display: flex; flex-direction: column; align-items: start"
         >
-          <h3 style="margin-top: 8px; font-weight: 500">
-            {{ foapa.foapaName }}
-          </h3>
+          <span class="foapa-number-title">
+            <img
+              src="../assets/trash-icon.png"
+              alt="Trash"
+              @click="deleteFoapa(foapa.foapaNumber)"
+            />
+            <h3 style="font-weight: 500">
+              {{ foapa.foapaName }}
+            </h3>
+          </span>
           <div
             style="
               display: flex;
@@ -23,12 +30,6 @@
           >
             <h3 style="margin-top: 10px">{{ foapa.foapaNumber }}</h3>
           </div>
-          <img
-            src="../assets/trash-icon.png"
-            alt="Trash"
-            @click="deleteFoapa(foapa.foapaNumber)"
-            style="transform: translate(221px, -24px)"
-          />
         </div>
         <div class="filter" @click="goToFoapaPage">
           <h3>Add Foapa Number</h3>

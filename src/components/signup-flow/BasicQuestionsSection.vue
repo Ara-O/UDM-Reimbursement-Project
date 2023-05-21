@@ -47,6 +47,7 @@
         </span>
         <input
           type="text"
+          style="padding-left: 30px"
           name="Employment Number"
           id="employment-number"
           v-model="userSignupData.employmentNumber"
@@ -121,7 +122,10 @@ function progress() {
       );
       break;
     } else {
-      if (isNaN(userSignupData.employmentNumber)) {
+      if (
+        userSignupData.employmentNumber !== null &&
+        isNaN(userSignupData.employmentNumber)
+      ) {
         alert("Employment number must be a number");
         break;
       }

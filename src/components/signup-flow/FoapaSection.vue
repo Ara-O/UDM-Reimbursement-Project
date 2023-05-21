@@ -22,11 +22,11 @@
         <label for="foapa-name">Amount</label>
         <input
           type="text"
-          style="width: 150px"
+          style="width: 95px"
           placeholder="Amount"
           name="Amount"
           id="foapa-amount"
-          v-model="userFoapaStuff.foapaAmount"
+          v-model="userFoapaStuff.initialAmount"
         />
       </div>
       <h5>:</h5>
@@ -106,29 +106,31 @@
       </button>
     </div>
     <br />
-    <div
-      v-for="(foapa, index) in foapaList"
-      style="display: flex"
-      class="added-foapa-number"
-    >
-      <h3 style="margin-right: 15px; font-weight: 500">#{{ index + 1 }}</h3>
-      <h3>{{ foapa.foapaName }} : {{ foapa.fNumber }}</h3>
-      <h3>-</h3>
-      <h3>{{ foapa.oNumber }}</h3>
-      <h3>-</h3>
-      <h3>{{ foapa.aNumber }}</h3>
-      <h3>-</h3>
-      <h3>{{ foapa.pNumber }}</h3>
-      <h3>-</h3>
-      <h3>{{ foapa.a2Number }}, ${{ foapa.foapaAmount }}</h3>
-      <img
-        src="../../assets/trash-icon.png"
-        alt="Trash"
-        class="delete-icon"
-        @click="deleteFoapa(foapa.foapaName, foapa.fNumber)"
-        style="width: 15px; margin-left: 15px; cursor: pointer"
-      />
-    </div>
+    <section class="" style="width: auto">
+      <div v-for="(foapa, index) in foapaList" class="signup-page-foapa">
+        <img
+          src="../../assets/trash-icon.png"
+          alt="Trash"
+          class="delete-icon"
+          @click="deleteFoapa(foapa.foapaName, foapa.fNumber)"
+          style="width: 15px; margin-right: 15px; cursor: pointer"
+        />
+        <h3 style="margin-right: 15px; font-weight: 500">#{{ index + 1 }}</h3>
+        <h3>{{ foapa.foapaName }} : {{ foapa.fNumber }}</h3>
+        <h3>-</h3>
+        <h3>{{ foapa.oNumber }}</h3>
+        <h3>-</h3>
+        <h3>{{ foapa.aNumber }}</h3>
+        <h3>-</h3>
+        <h3>{{ foapa.pNumber }}</h3>
+        <span v-if="foapa.a2Number">
+          <h3>-</h3>
+          <h3>{{ foapa.a2Number }}</h3>
+        </span>
+        <h3 style="margin-right: 10px">;</h3>
+        <h3>Initial Amount: ${{ foapa.initialAmount }}</h3>
+      </div>
+    </section>
     <div class="continue-buttons" style="margin-top: 20px">
       <button
         class="signup-button"
@@ -163,7 +165,8 @@ let userFoapaStuff = reactive<FoapaStuff>({
   pNumber: "",
   a2Number: "",
   foapaName: "",
-  foapaAmount: "",
+  initialAmount: "",
+  currentAmount: "",
 });
 
 const emits = defineEmits(["finish", "goBack"]);
@@ -184,7 +187,7 @@ function addFoapa() {
     "oNumber",
     "aNumber",
     "pNumber",
-    "foapaAmount",
+    "initialAmount",
   ];
 
   // Refactor later :*)
@@ -220,7 +223,8 @@ function addFoapa() {
       let currentFoapa = Object.assign({}, userFoapaStuff);
       foapaList.push(currentFoapa);
       userFoapaStuff.foapaName =
-        userFoapaStuff.foapaAmount =
+        userFoapaStuff.currentAmount =
+        userFoapaStuff.initialAmount =
         userFoapaStuff.fNumber =
         userFoapaStuff.oNumber =
         userFoapaStuff.aNumber =

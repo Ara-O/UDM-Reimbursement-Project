@@ -37,8 +37,7 @@
         :disabled="userSignupData.state === ''"
       />
     </div>
-  </div>
-  <div class="input-field-wrapper">
+
     <div class="input-field">
       <label for="street-address">Street Address: *</label>
       <input
@@ -49,16 +48,15 @@
       />
     </div>
     <div class="input-field">
-      <label for="zip-code">Postal Code: *</label>
+      <label for="postal-code">Postal Code: *</label>
       <input
-        type="number"
+        type="text"
         name="Postal Code"
-        id="zip-code"
-        v-model="userSignupData.zipCode"
+        id="postal-code"
+        v-model="userSignupData.postalCode"
       />
     </div>
   </div>
-
   <div class="continue-buttons">
     <button
       class="signup-button"

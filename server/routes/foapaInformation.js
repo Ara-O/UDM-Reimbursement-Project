@@ -2,28 +2,12 @@ import { Router } from "express";
 const router = Router();
 import Faculty from "../models/faculty.js";
 import { verifyToken } from "../middleware/auth.js";
+import formatFoapaDetails from "../utils/formatFoapaDetails.js";
 
 router.post("/updateFoapaDetails", verifyToken, async (req, res) => {
   console.log(req.body.foapaData, req.user);
 
-  let foapaDetails = [];
-  req.body.foapaData.forEach((foapa) => {
-    let concatFoapa =
-      foapa.fNumber +
-      "-" +
-      foapa.oNumber +
-      "-" +
-      foapa.aNumber +
-      "-" +
-      foapa.pNumber +
-      "-" +
-      foapa.a2Number;
-
-    foapaDetails.push({
-      foapaName: foapa.foapaName,
-      foapaNumber: concatFoapa,
-    });
-  });
+  let foapaDetails = formatFoapaDetails(req.body.foapaData);
 
   try {
     await Faculty.updateOne(

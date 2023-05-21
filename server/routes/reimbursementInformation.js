@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
+import updateFoapaDetails from "../utils/updateFoapaDetails.js";
 import Faculty from "../models/faculty.js";
 const router = Router();
 
@@ -25,7 +26,12 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
       reimbursementDate,
       activities: allActivities,
     });
+
+    //Update foapa details
     await userInfo.save();
+
+    await updateFoapaDetails(req.user.employmentNumber);
+    //Save
     res
       .status(200)
       .send({ message: "Reimbursement ticket added successfully" });

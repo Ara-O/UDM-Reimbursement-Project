@@ -18,7 +18,7 @@ const facultySchema = new Schema({
       foapaName: String,
       foapaNumber: String,
       initialAmount: Number,
-      remainingAmount: Number,
+      currentAmount: Number,
     },
   ],
   reimbursementTickets: [
