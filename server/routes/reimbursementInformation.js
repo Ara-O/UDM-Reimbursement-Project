@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
+import updateFoapaDetails from "../utils/updateFoapaDetails.js";
 import Faculty from "../models/faculty.js";
 const router = Router();
 
@@ -25,7 +26,12 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
       reimbursementDate,
       activities: allActivities,
     });
+
+    //Update foapa details
     await userInfo.save();
+
+    await updateFoapaDetails(req.user.employmentNumber);
+    //Save
     res
       .status(200)
       .send({ message: "Reimbursement ticket added successfully" });
@@ -37,9 +43,34 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
 //GET /api/retrieveReimbursements
 router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
   try {
+    let sortBy = req.query.sortBy;
+    console.log("sortby", sortBy);
+
     let reimbursements = await Faculty.findOne({
       employmentNumber: req.user.employmentNumber,
     }).select("reimbursementTickets");
+
+    if (sortBy === "Cost Ascending") {
+      reimbursements.reimbursementTickets =
+        reimbursements.reimbursementTickets.sort((a, b) => {
+          return a.totalAmount - b.totalAmount;
+        });
+    }
+
+    if (sortBy === "Cost Descending") {
+      reimbursements.reimbursementTickets =
+        reimbursements.reimbursementTickets.sort((a, b) => {
+          return b.totalAmount - a.totalAmount;
+        });
+    }
+
+    if (sortBy === "Date") {
+      reimbursements.reimbursementTickets =
+        reimbursements.reimbursementTickets.sort((a, b) => {
+          return b.reimbursementDate - b.reimbursementDate;
+        });
+    }
+    console.log(reimbursements);
 
     res.status(200).send(reimbursements.reimbursementTickets);
   } catch (err) {
@@ -91,6 +122,8 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
       },
       { new: true }
     );
+
+    await updateFoapaDetails(req.user.employmentNumber);
 
     console.log("up", result);
 

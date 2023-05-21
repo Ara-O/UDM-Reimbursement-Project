@@ -26,7 +26,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 31px;
+  padding: 20px 31px;
   box-sizing: border-box;
   width: 300px;
   height: auto;
@@ -35,8 +35,14 @@
   border-radius: 5px;
 }
 
+.foapa-number-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .foapa-number h3 {
-  font-size: 14.5px;
+  font-size: 14px;
   font-weight: 400;
   margin-top: 0px;
   margin-bottom: 0px;

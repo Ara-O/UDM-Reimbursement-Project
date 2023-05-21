@@ -9,7 +9,7 @@ const facultySchema = new Schema({
   password: String,
   mailingAddress: String,
   department: String,
-  zipCode: String,
+  postalCode: String,
   city: String,
   state: String,
   country: String,
@@ -18,7 +18,7 @@ const facultySchema = new Schema({
       foapaName: String,
       foapaNumber: String,
       initialAmount: Number,
-      remainingAmount: Number,
+      currentAmount: Number,
     },
   ],
   reimbursementTickets: [
@@ -30,7 +30,7 @@ const facultySchema = new Schema({
       eventName: String,
       totalAmount: Number,
       reimbursementStatus: Boolean,
-      reimbursementDate: Date,
+      reimbursementDate: String,
       activities: [
         {
           //likewise, id unique here
@@ -41,7 +41,7 @@ const facultySchema = new Schema({
           foapaNumber: String,
           activityName: String,
           activityReceipt: String,
-          activityDate: String,
+          activityDate: Date,
           amount: Number,
         },
       ],

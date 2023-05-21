@@ -9,7 +9,7 @@
         v-model="userSignupData.password"
       />
     </div>
-    <div class="input-field" style="width: 320px">
+    <div class="input-field">
       <label for="reenter-password" style="width: auto"
         >Re-enter password: *</label
       >

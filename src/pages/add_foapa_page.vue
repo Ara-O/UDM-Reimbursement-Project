@@ -17,7 +17,7 @@
       <br />
       <div class="input-field-foapa-wrapper" style="text-align: center">
         <div class="input-FOAPA-field">
-          <label for="foapa-name">FOAPA Name</label>
+          <label for="foapa-name">FOAPA Name*</label>
           <input
             type="text"
             style="width: 150px"
@@ -28,20 +28,20 @@
           />
         </div>
         <div class="input-FOAPA-field">
-          <label for="foapa-name">Amount</label>
+          <label for="foapa-name">Amount*</label>
           <input
             type="text"
             style="width: 150px"
             placeholder="Amount"
             name="Amount"
             id="foapa-amount"
-            v-model="userFoapaStuff.foapaAmount"
+            v-model="userFoapaStuff.initialAmount"
           />
         </div>
         <h5>:</h5>
 
         <div class="input-FOAPA-field">
-          <label for="foapa-name">FUND</label>
+          <label for="foapa-name">FUND*</label>
 
           <input
             type="text"
@@ -54,7 +54,7 @@
         <h5>-</h5>
 
         <div class="input-FOAPA-field">
-          <label for="foapa-name">ORG</label>
+          <label for="foapa-name">ORG*</label>
 
           <input
             type="text"
@@ -66,7 +66,7 @@
         </div>
         <h5>-</h5>
         <div class="input-FOAPA-field">
-          <label for="foapa-name">ACCT</label>
+          <label for="foapa-name">ACCT*</label>
 
           <input
             type="text"
@@ -79,7 +79,7 @@
         <h5>-</h5>
 
         <div class="input-FOAPA-field">
-          <label for="foapa-name">PROG</label>
+          <label for="foapa-name">PROG*</label>
 
           <input
             type="text"
@@ -110,65 +110,64 @@
         </button>
       </div>
       <br />
-      <div
-        v-for="(foapa, index) in foapaList"
-        style="display: flex"
-        class="added-foapa-number"
-      >
-        <h3 style="margin-right: 15px; font-weight: 500">#{{ index + 1 }}</h3>
-        <h3>{{ foapa.foapaName }} : {{ foapa.fNumber }}</h3>
-        <h3>-</h3>
-        <h3>{{ foapa.oNumber }}</h3>
-        <h3>-</h3>
-        <h3>{{ foapa.aNumber }}</h3>
-        <h3>-</h3>
-        <h3>{{ foapa.pNumber }}</h3>
-        <h3>-</h3>
-        <h3>{{ foapa.a2Number }}, ${{ foapa.foapaAmount }}</h3>
+      <div class="added-foapa-number" v-for="(foapa, index) in foapaList">
+        <span>
+          <h3 style="margin-right: 15px; font-weight: 500">#{{ index + 1 }}</h3>
+          <h3>{{ foapa.foapaName }} : {{ foapa.fNumber }}</h3>
+          <h3>-</h3>
+          <h3>{{ foapa.oNumber }}</h3>
+          <h3>-</h3>
+          <h3>{{ foapa.aNumber }}</h3>
+          <h3>-</h3>
+          <h3>{{ foapa.pNumber }}</h3>
+
+          <h3 v-if="foapa.a2Number">-</h3>
+          <h3 v-if="foapa.a2Number">{{ foapa.a2Number }}</h3>
+          <h3 style="padding-left: 10px">
+            -> Initial amount: ${{ foapa.initialAmount }}
+          </h3>
+          <h3 style="padding-left: 10px">
+            -> Current amount: ${{ foapa.currentAmount }}
+          </h3>
+        </span>
+        <!-- <h3>Initial amount:</h3> -->
         <!-- <img
           src="../assets/trash-icon.png"
           alt="Trash"
           class="delete-icon"
           @click="deleteFoapa(foapa.foapaName, foapa.fNumber)"
           style="width: 15px; margin-left: 15px; cursor: pointer"
-        /> -->
+          /> -->
       </div>
       <div style="display: flex; gap: 22px">
         <button class="add-foapa-button" @click="$router.push('/dashboard')">
-          Discard
+          Discard Changes
         </button>
-        <button class="add-foapa-button" @click="updateFoapa">Add</button>
+        <button class="add-foapa-button" @click="updateFoapa">
+          Save FOAPAs
+        </button>
       </div>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import "../assets/styles/add-foapa-page.css";
 import axios from "axios";
 import { reactive, ref, onMounted } from "vue";
+import { FoapaStuff } from "../types/types";
 import router from "../router";
 
 let foapaList = ref<FoapaStuff[]>([]);
 
-type FoapaStuff = {
-  fNumber: string;
-  oNumber: string;
-  aNumber: string;
-  pNumber: string;
-  a2Number: string;
-  foapaName: string;
-  foapaAmount: string;
-};
-
 let userFoapaStuff = reactive<FoapaStuff>({
-  fNumber: "",
-  oNumber: "",
-  aNumber: "",
-  pNumber: "",
-  a2Number: "",
-  foapaName: "",
-  foapaAmount: "",
+  fNumber: "3323333",
+  oNumber: "1111",
+  aNumber: "4242",
+  pNumber: "4324",
+  a2Number: "4324",
+  foapaName: "4644",
+  initialAmount: "3566",
+  currentAmount: "",
 });
 
 // function deleteFoapa(foapaName, fNumber) {
@@ -186,6 +185,7 @@ let userFoapaStuff = reactive<FoapaStuff>({
 // }
 
 function addFoapa() {
+  //refactor- looks ugle
   const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber", "a2Number"];
   for (let i = 0; i < foapaFields.length; i++) {
     if (userFoapaStuff[foapaFields[i]] === "") {
@@ -223,13 +223,15 @@ function addFoapa() {
         pNumber: userFoapaStuff.pNumber,
         a2Number: userFoapaStuff.a2Number,
         foapaName: userFoapaStuff.foapaName,
-        foapaAmount: userFoapaStuff.foapaAmount,
+        initialAmount: userFoapaStuff.initialAmount,
+        currentAmount: userFoapaStuff.initialAmount,
       });
 
       foapaList.value.push(currentFoapa);
 
       userFoapaStuff.foapaName =
-        userFoapaStuff.foapaAmount =
+        userFoapaStuff.initialAmount =
+        userFoapaStuff.currentAmount =
         userFoapaStuff.fNumber =
         userFoapaStuff.oNumber =
         userFoapaStuff.aNumber =
@@ -256,6 +258,7 @@ function updateFoapa() {
 }
 
 function retrieveFoapaDetails() {
+  //REFACTOR
   axios
     .get(`/api/retrieveFoapaDetails`)
     .then((res) => {
@@ -267,10 +270,13 @@ function retrieveFoapaDetails() {
           pNumber: "",
           a2Number: "",
           foapaName: "",
-          foapaAmount: "",
+          currentAmount: "",
+          initialAmount: "",
         };
 
         foapaEdited.foapaName = foapa.foapaName;
+        foapaEdited.initialAmount = foapa.initialAmount;
+        foapaEdited.currentAmount = foapa.currentAmount;
         let foapaData = foapa.foapaNumber.split("-");
         foapaEdited.fNumber = foapaData[0];
         foapaEdited.oNumber = foapaData[1];
@@ -292,3 +298,7 @@ onMounted(() => {
   retrieveFoapaDetails();
 });
 </script>
+
+<style scoped>
+@import url("../assets/styles/add-foapa-page.css");
+</style>

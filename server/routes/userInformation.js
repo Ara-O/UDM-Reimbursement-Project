@@ -17,7 +17,8 @@ router.post("/register", async (req, res) => {
   const userData = req.body;
 
   //Formatting the user's foapa information
-  userData.userFoapas = formatFoapaDetails(userData.userFoapas);
+  userData.foapaDetails = formatFoapaDetails(userData.userFoapas);
+  console.log(userData.foapaDetails);
 
   //Formatting email input
   if (!userData.workEmail.includes("@udmercy.edu")) {
@@ -25,10 +26,7 @@ router.post("/register", async (req, res) => {
   }
 
   userData.workEmail = userData.workEmail.toLowerCase();
-
-  if (!userData.employmentNumber.includes("T")) {
-    userData.employmentNumber = "T" + userData.employmentNumber;
-  }
+  userData.employmentNumber = "T" + userData.employmentNumber;
 
   try {
     let encryptedPassword = await encryptPassword(userData.password);
