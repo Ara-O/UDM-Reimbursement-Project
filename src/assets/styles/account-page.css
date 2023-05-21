@@ -64,7 +64,8 @@ input {
   font-size: 14px;
 }
 
-.input-FOAPA-field input {
+.input-FOAPA-field input,
+.input-FOAPA-field select {
   width: 90px;
   height: 36px;
   text-align: center;
@@ -84,7 +85,8 @@ input {
   justify-content: space-between;
 }
 
-.input-field input {
+.input-field input,
+.input-field select {
   padding-left: 20px;
   width: 150px;
   box-sizing: border-box;
@@ -214,7 +216,8 @@ input {
     width: auto;
   }
 
-  .input-field input {
+  .input-field input,
+  .input-field select {
     text-align: center;
   }
 

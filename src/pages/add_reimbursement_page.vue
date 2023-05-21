@@ -262,8 +262,8 @@ function generateRandomId(): string {
 }
 
 function parseDate(dateString: string) {
-  const dateObj = new Date(dateString);
-  const formattedDate = dateObj.toISOString().slice(0, 10);
+  const dateParsed = new Date(dateString);
+  const formattedDate = dateParsed.toISOString().slice(0, 10);
   return formattedDate;
 }
 

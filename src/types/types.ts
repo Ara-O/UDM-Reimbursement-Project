@@ -14,6 +14,19 @@ export type UserData = {
   userFoapas: Array<FoapaStuff>;
 };
 
+export type UserDataAcct = {
+  firstName: string;
+  lastName: string;
+  workEmail: string;
+  department: string;
+  mailingAddress: string;
+  phoneNumber: string;
+  postalCode: string;
+  city: string;
+  state: string;
+  country: string;
+};
+
 export type FoapaStuff = {
   fNumber: string;
   oNumber: string;
@@ -23,4 +36,9 @@ export type FoapaStuff = {
   foapaName: string;
   initialAmount: string;
   currentAmount: string;
+};
+
+export type AddressDetails = {
+  name: String;
+  code: String;
 };

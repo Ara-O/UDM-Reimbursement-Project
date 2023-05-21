@@ -58,6 +58,7 @@
           type="text"
           v-model="searchValue"
           class="reimbusement-search"
+          onchange="filterReimbursements"
           placeholder="Search Reimbursement"
         />
         <div class="search-button">
@@ -85,10 +86,17 @@
         </div>
         <div
           class="filter"
-          :class="{ selected: sortParameter === 'Cost' }"
-          @click="sortBy('Cost')"
+          :class="{ selected: sortParameter === 'Cost Ascending' }"
+          @click="sortBy('Cost Ascending')"
         >
-          <h3>Sort by Cost</h3>
+          <h3>Sort by Cost ( ASC )</h3>
+        </div>
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Cost Descending' }"
+          @click="sortBy('Cost Descending')"
+        >
+          <h3>Sort by Cost ( DESC )</h3>
         </div>
         <div
           class="filter"
@@ -107,10 +115,7 @@
       </h3>
       <br />
       <div class="reimbursement-wrapper">
-        <div
-          class="reimbursement"
-          v-for="ticket in filteredStoredReimbursementTickets"
-        >
+        <div class="reimbursement" v-for="ticket in filterReimbursements">
           <div class="total-amount">${{ ticket.totalAmount }}</div>
           <h3>{{ ticket.eventName }}</h3>
           <h4>Status: In Progress</h4>
@@ -159,12 +164,18 @@
 <script lang="ts" setup>
 import axios from "axios";
 import "../assets/styles/dashboard-page.css";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { computed } from "@vue/reactivity";
 
 const router = useRouter();
 const searchValue = ref<string>("");
+
+type SortParameters =
+  | ""
+  | "Date"
+  | "Cost Ascending"
+  | "Cost Descending"
+  | "Status";
 
 type FoapaNumbers = {
   employmentNumber: number;
@@ -176,35 +187,35 @@ type UserData = {
   firstName: string;
   lastName: string;
   workEmail: string;
-  employmentNumber: number;
+  employmentNumber: string;
   phoneNumber: string;
 };
 
 let userInfo = ref<UserData>({
-  employmentNumber: 0,
+  employmentNumber: "",
   firstName: "",
   lastName: "",
   phoneNumber: "",
   workEmail: "",
 });
 
-let storedReimbursementTickets = ref<any>([]);
+let reimbursementTickets = ref<any>([
+  // {
+  //   reimbursementId: 169449298,
+  //   eventName: "Reim3",
+  //   totalAmount: 300,
+  //   reimbursementStatus: false,
+  //   reimbursementDate: "2023-05-21",
+  // },
+]);
 
-let filteredStoredReimbursementTickets = computed(() => {
-  if (searchValue.value === "") {
-    return storedReimbursementTickets.value;
-  } else {
-    return storedReimbursementTickets.value.filter((ticket) =>
-      ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
-    );
-  }
+const filterReimbursements = computed(() => {
+  return searchValue.value
+    ? reimbursementTickets.value.filter((ticket) =>
+        ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
+      )
+    : reimbursementTickets.value;
 });
-
-function closeConnection() {
-  axios.get("/close").catch((err) => {
-    console.log(err);
-  });
-}
 
 function signOut() {
   localStorage.setItem("token", "");
@@ -259,8 +270,9 @@ function retrieveUserInformationSummary() {
 }
 
 function parseDate(dateString: string) {
-  const dateObj = new Date(dateString);
-  const formattedDate = dateObj.toISOString().slice(0, 10);
+  console.log(dateString);
+  const dateParsed = new Date(dateString);
+  const formattedDate = dateParsed.toISOString().slice(0, 10);
   return formattedDate;
 }
 
@@ -273,46 +285,20 @@ function viewTicket(reimbursementId: string) {
   router.push({ path: "/add-reimbursement", query: { reimbursementId } });
 }
 
-let sortParameter = ref("");
-function sortBy(parameter: String) {
-  if (parameter === "Date") {
-    sortParameter.value = "Date";
-    storedReimbursementTickets.value = storedReimbursementTickets.value.sort(
-      (ticketA, ticketB) => {
-        return (
-          //@ts-ignore
-          new Date(ticketA.reimbursementDate) -
-          //@ts-ignore
-          new Date(ticketB.reimbursementDate)
-        );
-      }
-    );
-  }
-  if (parameter === "") {
-    sortParameter.value = "";
-    storedReimbursementTickets.value = storedReimbursementTickets.value.sort(
-      (ticketA, ticketB) => {
-        return (
-          //@ts-ignore
-          new Date(ticketB.reimbursementDate) -
-          //@ts-ignore
-          new Date(ticketA.reimbursementDate)
-        );
-      }
-    );
-  }
-  if (parameter === "Cost") {
-    sortParameter.value = "Cost";
-    storedReimbursementTickets.value = storedReimbursementTickets.value.sort(
-      (ticketA, ticketB) => ticketA.totalAmount - ticketB.totalAmount
-    );
-  }
-  if (parameter === "Status") {
-    sortParameter.value = "Status";
-    storedReimbursementTickets.value = storedReimbursementTickets.value.sort(
-      (ticketA, ticketB) =>
-        ticketA.reimbursementStatus - ticketB.reimbursementStatus
-    );
+let sortParameter = ref<SortParameters>("");
+
+async function sortBy(parameter: SortParameters) {
+  sortParameter.value = parameter;
+  try {
+    let reimbursements = await axios.get("/api/retrieveReimbursements", {
+      params: {
+        sortBy: parameter,
+      },
+    });
+
+    reimbursementTickets.value = reimbursements.data;
+  } catch (err) {
+    console.error(err);
   }
 }
 
@@ -335,7 +321,7 @@ onMounted(() => {
       .get("/api/retrieveReimbursements")
       .then((res) => {
         console.log(res);
-        storedReimbursementTickets.value = res.data;
+        reimbursementTickets.value = res.data;
       })
       .catch((err) => {
         alert(err);

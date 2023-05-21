@@ -79,13 +79,8 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { UserData } from "../../types/types";
-import { onMounted, ref, watch } from "vue";
-
-type AddressDetails = {
-  name: String;
-  code: String;
-};
+import { UserData, AddressDetails } from "../../types/types";
+import { onMounted, ref } from "vue";
 
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
