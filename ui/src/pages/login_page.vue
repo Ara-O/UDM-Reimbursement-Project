@@ -50,7 +50,10 @@ let userInfo = ref<any>({ workEmail: "", password: "" });
 const router = useRouter();
 function loginUser() {
   axios
-    .post("/api/login", userInfo.value)
+    .post(
+      "https://reimbursement-project.onrender.com/api/login",
+      userInfo.value
+    )
     .then((res) => {
       console.log(res);
       alert(res.data.message);

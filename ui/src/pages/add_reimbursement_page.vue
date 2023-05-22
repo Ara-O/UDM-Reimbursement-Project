@@ -242,7 +242,7 @@ let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 function retrieveFoapaDetails() {
   axios
-    .get(`/api/retrieveFoapaDetails`)
+    .get(`https://reimbursement-project.onrender.com/api/retrieveFoapaDetails`)
     .then((res) => {
       userFoapaNumbers.value = res.data;
     })
@@ -309,7 +309,10 @@ async function storeActivityImage() {
   if (files.length > 0) {
     try {
       // Send the FormData object to the server using axios
-      let res = await axios.post("/api/storeActivityImages", formData);
+      let res = await axios.post(
+        "https://reimbursement-project.onrender.com/api/storeActivityImages",
+        formData
+      );
       return res.data;
     } catch (err) {
       console.log(err);
@@ -331,7 +334,7 @@ async function saveReimbursement() {
     console.log(reimbursementDataFromDb.value);
 
     let updatingReimbursement = await axios.post(
-      "/api/updateReimbursement",
+      "https://reimbursement-project.onrender.com/api/updateReimbursement",
       reimbursementDataFromDb.value
     );
 
@@ -349,7 +352,10 @@ async function saveReimbursement() {
     };
 
     axios
-      .post("/api/addReimbursement", reimbursementData)
+      .post(
+        "https://reimbursement-project.onrender.com/api/addReimbursement",
+        reimbursementData
+      )
       .then((res) => {
         console.log(res);
         router.push("/dashboard");
@@ -378,7 +384,9 @@ function createPdf() {
   currentlyAddingPDF.value = true;
   //Send user information
   axios
-    .get(`/api/retrieveAccountInformation`)
+    .get(
+      `https://reimbursement-project.onrender.com/api/retrieveAccountInformation`
+    )
     .then((response) => {
       if (userIsEditingReimbursement.value === true) {
         reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
@@ -389,7 +397,7 @@ function createPdf() {
         reimbursementDataFromDb.value.totalAmount = getAllActivitiesAmount();
         reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
         axios
-          .get("/api/generatePdf", {
+          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
             params: {
               reimbursementData: reimbursementDataFromDb.value,
               userInfo: response.data,
@@ -413,7 +421,7 @@ function createPdf() {
           allActivities: allActivities.value,
         };
         axios
-          .get("/api/generatePdf", {
+          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
             params: {
               reimbursementData: reimbursementData,
               userInfo: response.data,
@@ -438,7 +446,7 @@ onMounted(() => {
   if (route.query.reimbursementId) {
     userIsEditingReimbursement.value = true;
     axios
-      .get("/api/retrieveTicketInformation", {
+      .get("https://reimbursement-project.onrender.com/api/retrieveTicketInformation", {
         params: {
           reimbursementId: route.query.reimbursementId,
         },

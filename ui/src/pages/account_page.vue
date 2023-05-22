@@ -199,7 +199,10 @@ function back() {
 
 function save() {
   axios
-    .post("/api/updateAccountInfo", accountInfo.value)
+    .post(
+      "https://reimbursement-project.onrender.com/api/updateAccountInfo",
+      accountInfo.value
+    )
     .then((res) => {
       console.log(res.data);
       alert("Account information updated!");
@@ -212,7 +215,9 @@ function save() {
 
 function retrieveAccountInformation() {
   axios
-    .get(`/api/retrieveAccountInformation`)
+    .get(
+      `https://reimbursement-project.onrender.com/api/retrieveAccountInformation`
+    )
     .then((res) => {
       accountInfo.value = res.data;
       console.log(res);
@@ -228,7 +233,9 @@ function countryChanged() {
   );
 
   axios
-    .get("/api/getStateFromCountry", { params: { realCountryData } })
+    .get("https://reimbursement-project.onrender.com/api/getStateFromCountry", {
+      params: { realCountryData },
+    })
     .then((res) => {
       console.log(res.data);
       states.value = res.data;
@@ -241,7 +248,7 @@ function countryChanged() {
 onMounted(() => {
   retrieveAccountInformation();
   axios
-    .get("/api/allCountries")
+    .get("https://reimbursement-project.onrender.com/api/allCountries")
     .then((res) => {
       console.log(res.data);
       countries.value = res.data;

@@ -107,7 +107,9 @@ function countryChanged() {
   );
 
   axios
-    .get("/api/getStateFromCountry", { params: { realCountryData } })
+    .get("https://reimbursement-project.onrender.com/api/getStateFromCountry", {
+      params: { realCountryData },
+    })
     .then((res) => {
       console.log(res.data);
       states.value = res.data;
@@ -139,7 +141,7 @@ function progress() {
 
 onMounted(() => {
   axios
-    .get("/api/allCountries")
+    .get("https://reimbursement-project.onrender.com/api/allCountries")
     .then((res) => {
       console.log(res.data);
       countries.value = res.data;

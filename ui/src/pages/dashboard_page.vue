@@ -225,7 +225,9 @@ function signOut() {
 
 function deleteFoapa(foapaNumber: string) {
   axios
-    .post("/api/deleteFoapaDetail", { foapaNumber })
+    .post("https://reimbursement-project.onrender.com/api/deleteFoapaDetail", {
+      foapaNumber,
+    })
     .then(() => {
       console.log("The thing that was deleted: " + foapaNumber);
       alert("Foapa Deleted Successfully");
@@ -241,7 +243,7 @@ let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 function retrieveUserFoapaNumbers() {
   axios
-    .get(`/api/retrieveFoapaDetails`)
+    .get(`https://reimbursement-project.onrender.com/api/retrieveFoapaDetails`)
     .then((res) => {
       userFoapaNumbers.value = res.data;
       console.log(res);
@@ -253,7 +255,9 @@ function retrieveUserFoapaNumbers() {
 
 function retrieveUserInformationSummary() {
   axios
-    .get(`/api/retrieveUserInformationSummary`)
+    .get(
+      `https://reimbursement-project.onrender.com/api/retrieveUserInformationSummary`
+    )
     .then((res) => {
       userInfo.value = res.data;
       console.log(res);
@@ -290,11 +294,14 @@ let sortParameter = ref<SortParameters>("");
 async function sortBy(parameter: SortParameters) {
   sortParameter.value = parameter;
   try {
-    let reimbursements = await axios.get("/api/retrieveReimbursements", {
-      params: {
-        sortBy: parameter,
-      },
-    });
+    let reimbursements = await axios.get(
+      "https://reimbursement-project.onrender.com/api/retrieveReimbursements",
+      {
+        params: {
+          sortBy: parameter,
+        },
+      }
+    );
 
     reimbursementTickets.value = reimbursements.data;
   } catch (err) {
@@ -318,7 +325,9 @@ onMounted(() => {
     retrieveUserFoapaNumbers();
 
     axios
-      .get("/api/retrieveReimbursements")
+      .get(
+        "https://reimbursement-project.onrender.com/api/retrieveReimbursements"
+      )
       .then((res) => {
         console.log(res);
         reimbursementTickets.value = res.data;

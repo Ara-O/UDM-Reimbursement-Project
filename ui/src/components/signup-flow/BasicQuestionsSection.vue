@@ -133,9 +133,12 @@ function progress() {
       if (i === dataShown.length - 1) {
         window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
         axios
-          .post("/api/verifyEmploymentNumber", {
-            employmentNumber: userSignupData.employmentNumber,
-          })
+          .post(
+            "https://reimbursement-project.onrender.com/api/verifyEmploymentNumber",
+            {
+              employmentNumber: userSignupData.employmentNumber,
+            }
+          )
           .then((res) => {
             emits("continue");
           })

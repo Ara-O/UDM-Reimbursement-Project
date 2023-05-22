@@ -244,7 +244,7 @@ function addFoapa() {
 
 function updateFoapa() {
   axios
-    .post("/api/updateFoapaDetails", {
+    .post("https://reimbursement-project.onrender.com/api/updateFoapaDetails", {
       foapaData: foapaList.value,
     })
     .then((res) => {
@@ -260,7 +260,7 @@ function updateFoapa() {
 function retrieveFoapaDetails() {
   //REFACTOR
   axios
-    .get(`/api/retrieveFoapaDetails`)
+    .get(`https://reimbursement-project.onrender.com/api/retrieveFoapaDetails`)
     .then((res) => {
       res.data.forEach((foapa) => {
         let foapaEdited: FoapaStuff = {
