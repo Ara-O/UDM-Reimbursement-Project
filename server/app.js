@@ -14,20 +14,12 @@ const port = process.env.PORT || 8080;
 
 const app = express();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-app.use(express.static(path.join(__dirname, "../", "ui", "dist")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.listen(port, () => {
   connectToDB();
   console.log("Server started on port 8080");
-});
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../", "ui", "dist", "index.html"));
 });
 
 app.use("/api", userInformationRouter);
