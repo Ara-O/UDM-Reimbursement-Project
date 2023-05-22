@@ -48,6 +48,7 @@
                 name="Country"
                 id="country"
                 v-model="accountInfo.country"
+                required
               />
             </div>
           </div>
@@ -60,18 +61,22 @@
                 id="work-email"
                 v-model="accountInfo.workEmail"
                 required
+                disabled
               />
             </div>
 
             <div class="input-field">
-              <label for="department">Department:</label>
-              <input
-                type="text"
+              <label for="department">Department: *</label>
+              <select
                 name="Department"
                 id="department"
                 v-model="accountInfo.department"
                 required
-              />
+              >
+                <option :value="department" v-for="department in departments">
+                  {{ department }}
+                </option>
+              </select>
             </div>
             <div class="input-field">
               <label for="state">State:</label>
@@ -80,6 +85,7 @@
                 id="state"
                 :disabled="accountInfo.country === ''"
                 v-model="accountInfo.state"
+                required
               />
             </div>
           </div>
@@ -159,6 +165,20 @@ import { UserDataAcct, AddressDetails } from "../types/types";
 const router = useRouter();
 let countries = ref<AddressDetails[]>();
 let states = ref<AddressDetails[]>([]);
+const departments = [
+  "Architectural Engineering",
+  "Biochemistry",
+  "Civil Engineering",
+  "Computer Science",
+  "Electrical Engineering",
+  "Environmental Engineering",
+  "Mathematics",
+  "Mechanical Engineering",
+  "Office of the Dean",
+  "Physics",
+  "Chemistry",
+  "Robotics and Mechatronic Systems Engineering",
+];
 
 let accountInfo = ref<UserDataAcct>({
   firstName: "",
