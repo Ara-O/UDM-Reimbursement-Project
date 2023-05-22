@@ -17,7 +17,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static("dist"));
+app.use(express.static(path.join(__dirname, "../", "ui", "dist")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -27,7 +27,7 @@ app.listen(port, () => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../", "ui", "dist", "index.html"));
 });
 
 app.use("/api", userInformationRouter);
