@@ -321,6 +321,8 @@ onMounted(() => {
     console.log("User not signed in");
     // router.push("/");
   } else {
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
     retrieveUserInformationSummary();
     retrieveUserFoapaNumbers();
 
