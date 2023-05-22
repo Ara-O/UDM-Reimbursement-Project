@@ -1,6 +1,5 @@
 import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
+import cors from "cors";
 import bodyParser from "body-parser";
 import * as dotenv from "dotenv";
 import connectToDB from "./db.js";
@@ -14,6 +13,7 @@ const port = process.env.PORT || 8080;
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
