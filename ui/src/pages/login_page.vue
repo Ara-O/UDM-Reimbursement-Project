@@ -148,7 +148,7 @@ onMounted(() => {
 
 function sendEmail() {
   axios
-    .post("http://localhost:8080/api/forgotPassword", {
+    .post("https://reimbursement-project.onrender.com/api/forgotPassword", {
       workEmail: forgotPasswordWorkEmail.value,
     })
     .then((res) => {
