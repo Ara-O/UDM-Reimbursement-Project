@@ -1,4 +1,5 @@
 import { Router } from "express";
+import bcrypt from "bcrypt";
 import Faculty from "../models/faculty.js";
 import {
   encryptPassword,
@@ -8,6 +9,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import formatFoapaDetails from "../utils/formatFoapaDetails.js";
 import { verifyToken } from "../middleware/auth.js";
+import sgMail from "@sendgrid/mail";
 dotenv.config();
 
 const router = Router();
@@ -89,7 +91,9 @@ router.post("/login", async (req, res) => {
         console.log("token", token);
         res.status(200).send({ message: "Login successful", token });
       } else {
-        res.status(403).send({ message: "Password does not match" });
+        res
+          .status(403)
+          .send({ message: "Incorrect Password. Please try again" });
       }
     }
   } catch (error) {
@@ -216,10 +220,64 @@ router.post("/verifyEmploymentNumber", async (req, res) => {
   }
 });
 
-router.get("/forgotPassword", async (req, res) => {
+router.post("/forgotPassword", async (req, res) => {
   try {
-    console.log("pls work");
-    res.send("ee");
-  } catch (err) {}
+    console.log(req.body);
+    let userData = await Faculty.findOne({ workEmail: req.body.workEmail });
+    if (userData === null) {
+      console.log("null");
+    } else {
+      console.log(userData);
+
+      try {
+        let token = await jwt.sign(
+          { workEmail: userData.workEmail },
+          process.env.JWT_SECRET,
+          { expiresIn: "15m" }
+        );
+
+        token = token.replaceAll(".", "$");
+
+        const msg = {
+          to: req.body.workEmail, // Change to your recipient
+          from: "oladipoeyiara@gmail.com", // Change to your verified sender
+          subject: "Password Reset Instructions",
+          html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password for your UDM Reimbursement Website. To proceed
+           with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='http://localhost:5173/forgot-password/${token}' >Click here</a>
+           <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
+        };
+        let res = await sgMail.send(msg);
+        console.log(res);
+      } catch (e) {
+        res.status(400).send({ message: "Token has expired" });
+        console.log(e);
+      }
+    }
+    res.status(200).send("e");
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.post("/resetPassword", async (req, res) => {
+  console.log(req.body);
+  //parsing the token
+  try {
+    let token = req.body.token.replaceAll("$", ".");
+    console.log(token);
+    let userData = await jwt.verify(token, process.env.JWT_SECRET);
+    console.log(userData);
+
+    let encryptedPassword = await encryptPassword(req.body.newPassword);
+    const result = await Faculty.findOneAndUpdate(
+      { workEmail: userData.workEmail },
+      { password: encryptedPassword }
+    );
+    console.log(result);
+
+    res.status(200).send({ message: "Password reset successfully" });
+  } catch (err) {
+    console.log(err);
+  }
 });
 export default router;

@@ -8,7 +8,9 @@ import foapaInformationRouter from "./routes/foapaInformation.js";
 import reimbursementInformation from "./routes/reimbursementInformation.js";
 import pdfInformation from "./routes/pdfInformation.js";
 import geographyInformation from "./routes/geographyInformation.js";
+import sgMail from "@sendgrid/mail";
 dotenv.config();
+sgMail.setApiKey(process.env.UDM_EMAIL_KEY);
 const port = process.env.PORT || 8080;
 
 const app = express();
@@ -19,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.listen(port, () => {
   connectToDB();
+
   console.log("Server started on port 8080");
 });
 
