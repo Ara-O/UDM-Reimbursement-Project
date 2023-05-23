@@ -116,8 +116,9 @@ router.get("/retrieveUserInformationSummary", verifyToken, async (req, res) => {
         foapaDetails: 0,
         mailingAddress: 0,
         password: 0,
+        reimbursemmentTickets: 0,
         state: 0,
-        zipCode: 0,
+        postalCode: 0,
         country: 0,
         department: 0,
       }
@@ -242,8 +243,8 @@ router.post("/forgotPassword", async (req, res) => {
           to: req.body.workEmail, // Change to your recipient
           from: "oladipoeyiara@gmail.com", // Change to your verified sender
           subject: "Password Reset Instructions",
-          html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password for your UDM Reimbursement Website. To proceed
-           with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='http://localhost:5173/forgot-password/${token}' >Click here</a>
+          html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
+           with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udm-reimbursement-project.vercel.app/forgot-password/${token}' >Click here</a>
            <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
         };
         let res = await sgMail.send(msg);
