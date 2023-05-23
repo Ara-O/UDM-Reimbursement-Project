@@ -215,4 +215,11 @@ router.post("/verifyEmploymentNumber", async (req, res) => {
     res.status(400).send({ message: err.message });
   }
 });
+
+router.get("/forgotPassword", async (req, res) => {
+  try {
+    console.log("pls work");
+    res.send("ee");
+  } catch (err) {}
+});
 export default router;
