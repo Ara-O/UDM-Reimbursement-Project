@@ -47,15 +47,16 @@ router.post("/register", async (req, res) => {
       await faculty.save();
 
       //Creates a token thatll be used to authenticate the user for later api calls
-      let token = await jwt.sign(
+      jwt.sign(
         { employmentNumber: userData.employmentNumber },
         process.env.JWT_SECRET,
         {
           expiresIn: "30d",
+        },
+        (err, token) => {
+          res.status(200).send({ message: "Registration successful!", token });
         }
       );
-
-      res.status(200).send({ message: "Registration successful!", token });
     }
   } catch (error) {
     res.status(400).send({ message: error.message });
@@ -116,7 +117,7 @@ router.get("/retrieveUserInformationSummary", verifyToken, async (req, res) => {
         foapaDetails: 0,
         mailingAddress: 0,
         password: 0,
-        reimbursemmentTickets: 0,
+        reimbursementTickets: 0,
         state: 0,
         postalCode: 0,
         country: 0,
@@ -229,32 +230,33 @@ router.post("/forgotPassword", async (req, res) => {
       console.log("null");
     } else {
       console.log(userData);
+      jwt.sign(
+        { workEmail: userData.workEmail },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" },
+        async (err, token) => {
+          if (err) {
+            res
+              .status(400)
+              .send({ message: "There has been an error, please try again" });
+          } else {
+            console.log("here token", token);
+            token = token.replaceAll(".", "$");
 
-      try {
-        let token = await jwt.sign(
-          { workEmail: userData.workEmail },
-          process.env.JWT_SECRET,
-          { expiresIn: "15m" }
-        );
-
-        token = token.replaceAll(".", "$");
-
-        const msg = {
-          to: req.body.workEmail, // Change to your recipient
-          from: "oladipoeyiara@gmail.com", // Change to your verified sender
-          subject: "Password Reset Instructions",
-          html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
+            const msg = {
+              to: req.body.workEmail, // Change to your recipient
+              from: "oladipoeyiara@gmail.com", // Change to your verified sender
+              subject: "Password Reset Instructions",
+              html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
            with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udm-reimbursement-project.vercel.app/forgot-password/${token}' >Click here</a>
            <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
-        };
-        let res = await sgMail.send(msg);
-        console.log(res);
-      } catch (e) {
-        res.status(400).send({ message: "Token has expired" });
-        console.log(e);
-      }
+            };
+            let resp = await sgMail.send(msg);
+            res.status(200).send({ message: "Sent email" });
+          }
+        }
+      );
     }
-    res.status(200).send("e");
   } catch (err) {
     console.log(err);
   }
@@ -266,17 +268,19 @@ router.post("/resetPassword", async (req, res) => {
   try {
     let token = req.body.token.replaceAll("$", ".");
     console.log(token);
-    let userData = await jwt.verify(token, process.env.JWT_SECRET);
-    console.log(userData);
-
-    let encryptedPassword = await encryptPassword(req.body.newPassword);
-    const result = await Faculty.findOneAndUpdate(
-      { workEmail: userData.workEmail },
-      { password: encryptedPassword }
-    );
-    console.log(result);
-
-    res.status(200).send({ message: "Password reset successfully" });
+    jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+      if (!err) {
+        let encryptedPassword = await encryptPassword(req.body.newPassword);
+        const result = await Faculty.findOneAndUpdate(
+          { workEmail: userData.workEmail },
+          { password: encryptedPassword }
+        );
+        console.log(result);
+        res.status(200).send({ message: "Password reset successfully" });
+      } else {
+        throw err;
+      }
+    });
   } catch (err) {
     console.log(err);
   }

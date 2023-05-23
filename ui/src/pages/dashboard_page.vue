@@ -271,7 +271,7 @@ function retrieveUserFoapaNumbers() {
 function retrieveUserInformationSummary() {
   axios
     .get(
-      `https://reimbursement-project.onrender.com/api/retrieveUserInformationSummary`
+      "https://reimbursement-project.onrender.com/api/retrieveUserInformationSummary"
     )
     .then((res) => {
       userInfo.value = res.data;
