@@ -30,7 +30,7 @@ const facultySchema = new Schema({
       eventName: String,
       totalAmount: Number,
       reimbursementStatus: Boolean,
-      reimbursementDate: String,
+      reimbursementDate: Date,
       activities: [
         {
           //likewise, id unique here

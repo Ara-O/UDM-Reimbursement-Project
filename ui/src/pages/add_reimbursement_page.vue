@@ -324,7 +324,8 @@ async function storeActivityImage() {
 
 async function saveReimbursement() {
   if (userIsEditingReimbursement.value === true) {
-    reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
+    // reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
+    reimbursementDataFromDb.value.reimbursementDate = new Date().toISOString();
     allActivities.value.forEach((activity) => {
       activity.activityDate = parseDate(activity.activityDate);
     });
@@ -347,7 +348,7 @@ async function saveReimbursement() {
       eventName: reimbursementTitle.value,
       totalAmount: getAllActivitiesAmount(),
       reimbursementStatus: 0,
-      reimbursementDate: getCurrentDate(),
+      reimbursementDate: new Date().toISOString(),
       allActivities: allActivities.value,
     };
 
@@ -389,7 +390,8 @@ function createPdf() {
     )
     .then((response) => {
       if (userIsEditingReimbursement.value === true) {
-        reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
+        reimbursementDataFromDb.value.reimbursementDate =
+          new Date().toISOString();
         allActivities.value.forEach((activity) => {
           activity.activityDate = parseDate(activity.activityDate);
         });
@@ -417,7 +419,7 @@ function createPdf() {
           eventName: reimbursementTitle.value,
           totalAmount: getAllActivitiesAmount(),
           reimbursementStatus: 0,
-          reimbursementDate: getCurrentDate(),
+          reimbursementDate: new Date().toISOString(),
           allActivities: allActivities.value,
         };
         axios
@@ -446,11 +448,14 @@ onMounted(() => {
   if (route.query.reimbursementId) {
     userIsEditingReimbursement.value = true;
     axios
-      .get("https://reimbursement-project.onrender.com/api/retrieveTicketInformation", {
-        params: {
-          reimbursementId: route.query.reimbursementId,
-        },
-      })
+      .get(
+        "https://reimbursement-project.onrender.com/api/retrieveTicketInformation",
+        {
+          params: {
+            reimbursementId: route.query.reimbursementId,
+          },
+        }
+      )
       .then((res) => {
         // reimbursementDataFromDb.value = res.data;
         reimbursementTitle.value = res.data.eventName;

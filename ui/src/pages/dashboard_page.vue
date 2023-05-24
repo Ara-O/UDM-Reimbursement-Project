@@ -86,6 +86,13 @@
         </div>
         <div
           class="filter"
+          :class="{ selected: sortParameter === 'Name' }"
+          @click="orderByName()"
+        >
+          <h3>Sort by Name</h3>
+        </div>
+        <!-- <div
+          class="filter"
           :class="{ selected: sortParameter === 'Cost Ascending' }"
           @click="sortBy('Cost Ascending')"
         >
@@ -97,7 +104,7 @@
           @click="sortBy('Cost Descending')"
         >
           <h3>Sort by Cost ( DESC )</h3>
-        </div>
+        </div> -->
         <div
           class="filter"
           :class="{ selected: sortParameter === '' }"
@@ -170,12 +177,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const searchValue = ref<string>("");
 
-type SortParameters =
-  | ""
-  | "Date"
-  | "Cost Ascending"
-  | "Cost Descending"
-  | "Status";
+type SortParameters = "" | "Date" | "Name" | "Status";
 
 type FoapaNumbers = {
   employmentNumber: number;
@@ -208,6 +210,19 @@ let reimbursementTickets = ref<any>([
   //   reimbursementDate: "2023-05-21",
   // },
 ]);
+
+function orderByName() {
+  sortParameter.value = "Name";
+  reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
+    if (a.eventName.toUpperCase() < b.eventName.toUpperCase()) {
+      return -1;
+    }
+    if (a.eventName.toUpperCase() > b.eventName.toUpperCase()) {
+      return 1;
+    }
+    return 0;
+  });
+}
 
 const filterReimbursements = computed(() => {
   return searchValue.value
@@ -256,7 +271,7 @@ function retrieveUserFoapaNumbers() {
 function retrieveUserInformationSummary() {
   axios
     .get(
-      `https://reimbursement-project.onrender.com/api/retrieveUserInformationSummary`
+      "https://reimbursement-project.onrender.com/api/retrieveUserInformationSummary"
     )
     .then((res) => {
       userInfo.value = res.data;

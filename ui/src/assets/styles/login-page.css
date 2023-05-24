@@ -1,0 +1,135 @@
+input {
+  outline: none;
+}
+
+.email-help {
+  font-weight: 400;
+  margin: 0px;
+  font-size: 14px;
+  margin-bottom: 30px;
+  color: gray;
+}
+
+.btn-link {
+  font-size: 14px;
+  text-decoration: underline;
+  color: purple;
+  cursor: pointer;
+}
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.login-title {
+  font-weight: 600;
+  font-size: 25px;
+  margin-bottom: 4px;
+}
+
+.udmercy-logo {
+  width: 100px;
+  padding: 40px 20px;
+}
+
+.udmercy-logo-wrapper {
+  border: 1px solid #ffffff;
+  border-radius: 9999px;
+  height: 140px;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 9px rgba(184, 184, 184, 0.38);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-field {
+  margin-bottom: 30px;
+  width: 365px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.login-field input {
+  margin-left: 30px;
+  padding-left: 20px;
+  width: 224px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #f7f7f7;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
+  border-radius: 5px;
+}
+
+.login-field label {
+  width: auto;
+  font-size: 14px;
+}
+
+.login-button {
+  background-color: var(--udmercy-blue);
+  color: white;
+  padding: 10px 70px;
+  border: solid 1px;
+  width: 232px;
+  height: 50px;
+  margin-top: 20px;
+  cursor: pointer;
+  background: #a5093e;
+  border-radius: 26px;
+}
+
+@media (max-width: 610px) {
+  .login-title {
+    font-size: 20px;
+    text-align: center;
+    width: 350px;
+    margin: 0px;
+    line-height: 45px;
+    margin-top: 0px;
+  }
+  .login-field {
+    flex-direction: column;
+  }
+
+  .login-field input {
+    margin-left: 0px;
+    text-align: center;
+    padding-left: 0px;
+  }
+  .login-field label {
+    width: auto;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .udmercy-logo {
+    width: 70px;
+    padding: 40px 20px;
+  }
+
+  .udmercy-logo-wrapper {
+    border: 1px solid #ffffff;
+    border-radius: 9999px;
+    height: 110px;
+    padding: 30px;
+  }
+
+  .login-page {
+    height: 95vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

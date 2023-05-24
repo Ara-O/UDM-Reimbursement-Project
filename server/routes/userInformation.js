@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { transporter } from "../app.js";
 import Faculty from "../models/faculty.js";
 import {
   encryptPassword,
@@ -8,6 +9,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import formatFoapaDetails from "../utils/formatFoapaDetails.js";
 import { verifyToken } from "../middleware/auth.js";
+import sgMail from "@sendgrid/mail";
 dotenv.config();
 
 const router = Router();
@@ -45,15 +47,16 @@ router.post("/register", async (req, res) => {
       await faculty.save();
 
       //Creates a token thatll be used to authenticate the user for later api calls
-      let token = await jwt.sign(
+      jwt.sign(
         { employmentNumber: userData.employmentNumber },
         process.env.JWT_SECRET,
         {
           expiresIn: "30d",
+        },
+        (err, token) => {
+          res.status(200).send({ message: "Registration successful!", token });
         }
       );
-
-      res.status(200).send({ message: "Registration successful!", token });
     }
   } catch (error) {
     res.status(400).send({ message: error.message });
@@ -78,18 +81,23 @@ router.post("/login", async (req, res) => {
         facultyInfo.password
       );
       if (passwordMatches) {
-        let token = await jwt.sign(
+        jwt.sign(
           { employmentNumber: facultyInfo.employmentNumber },
           process.env.JWT_SECRET,
           {
             expiresIn: "30d",
+          },
+          (err, token) => {
+            if (!err) {
+              console.log("token", token);
+              res.status(200).send({ message: "Login successful", token });
+            }
           }
         );
-
-        console.log("token", token);
-        res.status(200).send({ message: "Login successful", token });
       } else {
-        res.status(403).send({ message: "Password does not match" });
+        res
+          .status(403)
+          .send({ message: "Incorrect Password. Please try again" });
       }
     }
   } catch (error) {
@@ -112,8 +120,9 @@ router.get("/retrieveUserInformationSummary", verifyToken, async (req, res) => {
         foapaDetails: 0,
         mailingAddress: 0,
         password: 0,
+        reimbursementTickets: 0,
         state: 0,
-        zipCode: 0,
+        postalCode: 0,
         country: 0,
         department: 0,
       }
@@ -216,10 +225,70 @@ router.post("/verifyEmploymentNumber", async (req, res) => {
   }
 });
 
-router.get("/forgotPassword", async (req, res) => {
+router.post("/forgotPassword", async (req, res) => {
   try {
-    console.log("pls work");
-    res.send("ee");
-  } catch (err) {}
+    console.log(req.body);
+    let userData = await Faculty.findOne({ workEmail: req.body.workEmail });
+    if (userData === null) {
+      console.log("null");
+    } else {
+      console.log(userData);
+      jwt.sign(
+        { workEmail: userData.workEmail },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" },
+        async (err, token) => {
+          if (err) {
+            res
+              .status(400)
+              .send({ message: "There has been an error, please try again" });
+          } else {
+            console.log("here token", token);
+            token = token.replaceAll(".", "$");
+
+            // send mail with defined transport object
+            let resp = await transporter.sendMail({
+              from: '"UDM Reimbursement Team" <ara@araoladipo.dev>',
+              to: req.body.workEmail,
+              subject: "Password Reset Instructions",
+              html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
+              with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udm-reimbursement-project.vercel.app/forgot-password/${token}' >Click here</a>
+              <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
+            });
+
+            console.log(resp);
+
+            res.status(200).send({ message: "Sent email" });
+          }
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.post("/resetPassword", async (req, res) => {
+  console.log(req.body);
+  //parsing the token
+  try {
+    let token = req.body.token.replaceAll("$", ".");
+    console.log(token);
+    jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+      if (!err) {
+        let encryptedPassword = await encryptPassword(req.body.newPassword);
+        const result = await Faculty.findOneAndUpdate(
+          { workEmail: userData.workEmail },
+          { password: encryptedPassword }
+        );
+        console.log(result);
+        res.status(200).send({ message: "Password reset successfully" });
+      } else {
+        throw err;
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
 });
 export default router;
