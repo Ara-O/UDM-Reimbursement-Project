@@ -99,8 +99,18 @@
       </span>
       <button class="login-button" type="submit">Receive link</button>
     </form>
-    <h5 v-if="emailSent" style="font-weight: 400">
-      Email sent! You can close out of this page
+    <h5
+      v-if="emailSent"
+      style="
+        font-weight: 400;
+        max-width: 400px;
+        width: auto;
+        line-height: 25px;
+        text-align: center;
+      "
+    >
+      If the email you entered exists in our database, you will receive a
+      password reset e-mail shortly.
     </h5>
   </section>
 </template>

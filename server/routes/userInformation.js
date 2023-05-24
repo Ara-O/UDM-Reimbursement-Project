@@ -1,5 +1,5 @@
 import { Router } from "express";
-import bcrypt from "bcrypt";
+import { transporter } from "../app.js";
 import Faculty from "../models/faculty.js";
 import {
   encryptPassword,
@@ -81,16 +81,19 @@ router.post("/login", async (req, res) => {
         facultyInfo.password
       );
       if (passwordMatches) {
-        let token = await jwt.sign(
+        jwt.sign(
           { employmentNumber: facultyInfo.employmentNumber },
           process.env.JWT_SECRET,
           {
             expiresIn: "30d",
+          },
+          (err, token) => {
+            if (!err) {
+              console.log("token", token);
+              res.status(200).send({ message: "Login successful", token });
+            }
           }
         );
-
-        console.log("token", token);
-        res.status(200).send({ message: "Login successful", token });
       } else {
         res
           .status(403)
@@ -243,15 +246,18 @@ router.post("/forgotPassword", async (req, res) => {
             console.log("here token", token);
             token = token.replaceAll(".", "$");
 
-            const msg = {
-              to: req.body.workEmail, // Change to your recipient
-              from: "oladipoeyiara@gmail.com", // Change to your verified sender
+            // send mail with defined transport object
+            let resp = await transporter.sendMail({
+              from: '"UDM Reimbursement Team" <ara@araoladipo.dev>',
+              to: req.body.workEmail,
               subject: "Password Reset Instructions",
               html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
-           with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udm-reimbursement-project.vercel.app/forgot-password/${token}' >Click here</a>
-           <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
-            };
-            let resp = await sgMail.send(msg);
+              with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udm-reimbursement-project.vercel.app/forgot-password/${token}' >Click here</a>
+              <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
+            });
+
+            console.log(resp);
+
             res.status(200).send({ message: "Sent email" });
           }
         }

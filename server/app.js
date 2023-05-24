@@ -9,11 +9,23 @@ import reimbursementInformation from "./routes/reimbursementInformation.js";
 import pdfInformation from "./routes/pdfInformation.js";
 import geographyInformation from "./routes/geographyInformation.js";
 import sgMail from "@sendgrid/mail";
+import nodemailer from "nodemailer";
 dotenv.config();
 sgMail.setApiKey(process.env.UDM_EMAIL_KEY);
 const port = process.env.PORT || 8080;
 
 const app = express();
+
+// create reusable transporter object using the default SMTP transport
+export const transporter = nodemailer.createTransport({
+  host: process.env.SEND_GRID_HOST,
+  port: 465,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: "apikey", // generated ethereal user
+    pass: process.env.SEND_GRID_KEY, // generated ethereal password
+  },
+});
 
 app.use(cors());
 app.use(bodyParser.json());
