@@ -255,7 +255,7 @@ function deleteFoapa(foapaNumber: string) {
 }
 
 function deleteReimbursement(id: string) {
-  axios.post("http://localhost:8080/api/deleteReimbursement", {
+  axios.post("https://reimbursement-project.onrender.com/api/deleteReimbursement", {
     id,
   })
   .then(() => {
