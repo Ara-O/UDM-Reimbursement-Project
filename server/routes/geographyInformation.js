@@ -2,9 +2,11 @@ import { Router } from "express";
 import axios from "axios";
 import { Country, State, City } from "country-state-city";
 const router = Router();
-git git 
+
 router.get("/allCountries", (req, res) => {
-  let allCountries = Country.getAllCountries();
+  let allCountries = Country.getAllCountries().filter(
+    (allCountries) => allCountries.isoCode === "US" || allCountries.isoCode === "CA"
+  );
   let formattedCountries = allCountries.map((country) => {
     return { name: country.name, code: country.isoCode };
   });
