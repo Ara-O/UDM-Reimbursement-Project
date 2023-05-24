@@ -131,7 +131,7 @@
           </h5>
           <div class="reimbursement-buttons">
             <button @click="viewTicket(ticket.reimbursementId)">Modify</button>
-            <button>Delete</button>
+            <button @click="deleteReimbursement(ticket.reimbursementId)">Delete</button>
           </div>
         </div>
       </div>
@@ -254,6 +254,17 @@ function deleteFoapa(foapaNumber: string) {
     });
 }
 
+function deleteReimbursement(id: string) {
+  axios.post("http://localhost:8080/api/deleteReimbursement", {
+    id,
+  })
+  .then(() => {
+    retrieveReimbursements();
+    console.log("Deleted reimbursement id: " + id);
+      alert("Ticket Deleted Successfully");
+  })
+}
+
 let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 function retrieveUserFoapaNumbers() {
@@ -340,8 +351,12 @@ onMounted(() => {
       localStorage.getItem("token");
     retrieveUserInformationSummary();
     retrieveUserFoapaNumbers();
+    retrieveReimbursements();
+  }
+});
 
-    axios
+function retrieveReimbursements() {
+  axios
       .get(
         "https://reimbursement-project.onrender.com/api/retrieveReimbursements"
       )
@@ -352,6 +367,5 @@ onMounted(() => {
       .catch((err) => {
         alert(err);
       });
-  }
-});
+}
 </script>

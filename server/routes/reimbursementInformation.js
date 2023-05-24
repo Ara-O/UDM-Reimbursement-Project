@@ -135,7 +135,8 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
 });
 
 router.post("/deleteReimbursement", verifyToken, async (req, res) => {
-  const reimbursementId = req.body;
+  const reimbursementId = req.body.id;
+  // console.log(reimbursementId)
 
   try {
     let userInfo = await Faculty.findOne({
@@ -147,11 +148,13 @@ router.post("/deleteReimbursement", verifyToken, async (req, res) => {
     });
 
     await userInfo.save();
+    console.log(userInfo)
 
     res
       .status(200)
       .send({ message: "Reimbursement ticket deleted successfully" });
   } catch (err) {
+    // console.log(err)
     res.status(400).send({ message: err.message });
   }
 });
