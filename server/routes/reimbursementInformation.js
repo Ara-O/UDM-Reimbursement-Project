@@ -133,4 +133,27 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
     res.status(400).send({ message: err.message });
   }
 });
+
+router.post("/deleteReimbursement", verifyToken, async (req, res) => {
+  const reimbursementId = req.body;
+
+  try {
+    let userInfo = await Faculty.findOne({
+      employmentNumber: req.user.employmentNumber,
+    });
+
+    await userInfo.reimbursementTickets.pull({
+      reimbursementId
+    });
+
+    await userInfo.save();
+
+    res
+      .status(200)
+      .send({ message: "Reimbursement ticket deleted successfully" });
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
+});
+
 export default router;
