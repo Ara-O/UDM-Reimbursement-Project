@@ -4,11 +4,14 @@ import { Country, State, City } from "country-state-city";
 const router = Router();
 
 router.get("/allCountries", (req, res) => {
-  let allCountries = Country.getAllCountries();
+  let allCountries = Country.getAllCountries().filter(
+    (allCountries) => allCountries.isoCode === "US" || allCountries.isoCode === "CA"
+  );
   let formattedCountries = allCountries.map((country) => {
     return { name: country.name, code: country.isoCode };
   });
   res.status(200).send(formattedCountries);
+  console.log(allCountries)
 });
 
 router.get("/getStateFromCountry", (req, res) => {

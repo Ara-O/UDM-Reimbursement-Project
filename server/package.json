@@ -28,13 +28,13 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.2.4",
     "nodemailer": "^6.9.2",
-    "nodemon": "^2.0.22",
     "pdfmake": "^0.2.7",
     "pdfmake-unicode": "^0.0.1"
   },
   "devDependencies": {
     "@types/pdfmake": "^0.2.2",
     "@vitejs/plugin-vue": "^4.1.0",
+    "nodemon": "^2.0.22",
     "typescript": "^4.9.3",
     "vite": "^4.2.0",
     "vue-tsc": "^1.2.0"
