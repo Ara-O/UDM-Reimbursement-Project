@@ -550,7 +550,7 @@ export default function createPdfDefinition(
             { text: "", border: [false, false, false, false] },
             {
               text: `${formattedToday}`,
-              border: [false, false, true, false],
+              border: [false, false, false, true],
               italics: false,
               fontSize: 9,
             },
