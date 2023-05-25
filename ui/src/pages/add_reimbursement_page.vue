@@ -341,6 +341,7 @@ async function saveReimbursement() {
 
     console.log(updatingReimbursement);
     alert("Reimbursement saved successfully");
+    router.push("/dashboard");
   } else {
     let randomId: string = generateRandomId();
     reimbursementData = {

@@ -39,11 +39,11 @@
     </div>
 
     <div class="input-field">
-      <label for="street-address">Street Address: *</label>
+      <label for="mailing-address">Mailing Address: *</label>
       <input
         type="text"
-        name="Street Address"
-        id="street-address"
+        name="Mailing Address"
+        id="mailing-address"
         v-model="userSignupData.mailingAddress"
       />
     </div>

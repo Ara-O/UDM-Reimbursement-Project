@@ -122,8 +122,6 @@ function registerUser() {
     .then((res) => {
       alert(res.data.message);
       localStorage.setItem("token", res.data.token);
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
       router.push("/dashboard");
     })
     .catch((err) => {

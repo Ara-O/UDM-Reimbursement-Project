@@ -131,7 +131,9 @@
           </h5>
           <div class="reimbursement-buttons">
             <button @click="viewTicket(ticket.reimbursementId)">Modify</button>
-            <button @click="deleteReimbursement(ticket.reimbursementId)">Delete</button>
+            <button @click="deleteReimbursement(ticket.reimbursementId)">
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -255,14 +257,18 @@ function deleteFoapa(foapaNumber: string) {
 }
 
 function deleteReimbursement(id: string) {
-  axios.post("https://reimbursement-project.onrender.com/api/deleteReimbursement", {
-    id,
-  })
-  .then(() => {
-    retrieveReimbursements();
-    console.log("Deleted reimbursement id: " + id);
+  axios
+    .post(
+      "https://reimbursement-project.onrender.com/api/deleteReimbursement",
+      {
+        id,
+      }
+    )
+    .then(() => {
+      retrieveReimbursements();
+      console.log("Deleted reimbursement id: " + id);
       alert("Ticket Deleted Successfully");
-  })
+    });
 }
 
 let userFoapaNumbers = ref<FoapaNumbers[]>([]);
@@ -345,10 +351,8 @@ onMounted(() => {
     localStorage.getItem("token") === ""
   ) {
     console.log("User not signed in");
-    // router.push("/");
+    router.push("/");
   } else {
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
     retrieveUserInformationSummary();
     retrieveUserFoapaNumbers();
     retrieveReimbursements();
@@ -357,15 +361,15 @@ onMounted(() => {
 
 function retrieveReimbursements() {
   axios
-      .get(
-        "https://reimbursement-project.onrender.com/api/retrieveReimbursements"
-      )
-      .then((res) => {
-        console.log(res);
-        reimbursementTickets.value = res.data;
-      })
-      .catch((err) => {
-        alert(err);
-      });
+    .get(
+      "https://reimbursement-project.onrender.com/api/retrieveReimbursements"
+    )
+    .then((res) => {
+      console.log(res);
+      reimbursementTickets.value = res.data;
+    })
+    .catch((err) => {
+      alert(err);
+    });
 }
 </script>

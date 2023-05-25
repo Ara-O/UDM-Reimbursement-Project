@@ -75,17 +75,29 @@
   >
     Continue
   </button>
+  <h5
+    style="font-weight: 400; margin: -24px 0px -10px 0px"
+    v-if="validatingSignupFields"
+  >
+    Validating Employment Number...
+  </h5>
 </template>
 
 <script lang="ts" setup>
 import axios from "axios";
+import { ref } from "vue";
 import { UserData } from "../../types/types";
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
 }>();
 
-const emits = defineEmits(["continue"]);
+type ValidationResult = {
+  field: (typeof fieldsToValidate)[number];
+  reason: "Invalid type" | "Empty" | "Invalid chars";
+};
 
+const emits = defineEmits(["continue"]);
+let validatingSignupFields = ref<boolean>(false);
 const departments = [
   "Architectural Engineering",
   "Biochemistry",
@@ -101,54 +113,84 @@ const departments = [
   "Robotics and Mechatronic Systems Engineering",
 ];
 
+const fieldsToValidate = [
+  "firstName",
+  "lastName",
+  "workEmail",
+  "phoneNumber",
+  "employmentNumber",
+  "department",
+];
+
+function validateField(data, fieldsToValidate) {
+  //Regex to test for alphanumeric vals, thanks chatGpt
+  var pattern = /^[a-zA-Z0-9\s-]+$/;
+
+  return new Promise((resolve, reject) => {
+    if (data.employmentNumber !== null && isNaN(data.employmentNumber)) {
+      reject({
+        field: "employmentNumber",
+        reason: "Invalid type",
+      } as ValidationResult);
+    }
+
+    for (let i = 0; i < fieldsToValidate.length; i++) {
+      let field = fieldsToValidate[i];
+      if (String(data[field]).trim() === "") {
+        reject({ field, reason: "Empty" } as ValidationResult);
+      }
+
+      if (!pattern.test(data[field])) {
+        reject({ field, reason: "Invalid chars" } as ValidationResult);
+      }
+
+      //Normalizing the fields
+      if (typeof userSignupData[field] === "string")
+        userSignupData[field] = userSignupData[field].trim();
+    }
+    resolve("All valid fields");
+  });
+}
 //Manually doing it, going to use a better validation library next semester
 function progress() {
-  let dataShown = [
-    "firstName",
-    "lastName",
-    "workEmail",
-    "employmentNumber",
-    "phoneNumber",
-    "department",
-  ];
+  validateField(userSignupData, fieldsToValidate)
+    .then(() => {
+      validatingSignupFields.value = true;
+      axios
+        .post(
+          "https://reimbursement-project.onrender.com/api/verifySignupBasicInformation",
+          {
+            employmentNumber: userSignupData.employmentNumber,
+            workEmail: userSignupData.workEmail,
+          }
+        )
+        .then((res) => {
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          emits("continue");
+        })
+        .catch((err) => {
+          alert(err.response.data.message);
+        });
+    })
+    .catch((err) => {
+      let erringField = err.field
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, function (match) {
+          return match.toUpperCase();
+        });
 
-  for (let i = 0; i < dataShown.length; i++) {
-    if (userSignupData[dataShown[i]] === "") {
-      console.log("field empty");
-      alert(
-        `The ${dataShown[i]
-          .replace(/([A-Z])/g, " $1")
-          .toLowerCase()} field is empty`
-      );
-      break;
-    } else {
-      if (
-        userSignupData.employmentNumber !== null &&
-        isNaN(userSignupData.employmentNumber)
-      ) {
-        alert("Employment number must be a number");
-        break;
-      }
+      err.reason === "Invalid type" &&
+        alert(`The ${erringField} field must be a number`);
 
-      if (i === dataShown.length - 1) {
-        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-        axios
-          .post(
-            "https://reimbursement-project.onrender.com/api/verifyEmploymentNumber",
-            {
-              employmentNumber: userSignupData.employmentNumber,
-            }
-          )
-          .then((res) => {
-            emits("continue");
-          })
-          .catch((err) => {
-            console.log(err);
-            alert(err.response.data.message);
-          });
-      }
-    }
-  }
+      err.reason === "Invalid chars" &&
+        alert(`The ${erringField} field contains invalid characters`);
+
+      err.reason === "Empty" &&
+        alert(`The ${erringField} field cannot be empty`);
+    })
+    .finally(() => {
+      validatingSignupFields.value = false;
+    });
 }
 </script>
 

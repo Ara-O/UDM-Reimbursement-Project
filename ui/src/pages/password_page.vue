@@ -26,16 +26,25 @@
         <section v-show="surveyProgress === 0" class="signup-form">
           <div class="input-field-wrapper">
             <div class="input-field">
-              <label for="password">Password: </label>
+              <label for="password">Current Password: </label>
               <input
                 type="password"
                 name="Password"
                 id="password"
-                v-model="userSignupData.password"
+                v-model="currentPassword"
               />
             </div>
             <div class="input-field">
-              <label for="reenter-password">Re-enter password: </label>
+              <label for="reenter-password">New password: </label>
+              <input
+                type="password"
+                name="reenter-password"
+                id="reenter-password"
+                v-model="userPasswordData.password"
+              />
+            </div>
+            <div class="input-field">
+              <label for="reenter-password">Re-enter new password: </label>
               <input
                 type="password"
                 name="reenter-password"
@@ -73,7 +82,7 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
 type UserData = {
@@ -81,11 +90,12 @@ type UserData = {
 };
 
 let reEnteredPassword = ref<string>("");
+let currentPassword = ref<string>("");
 let surveyProgress = ref<number>(0);
 
 const router = useRouter();
 
-let userSignupData = reactive<UserData>({
+let userPasswordData = reactive<UserData>({
   password: "",
 });
 
@@ -93,7 +103,7 @@ function finishedPasswordSection() {
   let dataShown = ["password"];
 
   for (let i = 0; i < dataShown.length; i++) {
-    if (userSignupData[dataShown[i]] === "") {
+    if (userPasswordData[dataShown[i]] === "") {
       console.log("password field empty");
       alert(
         `The ${dataShown[i]
@@ -104,7 +114,7 @@ function finishedPasswordSection() {
     }
 
     if (i === dataShown.length - 1) {
-      if (reEnteredPassword.value !== userSignupData.password) {
+      if (reEnteredPassword.value !== userPasswordData.password) {
         alert("Passwords do not match, please try again");
       } else {
         alert(`Password updated!`);

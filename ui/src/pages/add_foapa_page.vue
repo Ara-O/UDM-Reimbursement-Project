@@ -155,18 +155,19 @@
 import axios from "axios";
 import { reactive, ref, onMounted } from "vue";
 import { FoapaStuff } from "../types/types";
-import router from "../router";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 let foapaList = ref<FoapaStuff[]>([]);
 
 let userFoapaStuff = reactive<FoapaStuff>({
-  fNumber: "3323333",
-  oNumber: "1111",
-  aNumber: "4242",
-  pNumber: "4324",
-  a2Number: "4324",
-  foapaName: "4644",
-  initialAmount: "3566",
+  fNumber: "",
+  oNumber: "",
+  aNumber: "",
+  pNumber: "",
+  a2Number: "",
+  foapaName: "",
+  initialAmount: "",
   currentAmount: "",
 });
 
@@ -186,9 +187,10 @@ let userFoapaStuff = reactive<FoapaStuff>({
 
 function addFoapa() {
   //refactor- looks ugle
-  const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber", "a2Number"];
+  const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber"];
   for (let i = 0; i < foapaFields.length; i++) {
     if (userFoapaStuff[foapaFields[i]] === "") {
+      console.log(foapaFields[i]);
       alert("Some FOAPA information is missing, please try again.");
       break;
     }
@@ -215,6 +217,14 @@ function addFoapa() {
       break;
     }
 
+    if (
+      userFoapaStuff.a2Number.length > 0 &&
+      userFoapaStuff.a2Number.length !== 4
+    ) {
+      alert("ACTV value can only accept 4 digits");
+      break;
+    }
+
     if (i === foapaFields.length - 1) {
       let currentFoapa = reactive<FoapaStuff>({
         fNumber: userFoapaStuff.fNumber,
@@ -227,17 +237,31 @@ function addFoapa() {
         currentAmount: userFoapaStuff.initialAmount,
       });
 
-      foapaList.value.push(currentFoapa);
+      let duplicate = foapaList.value.filter(
+        (foapa) =>
+          foapa.foapaName === currentFoapa.foapaName &&
+          foapa.fNumber === currentFoapa.fNumber &&
+          foapa.oNumber === currentFoapa.oNumber &&
+          foapa.aNumber === currentFoapa.aNumber &&
+          foapa.pNumber === currentFoapa.pNumber &&
+          (foapa.a2Number || "" === currentFoapa.a2Number || "")
+      );
 
-      userFoapaStuff.foapaName =
-        userFoapaStuff.initialAmount =
-        userFoapaStuff.currentAmount =
-        userFoapaStuff.fNumber =
-        userFoapaStuff.oNumber =
-        userFoapaStuff.aNumber =
-        userFoapaStuff.pNumber =
-        userFoapaStuff.a2Number =
-          "";
+      console.log(duplicate);
+      if (duplicate.length > 0) {
+        alert("That FOAPA number already exists");
+      } else {
+        foapaList.value.push(currentFoapa);
+        userFoapaStuff.foapaName =
+          userFoapaStuff.initialAmount =
+          userFoapaStuff.currentAmount =
+          userFoapaStuff.fNumber =
+          userFoapaStuff.oNumber =
+          userFoapaStuff.aNumber =
+          userFoapaStuff.pNumber =
+          userFoapaStuff.a2Number =
+            "";
+      }
     }
   }
 }
