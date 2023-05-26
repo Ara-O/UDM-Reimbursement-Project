@@ -1,22 +1,29 @@
 <template>
   <section class="add-reimbursement-section">
     <section class="all-activities-section">
-      <h3>All Activities</h3>
-      <div class="activity" v-for="activity in allActivities">
-        <h3>{{ activity.activityName }}</h3>
-        <h4>
-          Date: {{ parseDate(activity.activityDate) }} || Cost:
-          {{ activity.amount }}
-        </h4>
-        <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
-        <div class="delete-option" @click="deleteActivity(activity.activityId)">
-          <img
-            src="../assets/trash-icon-white.png"
-            alt="Trash icon"
-            class="trash-icon"
-          />
+      <h3 style="margin-top: 0px" class="all-activities-text">
+        All Activities
+      </h3>
+      <span class="activities-list">
+        <div class="activity" v-for="activity in allActivities">
+          <h3>{{ activity.activityName }}</h3>
+          <h4>
+            Date: {{ parseDate(activity.activityDate) }} || Cost:
+            {{ activity.amount }}
+          </h4>
+          <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
+          <div
+            class="delete-option"
+            @click="deleteActivity(activity.activityId)"
+          >
+            <img
+              src="../assets/trash-icon-white.png"
+              alt="Trash icon"
+              class="trash-icon"
+            />
+          </div>
         </div>
-      </div>
+      </span>
       <div class="cta-buttons">
         <button class="add-actvities-button" @click="createPdf">
           Submit Ticket
@@ -51,14 +58,14 @@
           alt="Edit icon"
         />
       </div>
-      <br />
+
       <div style="display: flex; align-items: center; gap: 20px; height: 20px">
         <img
           src="../assets/user-help-icon.png"
           alt="Help icon"
           class="help-icon"
         />
-        <h4 style="font-weight: 300; font-size: 14px">
+        <h4 style="font-weight: 300; font-size: 14px; margin: 0px">
           Choose from one of the default options below or select other to create
           another type of expense
         </h4>
@@ -109,6 +116,7 @@
             </option>
           </select>
         </div>
+
         <div>
           <h3>Date Of Activity:</h3>
           <input
@@ -119,7 +127,17 @@
           />
         </div>
       </div>
-
+      <h3
+        v-if="selectedFoapaAmount"
+        style="
+          margin-bottom: -15px;
+          font-weight: 500;
+          font-size: 13px;
+          margin-top: 27px;
+        "
+      >
+        The Selected FOAPA has ${{ selectedFoapaAmount }}
+      </h3>
       <div class="add-receipt">
         <div class="add-receipt-text">Add Receipt:</div>
         <input
@@ -131,6 +149,7 @@
           multiple
         />
       </div>
+
       <h5 class="terms-and-conditions">
         By adding an activity; I hereby certify that this claim is correct and
         reimbursable under published travel expense Policies & Procedures of UDM
@@ -147,6 +166,14 @@
         Adding activity, please wait...
       </h5>
     </section>
+    <!-- <section class="user-foapa-info-section">
+      <div><h3>Foapa Details</h3></div>
+      <div v-for="foapa in userFoapaNumbers">
+        <h3>{{ foapa.foapaName }}</h3>
+        <h3>{{ foapa.foapaNumber }}</h3>
+        <h3>Remaining Amount: {{ foapa.currentAmount }}</h3>
+      </div>
+    </section> -->
   </section>
 </template>
 
@@ -154,7 +181,6 @@
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-import { pdfMake } from "pdfmake/build/vfs_fonts";
 
 const receiptRef = ref(null);
 const router = useRouter();
@@ -172,6 +198,8 @@ type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
   foapaName: string;
+  currentAmount: number;
+  initialAmount: number;
 };
 
 let chosenExpense = ref<string>("");
@@ -185,10 +213,25 @@ let allActivities = ref<Array<Activity>>([]);
 let reimbursementDataFromDb = ref<any>({});
 let currentlyAddingActivity = ref<boolean>(false);
 let currentlyAddingPDF = ref<boolean>(false);
+let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 watch(chosenExpenseOther, (newVal) => {
   if (newVal.length >= 0) {
     chosenExpense.value = chosenExpenseOther.value;
+  }
+});
+
+let selectedFoapaAmount = ref<number>();
+watch(foapaNumber, () => {
+  console.log(foapaNumber.value);
+
+  let selectedFoapa = userFoapaNumbers.value.filter(
+    (foapa) => foapa.foapaNumber == foapaNumber.value
+  );
+
+  console.log("sel", selectedFoapa);
+  if (selectedFoapa.length > 0) {
+    selectedFoapaAmount.value = selectedFoapa[0].currentAmount;
   }
 });
 
@@ -210,8 +253,39 @@ function goToHomePage() {
   router.push("/dashboard");
 }
 
+async function storeActivityImage() {
+  let formData = new FormData();
+
+  //@ts-ignore
+  const files = receiptRef.value.files;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    formData.append("receipts", file);
+  }
+
+  if (files.length > 0) {
+    try {
+      // Send the FormData object to the server using axios
+      let res = await axios.post(
+        "https://reimbursement-project.onrender.com/api/storeActivityImages",
+        formData
+      );
+      return res.data;
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    return "";
+  }
+}
+
 async function addActivity() {
-  if (
+  if (expenseCost.value > (selectedFoapaAmount.value ?? 0)) {
+    alert("Warning: Activity cost exceeds the selected FOAPA's current amount");
+  }
+  if (chosenExpense.value === "Other") {
+    alert("Please type in description of 'Other' expense.");
+  } else if (
     chosenExpense.value !== "" &&
     expenseCost.value !== 0 &&
     foapaNumber.value !== "" &&
@@ -229,7 +303,6 @@ async function addActivity() {
       activityReceipt: storedImagesURL,
     });
 
-    console.log(allActivities.value);
     chosenExpense.value = foapaNumber.value = activityDate.value = "";
     expenseCost.value = 0;
     currentlyAddingActivity.value = false;
@@ -237,8 +310,6 @@ async function addActivity() {
     alert("Missing field, please check to make sure all fields are filled");
   }
 }
-
-let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 function retrieveFoapaDetails() {
   axios
@@ -272,20 +343,7 @@ function getAllActivitiesAmount(): number {
   allActivities.value.forEach((activity) => {
     sum += Number(activity.amount);
   });
-
   return sum;
-}
-
-function getCurrentDate(): string {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth() + 1; // add 1 because getMonth() returns 0-11
-  const day = today.getDate();
-  const formattedDate = `${year}-${month < 10 ? "0" + month : month}-${
-    day < 10 ? "0" + day : day
-  }`;
-
-  return formattedDate;
 }
 
 function deleteActivity(activityId: number) {
@@ -296,35 +354,8 @@ function deleteActivity(activityId: number) {
 
 let reimbursementData = {};
 
-async function storeActivityImage() {
-  let formData = new FormData();
-
-  //@ts-ignore
-  const files = receiptRef.value.files;
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    formData.append("receipts", file);
-  }
-
-  if (files.length > 0) {
-    try {
-      // Send the FormData object to the server using axios
-      let res = await axios.post(
-        "https://reimbursement-project.onrender.com/api/storeActivityImages",
-        formData
-      );
-      return res.data;
-    } catch (err) {
-      console.log(err);
-    }
-  } else {
-    return "";
-  }
-}
-
 async function saveReimbursement() {
   if (userIsEditingReimbursement.value === true) {
-    // reimbursementDataFromDb.value.reimbursementDate = getCurrentDate();
     reimbursementDataFromDb.value.reimbursementDate = new Date().toISOString();
     allActivities.value.forEach((activity) => {
       activity.activityDate = parseDate(activity.activityDate);
@@ -332,15 +363,12 @@ async function saveReimbursement() {
     reimbursementDataFromDb.value.allActivities = allActivities.value;
     reimbursementDataFromDb.value.totalAmount = getAllActivitiesAmount();
     reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
-    console.log(reimbursementDataFromDb.value);
 
     let updatingReimbursement = await axios.post(
       "https://reimbursement-project.onrender.com/api/updateReimbursement",
       reimbursementDataFromDb.value
     );
-
-    console.log(updatingReimbursement);
-    alert("Reimbursement saved successfully");
+    alert("Reimbursement ticket saved successfully");
     router.push("/dashboard");
   } else {
     let randomId: string = generateRandomId();
@@ -463,8 +491,6 @@ onMounted(() => {
         allActivities.value = res.data.activities;
         reimbursementDataFromDb.value.reimbursementId =
           res.data.reimbursementId;
-
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);

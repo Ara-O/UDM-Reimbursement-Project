@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="filter" @click="goToFoapaPage">
-          <h3>Add Foapa Number</h3>
+          <h3>Manage Foapa Details</h3>
         </div>
         <!-- <div class="foapa-number">
           <input

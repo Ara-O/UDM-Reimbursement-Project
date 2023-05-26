@@ -9,7 +9,7 @@
     </div>
     <div>
       <h3 class="add-foapa-title">Manage FOAPA</h3>
-      <div>
+      <div class="add-foapa-title-descriptions">
         <label for="foapa-numbers"
           >FOAPA [ FUND - ORG - ACCT - PROG - ACTV ]:</label
         >
@@ -110,10 +110,51 @@
         </button>
       </div>
       <br />
-      <div class="added-foapa-number" v-for="(foapa, index) in foapaList">
+      <table
+        style="
+          width: 95%;
+          border: 1px solid rgba(246, 246, 246, 0.44);
+          padding: 13px 28px;
+          border-spacing: 10px;
+          box-shadow: 0 2px 2px #5353532b;
+          border-radius: 5px;
+        "
+      >
+        <tr style="text-align: left">
+          <th>FOAPA Name</th>
+          <th>Amount</th>
+          <th>FUND</th>
+          <th>ORG</th>
+          <th>ACCT</th>
+          <th>PROG</th>
+          <th>ACTV</th>
+          <th></th>
+        </tr>
+        <tr v-for="foapa in foapaList">
+          <td>
+            {{ foapa.foapaName }}
+          </td>
+          <td>{{ foapa.currentAmount }}</td>
+          <td>{{ foapa.fNumber }}</td>
+          <td>{{ foapa.oNumber }}</td>
+          <td>{{ foapa.aNumber }}</td>
+          <td>{{ foapa.pNumber }}</td>
+          <td>{{ foapa.a2Number ?? "N/A" }}</td>
+          <td>
+            <img
+              src="../assets/trash-icon.png"
+              alt="Trash"
+              class="delete-icon"
+              @click="deleteFoapa(foapa)"
+              style="width: 15px; margin-left: 15px; cursor: pointer"
+            />
+          </td>
+        </tr>
+      </table>
+      <!-- <div class="added-foapa-number" v-for="(foapa, index) in foapaList">
         <span>
           <h3 style="margin-right: 15px; font-weight: 500">#{{ index + 1 }}</h3>
-          <h3>{{ foapa.foapaName }} : {{ foapa.fNumber }}</h3>
+          <h3>: </h3>
           <h3>-</h3>
           <h3>{{ foapa.oNumber }}</h3>
           <h3>-</h3>
@@ -130,16 +171,10 @@
             -> Current amount: ${{ foapa.currentAmount }}
           </h3>
         </span>
-        <!-- <h3>Initial amount:</h3> -->
-        <!-- <img
-          src="../assets/trash-icon.png"
-          alt="Trash"
-          class="delete-icon"
-          @click="deleteFoapa(foapa.foapaName, foapa.fNumber)"
-          style="width: 15px; margin-left: 15px; cursor: pointer"
-          /> -->
-      </div>
-      <div style="display: flex; gap: 22px">
+        - <h3>Initial amount:</h3> -->
+      <!-- 
+      </div> -->
+      <div class="add-foapa-button-wrapper">
         <button class="add-foapa-button" @click="$router.push('/dashboard')">
           Discard Changes
         </button>
@@ -171,19 +206,18 @@ let userFoapaStuff = reactive<FoapaStuff>({
   currentAmount: "",
 });
 
-// function deleteFoapa(foapaName, fNumber) {
-//   axios
-//     .post("/api/deleteFoapaNumber")
-//     .then(() => {
-//       foapaList.value = foapaList.value.filter(
-//         (foapa) => foapa.foapaName !== foapaName || foapa.fNumber !== fNumber
-//       );
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       alert(err.response.data.message);
-//     });
-// }
+function deleteFoapa(foapaParameter) {
+  console.log(foapaParameter);
+  foapaList.value = foapaList.value.filter(
+    (foapa) =>
+      foapa.fNumber !== foapaParameter.fNumber ||
+      foapa.foapaName !== foapaParameter.foapaName ||
+      foapa.oNumber !== foapaParameter.oNumber ||
+      foapa.aNumber !== foapaParameter.aNumber ||
+      foapa.pNumber !== foapaParameter.pNumber ||
+      (foapa.a2Number || "") !== (foapaParameter.a2Number || "")
+  );
+}
 
 function addFoapa() {
   //refactor- looks ugle
@@ -196,6 +230,11 @@ function addFoapa() {
     }
 
     if (isNaN(userFoapaStuff[foapaFields[i]])) {
+      alert("FOAPA fields only accept numbers");
+      break;
+    }
+
+    if (isNaN(Number(userFoapaStuff.a2Number))) {
       alert("FOAPA fields only accept numbers");
       break;
     }

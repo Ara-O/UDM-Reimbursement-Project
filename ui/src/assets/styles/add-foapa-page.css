@@ -43,6 +43,15 @@ input {
   display: inline-flex;
 }
 
+tr th {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+tr td {
+  font-size: 14px;
+}
+
 .update-foapa-button {
   background-color: var(--udmercy-red);
   background: #a5093e;
@@ -139,6 +148,11 @@ input {
   text-align: left;
 }
 
+.add-foapa-button-wrapper {
+  display: flex;
+  gap: 22px;
+}
+
 @media (max-width: 1350px) {
   .udmercy-logo {
     display: none;
@@ -169,6 +183,13 @@ input {
 }
 
 @media (max-width: 750px) {
+  .add-foapa-title-descriptions {
+    text-align: center;
+  }
+  .add-foapa-button-wrapper {
+    justify-content: center;
+    margin-top: 15px;
+  }
   .add-foapa-page {
     column-gap: 20px;
     height: auto;
