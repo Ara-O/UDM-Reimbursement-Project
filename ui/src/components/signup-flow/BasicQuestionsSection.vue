@@ -93,7 +93,7 @@ const { userSignupData } = defineProps<{
 
 type ValidationResult = {
   field: (typeof fieldsToValidate)[number];
-  reason: "Invalid type" | "Empty" | "Invalid chars";
+  reason: "Invalid type" | "Empty" | "Invalid chars" | "Invalid format";
 };
 
 const emits = defineEmits(["continue"]);
@@ -134,8 +134,25 @@ function validateField(data, fieldsToValidate) {
       } as ValidationResult);
     }
 
+    if (data.employmentNumber === null) {
+      reject({
+        field: "employmentNumber",
+        reason: "Empty",
+      } as ValidationResult);
+    }
+
+    const numericPhoneNumber = userSignupData.phoneNumber.replace(/\D/g, "");
+    const isValidPhoneNumber = /^\d{10}$/.test(numericPhoneNumber);
+    if (!isValidPhoneNumber) {
+      reject({
+        field: "phoneNumber",
+        reason: "Invalid format",
+      } as ValidationResult);
+    }
+
     for (let i = 0; i < fieldsToValidate.length; i++) {
       let field = fieldsToValidate[i];
+      console.log(field, data[field]);
       if (String(data[field]).trim() === "") {
         reject({ field, reason: "Empty" } as ValidationResult);
       }
@@ -156,6 +173,7 @@ function progress() {
   validateField(userSignupData, fieldsToValidate)
     .then(() => {
       validatingSignupFields.value = true;
+
       axios
         .post(
           "https://reimbursement-project.onrender.com/api/verifySignupBasicInformation",
@@ -170,9 +188,11 @@ function progress() {
         })
         .catch((err) => {
           alert(err.response.data.message);
+          validatingSignupFields.value = false;
         });
     })
     .catch((err) => {
+      validatingSignupFields.value = false;
       let erringField = err.field
         .replace(/([A-Z])/g, " $1")
         .replace(/^./, function (match) {
@@ -187,9 +207,9 @@ function progress() {
 
       err.reason === "Empty" &&
         alert(`The ${erringField} field cannot be empty`);
-    })
-    .finally(() => {
-      validatingSignupFields.value = false;
+
+      err.reason === "Invalid format" &&
+        alert(`The ${erringField} field must have the format XXXXXXXXXX`);
     });
 }
 </script>
