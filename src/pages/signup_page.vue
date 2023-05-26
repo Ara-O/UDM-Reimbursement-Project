@@ -109,6 +109,7 @@ let userSignupData = reactive<UserData>({
   userFoapas: [],
 });
 
+
 let foapaList = ref<FoapaStuff[]>([]);
 
 function registerUser() {

@@ -143,6 +143,17 @@ function progress() {
         break;
       }
 
+      const numericPhoneNumber = userSignupData.phoneNumber.replace(/\D/g, '');
+      const isValidPhoneNumber = /^\d{10}$/.test(numericPhoneNumber);
+
+      if (isValidPhoneNumber) {
+        const formattedPhoneNumber = `(${numericPhoneNumber.slice(0, 3)}) ${numericPhoneNumber.slice(3, 6)}-${numericPhoneNumber.slice(6)}`;
+      }
+      else{
+        alert("Number must be 10 digits and typed as follows xxxxxxxxxx");
+        break;
+     }
+
       if (i === dataShown.length - 1) {
         window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
         axios
