@@ -18,6 +18,7 @@ export type UserDataAcct = {
   firstName: string;
   lastName: string;
   workEmail: string;
+  employmentNumber: string;
   department: string;
   mailingAddress: string;
   phoneNumber: string;

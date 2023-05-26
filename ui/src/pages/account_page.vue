@@ -43,23 +43,25 @@
               />
             </div>
             <div class="input-field">
-              <label for="country">Country:</label>
-              <input
-                name="Country"
-                id="country"
-                v-model="accountInfo.country"
-                required
-              />
-            </div>
-          </div>
-          <div class="input-field-wrapper">
-            <div class="input-field">
               <label for="work-email">Work Email: </label>
               <input
                 type="email"
                 name="Work Email"
                 id="work-email"
                 v-model="accountInfo.workEmail"
+                required
+                disabled
+              />
+            </div>
+          </div>
+          <div class="input-field-wrapper">
+            <div class="input-field">
+              <label for="employment-number">Employment Number: </label>
+              <input
+                type="text"
+                name="Employment Number"
+                id="employment-number"
+                v-model="accountInfo.employmentNumber"
                 required
                 disabled
               />
@@ -77,6 +79,36 @@
                   {{ department }}
                 </option>
               </select>
+            </div>
+            <div class="input-field">
+              <label for="country">Country:</label>
+              <input
+                name="Country"
+                id="country"
+                v-model="accountInfo.country"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label for="mailing-address">Mailing Address:</label>
+              <input
+                type="text"
+                name="Mailing Address"
+                id="mailing-address"
+                v-model="accountInfo.mailingAddress"
+                required
+              />
+            </div>
+
+            <div class="input-field">
+              <label for="city">City:</label>
+              <input
+                type="text"
+                name="City"
+                id="city"
+                v-model="accountInfo.city"
+                required
+              />
             </div>
             <div class="input-field">
               <label for="state">State:</label>
@@ -100,31 +132,6 @@
                 required
               />
             </div>
-
-            <div class="input-field">
-              <label for="mailing-address">Mailing Address:</label>
-              <input
-                type="text"
-                name="Mailing Address"
-                id="mailing-address"
-                v-model="accountInfo.mailingAddress"
-                required
-              />
-            </div>
-
-            <div class="input-field">
-              <label for="city">City:</label>
-              <input
-                type="text"
-                name="City"
-                id="city"
-                v-model="accountInfo.city"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="input-field-wrapper">
             <div class="input-field">
               <label for="postal-code">Postal Code:</label>
               <input
@@ -136,6 +143,7 @@
               />
             </div>
           </div>
+
           <div class="continue-buttons">
             <button
               class="signup-button"
@@ -187,6 +195,7 @@ let accountInfo = ref<UserDataAcct>({
   department: "",
   mailingAddress: "",
   phoneNumber: "",
+  employmentNumber: "",
   postalCode: "",
   city: "",
   state: "",
@@ -216,7 +225,7 @@ function save() {
 function retrieveAccountInformation() {
   axios
     .get(
-      `https://reimbursement-project.onrender.com/api/retrieveAccountInformation`
+      "https://reimbursement-project.onrender.com/api/retrieveAccountInformation"
     )
     .then((res) => {
       accountInfo.value = res.data;

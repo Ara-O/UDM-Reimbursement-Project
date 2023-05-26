@@ -35,12 +35,12 @@
               />
             </div>
             <div class="input-field">
-              <label for="reenter-password">New password: </label>
+              <label for="new-password">New password: </label>
               <input
                 type="password"
-                name="reenter-password"
-                id="reenter-password"
-                v-model="userPasswordData.password"
+                name="new-password"
+                id="new-password"
+                v-model="newPassword"
               />
             </div>
             <div class="input-field">
@@ -69,7 +69,7 @@
               class="signup-button"
               type="button"
               style="margin-top: 0px"
-              @click="finishedPasswordSection"
+              @click="changePassword"
             >
               Update
             </button>
@@ -85,41 +85,33 @@ import axios from "axios";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
-type UserData = {
-  password: string;
-};
-
 let reEnteredPassword = ref<string>("");
 let currentPassword = ref<string>("");
 let surveyProgress = ref<number>(0);
 
 const router = useRouter();
 
-let userPasswordData = reactive<UserData>({
-  password: "",
-});
+let newPassword = ref<string>("");
 
-function finishedPasswordSection() {
-  let dataShown = ["password"];
-
-  for (let i = 0; i < dataShown.length; i++) {
-    if (userPasswordData[dataShown[i]] === "") {
-      console.log("password field empty");
-      alert(
-        `The ${dataShown[i]
-          .replace(/([A-Z])/g, " $1")
-          .toLowerCase()} field is empty`
-      );
-      break;
-    }
-
-    if (i === dataShown.length - 1) {
-      if (reEnteredPassword.value !== userPasswordData.password) {
-        alert("Passwords do not match, please try again");
-      } else {
-        alert(`Password updated!`);
-      }
-    }
+function changePassword() {
+  if (reEnteredPassword.value !== newPassword.value) {
+    alert("Passwords do not match, please try again");
+  } else if (newPassword.value === currentPassword.value) {
+    alert("New password can not match current password, please try again");
+  } else {
+    axios
+      .post("http://localhost:8080/api/changePassword", {
+        currentPassword: currentPassword.value,
+        newPassword: newPassword.value,
+      })
+      .then((res) => {
+        alert(res.data.message);
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        alert(err.response.data.message);
+        console.log(err);
+      });
   }
 }
 </script>

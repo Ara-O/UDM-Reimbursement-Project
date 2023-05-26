@@ -91,35 +91,36 @@
         >
           <h3>Sort by Name</h3>
         </div>
-        <!-- <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Cost Ascending' }"
-          @click="sortBy('Cost Ascending')"
-        >
-          <h3>Sort by Cost ( ASC )</h3>
+        <div class="filter" :class="{ selected: sortParameter === 'Cost' }">
+          <h3>Sort by Cost</h3>
         </div>
-        <div
+        <!--   <div
           class="filter"
           :class="{ selected: sortParameter === 'Cost Descending' }"
           @click="sortBy('Cost Descending')"
         >
           <h3>Sort by Cost ( DESC )</h3>
         </div> -->
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === '' }"
-          @click="sortBy('')"
-        >
-          <h3>Remove filter</h3>
-        </div>
       </div>
       <br />
-      <h3 style="font-weight: 500; font-size: 14.5px">
-        All Reimbursements -
-        <router-link to="/add-reimbursement" class="add-reimbursement-link"
-          >Click here to add reimbursement ticket</router-link
+      <div style="display: flex; flex-direction: column">
+        <h3 style="font-weight: 500; font-size: 14.5px">
+          All Reimbursements -
+        </h3>
+        <button
+          @click="$router.push('/add-reimbursement')"
+          class="filter"
+          style="
+            border: 0px;
+            padding: 0px 20px;
+            width: 300px;
+            font-weight: 300;
+            font-size: 12.5px;
+          "
         >
-      </h3>
+          Click here to add reimbursement ticket
+        </button>
+      </div>
       <br />
       <div class="reimbursement-wrapper">
         <div class="reimbursement" v-for="ticket in filterReimbursements">
@@ -160,7 +161,7 @@
         >Manage account information</router-link
       >
 
-      <router-link to="/password" style="font-size: 14px"
+      <router-link to="/change-password" style="font-size: 14px"
         >Change password</router-link
       >
       <button @click="signOut">Sign Out</button>
@@ -179,7 +180,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const searchValue = ref<string>("");
 
-type SortParameters = "" | "Date" | "Name" | "Status";
+type SortParameters = "" | "Date" | "Name" | "Status" | "Cost";
 
 type FoapaNumbers = {
   employmentNumber: number;
@@ -321,7 +322,7 @@ function viewTicket(reimbursementId: string) {
   router.push({ path: "/add-reimbursement", query: { reimbursementId } });
 }
 
-let sortParameter = ref<SortParameters>("");
+let sortParameter = ref<SortParameters>("Name");
 
 async function sortBy(parameter: SortParameters) {
   sortParameter.value = parameter;

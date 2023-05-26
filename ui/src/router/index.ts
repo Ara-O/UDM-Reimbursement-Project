@@ -35,7 +35,7 @@ export default createRouter({
       component: AddFoapaPage,
     },
     {
-      path: "/password",
+      path: "/change-password",
       component: PasswordPage,
     },
     {

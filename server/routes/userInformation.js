@@ -304,4 +304,31 @@ router.post("/resetPassword", async (req, res) => {
     console.log(err);
   }
 });
+
+router.post("/changePassword", verifyToken, async (req, res) => {
+  console.log(req.body);
+  try {
+    let facultyInfo = await Faculty.findOne({
+      employmentNumber: req.user.employmentNumber,
+    });
+
+    if (facultyInfo) {
+      let passwordMatches = await decryptPassword(
+        req.body.currentPassword,
+        facultyInfo.password
+      );
+
+      if (passwordMatches) {
+        facultyInfo.password = await encryptPassword(req.body.newPassword);
+        await facultyInfo.save();
+        res.status(200).send({ message: "Password changed successfully" });
+      } else {
+        res.status(200).send({ message: "Current password is incorrect" });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(200).send({ message: "There has been an error" });
+  }
+});
 export default router;
