@@ -27,4 +27,18 @@ router.get("/getStateFromCountry", (req, res) => {
   res.status(200).send(formattedStates);
 });
 
+router.get("/getCityFromState", (req, res)=>{
+  let allCities = City.getAllCities();
+  console.log("UrMom", allCities);
+  const cities = allCities.filter(
+    (cities) => cities.stateCode === req.query.realStateData[0].code
+    );
+    
+    const formattedCities = cities.map((city) => {
+      return { name: city.name };
+    });
+    
+    res.status(200).send(formattedCities);
+  })
+  
 export default router;
