@@ -107,9 +107,9 @@ const states = ref<AddressDetails[]>([
 const cities = ref<AddressDetails[]>([
   {
     name: "Defualt",
-    code: "Default"
-  }
-])
+    code: "Default",
+  },
+]);
 
 function countryChanged() {
   let realCountryData = countries.value?.filter(
@@ -129,7 +129,7 @@ function countryChanged() {
     });
 }
 
-function stateChanged(){
+function stateChanged() {
   let realCountryData = countries.value?.filter(
     (country) => userSignupData.country === country.name
   );
@@ -138,14 +138,14 @@ function stateChanged(){
   );
 
   axios
-    .get("http://reimbursement-project.onrender.com/api/getCityFromState",{
+    .get("https://reimbursement-project.onrender.com/api/getCityFromState", {
       params: { realCountryData, realStateData },
     })
-    .then((res)=>{
+    .then((res) => {
       console.log(res.data);
-      cities.value=res.data;
+      cities.value = res.data;
     })
-    .catch((err)=>{
+    .catch((err) => {
       console.log(err);
     });
 }
