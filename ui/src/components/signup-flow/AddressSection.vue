@@ -21,6 +21,7 @@
         id="state"
         :disabled="userSignupData.country === ''"
         v-model="userSignupData.state"
+        @change="stateChanged"
       >
         <option :value="state.name" v-for="state in states">
           {{ state.name }}
@@ -29,21 +30,24 @@
     </div>
     <div class="input-field">
       <label for="city">City: *</label>
-      <input
-        type="text"
+      <select
         name="City"
         id="city"
         v-model="userSignupData.city"
         :disabled="userSignupData.state === ''"
-      />
+      >
+        <option :value="city.name" v-for="city in cities">
+          {{ city.name }}
+        </option>
+      </select>
     </div>
 
     <div class="input-field">
-      <label for="mailing-address">Mailing Address: *</label>
+      <label for="street-address">Street Address: *</label>
       <input
         type="text"
-        name="Mailing Address"
-        id="mailing-address"
+        name="Street Address"
+        id="street-address"
         v-model="userSignupData.mailingAddress"
       />
     </div>
@@ -100,6 +104,12 @@ const states = ref<AddressDetails[]>([
     code: "Default",
   },
 ]);
+const cities = ref<AddressDetails[]>([
+  {
+    name: "Defualt",
+    code: "Default"
+  }
+])
 
 function countryChanged() {
   let realCountryData = countries.value?.filter(
@@ -115,6 +125,27 @@ function countryChanged() {
       states.value = res.data;
     })
     .catch((err) => {
+      console.log(err);
+    });
+}
+
+function stateChanged(){
+  let realCountryData = countries.value?.filter(
+    (country) => userSignupData.country === country.name
+  );
+  let realStateData = states.value?.filter(
+    (state) => userSignupData.state === state.name
+  );
+
+  axios
+    .get("http://reimbursement-project.onrender.com/api/getCityFromState",{
+      params: { realCountryData, realStateData },
+    })
+    .then((res)=>{
+      console.log(res.data);
+      cities.value=res.data;
+    })
+    .catch((err)=>{
       console.log(err);
     });
 }
