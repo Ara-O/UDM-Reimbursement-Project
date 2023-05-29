@@ -68,7 +68,7 @@ router.post("/login", async (req, res) => {
   const { workEmail, password } = req.body;
   try {
     let facultyInfo = await Faculty.findOne({
-      workEmail: workEmail.toLowerCase(),
+      workEmail: workEmail.toLowerCase() + "@udmercy.edu",
     }).select("workEmail password employmentNumber");
 
     if (facultyInfo === null) {

@@ -2,9 +2,9 @@
   display: flex;
   box-sizing: border-box;
   height: 100vh;
-  align-items: center;
+  align-items: flex-start;
   gap: 86px;
-  padding: 60px 45px;
+  padding: 85px 45px 45px 60px;
 }
 
 .all-activities-section::-webkit-scrollbar {
@@ -193,7 +193,7 @@
   position: absolute;
   background-color: var(--udmercy-red);
   right: 30px;
-  bottom: 75px;
+  top: 30px;
   padding: 14px 15px;
   display: flex;
   cursor: pointer;
@@ -244,6 +244,10 @@
     width: auto;
   }
 
+  .foapa-and-date-section {
+    gap: 23px;
+  }
+
   .add-reimbursement-section {
     grid-template-columns: 31% 60%;
   }
@@ -288,15 +292,16 @@
 
   .cta-buttons {
     justify-content: flex-start;
+
     width: auto;
+  }
+  .cta-buttons button {
+    width: 155px;
   }
 }
 
 @media (max-width: 680px) {
   .activities-list {
     justify-content: center;
-  }
-  .all-activities-section {
-    align-items: center;
   }
 }

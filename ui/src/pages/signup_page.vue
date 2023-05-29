@@ -65,7 +65,9 @@
             @go-back="surveyProgress--"
           />
         </section>
-
+        <h5 v-if="creatingAccountFeedback" class="creating-account-feedback">
+          Creating Account...
+        </h5>
         <router-link to="/" style="font-size: 14px; margin-top: -15px"
           >Already have an Account</router-link
         >
@@ -92,7 +94,7 @@ import { FoapaStuff, UserData } from "../types/types";
 let surveyProgress = ref<number>(0);
 
 const router = useRouter();
-
+let creatingAccountFeedback = ref<boolean>(false);
 let userSignupData = reactive<UserData>({
   firstName: "",
   lastName: "",
@@ -113,7 +115,7 @@ let foapaList = ref<FoapaStuff[]>([]);
 
 function registerUser() {
   userSignupData.userFoapas = foapaList.value;
-
+  creatingAccountFeedback.value = true;
   axios
     .post(
       "https://reimbursement-project.onrender.com/api/register",
@@ -129,6 +131,9 @@ function registerUser() {
     .catch((err) => {
       console.log(err);
       alert(err.response.data.message);
+    })
+    .finally(() => {
+      creatingAccountFeedback.value = false;
     });
 }
 

@@ -59,7 +59,7 @@
         />
       </div>
 
-      <div style="display: flex; align-items: center; gap: 20px; height: 20px">
+      <div style="display: flex; align-items: center; gap: 20px; height: auto">
         <img
           src="../assets/user-help-icon.png"
           alt="Help icon"
@@ -180,7 +180,7 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import axios from "axios";
+import axios, { all } from "axios";
 
 const receiptRef = ref(null);
 const router = useRouter();
@@ -413,6 +413,14 @@ function previewPDF(pdfData: string) {
 function createPdf() {
   currentlyAddingPDF.value = true;
   //Send user information
+
+  for (let i = 0; i < allActivities.value.length; i++) {
+    if (allActivities.value[i].activityReceipt === "") {
+      alert("Warning: An activity without a receipt was added");
+      break;
+    }
+  }
+
   axios
     .get(
       `https://reimbursement-project.onrender.com/api/retrieveAccountInformation`

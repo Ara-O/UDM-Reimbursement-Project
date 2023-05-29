@@ -10,6 +10,35 @@ input {
   color: gray;
 }
 
+.work-email-input-field input {
+  font-size: 13px;
+}
+
+.work-email-input-field {
+  padding-left: 20px;
+  width: 251px;
+  box-sizing: border-box;
+  height: 36px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #f7f7f7;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.17);
+  border-radius: 5px;
+}
+
+.work-email-descriptor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(6px, -41px);
+  font-weight: 400;
+  font-size: 13px;
+}
+
 .btn-link {
   font-size: 14px;
   text-decoration: underline;
@@ -61,7 +90,13 @@ input {
   justify-content: space-between;
 }
 
-.login-field input {
+#work-email {
+  border: none;
+  width: 100px;
+  font-size: 13px;
+}
+
+.login-password-input {
   margin-left: 30px;
   padding-left: 20px;
   width: 224px;
