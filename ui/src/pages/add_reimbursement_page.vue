@@ -22,6 +22,13 @@
               class="trash-icon"
             />
           </div>
+          <div @click="editActivity(activity.activityId)">
+            <img
+              src="../assets/edit-icon.png"
+              class="edit-icon-button"
+              alt="Edit icon"
+            />
+          </div>
         </div>
       </span>
       <div class="cta-buttons">
@@ -320,6 +327,55 @@ function retrieveFoapaDetails() {
     .catch((err) => {
       console.log(err);
     });
+}
+
+function retrieveActivity() {
+  axios
+    .get(`http://localhost:8080/api/retrieveActivity`)
+    .then((res) => {
+      console.log(res)
+      allActivities.value = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function reverseParseDate(formattedDate: string) {
+  const year = formattedDate.slice(0, 4);
+  const month = formattedDate.slice(5, 7);
+  const day = formattedDate.slice(8, 10);
+
+  const originalDateString = `${year}-${month}-${day}`;
+
+  return originalDateString;
+}
+
+
+
+function editActivity(activityId: number) {
+  const activity = allActivities.value.find((activity) => activity.activityId === activityId);
+  console.log(activity)
+
+  if (activity) {
+    expenseCost.value = activity.amount
+    chosenExpense.value = activity.activityName;
+    foapaNumber.value = activity.foapaNumber;
+    activityDate.value = reverseParseDate(activity.activityDate);
+    activityId = activity.activityId
+    // Do image receipt as well here ...
+  }
+  // axios
+  //   .post(
+  //     "http://localhost:8080/api/editActivity",
+  //     {
+  //       activity,
+  //     }
+  //   )
+  //   .then(() => {
+  //     retrieveActivity();
+  //     alert("Activity Updated Successfully");
+  //   });
 }
 
 function generateRandomId(): string {

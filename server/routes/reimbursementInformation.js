@@ -159,4 +159,46 @@ router.post("/deleteReimbursement", verifyToken, async (req, res) => {
   }
 });
 
+router.post("/editActivity", verifyToken, async (req, res) => {
+  const activityId = req.body.id;
+  // console.log(activityId)
+
+  try {
+    let userInfo = await Faculty.findOne({
+      activityId: req.user.activityId,
+    });
+
+    await userInfo.allActivities.pull({
+      activityId
+    });
+
+    await userInfo.save();
+    console.log(userInfo)
+
+    res
+      .status(200)
+      .send({ message: "Activity updated successfully" });
+  } catch (err) {
+    // console.log(err)
+    res.status(400).send({ message: err.message });
+  }
+});
+
+router.get("/retrieveActivity", verifyToken, async (req, res) => {
+  try {
+    const activityId = req.query.activityId;
+    let activityInfo = await Faculty.findOne(
+      {
+        activityId: req.user.activityId,
+        "allActivities.activityId": activityId,
+      }
+    );
+    console.log(activityInfo);
+    res.status(200).send(activityInfo.allActivities[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: err.message });
+  }
+});
+
 export default router;
