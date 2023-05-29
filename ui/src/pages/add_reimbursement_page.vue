@@ -421,63 +421,67 @@ function createPdf() {
     }
   }
 
-  axios
-    .get(
-      `https://reimbursement-project.onrender.com/api/retrieveAccountInformation`
-    )
-    .then((response) => {
-      if (userIsEditingReimbursement.value === true) {
-        reimbursementDataFromDb.value.reimbursementDate =
-          new Date().toISOString();
-        allActivities.value.forEach((activity) => {
-          activity.activityDate = parseDate(activity.activityDate);
-        });
-        reimbursementDataFromDb.value.allActivities = allActivities.value;
-        reimbursementDataFromDb.value.totalAmount = getAllActivitiesAmount();
-        reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
-        axios
-          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
-            params: {
-              reimbursementData: reimbursementDataFromDb.value,
-              userInfo: response.data,
-            },
-          })
-          .then((res) => {
-            downloadPDF(res.data);
-            currentlyAddingPDF.value = false;
-          })
-          .catch((err) => {
-            console.log(err);
+  if (allActivities.value.length === 0) {
+    alert("An activity needs to be added to create a PDF");
+  } else {
+    axios
+      .get(
+        `https://reimbursement-project.onrender.com/api/retrieveAccountInformation`
+      )
+      .then((response) => {
+        if (userIsEditingReimbursement.value === true) {
+          reimbursementDataFromDb.value.reimbursementDate =
+            new Date().toISOString();
+          allActivities.value.forEach((activity) => {
+            activity.activityDate = parseDate(activity.activityDate);
           });
-      } else {
-        let randomId: string = generateRandomId();
-        reimbursementData = {
-          reimbursementId: Number(randomId),
-          eventName: reimbursementTitle.value,
-          totalAmount: getAllActivitiesAmount(),
-          reimbursementStatus: 0,
-          reimbursementDate: new Date().toISOString(),
-          allActivities: allActivities.value,
-        };
-        axios
-          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
-            params: {
-              reimbursementData: reimbursementData,
-              userInfo: response.data,
-            },
-          })
-          .then((res) => {
-            downloadPDF(res.data);
-            currentlyAddingPDF.value = false;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+          reimbursementDataFromDb.value.allActivities = allActivities.value;
+          reimbursementDataFromDb.value.totalAmount = getAllActivitiesAmount();
+          reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
+          axios
+            .get("https://reimbursement-project.onrender.com/api/generatePdf", {
+              params: {
+                reimbursementData: reimbursementDataFromDb.value,
+                userInfo: response.data,
+              },
+            })
+            .then((res) => {
+              downloadPDF(res.data);
+              currentlyAddingPDF.value = false;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        } else {
+          let randomId: string = generateRandomId();
+          reimbursementData = {
+            reimbursementId: Number(randomId),
+            eventName: reimbursementTitle.value,
+            totalAmount: getAllActivitiesAmount(),
+            reimbursementStatus: 0,
+            reimbursementDate: new Date().toISOString(),
+            allActivities: allActivities.value,
+          };
+          axios
+            .get("https://reimbursement-project.onrender.com/api/generatePdf", {
+              params: {
+                reimbursementData: reimbursementData,
+                userInfo: response.data,
+              },
+            })
+            .then((res) => {
+              downloadPDF(res.data);
+              currentlyAddingPDF.value = false;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 }
 
 onMounted(() => {
