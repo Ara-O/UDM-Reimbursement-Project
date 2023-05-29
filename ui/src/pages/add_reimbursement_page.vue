@@ -416,6 +416,7 @@ function downloadPDF(pdfData: string) {
     // Remove padding from the iframe content
     x.document.querySelector("style") ||
     x.document.head.appendChild(x.document.createElement("style"));
+    // @ts-ignore
     x.document.querySelector("style").textContent += `
   body, iframe {
     margin: 0;
