@@ -399,11 +399,31 @@ async function saveReimbursement() {
 
 function downloadPDF(pdfData: string) {
   const linkSource = pdfData;
-  const downloadLink = document.createElement("a");
-  const fileName = "reimbursement.pdf";
-  downloadLink.href = linkSource;
-  downloadLink.download = fileName;
-  downloadLink.click();
+  // const downloadLink = document.createElement("a");
+  // const fileName = "reimbursement.pdf";
+  // downloadLink.href = linkSource;
+  // downloadLink.setAttribute("target", "_blank")
+  // downloadLink.click();
+
+  let iframe =
+    "<iframe width='100%' height='100%' src='" + linkSource + "'></iframe>";
+  let x = window.open();
+  if (x != null) {
+    x.document.open();
+    x.document.write(iframe);
+    x.document.close();
+
+    // Remove padding from the iframe content
+    x.document.querySelector("style") ||
+    x.document.head.appendChild(x.document.createElement("style"));
+    x.document.querySelector("style").textContent += `
+  body, iframe {
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+  }
+`;
+  }
 }
 
 function previewPDF(pdfData: string) {
