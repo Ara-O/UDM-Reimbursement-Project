@@ -34,14 +34,9 @@
 </template>
 
 <script lang="ts" setup>
+import { Activity } from "../../types/types";
 defineProps<{
-  activity: {
-    amount: number;
-    activityName: string;
-    activityDate: string;
-    foapaNumber: string;
-    activityId: string;
-  };
+  activity: Activity;
 }>();
 
 function parseDate(dateString: string) {
