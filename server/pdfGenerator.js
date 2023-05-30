@@ -1,3 +1,9 @@
+function parseDate(dateString) {
+  const dateParsed = new Date(dateString);
+  const formattedDate = dateParsed.toISOString().slice(0, 10);
+  return formattedDate;
+}
+
 export default function createPdfDefinition(
   reimbursementData,
   userInfo,
@@ -15,7 +21,7 @@ export default function createPdfDefinition(
   // console.log("generate pdf", userInfo);
   // console.log(reimbursementData, userInfo);
 
-  const { allActivities } = reimbursementData;
+  const { activities } = reimbursementData;
   let content = [];
   //Top section
   content.push(
@@ -229,7 +235,7 @@ export default function createPdfDefinition(
     },
   };
 
-  allActivities.forEach((activity) => {
+  activities.forEach((activity) => {
     console.log(activity);
     let arrayField = activitiesClassification[`${activity.activityName}`];
 
@@ -238,7 +244,10 @@ export default function createPdfDefinition(
       arrayField = activitiesClassification[`Other`];
       arrayField.explanation += activity.activityName + " ";
     } else {
-      arrayField.dates.push({ text: activity.activityDate, fontSize: 7.5 });
+      arrayField.dates.push({
+        text: parseDate(activity.activityDate),
+        fontSize: 7.5,
+      });
     }
     arrayField.total += Number(activity.amount);
   });
@@ -362,11 +371,11 @@ export default function createPdfDefinition(
   //FOAPA Number section
   let foapaDetails = {};
   let foapaArray = [];
-  reimbursementData.allActivities.forEach((activity) => {
+  reimbursementData.activities.forEach((activity) => {
     if (foapaDetails[activity.foapaNumber]) {
-      foapaDetails[activity.foapaNumber] += activity.amount;
+      foapaDetails[activity.foapaNumber] += Number(activity.amount);
     } else {
-      foapaDetails[activity.foapaNumber] = activity.amount;
+      foapaDetails[activity.foapaNumber] = Number(activity.amount);
     }
   });
 
