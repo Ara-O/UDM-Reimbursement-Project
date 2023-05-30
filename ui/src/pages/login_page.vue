@@ -116,8 +116,9 @@
         text-align: center;
       "
     >
-      If the email you entered exists in our database, you will receive a
-      password reset e-mail shortly.
+      We will send a password reset e-mail to
+      {{ forgotPasswordWorkEmail }}@udmercy.edu. Remember to check your
+      spam/junk folder if it doesn't arrive in a few minutes.
     </h5>
   </section>
 </template>
