@@ -37,7 +37,7 @@
 defineProps<{
   activity: {
     amount: number;
-    activityName: number;
+    activityName: string;
     activityDate: string;
     foapaNumber: string;
     activityId: string;
