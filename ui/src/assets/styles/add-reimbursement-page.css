@@ -189,20 +189,24 @@
   font-weight: 300;
   font-size: 12px;
 }
-.delete-option {
-  position: absolute;
+.activity-option {
   background-color: var(--udmercy-red);
-  right: 30px;
-  top: 30px;
+  width: 10px;
+  height: 10px;
   padding: 14px 15px;
   display: flex;
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 7px;
 }
 
-.activity .delete-option .trash-icon {
+.activity-options-wrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.activity .activity-option .trash-icon {
   filter: brightness(1);
   width: 15px;
 }

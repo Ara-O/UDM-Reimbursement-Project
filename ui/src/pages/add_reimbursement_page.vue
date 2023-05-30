@@ -5,50 +5,31 @@
         All Activities
       </h3>
       <span class="activities-list">
-        <div class="activity" v-for="activity in allActivities">
-          <h3>{{ activity.activityName }}</h3>
-          <h4>
-            Date: {{ parseDate(activity.activityDate) }} || Cost:
-            {{ activity.amount }}
-          </h4>
-          <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
-          <div
-            class="delete-option"
-            @click="deleteActivity(activity.activityId)"
-          >
-            <img
-              src="../assets/trash-icon-white.png"
-              alt="Trash icon"
-              class="trash-icon"
-            />
-          </div>
-          <div @click="editActivity(activity.activityId)">
-            <img
-              src="../assets/edit-icon.png"
-              class="edit-icon-button"
-              alt="Edit icon"
-            />
-          </div>
-        </div>
+        <ActivityContainer
+          v-for="activity in currentReimbursement.activities"
+          :activity="activity"
+          @edit-activity="editActivity"
+          @delete-activity="deleteActivity"
+        />
       </span>
       <div class="cta-buttons">
-        <button class="add-actvities-button" @click="createPdf">
-          Submit Ticket
-        </button>
         <button class="add-actvities-button" @click="saveReimbursement">
           Save Ticket
         </button>
         <button class="add-actvities-button" @click="createPdf">
           Preview Ticket
         </button>
-        <button class="add-actvities-button" @click="goToHomePage">
-          Discard
+        <button class="add-actvities-button" @click="createPdf">
+          Submit Ticket
+        </button>
+        <button class="add-actvities-button" @click="router.push('/dashboard')">
+          Discard Changes
         </button>
         <h5
-          style="font-weight: 400; margin-top: 2px"
-          v-show="currentlyAddingPDF"
+          style="font-weight: 400; margin-top: 2px; text-align: center"
+          v-show="currentlyCreatingPDF"
         >
-          Attaching with ticket, please wait ...
+          Creating PDF, please wait, this may take a few seconds...
         </h5>
       </div>
     </section>
@@ -56,7 +37,7 @@
       <div class="reimbursement-title">
         <input
           class="reimbursement-title-text"
-          v-model="reimbursementTitle"
+          v-model="currentReimbursement.eventName"
           placeholder="Reimbursement Title"
         />
         <img
@@ -82,7 +63,7 @@
         <input
           list="defaults"
           name="defaultOptions"
-          v-model="chosenExpense"
+          v-model="currentActivity.activityName"
           class="input-field"
         />
 
@@ -98,7 +79,7 @@
         <span>
           <h3>Cost:</h3>
           <input
-            v-model="expenseCost"
+            v-model="currentActivity.amount"
             type="number"
             placeholder="$ Cost"
             min="0"
@@ -113,7 +94,7 @@
           <select
             placeholder="Select FOAPA to pay for activity with"
             class="input-field"
-            v-model="foapaNumber"
+            v-model="currentActivity.foapaNumber"
           >
             <option
               :value="foapaNumber.foapaNumber"
@@ -128,7 +109,7 @@
           <h3>Date Of Activity:</h3>
           <input
             type="date"
-            v-model="activityDate"
+            v-model="currentActivity.activityDate"
             placeholder="Date of Activity"
             class="input-field"
           />
@@ -149,9 +130,9 @@
         <div class="add-receipt-text">Add Receipt:</div>
         <input
           type="file"
-          id="avatar"
+          id="receipt"
           ref="receiptRef"
-          name="avatar"
+          name="receipt"
           accept="image/png, image/jpeg"
           multiple
         />
@@ -166,11 +147,32 @@
         class="add-reimbursement-button"
         @click="addActivity"
         :disabled="currentlyAddingActivity"
+        v-if="!userIsEditingActivity"
       >
         Add Activity
       </button>
+      <span style="display: flex; gap: 30px">
+        <button
+          class="add-reimbursement-button"
+          @click="updateActivity"
+          v-if="userIsEditingActivity"
+        >
+          Update Activity
+        </button>
+        <button
+          class="add-reimbursement-button"
+          @click="discardActivityChanges"
+          v-if="userIsEditingActivity"
+        >
+          Discard Changes
+        </button>
+      </span>
+
       <h5 style="font-weight: 400" v-show="currentlyAddingActivity">
         Adding activity, please wait...
+      </h5>
+      <h5 style="font-weight: 400" v-show="currentlyUpdatingActivity">
+        Updating activity, please wait...
       </h5>
     </section>
     <!-- <section class="user-foapa-info-section">
@@ -185,62 +187,57 @@
 </template>
 
 <script lang="ts" setup>
+import ActivityContainer from "../components/add-reimbursement/ActivityContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import axios, { all } from "axios";
+import { Activity, FoapaNumbers, ReimbursementTicket } from "../types/types";
+import generateRandomId from "../utils/generateRandomId";
+import parseDate from "../utils/parseDate";
+import axios from "axios";
 
-const receiptRef = ref(null);
 const router = useRouter();
 const route = useRoute();
-type Activity = {
-  activityId: number;
-  activityName: string;
-  amount: number;
-  foapaNumber: string;
-  activityDate: string;
-  activityReceipt: string;
-};
 
-type FoapaNumbers = {
-  employmentNumber: number;
-  foapaNumber: string;
-  foapaName: string;
-  currentAmount: number;
-  initialAmount: number;
-};
+const receiptRef = ref(null);
 
-let chosenExpense = ref<string>("");
-let chosenExpenseOther = ref<string>("");
-let expenseCost = ref<number>(0);
-let activityDate = ref<string>("");
-let foapaNumber = ref<string>("");
-let reimbursementTitle = ref<string>("");
-let userIsEditingReimbursement = ref<boolean>(false);
-let allActivities = ref<Array<Activity>>([]);
-let reimbursementDataFromDb = ref<any>({});
-let currentlyAddingActivity = ref<boolean>(false);
-let currentlyAddingPDF = ref<boolean>(false);
-let userFoapaNumbers = ref<FoapaNumbers[]>([]);
-
-watch(chosenExpenseOther, (newVal) => {
-  if (newVal.length >= 0) {
-    chosenExpense.value = chosenExpenseOther.value;
-  }
+let currentActivity = ref<Activity>({
+  activityId: generateRandomId(),
+  activityName: "",
+  amount: 0,
+  activityDate: "",
+  activityReceipt: "",
+  foapaNumber: "",
 });
+
+let currentReimbursement = ref<ReimbursementTicket>({
+  reimbursementId: generateRandomId(),
+  eventName: "",
+  totalAmount: 0,
+  reimbursementStatus: 0,
+  reimbursementDate: parseDate(new Date().toISOString()),
+  activities: [],
+});
+
+let userIsEditingReimbursement = ref<boolean>(false);
+let currentlyAddingActivity = ref<boolean>(false);
+let currentlyUpdatingActivity = ref<boolean>(false);
+let currentlyCreatingPDF = ref<boolean>(false);
+let userFoapaNumbers = ref<FoapaNumbers[]>([]);
+let userIsEditingActivity = ref<boolean>(false);
 
 let selectedFoapaAmount = ref<number>();
-watch(foapaNumber, () => {
-  console.log(foapaNumber.value);
+watch(
+  () => currentActivity.value.foapaNumber,
+  () => {
+    let selectedFoapa = userFoapaNumbers.value.filter(
+      (foapa) => foapa.foapaNumber == currentActivity.value.foapaNumber
+    );
 
-  let selectedFoapa = userFoapaNumbers.value.filter(
-    (foapa) => foapa.foapaNumber == foapaNumber.value
-  );
-
-  console.log("sel", selectedFoapa);
-  if (selectedFoapa.length > 0) {
-    selectedFoapaAmount.value = selectedFoapa[0].currentAmount;
+    if (selectedFoapa.length > 0) {
+      selectedFoapaAmount.value = selectedFoapa[0].currentAmount;
+    }
   }
-});
+);
 
 const expensesDefaults = [
   "Air/Train",
@@ -256,8 +253,45 @@ const expensesDefaults = [
   "Taxi/Bus/Car Rental",
 ];
 
-function goToHomePage() {
-  router.push("/dashboard");
+// ACTIVITY RELATED
+
+function resetActivity() {
+  currentActivity.value = {
+    activityId: generateRandomId(),
+    activityName: "",
+    amount: 0,
+    activityDate: "",
+    activityReceipt: "",
+    foapaNumber: "",
+  };
+
+  //@ts-ignore
+  receiptRef.value.value = "";
+}
+
+async function addActivity() {
+  if (currentActivity.value.amount > (selectedFoapaAmount.value ?? 0)) {
+    alert("Warning: Activity cost exceeds the selected FOAPA's current amount");
+  }
+  if (currentActivity.value.activityName === "Other") {
+    alert("Please type in a description of 'Other' expense.");
+  } else if (
+    currentActivity.value.activityName !== "" &&
+    currentActivity.value.amount !== 0 &&
+    currentActivity.value.foapaNumber !== "" &&
+    currentActivity.value.activityDate !== ""
+  ) {
+    currentlyAddingActivity.value = true;
+    currentActivity.value.activityReceipt = await storeActivityImage();
+    currentReimbursement.value.activities.push(
+      Object.assign({}, currentActivity.value)
+    );
+
+    resetActivity();
+    currentlyAddingActivity.value = false;
+  } else {
+    alert("Missing field, please check to make sure all fields are filled");
+  }
 }
 
 async function storeActivityImage() {
@@ -286,38 +320,6 @@ async function storeActivityImage() {
   }
 }
 
-async function addActivity() {
-  if (expenseCost.value > (selectedFoapaAmount.value ?? 0)) {
-    alert("Warning: Activity cost exceeds the selected FOAPA's current amount");
-  }
-  if (chosenExpense.value === "Other") {
-    alert("Please type in description of 'Other' expense.");
-  } else if (
-    chosenExpense.value !== "" &&
-    expenseCost.value !== 0 &&
-    foapaNumber.value !== "" &&
-    activityDate.value !== ""
-  ) {
-    currentlyAddingActivity.value = true;
-    let storedImagesURL = await storeActivityImage();
-    //TODO: Delete acivity image when they delete an activity
-    allActivities.value.push({
-      activityName: chosenExpense.value,
-      amount: expenseCost.value,
-      foapaNumber: foapaNumber.value,
-      activityDate: activityDate.value,
-      activityId: Number(generateRandomId()),
-      activityReceipt: storedImagesURL,
-    });
-
-    chosenExpense.value = foapaNumber.value = activityDate.value = "";
-    expenseCost.value = 0;
-    currentlyAddingActivity.value = false;
-  } else {
-    alert("Missing field, please check to make sure all fields are filled");
-  }
-}
-
 function retrieveFoapaDetails() {
   axios
     .get(`https://reimbursement-project.onrender.com/api/retrieveFoapaDetails`)
@@ -329,127 +331,113 @@ function retrieveFoapaDetails() {
     });
 }
 
-function retrieveActivity() {
-  axios
-    .get(`http://localhost:8080/api/retrieveActivity`)
-    .then((res) => {
-      console.log(res)
-      allActivities.value = res.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-function reverseParseDate(formattedDate: string) {
-  const year = formattedDate.slice(0, 4);
-  const month = formattedDate.slice(5, 7);
-  const day = formattedDate.slice(8, 10);
-
-  const originalDateString = `${year}-${month}-${day}`;
-
-  return originalDateString;
-}
-
-
-
 function editActivity(activityId: number) {
-  const activity = allActivities.value.find((activity) => activity.activityId === activityId);
-  console.log(activity)
+  const activity = currentReimbursement.value.activities.find(
+    (activity) => activity.activityId === activityId
+  );
 
   if (activity) {
-    expenseCost.value = activity.amount
-    chosenExpense.value = activity.activityName;
-    foapaNumber.value = activity.foapaNumber;
-    activityDate.value = reverseParseDate(activity.activityDate);
-    activityId = activity.activityId
-    // Do image receipt as well here ...
+    userIsEditingActivity.value = true;
+    activity.activityDate = parseDate(activity.activityDate);
+    currentActivity.value = Object.assign({}, activity);
+    //@ts-ignore
+    receiptRef.value.value = "";
   }
-  // axios
-  //   .post(
-  //     "http://localhost:8080/api/editActivity",
-  //     {
-  //       activity,
-  //     }
-  //   )
-  //   .then(() => {
-  //     retrieveActivity();
-  //     alert("Activity Updated Successfully");
-  //   });
 }
 
-function generateRandomId(): string {
-  const chars: string = "1234567890";
-  let result: string = "";
-  for (let i = 0; i < 9; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-
-  return result;
+function discardActivityChanges() {
+  resetActivity();
+  userIsEditingActivity.value = false;
 }
 
-function parseDate(dateString: string) {
-  const dateParsed = new Date(dateString);
-  const formattedDate = dateParsed.toISOString().slice(0, 10);
-  return formattedDate;
+// UPDATING ACTIVITY
+
+async function updateActivity() {
+  currentlyUpdatingActivity.value = true;
+  let editedActivityIndex = currentReimbursement.value.activities.findIndex(
+    (activity) => activity.activityId === currentActivity.value.activityId
+  );
+
+  currentReimbursement.value.totalAmount = getAllActivitiesAmount();
+
+  currentReimbursement.value.activities[editedActivityIndex] =
+    currentActivity.value;
+
+  //@ts-ignore
+  const files = receiptRef.value.files;
+  if (files.length > 0) {
+    let storedImagesURL = await storeActivityImage();
+    currentReimbursement.value.activities[editedActivityIndex].activityReceipt =
+      storedImagesURL;
+  }
+
+  currentlyUpdatingActivity.value = false;
+  alert("Activity updated successfully");
+  discardActivityChanges();
 }
 
 function getAllActivitiesAmount(): number {
   let sum: number = 0;
-  allActivities.value.forEach((activity) => {
+  currentReimbursement.value.activities.forEach((activity) => {
     sum += Number(activity.amount);
   });
   return sum;
 }
 
 function deleteActivity(activityId: number) {
-  allActivities.value = allActivities.value.filter(
-    (activity) => activity.activityId != activityId
-  );
+  currentReimbursement.value.activities =
+    currentReimbursement.value.activities.filter(
+      (activity) => activity.activityId != activityId
+    );
 }
 
-let reimbursementData = {};
+async function userIsUpdatingReimbursement() {
+  userIsEditingReimbursement.value = true;
+  let reimbursement = await axios.get(
+    "https://reimbursement-project.onrender.com/api/retrieveTicketInformation",
+    {
+      params: {
+        reimbursementId: route.query.reimbursementId,
+      },
+    }
+  );
+
+  currentReimbursement.value = reimbursement.data;
+}
+
+async function updateReimbursement() {
+  currentReimbursement.value.reimbursementDate = parseDate(
+    new Date().toISOString()
+  );
+
+  await axios.post(
+    "https://reimbursement-project.onrender.com/api/updateReimbursement",
+    currentReimbursement.value
+  );
+  alert("Reimbursement ticket saved successfully");
+  router.push("/dashboard");
+}
+
+async function addReimbursement() {
+  try {
+    await axios.post(
+      "https://reimbursement-project.onrender.com/api/addReimbursement",
+      currentReimbursement.value
+    );
+
+    router.push("/dashboard");
+
+    alert("Reimbursement saved successfully");
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function saveReimbursement() {
   if (userIsEditingReimbursement.value === true) {
-    reimbursementDataFromDb.value.reimbursementDate = new Date().toISOString();
-    allActivities.value.forEach((activity) => {
-      activity.activityDate = parseDate(activity.activityDate);
-    });
-    reimbursementDataFromDb.value.allActivities = allActivities.value;
-    reimbursementDataFromDb.value.totalAmount = getAllActivitiesAmount();
-    reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
-
-    let updatingReimbursement = await axios.post(
-      "https://reimbursement-project.onrender.com/api/updateReimbursement",
-      reimbursementDataFromDb.value
-    );
-    alert("Reimbursement ticket saved successfully");
-    router.push("/dashboard");
+    updateReimbursement();
   } else {
-    let randomId: string = generateRandomId();
-    reimbursementData = {
-      reimbursementId: Number(randomId),
-      eventName: reimbursementTitle.value,
-      totalAmount: getAllActivitiesAmount(),
-      reimbursementStatus: 0,
-      reimbursementDate: new Date().toISOString(),
-      allActivities: allActivities.value,
-    };
-
-    axios
-      .post(
-        "https://reimbursement-project.onrender.com/api/addReimbursement",
-        reimbursementData
-      )
-      .then((res) => {
-        console.log(res);
-        router.push("/dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    alert("Reimbursement saved successfully");
+    addReimbursement();
   }
 }
 
@@ -471,7 +459,7 @@ function downloadPDF(pdfData: string) {
 
     // Remove padding from the iframe content
     x.document.querySelector("style") ||
-    x.document.head.appendChild(x.document.createElement("style"));
+      x.document.head.appendChild(x.document.createElement("style"));
     // @ts-ignore
     x.document.querySelector("style").textContent += `
   body, iframe {
@@ -488,11 +476,11 @@ function previewPDF(pdfData: string) {
 }
 
 function createPdf() {
-  currentlyAddingPDF.value = true;
+  currentlyCreatingPDF.value = true;
   //Send user information
 
-  for (let i = 0; i < allActivities.value.length; i++) {
-    if (allActivities.value[i].activityReceipt === "") {
+  for (let i = 0; i < currentReimbursement.value.activities.length; i++) {
+    if (currentReimbursement.value.activities[i].activityReceipt === "") {
       alert("Warning: An activity without a receipt was added");
       break;
     }
@@ -504,48 +492,32 @@ function createPdf() {
     )
     .then((response) => {
       if (userIsEditingReimbursement.value === true) {
-        reimbursementDataFromDb.value.reimbursementDate =
-          new Date().toISOString();
-        allActivities.value.forEach((activity) => {
-          activity.activityDate = parseDate(activity.activityDate);
-        });
-        reimbursementDataFromDb.value.allActivities = allActivities.value;
-        reimbursementDataFromDb.value.totalAmount = getAllActivitiesAmount();
-        reimbursementDataFromDb.value.eventName = reimbursementTitle.value;
+        currentReimbursement.value.totalAmount = getAllActivitiesAmount();
         axios
           .get("https://reimbursement-project.onrender.com/api/generatePdf", {
             params: {
-              reimbursementData: reimbursementDataFromDb.value,
+              reimbursementData: currentReimbursement.value,
               userInfo: response.data,
             },
           })
           .then((res) => {
             downloadPDF(res.data);
-            currentlyAddingPDF.value = false;
+            currentlyCreatingPDF.value = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else {
-        let randomId: string = generateRandomId();
-        reimbursementData = {
-          reimbursementId: Number(randomId),
-          eventName: reimbursementTitle.value,
-          totalAmount: getAllActivitiesAmount(),
-          reimbursementStatus: 0,
-          reimbursementDate: new Date().toISOString(),
-          allActivities: allActivities.value,
-        };
         axios
           .get("https://reimbursement-project.onrender.com/api/generatePdf", {
             params: {
-              reimbursementData: reimbursementData,
+              reimbursementData: currentReimbursement.value,
               userInfo: response.data,
             },
           })
           .then((res) => {
             downloadPDF(res.data);
-            currentlyAddingPDF.value = false;
+            currentlyCreatingPDF.value = false;
           })
           .catch((err) => {
             console.log(err);
@@ -560,26 +532,7 @@ function createPdf() {
 onMounted(() => {
   console.log(route.query.reimbursementId);
   if (route.query.reimbursementId) {
-    userIsEditingReimbursement.value = true;
-    axios
-      .get(
-        "https://reimbursement-project.onrender.com/api/retrieveTicketInformation",
-        {
-          params: {
-            reimbursementId: route.query.reimbursementId,
-          },
-        }
-      )
-      .then((res) => {
-        // reimbursementDataFromDb.value = res.data;
-        reimbursementTitle.value = res.data.eventName;
-        allActivities.value = res.data.activities;
-        reimbursementDataFromDb.value.reimbursementId =
-          res.data.reimbursementId;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    userIsUpdatingReimbursement();
   }
   retrieveFoapaDetails();
 });
