@@ -122,6 +122,8 @@ function registerUser() {
     .then((res) => {
       alert(res.data.message);
       localStorage.setItem("token", res.data.token);
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
       router.push("/dashboard");
     })
     .catch((err) => {
@@ -133,8 +135,6 @@ function registerUser() {
 onMounted(() => {
   if (localStorage.getItem("token")?.length ?? 0 > 0) {
     console.log("user is already signed in");
-    axios.defaults.headers.common["authorization"] =
-      localStorage.getItem("token");
     router.push("/dashboard");
   }
 });
