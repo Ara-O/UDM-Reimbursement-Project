@@ -11,7 +11,7 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
     totalAmount,
     reimbursementStatus,
     reimbursementDate,
-    allActivities,
+    activities,
   } = req.body;
   try {
     let userInfo = await Faculty.findOne({
@@ -24,7 +24,7 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
       totalAmount,
       reimbursementStatus,
       reimbursementDate,
-      activities: allActivities,
+      activities,
     });
 
     //Update foapa details
@@ -101,7 +101,7 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
   try {
     const {
       reimbursementId,
-      allActivities,
+      activities,
       eventName,
       totalAmount,
       reimbursementDate,
@@ -114,7 +114,7 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
       },
       {
         $set: {
-          "reimbursementTickets.$.activities": allActivities,
+          "reimbursementTickets.$.activities": activities,
           "reimbursementTickets.$.eventName": eventName,
           "reimbursementTickets.$.totalAmount": totalAmount,
           "reimbursementTickets.$.reimbursementDate": reimbursementDate,
@@ -144,17 +144,55 @@ router.post("/deleteReimbursement", verifyToken, async (req, res) => {
     });
 
     await userInfo.reimbursementTickets.pull({
-      reimbursementId
+      reimbursementId,
     });
 
     await userInfo.save();
-    console.log(userInfo)
+    console.log(userInfo);
 
     res
       .status(200)
       .send({ message: "Reimbursement ticket deleted successfully" });
   } catch (err) {
     // console.log(err)
+    res.status(400).send({ message: err.message });
+  }
+});
+
+router.post("/editActivity", verifyToken, async (req, res) => {
+  const activityId = req.body.id;
+  // console.log(activityId)
+
+  try {
+    let userInfo = await Faculty.findOne({
+      activityId: req.user.activityId,
+    });
+
+    await userInfo.activities.pull({
+      activityId,
+    });
+
+    await userInfo.save();
+    console.log(userInfo);
+
+    res.status(200).send({ message: "Activity updated successfully" });
+  } catch (err) {
+    // console.log(err)
+    res.status(400).send({ message: err.message });
+  }
+});
+
+router.get("/retrieveActivity", verifyToken, async (req, res) => {
+  try {
+    const activityId = req.query.activityId;
+    let activityInfo = await Faculty.findOne({
+      activityId: req.user.activityId,
+      "activities.activityId": activityId,
+    });
+    console.log(activityInfo);
+    res.status(200).send(activityInfo.activities[0]);
+  } catch (err) {
+    console.error(err);
     res.status(400).send({ message: err.message });
   }
 });

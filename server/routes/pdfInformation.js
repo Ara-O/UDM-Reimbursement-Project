@@ -58,10 +58,10 @@ function generatePdf(docDefinition, callback) {
 }
 
 router.get("/generatePdf", verifyToken, (req, res) => {
-  let allActivities = req.query.reimbursementData.allActivities;
-  console.log(allActivities);
+  let activities = req.query.reimbursementData.activities;
+  console.log(activities);
   let promises = [];
-  allActivities.forEach((activity) => {
+  activities.forEach((activity) => {
     if (!activity.activityReceipt) return;
     let receipts = [...activity.activityReceipt.split("%%%%%")];
     receipts.pop();

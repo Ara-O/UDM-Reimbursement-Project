@@ -68,7 +68,7 @@ router.post("/login", async (req, res) => {
   const { workEmail, password } = req.body;
   try {
     let facultyInfo = await Faculty.findOne({
-      workEmail: workEmail.toLowerCase(),
+      workEmail: workEmail.toLowerCase() + "@udmercy.edu",
     }).select("workEmail password employmentNumber");
 
     if (facultyInfo === null) {
@@ -232,7 +232,6 @@ router.post("/verifySignupBasicInformation", async (req, res) => {
       }
     }
   } catch (err) {
-    console.log("imma throw");
     console.log(err);
     res.status(400).send({ message: err.message });
   }
@@ -241,9 +240,15 @@ router.post("/verifySignupBasicInformation", async (req, res) => {
 router.post("/forgotPassword", async (req, res) => {
   try {
     console.log(req.body);
-    let userData = await Faculty.findOne({ workEmail: req.body.workEmail });
+    let userData = await Faculty.findOne({
+      workEmail: req.body.workEmail.trim() + "@udmercy.edu",
+    }).select("workEmail");
+
     if (userData === null) {
       console.log("null");
+      res
+        .status(404)
+        .send({ message: "A user with that email address was not found." });
     } else {
       console.log(userData);
       jwt.sign(
@@ -262,7 +267,7 @@ router.post("/forgotPassword", async (req, res) => {
             // send mail with defined transport object
             let resp = await transporter.sendMail({
               from: '"UDM Reimbursement Team" <ara@araoladipo.dev>',
-              to: req.body.workEmail,
+              to: req.body.workEmail.trim() + "@udmercy.edu",
               subject: "Password Reset Instructions",
               html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
               with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udm-reimbursement-project.vercel.app/forgot-password/${token}' >Click here</a>
@@ -289,6 +294,7 @@ router.post("/resetPassword", async (req, res) => {
     console.log(token);
     jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
       if (!err) {
+        console.log("test", userData.workEmail);
         let encryptedPassword = await encryptPassword(req.body.newPassword);
         const result = await Faculty.findOneAndUpdate(
           { workEmail: userData.workEmail },
@@ -297,6 +303,7 @@ router.post("/resetPassword", async (req, res) => {
         console.log(result);
         res.status(200).send({ message: "Password reset successfully" });
       } else {
+        console.error(err);
         throw err;
       }
     });
@@ -321,14 +328,14 @@ router.post("/changePassword", verifyToken, async (req, res) => {
       if (passwordMatches) {
         facultyInfo.password = await encryptPassword(req.body.newPassword);
         await facultyInfo.save();
-        res.status(200).send({ message: "Password changed successfully" });
+        res.status(200).send({ message: "Password updated successfully" });
       } else {
-        res.status(200).send({ message: "Current password is incorrect" });
+        res.status(404).send({ message: "Current password is incorrect" });
       }
     }
   } catch (err) {
     console.log(err);
-    res.status(200).send({ message: "There has been an error" });
+    res.status(404).send({ message: "There has been an error" });
   }
 });
 export default router;

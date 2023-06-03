@@ -139,7 +139,7 @@
           <td>{{ foapa.oNumber }}</td>
           <td>{{ foapa.aNumber }}</td>
           <td>{{ foapa.pNumber }}</td>
-          <td>{{ foapa.a2Number ?? "N/A" }}</td>
+          <td>{{ foapa.a2Number || "N/A" }}</td>
           <td>
             <img
               src="../assets/trash-icon.png"

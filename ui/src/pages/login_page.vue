@@ -15,19 +15,23 @@
     <form @submit.prevent="loginUser" class="login-form">
       <div class="login-field">
         <label for="work-email">Work Email: </label>
-        <input
-          v-model="userInfo.workEmail"
-          type="email"
-          name="Work Email"
-          id="work-email"
-          required
-        />
+        <div class="work-email-input-field">
+          <input
+            v-model="userInfo.workEmail"
+            type="text"
+            name="Work Email"
+            id="work-email"
+            required
+          />
+          <h6 class="work-email-descriptor">@udmercy.edu</h6>
+        </div>
       </div>
       <div class="login-field">
         <label for="password">Password:</label>
         <input
           v-model="userInfo.password"
           type="password"
+          class="login-password-input"
           name="Password"
           required
           id="password"
@@ -80,13 +84,16 @@
       </h6>
       <div class="login-field">
         <label for="work-email">Work Email: </label>
-        <input
-          v-model="forgotPasswordWorkEmail"
-          type="email"
-          name="Work Email"
-          id="work-email"
-          required
-        />
+        <div class="work-email-input-field">
+          <input
+            v-model="forgotPasswordWorkEmail"
+            type="text"
+            name="Work Email"
+            id="work-email"
+            required
+          />
+          <h6 class="work-email-descriptor">@udmercy.edu</h6>
+        </div>
       </div>
       <span
         style="display: flex; align-items: center; gap: 10px; margin-top: -20px"
@@ -109,8 +116,9 @@
         text-align: center;
       "
     >
-      If the email you entered exists in our database, you will receive a
-      password reset e-mail shortly.
+      We will send a password reset e-mail to
+      {{ forgotPasswordWorkEmail }}@udmercy.edu. Remember to check your
+      spam/junk folder if it doesn't arrive in a few minutes.
     </h5>
   </section>
 </template>
@@ -126,25 +134,36 @@ let userInfo = ref<any>({ workEmail: "", password: "" });
 let forgotPasswordWorkEmail = ref<string>("");
 const router = useRouter();
 function loginUser() {
-  loggingIn.value = true;
-  axios
-    .post(
-      "https://reimbursement-project.onrender.com/api/login",
-      userInfo.value
-    )
-    .then((res) => {
-      console.log(res);
-      alert(res.data.message);
-      localStorage.setItem("token", res.data.token);
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
-      router.push("/dashboard");
-    })
-    .catch((err) => {
-      loggingIn.value = false;
-      console.log(err);
-      alert(err.response.data.message);
-    });
+  let pattern = /^[a-zA-Z0-9\s-]+$/;
+
+  if (userInfo.value.workEmail.trim() === "") {
+    loggingIn.value = false;
+    alert("Work Email cannot be empty");
+  } else if (!pattern.test(userInfo.value.workEmail)) {
+    loggingIn.value = false;
+    alert("Work Email contains invalid characters");
+  } else {
+    loggingIn.value = true;
+    axios
+      .post(
+        "https://reimbursement-project.onrender.com/api/login",
+        userInfo.value
+      )
+      .then((res) => {
+        console.log(res);
+        alert(res.data.message);
+        loggingIn.value = false;
+        localStorage.setItem("token", res.data.token);
+        axios.defaults.headers.common["authorization"] =
+          localStorage.getItem("token");
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        loggingIn.value = false;
+        console.log(err);
+        alert(err.response.data.message);
+      });
+  }
 }
 
 onMounted(() => {

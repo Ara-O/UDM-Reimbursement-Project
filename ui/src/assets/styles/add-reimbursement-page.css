@@ -2,9 +2,9 @@
   display: flex;
   box-sizing: border-box;
   height: 100vh;
-  align-items: center;
+  align-items: flex-start;
   gap: 86px;
-  padding: 60px 45px;
+  padding: 85px 45px 45px 60px;
 }
 
 .all-activities-section::-webkit-scrollbar {
@@ -189,20 +189,24 @@
   font-weight: 300;
   font-size: 12px;
 }
-.delete-option {
-  position: absolute;
+.activity-option {
   background-color: var(--udmercy-red);
-  right: 30px;
-  bottom: 75px;
+  width: 10px;
+  height: 10px;
   padding: 14px 15px;
   display: flex;
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 7px;
 }
 
-.activity .delete-option .trash-icon {
+.activity-options-wrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.activity .activity-option .trash-icon {
   filter: brightness(1);
   width: 15px;
 }
@@ -242,6 +246,10 @@
 @media (max-width: 1350px) {
   .expenses-section {
     width: auto;
+  }
+
+  .foapa-and-date-section {
+    gap: 23px;
   }
 
   .add-reimbursement-section {
@@ -288,15 +296,16 @@
 
   .cta-buttons {
     justify-content: flex-start;
+
     width: auto;
+  }
+  .cta-buttons button {
+    width: 155px;
   }
 }
 
 @media (max-width: 680px) {
   .activities-list {
     justify-content: center;
-  }
-  .all-activities-section {
-    align-items: center;
   }
 }

@@ -40,6 +40,32 @@ export type FoapaStuff = {
 };
 
 export type AddressDetails = {
-  name: String;
-  code: String;
+  name: string;
+  code: string;
+};
+
+export type Activity = {
+  activityId: number;
+  activityName: string;
+  amount: number;
+  foapaNumber: string;
+  activityDate: string;
+  activityReceipt: string;
+};
+
+export type FoapaNumbers = {
+  employmentNumber: number;
+  foapaNumber: string;
+  foapaName: string;
+  currentAmount: number;
+  initialAmount: number;
+};
+
+export type ReimbursementTicket = {
+  reimbursementId: number;
+  eventName: string;
+  totalAmount: number;
+  reimbursementStatus: number;
+  reimbursementDate: string;
+  activities: Activity[];
 };

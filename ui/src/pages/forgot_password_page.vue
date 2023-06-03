@@ -17,6 +17,7 @@
         <label for="new-password">New Password: </label>
         <input
           type="password"
+          class="login-password-input"
           name="new password"
           v-model="password"
           id="new-password"
@@ -31,10 +32,11 @@
           <input
             v-model="confirmPassword"
             type="password"
+            class="login-password-input"
             name="Confirm Password"
             style="width: auto; margin-left: 0px"
             required
-            id="confirm-password"
+            id="confirm-password "
           />
         </div>
       </div>

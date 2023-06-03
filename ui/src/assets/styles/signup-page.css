@@ -234,8 +234,9 @@ input {
   font-size: 13px;
 }
 
-.work-email-input-field input {
-  font-size: 13px;
+.creating-account-feedback {
+  margin: -25px 0px -16px;
+  font-weight: 400;
 }
 
 .work-email-input-field {
@@ -256,6 +257,7 @@ input {
 
 .work-email-input-field input {
   border: none;
+  font-size: 13px;
   width: 65px;
 }
 

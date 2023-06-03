@@ -1,3 +1,9 @@
+function parseDate(dateString) {
+  const dateParsed = new Date(dateString);
+  const formattedDate = dateParsed.toISOString().slice(0, 10);
+  return formattedDate;
+}
+
 export default function createPdfDefinition(
   reimbursementData,
   userInfo,
@@ -12,9 +18,10 @@ export default function createPdfDefinition(
   if (mm < 10) mm = "0" + mm;
 
   const formattedToday = dd + "/" + mm + "/" + yyyy;
-  console.log("generate pdf", userInfo);
+  // console.log("generate pdf", userInfo);
   // console.log(reimbursementData, userInfo);
-  const { allActivities } = reimbursementData;
+
+  const { activities } = reimbursementData;
   let content = [];
   //Top section
   content.push(
@@ -110,7 +117,7 @@ export default function createPdfDefinition(
         ],
         [
           {
-            text: `${userInfo.city}, ${userInfo.state}, ${userInfo.zipCode}`,
+            text: `${userInfo.city}, ${userInfo.state}, ${userInfo.postalCode}`,
             colSpan: 3,
           },
           {},
@@ -228,7 +235,7 @@ export default function createPdfDefinition(
     },
   };
 
-  allActivities.forEach((activity) => {
+  activities.forEach((activity) => {
     console.log(activity);
     let arrayField = activitiesClassification[`${activity.activityName}`];
 
@@ -237,7 +244,10 @@ export default function createPdfDefinition(
       arrayField = activitiesClassification[`Other`];
       arrayField.explanation += activity.activityName + " ";
     } else {
-      arrayField.dates.push({ text: activity.activityDate, fontSize: 7.5 });
+      arrayField.dates.push({
+        text: parseDate(activity.activityDate),
+        fontSize: 7.5,
+      });
     }
     arrayField.total += Number(activity.amount);
   });
@@ -358,6 +368,28 @@ export default function createPdfDefinition(
   content.push({ text: " " }, { text: " " });
   //Columns
 
+  //FOAPA Number section
+  let foapaDetails = {};
+  let foapaArray = [];
+  reimbursementData.activities.forEach((activity) => {
+    if (foapaDetails[activity.foapaNumber]) {
+      foapaDetails[activity.foapaNumber] += Number(activity.amount);
+    } else {
+      foapaDetails[activity.foapaNumber] = Number(activity.amount);
+    }
+  });
+
+  for (const foapa in foapaDetails) {
+    let subFoapaArray = [];
+    subFoapaArray = foapa.split("-");
+    if (subFoapaArray.length === 4) {
+      subFoapaArray[4] = "";
+    }
+    subFoapaArray[5] = foapaDetails[foapa];
+    foapaArray.push(subFoapaArray);
+  }
+  console.log("Foapa array", foapaArray);
+
   content.push({
     columns: [
       {
@@ -368,6 +400,7 @@ export default function createPdfDefinition(
           body: [
             [
               { text: "FOAPA", colSpan: 6, alignment: "center" },
+              //TODO: HERE
               {},
               {},
               {},
@@ -382,10 +415,10 @@ export default function createPdfDefinition(
               { text: "ACTV", alignment: "center", fillColor: "#d9d9d9" },
               { text: "$", alignment: "center", fillColor: "#d9d9d9" },
             ],
-            ["", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
+            foapaArray[0] || ["", "", "", "", "", ""],
+            foapaArray[1] || ["", "", "", "", "", ""],
+            foapaArray[2] || ["", "", "", "", "", ""],
+            foapaArray[3] || ["", "", "", "", "", ""],
             [
               { text: "", colSpan: 6, border: [0, 0, 0, 0] },
               {},
@@ -582,8 +615,7 @@ export default function createPdfDefinition(
   allImageIds.forEach((imgid) => {
     content.push({
       image: imgid,
-      width: 550,
-      height: 550,
+      fit: [550, 550],
     });
   });
   return content;
