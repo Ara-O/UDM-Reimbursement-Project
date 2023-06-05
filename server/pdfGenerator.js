@@ -38,12 +38,17 @@ export default function createPdfDefinition(
       fontSize: 8,
     },
     {
-      text: `Date Submitted ___${formattedToday}___\n\n`,
+      text: `Date Submitted:   ${formattedToday}\n\n`,
       italics: true,
+      decoration: 'underline'
     }
   );
 
   //   Faculty information section
+  let ticketTotal = 0;
+  reimbursementData.activities.forEach((activity) => {
+    ticketTotal += Number(activity.amount);
+  });
   content.push({
     table: {
       //13
@@ -63,7 +68,7 @@ export default function createPdfDefinition(
           { text: "Reimbursement", colSpan: 3, italics: true },
           {},
           {},
-          { text: "N/A", colSpan: 3 },
+          { text:"$" + `${ticketTotal}`, colSpan: 3 },
           {},
           {},
         ],
@@ -466,10 +471,11 @@ export default function createPdfDefinition(
           body: [
             [
               {
-                text: "A. Total Actual Expenses $________",
+                text: ["A. Total Actual Expenses $", 
+                {text: `${ticketTotal}`, decoration: 'underline'},],
                 border: [false, false, false, false],
                 bold: false,
-              },
+            },
             ],
             [
               {

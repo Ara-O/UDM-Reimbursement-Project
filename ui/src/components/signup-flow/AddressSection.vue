@@ -138,7 +138,7 @@ function stateChanged() {
   );
 
   axios
-    .get("https://reimbursement-project.onrender.com/api/getCityFromState", {
+    .get("https://reimbursement-project.onrender.com/api/getCityFromState",{
       params: { realCountryData, realStateData },
     })
     .then((res) => {
