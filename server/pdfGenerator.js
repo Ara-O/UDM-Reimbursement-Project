@@ -9,6 +9,7 @@ export default function createPdfDefinition(
   userInfo,
   allImageIds
 ) {
+  console.log("DATA", reimbursementData);
   const today = new Date();
   const yyyy = today.getFullYear();
   let mm = today.getMonth() + 1; // Months start at 0!
@@ -40,7 +41,7 @@ export default function createPdfDefinition(
     {
       text: `Date Submitted:   ${formattedToday}\n\n`,
       italics: true,
-      decoration: 'underline'
+      decoration: "underline",
     }
   );
 
@@ -68,7 +69,7 @@ export default function createPdfDefinition(
           { text: "Reimbursement", colSpan: 3, italics: true },
           {},
           {},
-          { text:"$" + `${ticketTotal}`, colSpan: 3 },
+          { text: "$" + `${ticketTotal}`, colSpan: 3 },
           {},
           {},
         ],
@@ -80,6 +81,7 @@ export default function createPdfDefinition(
           {},
           { text: `${userInfo.workEmail}`, colSpan: 2 },
           {},
+          // HERE
           {
             text: "Hold for Pickup",
             colSpan: 2,
@@ -88,12 +90,24 @@ export default function createPdfDefinition(
           },
           {},
           {
-            svg: `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`,
+            svg:
+              reimbursementData.holdForPickup === "false"
+                ? `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`
+                : `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/>
+                <path d="M2 9.5L5.5 13L11 6.5" stroke="black" stroke-width="1" fill="none"/>
+              </svg>`,
           },
           { text: "Direct Deposit", alignment: "center", colSpan: 2 },
           {},
           {
-            svg: `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`,
+            svg:
+              reimbursementData.directDeposit === "false"
+                ? `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`
+                : `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/>
+            <path d="M2 9.5L5.5 13L11 6.5" stroke="black" stroke-width="1" fill="none"/>
+          </svg>`,
           },
         ],
         [
@@ -116,7 +130,13 @@ export default function createPdfDefinition(
           {},
           {},
           {
-            svg: `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`,
+            svg:
+              reimbursementData.UDMPUVoucher === "false"
+                ? `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`
+                : `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/>
+            <path d="M2 9.5L5.5 13L11 6.5" stroke="black" stroke-width="1" fill="none"/>
+          </svg>`,
             rowSpan: 2,
           },
         ],
@@ -142,7 +162,11 @@ export default function createPdfDefinition(
           { text: "Reason for Travel/Expense", italics: true, colSpan: 3 },
           {},
           {},
-          { text: "", colSpan: 10, italics: true },
+          {
+            text: reimbursementData.expenseReason,
+            colSpan: 10,
+            italics: false,
+          },
           {},
           {},
           {},
@@ -157,7 +181,11 @@ export default function createPdfDefinition(
           { text: "Destination-City,State,Country", italics: true, colSpan: 3 },
           {},
           {},
-          { text: "", colSpan: 10, italics: true },
+          {
+            text: reimbursementData.destinationLocation,
+            colSpan: 10,
+            italics: false,
+          },
           {},
           {},
           {},
@@ -241,11 +269,9 @@ export default function createPdfDefinition(
   };
 
   activities.forEach((activity) => {
-    console.log(activity);
     let arrayField = activitiesClassification[`${activity.activityName}`];
 
     if (arrayField === undefined) {
-      console.log("prolly an other field");
       arrayField = activitiesClassification[`Other`];
       arrayField.explanation += activity.activityName + " ";
     } else {
@@ -277,8 +303,6 @@ export default function createPdfDefinition(
       };
     }
   }
-
-  console.log(activitiesClassification);
 
   //Expenses section
   content.push({
@@ -393,7 +417,6 @@ export default function createPdfDefinition(
     subFoapaArray[5] = foapaDetails[foapa];
     foapaArray.push(subFoapaArray);
   }
-  console.log("Foapa array", foapaArray);
 
   content.push({
     columns: [
@@ -471,11 +494,13 @@ export default function createPdfDefinition(
           body: [
             [
               {
-                text: ["A. Total Actual Expenses $", 
-                {text: `${ticketTotal}`, decoration: 'underline'},],
+                text: [
+                  "A. Total Actual Expenses $",
+                  { text: `${ticketTotal}`, decoration: "underline" },
+                ],
                 border: [false, false, false, false],
                 bold: false,
-            },
+              },
             ],
             [
               {

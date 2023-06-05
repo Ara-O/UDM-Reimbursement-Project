@@ -5,27 +5,12 @@ import Faculty from "../models/faculty.js";
 const router = Router();
 
 router.post("/addReimbursement", verifyToken, async (req, res) => {
-  const {
-    reimbursementId,
-    eventName,
-    totalAmount,
-    reimbursementStatus,
-    reimbursementDate,
-    activities,
-  } = req.body;
   try {
     let userInfo = await Faculty.findOne({
       employmentNumber: req.user.employmentNumber,
     });
 
-    await userInfo.reimbursementTickets.push({
-      eventName,
-      reimbursementId,
-      totalAmount,
-      reimbursementStatus,
-      reimbursementDate,
-      activities,
-    });
+    await userInfo.reimbursementTickets.push(req.body.reimbursementTicket);
 
     //Update foapa details
     await userInfo.save();
@@ -98,15 +83,8 @@ router.get("/retrieveTicketInformation", verifyToken, async (req, res) => {
 
 router.post("/updateReimbursement", verifyToken, async (req, res) => {
   //REFACTOR
+  const { reimbursementId } = req.body.reimbursementTicket;
   try {
-    const {
-      reimbursementId,
-      activities,
-      eventName,
-      totalAmount,
-      reimbursementDate,
-    } = req.body;
-
     const result = await Faculty.findOneAndUpdate(
       {
         employmentNumber: req.user.employmentNumber,
@@ -114,10 +92,11 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
       },
       {
         $set: {
-          "reimbursementTickets.$.activities": activities,
-          "reimbursementTickets.$.eventName": eventName,
-          "reimbursementTickets.$.totalAmount": totalAmount,
-          "reimbursementTickets.$.reimbursementDate": reimbursementDate,
+          // "reimbursementTickets.$.activities": activities,
+          // "reimbursementTickets.$.eventName": eventName,
+          // "reimbursementTickets.$.totalAmount": totalAmount,
+          // "reimbursementTickets.$.reimbursementDate": reimbursementDate,
+          "reimbursementTickets.$": req.body.reimbursementTicket,
         },
       },
       { new: true }
