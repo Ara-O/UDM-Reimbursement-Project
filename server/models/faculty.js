@@ -17,8 +17,8 @@ const facultySchema = new Schema({
     {
       foapaName: String,
       foapaNumber: String,
-      initialAmount: Number,
-      currentAmount: Number,
+      initialAmount: mongoose.Schema.Types.Mixed,
+      currentAmount: mongoose.Schema.Types.Mixed,
     },
   ],
   reimbursementTickets: [

@@ -57,8 +57,8 @@ export type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
   foapaName: string;
-  currentAmount: number;
-  initialAmount: number;
+  currentAmount: number | "N/A";
+  initialAmount: number | "N/A";
 };
 
 export type ReimbursementTicket = {

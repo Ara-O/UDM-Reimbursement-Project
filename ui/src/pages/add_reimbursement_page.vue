@@ -234,7 +234,11 @@ watch(
     );
 
     if (selectedFoapa.length > 0) {
-      selectedFoapaAmount.value = selectedFoapa[0].currentAmount;
+      if (selectedFoapa[0].currentAmount != "N/A") {
+        selectedFoapaAmount.value = selectedFoapa[0].currentAmount;
+      } else {
+        selectedFoapaAmount.value = undefined;
+      }
     }
   }
 );
@@ -270,9 +274,15 @@ function resetActivity() {
 }
 
 async function addActivity() {
-  if (currentActivity.value.amount > (selectedFoapaAmount.value ?? 0)) {
-    alert("Warning: Activity cost exceeds the selected FOAPA's current amount");
+  console.log(selectedFoapaAmount.value);
+  if (selectedFoapaAmount.value !== undefined) {
+    if (currentActivity.value.amount > (selectedFoapaAmount.value ?? 0)) {
+      alert(
+        "Warning: Activity cost exceeds the selected FOAPA's current amount"
+      );
+    }
   }
+
   if (currentActivity.value.activityName === "Other") {
     alert("Please type in a description of 'Other' expense.");
   } else if (
@@ -281,6 +291,7 @@ async function addActivity() {
     currentActivity.value.foapaNumber !== "" &&
     currentActivity.value.activityDate !== ""
   ) {
+    selectedFoapaAmount.value = 0;
     currentlyAddingActivity.value = true;
     currentActivity.value.activityReceipt = await storeActivityImage();
     currentReimbursement.value.activities.push(
@@ -406,6 +417,7 @@ async function userIsUpdatingReimbursement() {
 }
 
 async function updateReimbursement() {
+  currentReimbursement.value.totalAmount = getAllActivitiesAmount();
   currentReimbursement.value.reimbursementDate = parseDate(
     new Date().toISOString()
   );
@@ -420,6 +432,11 @@ async function updateReimbursement() {
 
 async function addReimbursement() {
   try {
+    currentReimbursement.value.totalAmount = getAllActivitiesAmount();
+    currentReimbursement.value.reimbursementDate = parseDate(
+      new Date().toISOString()
+    );
+
     await axios.post(
       "https://reimbursement-project.onrender.com/api/addReimbursement",
       currentReimbursement.value

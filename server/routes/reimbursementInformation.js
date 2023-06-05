@@ -30,7 +30,7 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
     //Update foapa details
     await userInfo.save();
 
-    await updateFoapaDetails(req.user.employmentNumber);
+    // await updateFoapaDetails(req.user.employmentNumber);
     //Save
     res
       .status(200)
@@ -123,7 +123,7 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
       { new: true }
     );
 
-    await updateFoapaDetails(req.user.employmentNumber);
+    // await updateFoapaDetails(req.user.employmentNumber);
 
     console.log("up", result);
 

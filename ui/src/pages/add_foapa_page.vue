@@ -110,19 +110,11 @@
         </button>
       </div>
       <br />
-      <table
-        style="
-          width: 95%;
-          border: 1px solid rgba(246, 246, 246, 0.44);
-          padding: 13px 28px;
-          border-spacing: 10px;
-          box-shadow: 0 2px 2px #5353532b;
-          border-radius: 5px;
-        "
-      >
+      <table class="foapa-table">
         <tr style="text-align: left">
           <th>FOAPA Name</th>
-          <th>Amount</th>
+          <th>Initial Amount</th>
+          <th>Current Amount</th>
           <th>FUND</th>
           <th>ORG</th>
           <th>ACCT</th>
@@ -134,6 +126,7 @@
           <td>
             {{ foapa.foapaName }}
           </td>
+          <td>{{ foapa.initialAmount }}</td>
           <td>{{ foapa.currentAmount }}</td>
           <td>{{ foapa.fNumber }}</td>
           <td>{{ foapa.oNumber }}</td>
@@ -220,6 +213,10 @@ function deleteFoapa(foapaParameter) {
 }
 
 function addFoapa() {
+  if (userFoapaStuff.initialAmount.trim() === "") {
+    userFoapaStuff.currentAmount = "N/A";
+    userFoapaStuff.initialAmount = "N/A";
+  }
   //refactor- looks ugle
   const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber"];
   for (let i = 0; i < foapaFields.length; i++) {
@@ -336,6 +333,8 @@ function retrieveFoapaDetails() {
           currentAmount: "",
           initialAmount: "",
         };
+
+        console.log(foapa);
 
         foapaEdited.foapaName = foapa.foapaName;
         foapaEdited.initialAmount = foapa.initialAmount;

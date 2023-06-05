@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div class="foapa-numbers-label">
       <label for="foapa-numbers"
         >FOAPA [ FUND - ORG - ACCT - PROG - ACTV ]:</label
       >
@@ -8,14 +8,14 @@
     <br />
     <div class="input-field-foapa-wrapper" style="text-align: center">
       <div class="input-FOAPA-field">
-        <label for="foapa-name">FOAPA Name</label>
+        <label for="foapa-name">FOAPA Name*</label>
         <input
           type="text"
           style="width: 150px"
           placeholder="Name"
           name="FOAPA Name"
           id="foapa-name"
-          v-model="userFoapaStuff.foapaName"
+          v-model="currentlyInputtedFOAPA.foapaName"
         />
       </div>
       <div class="input-FOAPA-field">
@@ -26,58 +26,58 @@
           placeholder="Amount"
           name="Amount"
           id="foapa-amount"
-          v-model="userFoapaStuff.initialAmount"
+          v-model="currentlyInputtedFOAPA.initialAmount"
         />
       </div>
       <h5>:</h5>
 
       <div class="input-FOAPA-field">
-        <label for="foapa-name">FUND</label>
+        <label for="foapa-name">FUND*</label>
 
         <input
           type="text"
           name="F input"
           id="f-input"
           placeholder="xxxxxx"
-          v-model="userFoapaStuff.fNumber"
+          v-model="currentlyInputtedFOAPA.fNumber"
         />
       </div>
       <h5>-</h5>
 
       <div class="input-FOAPA-field">
-        <label for="foapa-name">ORG</label>
+        <label for="foapa-name">ORG*</label>
 
         <input
           type="text"
           name="O input"
           id="o-input"
           placeholder="xxxx"
-          v-model="userFoapaStuff.oNumber"
+          v-model="currentlyInputtedFOAPA.oNumber"
         />
       </div>
       <h5>-</h5>
       <div class="input-FOAPA-field">
-        <label for="foapa-name">ACCT</label>
+        <label for="foapa-name">ACCT*</label>
 
         <input
           type="text"
           name="A input"
           id="a-input"
           placeholder="xxxx"
-          v-model="userFoapaStuff.aNumber"
+          v-model="currentlyInputtedFOAPA.aNumber"
         />
       </div>
       <h5>-</h5>
 
       <div class="input-FOAPA-field">
-        <label for="foapa-name">PROG</label>
+        <label for="foapa-name">PROG*</label>
 
         <input
           type="text"
           name="P input"
           id="p-input"
           placeholder="xxxx"
-          v-model="userFoapaStuff.pNumber"
+          v-model="currentlyInputtedFOAPA.pNumber"
         />
       </div>
       <h5>-</h5>
@@ -89,7 +89,7 @@
           name="A2 input"
           id="a2-input"
           placeholder="xxxx"
-          v-model="userFoapaStuff.a2Number"
+          v-model="currentlyInputtedFOAPA.a2Number"
         />
       </div>
       <button
@@ -107,7 +107,7 @@
     </div>
     <br />
     <section class="" style="width: auto">
-      <div v-for="(foapa, index) in foapaList" class="signup-page-foapa">
+      <!-- <div v-for="(foapa, index) in foapaList" class="signup-page-foapa">
         <img
           src="../../assets/trash-icon.png"
           alt="Trash"
@@ -123,13 +123,55 @@
         <h3>{{ foapa.aNumber }}</h3>
         <h3>-</h3>
         <h3>{{ foapa.pNumber }}</h3>
-        <span v-if="foapa.a2Number">
-          <h3>-</h3>
-          <h3>{{ foapa.a2Number }}</h3>
-        </span>
+        <h3 v-if="foapa.a2Number">-</h3>
+        <h3 v-if="foapa.a2Number">{{ foapa.a2Number }}</h3>
         <h3 style="margin-right: 10px">;</h3>
         <h3>Initial Amount: ${{ foapa.initialAmount }}</h3>
-      </div>
+      </div> -->
+      <table
+        style="
+          width: 95%;
+          border: 1px solid rgba(246, 246, 246, 0.44);
+          padding: 13px 28px;
+          border-spacing: 10px;
+          box-shadow: 0 2px 2px #5353532b;
+          border-radius: 5px;
+        "
+      >
+        <tr style="text-align: left">
+          <th>FOAPA Name</th>
+          <th>Amount</th>
+          <th>FUND</th>
+          <th>ORG</th>
+          <th>ACCT</th>
+          <th>PROG</th>
+          <th>ACTV</th>
+          <th></th>
+        </tr>
+        <tr v-for="foapa in foapaList">
+          <td>
+            {{ foapa.foapaName }}
+          </td>
+          <td>
+            <span v-if="foapa.initialAmount !== 'N/A'">$</span
+            >{{ foapa.initialAmount }}
+          </td>
+          <td>{{ foapa.fNumber }}</td>
+          <td>{{ foapa.oNumber }}</td>
+          <td>{{ foapa.aNumber }}</td>
+          <td>{{ foapa.pNumber }}</td>
+          <td>{{ foapa.a2Number || "N/A" }}</td>
+          <td>
+            <img
+              src="../../assets/trash-icon.png"
+              alt="Trash"
+              class="delete-icon"
+              @click="deleteFoapa(foapa.foapaName, foapa.fNumber)"
+              style="width: 15px; margin-left: 15px; cursor: pointer"
+            />
+          </td>
+        </tr>
+      </table>
     </section>
     <div class="continue-buttons" style="margin-top: 20px">
       <button
@@ -158,7 +200,7 @@ let { foapaList } = defineProps<{
   foapaList: FoapaStuff[];
 }>();
 
-let userFoapaStuff = reactive<FoapaStuff>({
+let currentlyInputtedFOAPA = reactive<FoapaStuff>({
   fNumber: "",
   oNumber: "",
   aNumber: "",
@@ -182,54 +224,53 @@ function deleteFoapa(foapaName, fNumber) {
 }
 
 function addFoapa() {
-  const foapaFields = [
-    "fNumber",
-    "oNumber",
-    "aNumber",
-    "pNumber",
-    "initialAmount",
-  ];
+  const foapaFields = ["fNumber", "oNumber", "aNumber", "pNumber"];
+
+  if (currentlyInputtedFOAPA.initialAmount === "") {
+    currentlyInputtedFOAPA.initialAmount = "N/A";
+    currentlyInputtedFOAPA.currentAmount = "N/A";
+  }
 
   // Refactor later :*)
   for (let i = 0; i < foapaFields.length; i++) {
-    if (userFoapaStuff[foapaFields[i]] === "") {
+    if (currentlyInputtedFOAPA[foapaFields[i]] === "") {
+      console.log(foapaFields[i]);
       alert("Some FOAPA information is missing, please try again.");
       break;
     }
 
-    if (isNaN(userFoapaStuff[foapaFields[i]])) {
+    if (isNaN(currentlyInputtedFOAPA[foapaFields[i]])) {
       alert("FOAPA fields only accept numbers");
       break;
     }
-
-    if (userFoapaStuff.fNumber.length !== 6) {
+    if (currentlyInputtedFOAPA.fNumber.length !== 6) {
       alert("FUND value can only accept 6 digits");
       break;
     }
-    if (userFoapaStuff.oNumber.length !== 4) {
+    if (currentlyInputtedFOAPA.oNumber.length !== 4) {
       alert("ORG value can only accept 4 digits");
       break;
     }
-    if (userFoapaStuff.aNumber.length !== 4) {
+    if (currentlyInputtedFOAPA.aNumber.length !== 4) {
       alert("ACCT value can only accept 4 digits");
       break;
     }
-    if (userFoapaStuff.pNumber.length !== 4) {
+    if (currentlyInputtedFOAPA.pNumber.length !== 4) {
       alert("PROG value can only accept 4 digits");
       break;
     }
 
     if (i === foapaFields.length - 1) {
-      let currentFoapa = Object.assign({}, userFoapaStuff);
+      let currentFoapa = Object.assign({}, currentlyInputtedFOAPA);
       foapaList.push(currentFoapa);
-      userFoapaStuff.foapaName =
-        userFoapaStuff.currentAmount =
-        userFoapaStuff.initialAmount =
-        userFoapaStuff.fNumber =
-        userFoapaStuff.oNumber =
-        userFoapaStuff.aNumber =
-        userFoapaStuff.pNumber =
-        userFoapaStuff.a2Number =
+      currentlyInputtedFOAPA.foapaName =
+        currentlyInputtedFOAPA.currentAmount =
+        currentlyInputtedFOAPA.initialAmount =
+        currentlyInputtedFOAPA.fNumber =
+        currentlyInputtedFOAPA.oNumber =
+        currentlyInputtedFOAPA.aNumber =
+        currentlyInputtedFOAPA.pNumber =
+        currentlyInputtedFOAPA.a2Number =
           "";
     }
   }

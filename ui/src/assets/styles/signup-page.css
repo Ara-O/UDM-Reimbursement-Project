@@ -239,6 +239,24 @@ input {
   font-weight: 400;
 }
 
+tr th {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+tr td {
+  font-size: 14px;
+}
+
+.foapa-table {
+  width: 95%;
+  border: 1px solid rgba(246, 246, 246, 0.44);
+  padding: 13px 28px;
+  border-spacing: 10px;
+  box-shadow: 0 2px 2px #5353532b;
+  border-radius: 5px;
+}
+
 .work-email-input-field {
   padding-left: 20px;
   width: 210px;
@@ -368,6 +386,9 @@ input {
 }
 
 @media (max-width: 780px) {
+  .foapa-numbers-label {
+    text-align: center;
+  }
   .input-FOAPA-field label {
     text-align: center;
   }
