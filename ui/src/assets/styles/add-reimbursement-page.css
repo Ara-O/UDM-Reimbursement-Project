@@ -1,10 +1,10 @@
 .add-reimbursement-section {
   display: flex;
   box-sizing: border-box;
-  height: 100vh;
   align-items: flex-start;
   gap: 86px;
-  padding: 85px 45px 45px 60px;
+  margin-bottom: 60px;
+  padding: 70px 45px 0px 60px;
 }
 
 .all-activities-section::-webkit-scrollbar {
@@ -73,8 +73,7 @@
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  /* heheh */
-  width: 69vw;
+  width: auto;
 }
 
 .expenses-section div {
@@ -100,6 +99,7 @@
 .input-field {
   padding-left: 20px;
   width: 300px;
+  box-sizing: border-box;
   height: 45px;
   background: #ffffff;
   padding-right: 21px;
@@ -126,7 +126,7 @@
 .foapa-and-date-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 20px 40px;
 }
 
 .foapa-and-date-section h3 {
@@ -201,6 +201,15 @@
   border-radius: 7px;
 }
 
+.divider {
+  height: 3px;
+  background: rgb(237 237 237);
+  border-radius: 10px;
+  width: 80%;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
 .activity-options-wrapper {
   display: flex;
   gap: 20px;
@@ -261,13 +270,12 @@
   .add-reimbursement-section {
     height: auto;
     margin-bottom: 63px;
-
-    margin-top: 20px;
   }
 }
 
 @media (max-width: 1070px) {
   .add-reimbursement-section {
+    margin-top: 20px;
     display: flex;
     flex-direction: column-reverse;
     align-items: self-start;

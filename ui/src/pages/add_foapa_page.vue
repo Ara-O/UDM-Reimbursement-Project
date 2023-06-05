@@ -28,7 +28,7 @@
           />
         </div>
         <div class="input-FOAPA-field">
-          <label for="foapa-name">Amount*</label>
+          <label for="foapa-name">Amount</label>
           <input
             type="text"
             style="width: 150px"

@@ -46,46 +46,107 @@
           alt="Edit icon"
         />
       </div>
-
-      <div style="display: flex; align-items: center; gap: 20px; height: auto">
-        <img
-          src="../assets/user-help-icon.png"
-          alt="Help icon"
-          class="help-icon"
-        />
-        <h4 style="font-weight: 300; font-size: 14px; margin: 0px">
-          Choose from one of the default options below or select other to create
-          another type of expense
-        </h4>
-      </div>
-      <h4 style="font-weight: 500">Expenses</h4>
-      <div class="expenses-section">
-        <input
-          list="defaults"
-          name="defaultOptions"
-          v-model="currentActivity.activityName"
-          class="input-field"
-        />
-
-        <datalist id="defaults">
-          <option :value="expense" v-for="expense in expensesDefaults">
-            {{ expense }}
-          </option>
-        </datalist>
-      </div>
-      <br />
-      <div class="cost-and-other-section">
-        <br />
+      <h3 style="margin-top: 0px">Reimbursement Ticket Information</h3>
+      <div
+        style="display: flex; column-gap: 40px; row-gap: 20px; flex-wrap: wrap"
+      >
         <span>
-          <h3>Cost:</h3>
+          <h3 style="font-size: 14.5px">Reason for Travel/Expense:</h3>
           <input
-            v-model="currentActivity.amount"
-            type="number"
-            placeholder="$ Cost"
-            min="0"
+            name="expenseReason"
+            v-model="currentReimbursement.expenseReason"
             class="input-field"
           />
         </span>
+        <span>
+          <h3 style="font-size: 14.5px">Destination-City,State,Country:</h3>
+          <input
+            name="expenseReason"
+            v-model="currentReimbursement.destinationLocation"
+            class="input-field"
+          />
+        </span>
+      </div>
+      <br />
+      <div
+        style="display: flex; column-gap: 30px; row-gap: 20px; flex-wrap: wrap"
+      >
+        <span style="display: flex; gap: 3px">
+          <input
+            type="checkbox"
+            id="hold-for-pickup"
+            v-model="currentReimbursement.holdForPickup"
+          />
+          <label for="hold-for-pickup" style="font-size: 14px"
+            >Hold for Pickup</label
+          >
+        </span>
+        <span style="display: flex; gap: 7px">
+          <input
+            type="checkbox"
+            id="direct-deposit"
+            v-model="currentReimbursement.directDeposit"
+          />
+          <label for="direct-deposit" style="font-size: 14px"
+            >Direct Deposit</label
+          >
+        </span>
+        <span style="display: flex; gap: 7px">
+          <input
+            type="checkbox"
+            id="udmpu-voucher"
+            v-model="currentReimbursement.UDMPUVoucher"
+          />
+          <label for="udmpu-voucher" style="font-size: 14px"
+            >Check if using UDMPU 11.6 voucher (please attach
+            voucher/log)</label
+          >
+        </span>
+      </div>
+      <div class="divider"></div>
+      <!-- ACTIVITY SPECIFIC -->
+      <h3>Add Activity</h3>
+      <div style="display: flex; gap: 20px 40px; flex-wrap: wrap">
+        <div>
+          <div style="display: flex; align-items: center; gap: 12px">
+            <h3 style="font-size: 14.5px">Expenses</h3>
+            <img
+              src="../assets/user-help-icon.png"
+              alt="Help icon"
+              title=" Choose from one of the default options below or select other to create another type of expense"
+              class="help-icon"
+            />
+            <h3 style="font-size: 14px; font-weight: 400">
+              &lt;- Hover for help
+            </h3>
+          </div>
+          <div class="expenses-section">
+            <input
+              list="defaults"
+              name="defaultOptions"
+              v-model="currentActivity.activityName"
+              class="input-field"
+            />
+
+            <datalist id="defaults">
+              <option :value="expense" v-for="expense in expensesDefaults">
+                {{ expense }}
+              </option>
+            </datalist>
+          </div>
+        </div>
+        <div class="cost-and-other-section">
+          <span>
+            <h3 style="font-size: 14.5px">Cost:</h3>
+            <input
+              v-model="currentActivity.amount"
+              type="number"
+              placeholder="$ Cost"
+              min="0"
+              class="input-field"
+            />
+          </span>
+        </div>
       </div>
       <br />
       <div class="foapa-and-date-section">
@@ -216,6 +277,11 @@ let currentReimbursement = ref<ReimbursementTicket>({
   reimbursementStatus: 0,
   reimbursementDate: parseDate(new Date().toISOString()),
   activities: [],
+  expenseReason: "",
+  destinationLocation: "",
+  holdForPickup: false,
+  directDeposit: false,
+  UDMPUVoucher: false,
 });
 
 let userIsEditingReimbursement = ref<boolean>(false);
@@ -424,7 +490,9 @@ async function updateReimbursement() {
 
   await axios.post(
     "https://reimbursement-project.onrender.com/api/updateReimbursement",
-    currentReimbursement.value
+    {
+      reimbursementTicket: currentReimbursement.value,
+    }
   );
   alert("Reimbursement ticket saved successfully");
   router.push("/dashboard");
@@ -432,19 +500,25 @@ async function updateReimbursement() {
 
 async function addReimbursement() {
   try {
-    currentReimbursement.value.totalAmount = getAllActivitiesAmount();
-    currentReimbursement.value.reimbursementDate = parseDate(
-      new Date().toISOString()
-    );
+    if (currentReimbursement.value.eventName.trim() !== "") {
+      currentReimbursement.value.totalAmount = getAllActivitiesAmount();
+      currentReimbursement.value.reimbursementDate = parseDate(
+        new Date().toISOString()
+      );
 
-    await axios.post(
-      "https://reimbursement-project.onrender.com/api/addReimbursement",
-      currentReimbursement.value
-    );
+      await axios.post(
+        "https://reimbursement-project.onrender.com/api/addReimbursement",
+        {
+          reimbursementTicket: currentReimbursement.value,
+        }
+      );
 
-    router.push("/dashboard");
+      router.push("/dashboard");
 
-    alert("Reimbursement saved successfully");
+      alert("Reimbursement saved successfully");
+    } else {
+      alert("Missing field, please check to make sure all fields are filled");
+    }
   } catch (error) {
     console.log(error);
   }

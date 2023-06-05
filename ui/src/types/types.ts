@@ -63,6 +63,11 @@ export type FoapaNumbers = {
 
 export type ReimbursementTicket = {
   reimbursementId: number;
+  expenseReason: String;
+  destinationLocation: String;
+  holdForPickup: Boolean;
+  directDeposit: Boolean;
+  UDMPUVoucher: Boolean;
   eventName: string;
   totalAmount: number;
   reimbursementStatus: number;
