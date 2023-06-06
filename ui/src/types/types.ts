@@ -65,8 +65,7 @@ export type ReimbursementTicket = {
   reimbursementId: number;
   expenseReason: String;
   destinationLocation: String;
-  holdForPickup: Boolean;
-  directDeposit: Boolean;
+  paymentRetrievalMethod: "Hold for Pickup" | "Direct Deposit" | "";
   UDMPUVoucher: Boolean;
   eventName: string;
   totalAmount: number;

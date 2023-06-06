@@ -91,7 +91,7 @@ export default function createPdfDefinition(
           {},
           {
             svg:
-              reimbursementData.holdForPickup === "false"
+              reimbursementData.paymentRetrievalMethod === "Direct Deposit"
                 ? `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`
                 : `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg">
                 <rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/>
@@ -102,7 +102,7 @@ export default function createPdfDefinition(
           {},
           {
             svg:
-              reimbursementData.directDeposit === "false"
+              reimbursementData.paymentRetrievalMethod === "Hold for Pickup"
                 ? `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`
                 : `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg">
             <rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/>
@@ -261,6 +261,11 @@ export default function createPdfDefinition(
       total: 0,
       finalData: [],
     },
+    Mileage: {
+      explanation: "",
+      total: 0,
+      finalData: [],
+    },
     Other: {
       explanation: "",
       total: 0,
@@ -273,7 +278,9 @@ export default function createPdfDefinition(
 
     if (arrayField === undefined) {
       arrayField = activitiesClassification[`Other`];
-      arrayField.explanation += activity.activityName + " ";
+      arrayField.explanation += activity.activityName + ". ";
+    } else if (activity.activityName === "Mileage") {
+      arrayField.explanation += "Something goes here i spos";
     } else {
       arrayField.dates.push({
         text: parseDate(activity.activityDate),
@@ -285,7 +292,7 @@ export default function createPdfDefinition(
 
   //Put data in right format
   for (const property in activitiesClassification) {
-    if (property !== "Other") {
+    if (property !== "Other" && property !== "Mileage") {
       activitiesClassification[property].finalData = [
         property,
         ...activitiesClassification[property].dates,
@@ -351,15 +358,24 @@ export default function createPdfDefinition(
         // ["Registration", "", "", "", "", "", "", "", "0.00"],
         [
           "Mileage (Include destination)",
-          { text: "", colSpan: 7 },
+          {
+            text: activitiesClassification["Mileage"].explanation,
+            colSpan: 7,
+            fontSize: 9,
+          },
           "",
           "",
           "",
           "",
           "",
           "",
-          { text: "", colSpan: 1 },
+          {
+            text: `$${activitiesClassification["Mileage"].total}`,
+            colSpan: 1,
+            fontSize: 7.5,
+          },
         ],
+        // activitiesClassification["Mileage"].finalData,
         [
           "Other (Explain what expense is for )",
           {

@@ -73,9 +73,10 @@
       >
         <span style="display: flex; gap: 3px">
           <input
-            type="checkbox"
+            type="radio"
+            value="Hold for Pickup"
             id="hold-for-pickup"
-            v-model="currentReimbursement.holdForPickup"
+            v-model="currentReimbursement.paymentRetrievalMethod"
           />
           <label for="hold-for-pickup" style="font-size: 14px"
             >Hold for Pickup</label
@@ -83,9 +84,10 @@
         </span>
         <span style="display: flex; gap: 7px">
           <input
-            type="checkbox"
+            type="radio"
+            value="Direct Deposit"
             id="direct-deposit"
-            v-model="currentReimbursement.directDeposit"
+            v-model="currentReimbursement.paymentRetrievalMethod"
           />
           <label for="direct-deposit" style="font-size: 14px"
             >Direct Deposit</label
@@ -279,8 +281,7 @@ let currentReimbursement = ref<ReimbursementTicket>({
   activities: [],
   expenseReason: "",
   destinationLocation: "",
-  holdForPickup: false,
-  directDeposit: false,
+  paymentRetrievalMethod: "",
   UDMPUVoucher: false,
 });
 
@@ -340,6 +341,30 @@ function resetActivity() {
 }
 
 async function addActivity() {
+  let allActivitiesOccurence = {};
+  let limitReached: boolean = false;
+  currentReimbursement.value.activities.forEach((activity) => {
+    if (allActivitiesOccurence[activity.activityName] === undefined) {
+      allActivitiesOccurence[activity.activityName] = 1;
+    } else {
+      allActivitiesOccurence[activity.activityName]++;
+    }
+  });
+  if (allActivitiesOccurence[currentActivity.value.activityName] >= 7) {
+    alert("You have reached the limit of expenses with this activity");
+    limitReached = true;
+  }
+
+  if (limitReached) return;
+
+  if (
+    String(currentActivity.value.amount).includes("-") ||
+    String(currentActivity.value.amount).trim() === ""
+  ) {
+    alert("Invalid character/s in the cost field");
+    return;
+  }
+
   console.log(selectedFoapaAmount.value);
   if (selectedFoapaAmount.value !== undefined) {
     if (currentActivity.value.amount > (selectedFoapaAmount.value ?? 0)) {
@@ -483,6 +508,10 @@ async function userIsUpdatingReimbursement() {
 }
 
 async function updateReimbursement() {
+  if (currentReimbursement.value.eventName.trim() === "") {
+    alert("Reimbursement Title Missing");
+    return;
+  }
   currentReimbursement.value.totalAmount = getAllActivitiesAmount();
   currentReimbursement.value.reimbursementDate = parseDate(
     new Date().toISOString()
@@ -517,7 +546,7 @@ async function addReimbursement() {
 
       alert("Reimbursement saved successfully");
     } else {
-      alert("Missing field, please check to make sure all fields are filled");
+      alert("Reimbursement Title Missing");
     }
   } catch (error) {
     console.log(error);
@@ -567,6 +596,10 @@ function previewPDF(pdfData: string) {
 }
 
 function createPdf() {
+  if (currentReimbursement.value.activities.length === 0) {
+    return alert("A minimum of one activity is needed to preview a ticket");
+  }
+
   currentlyCreatingPDF.value = true;
   //Send user information
 
@@ -585,7 +618,7 @@ function createPdf() {
       if (userIsEditingReimbursement.value === true) {
         currentReimbursement.value.totalAmount = getAllActivitiesAmount();
         axios
-          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
+          .get("http://localhost:8080/api/generatePdf", {
             params: {
               reimbursementData: currentReimbursement.value,
               userInfo: response.data,
@@ -600,7 +633,7 @@ function createPdf() {
           });
       } else {
         axios
-          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
+          .get("http://localhost:8080/api/generatePdf", {
             params: {
               reimbursementData: currentReimbursement.value,
               userInfo: response.data,

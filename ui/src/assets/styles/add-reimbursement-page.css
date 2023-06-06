@@ -201,6 +201,11 @@
   border-radius: 7px;
 }
 
+input#hold-for-pickup,
+input#direct-deposit {
+  margin-top: 0px;
+}
+
 .divider {
   height: 3px;
   background: rgb(237 237 237);

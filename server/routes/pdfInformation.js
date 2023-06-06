@@ -58,8 +58,9 @@ function generatePdf(docDefinition, callback) {
 }
 
 router.get("/generatePdf", verifyToken, (req, res) => {
+  console.log(req.query);
   let activities = req.query.reimbursementData.activities;
-  // console.log(activities);
+  console.log("activities", activities);
   let promises = [];
   activities.forEach((activity) => {
     if (!activity.activityReceipt) return;

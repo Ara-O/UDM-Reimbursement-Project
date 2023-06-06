@@ -15,7 +15,6 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
     //Update foapa details
     await userInfo.save();
 
-    // await updateFoapaDetails(req.user.employmentNumber);
     //Save
     res
       .status(200)
@@ -92,10 +91,6 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
       },
       {
         $set: {
-          // "reimbursementTickets.$.activities": activities,
-          // "reimbursementTickets.$.eventName": eventName,
-          // "reimbursementTickets.$.totalAmount": totalAmount,
-          // "reimbursementTickets.$.reimbursementDate": reimbursementDate,
           "reimbursementTickets.$": req.body.reimbursementTicket,
         },
       },
