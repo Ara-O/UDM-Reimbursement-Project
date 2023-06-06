@@ -232,7 +232,9 @@ function deleteFoapa(foapaName, fNumber) {
 
 function retrieveAccountNumbers() {
   axios
-    .get("http://localhost:8080/api/retrieveAccountNumbers")
+    .get(
+      "https://reimbursement-project.onrender.com/api/retrieveAccountNumbers"
+    )
     .then((res) => {
       accountNumbers.value = res.data.accountNumbers;
     })

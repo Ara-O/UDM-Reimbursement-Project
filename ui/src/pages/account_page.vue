@@ -208,7 +208,10 @@ function back() {
 
 function save() {
   axios
-    .post("http://localhost:8080/api/updateAccountInfo", accountInfo.value)
+    .post(
+      "https://reimbursement-project.onrender.com/api/updateAccountInfo",
+      accountInfo.value
+    )
     .then((res) => {
       console.log(res.data);
       alert("Account information updated!");

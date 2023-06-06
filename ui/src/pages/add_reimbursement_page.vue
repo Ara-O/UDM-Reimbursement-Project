@@ -618,7 +618,7 @@ function createPdf() {
       if (userIsEditingReimbursement.value === true) {
         currentReimbursement.value.totalAmount = getAllActivitiesAmount();
         axios
-          .get("http://localhost:8080/api/generatePdf", {
+          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
             params: {
               reimbursementData: currentReimbursement.value,
               userInfo: response.data,
@@ -633,7 +633,7 @@ function createPdf() {
           });
       } else {
         axios
-          .get("http://localhost:8080/api/generatePdf", {
+          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
             params: {
               reimbursementData: currentReimbursement.value,
               userInfo: response.data,
