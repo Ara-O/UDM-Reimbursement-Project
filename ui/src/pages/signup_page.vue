@@ -117,10 +117,7 @@ function registerUser() {
   userSignupData.userFoapas = foapaList.value;
   creatingAccountFeedback.value = true;
   axios
-    .post(
-      "https://reimbursement-project.onrender.com/api/register",
-      userSignupData
-    )
+    .post("http://localhost:8080/api/register", userSignupData)
     .then((res) => {
       alert(res.data.message);
       localStorage.setItem("token", res.data.token);
@@ -129,7 +126,6 @@ function registerUser() {
       router.push("/dashboard");
     })
     .catch((err) => {
-      console.log(err);
       alert(err.response.data.message);
     })
     .finally(() => {

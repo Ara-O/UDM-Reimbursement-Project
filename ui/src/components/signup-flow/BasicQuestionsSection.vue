@@ -1,80 +1,92 @@
 <template>
-  <div class="input-field-wrapper">
-    <div class="input-field">
-      <label for="first-name">First Name:*</label>
-      <input
-        type="text"
-        name="First name"
-        id="first-name"
-        v-model="userSignupData.firstName"
-      />
-    </div>
-    <div class="input-field">
-      <label for="last-name">Last Name:*</label>
-      <input
-        type="text"
-        name="Last Name"
-        id="last-name"
-        v-model="userSignupData.lastName"
-      />
-    </div>
-    <div class="input-field">
-      <label for="phone-number">Phone: *</label>
-      <input
-        type="text"
-        name="Phone Number"
-        id="phone-number"
-        v-model="userSignupData.phoneNumber"
-      />
-    </div>
-    <div class="work-email-section">
-      <label for="work-email">Work Email: *</label>
-      <div class="work-email-input-field">
-        <input
-          type="email"
-          name="Work Email"
-          id="work-email"
-          v-model="userSignupData.workEmail"
-        />
-        <h6 class="work-email-descriptor">@udmercy.edu</h6>
+  <Form @submit="progress">
+    <div class="input-field-wrapper">
+      <div class="input-field">
+        <span>
+          <label for="first-name">First Name:*</label>
+          <Field
+            type="text"
+            name="first-name"
+            :rules="isValidString"
+            id="first-name"
+            v-model="userSignupData.firstName"
+          />
+        </span>
+        <ErrorMessage name="first-name" class="error-field" />
+      </div>
+      <div class="input-field">
+        <span>
+          <label for="first-name">Last Name:*</label>
+          <Field
+            type="text"
+            name="last-name"
+            :rules="isValidString"
+            id="last-name"
+            v-model="userSignupData.lastName"
+          />
+        </span>
+        <ErrorMessage name="last-name" class="error-field" />
       </div>
     </div>
-    <div class="input-field">
-      <label for="employment-number">Employment Number: *</label>
-      <span style="position: relative">
-        <span class="employment-number-section">
-          <h3>T</h3>
-        </span>
+    <!-- <div class="input-field">
+        <label for="last-name">Last Name:*</label>
         <input
           type="text"
-          style="padding-left: 30px"
-          name="Employment Number"
-          id="employment-number"
-          v-model="userSignupData.employmentNumber"
+          name="Last Name"
+          id="last-name"
+          v-model="userSignupData.lastName"
         />
-      </span>
-    </div>
-    <div class="input-field">
-      <label for="department">Department: *</label>
-      <select
-        name="Department"
-        id="department"
-        v-model="userSignupData.department"
-      >
-        <option :value="department" v-for="department in departments">
-          {{ department }}
-        </option>
-      </select>
-    </div>
-  </div>
-  <button
-    class="signup-button"
-    type="button"
-    @click="progress"
-    style="margin-top: 0px"
-  >
-    Continue
-  </button>
+      </div>
+      <div class="input-field">
+        <label for="phone-number">Phone: *</label>
+        <input
+          type="text"
+          name="Phone Number"
+          id="phone-number"
+          v-model="userSignupData.phoneNumber"
+        />
+      </div>
+      <div class="work-email-section">
+        <label for="work-email">Work Email: *</label>
+        <div class="work-email-input-field">
+          <input
+            type="email"
+            name="Work Email"
+            id="work-email"
+            v-model="userSignupData.workEmail"
+          />
+          <h6 class="work-email-descriptor">@udmercy.edu</h6>
+        </div>
+      </div>
+      <div class="input-field">
+        <label for="employment-number">Employment Number: *</label>
+        <span style="position: relative">
+          <span class="employment-number-section">
+            <h3>T</h3>
+          </span>
+          <input
+            type="text"
+            style="padding-left: 30px"
+            name="Employment Number"
+            id="employment-number"
+            v-model="userSignupData.employmentNumber"
+          />
+        </span>
+      </div>
+      <div class="input-field">
+        <label for="department">Department: *</label>
+        <select
+          name="Department"
+          id="department"
+          v-model="userSignupData.department"
+        >
+          <option :value="department" v-for="department in departments">
+            {{ department }}
+          </option>
+        </select>
+      </div> -->
+    <button class="signup-button" type="submit">Continue</button>
+  </Form>
   <h5
     style="font-weight: 400; margin: -24px 0px -10px 0px"
     v-if="validatingSignupFields"
@@ -84,6 +96,8 @@
 </template>
 
 <script lang="ts" setup>
+import { string, object, number } from "yup";
+import { Form, Field, ErrorMessage } from "vee-validate";
 import axios from "axios";
 import { ref } from "vue";
 import { UserData } from "../../types/types";
@@ -91,6 +105,18 @@ const { userSignupData } = defineProps<{
   userSignupData: UserData;
 }>();
 
+function isValidString(value) {
+  var pattern = /^[a-zA-Z0-9\s-]+$/;
+  if (pattern.test(value)) {
+    return true;
+  }
+
+  if (value.trim() === "") {
+    return "Field can not be empty";
+  }
+
+  return "Invalid Characters";
+}
 type ValidationResult = {
   field: (typeof fieldsToValidate)[number];
   reason: "Invalid type" | "Empty" | "Invalid chars" | "Invalid format";
@@ -169,49 +195,53 @@ function validateField(data, fieldsToValidate) {
   });
 }
 //Manually doing it, going to use a better validation library next semester
+// function progress() {
+//   validateField(userSignupData, fieldsToValidate)
+//     .then(() => {
+//       validatingSignupFields.value = true;
+
+//       axios
+//         .post(
+//           "https://reimbursement-project.onrender.com/api/verifySignupBasicInformation",
+//           {
+//             employmentNumber: userSignupData.employmentNumber,
+//             workEmail: userSignupData.workEmail,
+//           }
+//         )
+//         .then((res) => {
+//           validatingSignupFields.value = false;
+//           window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+//           emits("continue");
+//         })
+//         .catch((err) => {
+//           alert(err.response.data.message);
+//           validatingSignupFields.value = false;
+//         });
+//     })
+//     .catch((err) => {
+//       validatingSignupFields.value = false;
+//       let erringField = err.field
+//         .replace(/([A-Z])/g, " $1")
+//         .replace(/^./, function (match) {
+//           return match.toUpperCase();
+//         });
+
+//       err.reason === "Invalid type" &&
+//         alert(`The ${erringField} field must be a number`);
+
+//       err.reason === "Invalid chars" &&
+//         alert(`The ${erringField} field contains invalid characters`);
+
+//       err.reason === "Empty" &&
+//         alert(`The ${erringField} field cannot be empty`);
+
+//       err.reason === "Invalid format" &&
+//         alert(`The ${erringField} field must have the format XXXXXXXXXX`);
+//     });
+// }
+
 function progress() {
-  validateField(userSignupData, fieldsToValidate)
-    .then(() => {
-      validatingSignupFields.value = true;
-
-      axios
-        .post(
-          "https://reimbursement-project.onrender.com/api/verifySignupBasicInformation",
-          {
-            employmentNumber: userSignupData.employmentNumber,
-            workEmail: userSignupData.workEmail,
-          }
-        )
-        .then((res) => {
-          validatingSignupFields.value = false;
-          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-          emits("continue");
-        })
-        .catch((err) => {
-          alert(err.response.data.message);
-          validatingSignupFields.value = false;
-        });
-    })
-    .catch((err) => {
-      validatingSignupFields.value = false;
-      let erringField = err.field
-        .replace(/([A-Z])/g, " $1")
-        .replace(/^./, function (match) {
-          return match.toUpperCase();
-        });
-
-      err.reason === "Invalid type" &&
-        alert(`The ${erringField} field must be a number`);
-
-      err.reason === "Invalid chars" &&
-        alert(`The ${erringField} field contains invalid characters`);
-
-      err.reason === "Empty" &&
-        alert(`The ${erringField} field cannot be empty`);
-
-      err.reason === "Invalid format" &&
-        alert(`The ${erringField} field must have the format XXXXXXXXXX`);
-    });
+  alert("e");
 }
 </script>
 

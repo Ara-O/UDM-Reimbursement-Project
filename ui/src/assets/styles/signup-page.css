@@ -220,11 +220,21 @@ input {
 .work-email-section {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 14px;
   justify-content: space-between;
 }
+.input-field span {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
 
+.input-field .error-field {
+  color: rgb(238, 0, 0);
+  font-size: 13.5px;
+}
 .work-email-descriptor {
   position: absolute;
   top: 50%;
@@ -329,6 +339,7 @@ tr td {
   color: white;
   padding: 10px 40px;
   border: solid 1px;
+  margin-top: 0px;
   width: 232px;
   height: 50px;
   margin-top: 20px;
