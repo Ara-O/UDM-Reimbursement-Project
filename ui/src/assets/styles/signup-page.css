@@ -221,7 +221,7 @@ input {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  height: 70px;
+  height: auto;
   align-items: flex-start;
   gap: 14px;
   justify-content: space-between;
@@ -357,13 +357,31 @@ tr td {
   color: white;
   padding: 10px 40px;
   border: solid 1px;
-  margin-top: 0px;
   width: 232px;
   height: 50px;
-  margin-top: 20px;
+  margin-top: 25px;
   cursor: pointer;
   background: #a5093e;
   border-radius: 26px;
+}
+
+.signup-button-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--udmercy-blue);
+  color: white;
+  border: solid 1px;
+  width: 51px;
+  height: 50px;
+  margin-top: 25px;
+  cursor: pointer;
+  background: #a5093e;
+  border-radius: 26px;
+}
+
+.next-arrow {
+  width: 20px;
 }
 
 .signup-form {
@@ -480,12 +498,33 @@ tr td {
   .input-field,
   .work-email-section {
     flex-direction: column;
+    flex-wrap: nowrap;
     gap: 20px;
+    align-items: center;
+    height: auto;
+  }
+
+  .input-field span,
+  .work-email-section > span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  #department {
+    text-align: center;
+  }
+
+  .error-field {
+    text-align: center;
   }
 
   .input-field-wrapper {
     justify-content: center;
     flex-direction: column;
+    gap: 30px;
+    margin-bottom: 30px;
     align-items: center;
   }
 

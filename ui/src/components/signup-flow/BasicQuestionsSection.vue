@@ -97,6 +97,13 @@
       </div>
     </div>
     <button class="signup-button" type="submit">Continue</button>
+    <!-- <button class="signup-button-arrow" type="submit">
+      <img
+        src="../../assets/next-arrow.png"
+        alt="Next arrow"
+        class="next-arrow"
+      />
+    </button> -->
   </Form>
   <h5
     style="font-weight: 400; margin: -24px 0px -10px 0px"
@@ -202,4 +209,8 @@ function progress() {
 
 <style scoped>
 @import url("../../assets/styles/signup-page.css");
+.input-field,
+.work-email-section {
+  height: 70px;
+}
 </style>

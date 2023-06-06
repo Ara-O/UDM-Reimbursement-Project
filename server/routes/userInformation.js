@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { transporter } from "../app.js";
+import AccountNumbers from "../models/accountNumbers.js";
 import Faculty from "../models/faculty.js";
 import {
   encryptPassword,
@@ -9,7 +10,6 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import formatFoapaDetails from "../utils/formatFoapaDetails.js";
 import { verifyToken } from "../middleware/auth.js";
-import sgMail from "@sendgrid/mail";
 dotenv.config();
 
 const router = Router();
@@ -334,6 +334,16 @@ router.post("/changePassword", verifyToken, async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(404).send({ message: "There has been an error" });
+  }
+});
+
+router.get("/retrieveAccountNumbers", async (req, res) => {
+  try {
+    let allAccountNumbers = await AccountNumbers.find();
+    console.log(allAccountNumbers);
+    res.status(200).send(allAccountNumbers[0]);
+  } catch (err) {
+    res.status(400).send({ message: "There has been an error" });
   }
 });
 export default router;

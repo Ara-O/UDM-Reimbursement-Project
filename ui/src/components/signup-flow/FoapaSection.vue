@@ -63,9 +63,15 @@
           type="text"
           name="A input"
           id="a-input"
+          list="account-no"
           placeholder="xxxx"
           v-model="currentlyInputtedFOAPA.aNumber"
         />
+        <datalist id="account-no">
+          <option v-for="acctNo in accountNumbers" :value="acctNo.number">
+            {{ acctNo.number }} - {{ acctNo.description }}
+          </option>
+        </datalist>
       </div>
       <h5>-</h5>
 
@@ -194,12 +200,13 @@
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 import { FoapaStuff } from "../../types/types";
-import { reactive } from "vue";
+import { reactive, onMounted, ref } from "vue";
 let { foapaList } = defineProps<{
   foapaList: FoapaStuff[];
 }>();
-
+let accountNumbers = ref<{ number: string; description: string }[]>([]);
 let currentlyInputtedFOAPA = reactive<FoapaStuff>({
   fNumber: "",
   oNumber: "",
@@ -221,6 +228,17 @@ function deleteFoapa(foapaName, fNumber) {
   if (index > -1) {
     foapaList.splice(index, 1);
   }
+}
+
+function retrieveAccountNumbers() {
+  axios
+    .get("http://localhost:8080/api/retrieveAccountNumbers")
+    .then((res) => {
+      accountNumbers.value = res.data.accountNumbers;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 function addFoapa() {
@@ -279,6 +297,10 @@ function addFoapa() {
 function regress() {
   emits("goBack");
 }
+
+onMounted(() => {
+  retrieveAccountNumbers();
+});
 </script>
 
 <style scoped>

@@ -22,20 +22,10 @@
     </div>
   </div>
   <div class="continue-buttons">
-    <button
-      class="signup-button"
-      type="button"
-      @click="regress"
-      style="margin-top: 0px"
-    >
+    <button class="signup-button mt-0" type="button" @click="regress">
       Go Back
     </button>
-    <button
-      class="signup-button"
-      type="button"
-      style="margin-top: 0px"
-      @click="progress"
-    >
+    <button class="signup-button mt-0" type="button" @click="progress">
       Continue
     </button>
   </div>
