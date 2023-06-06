@@ -220,20 +220,38 @@ input {
 .work-email-section {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column;
+  flex-direction: row;
+  height: 70px;
   align-items: flex-start;
   gap: 14px;
   justify-content: space-between;
 }
-.input-field span {
-  display: flex;
-  gap: 15px;
-  align-items: center;
+
+.relative {
+  position: relative;
 }
 
-.input-field .error-field {
+.input-field label,
+.work-email-section label {
+  margin-top: 8px;
+}
+
+.input-field-wrapper:not(:nth-child(1)) {
+  margin-top: 6px;
+}
+
+.input-field span {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.input-field .error-field,
+.work-email-section .error-field {
   color: rgb(238, 0, 0);
-  font-size: 13.5px;
+  font-size: 12px;
+  max-width: 200px;
 }
 .work-email-descriptor {
   position: absolute;
@@ -362,6 +380,13 @@ tr td {
   gap: 30px;
 }
 
+.mt-0 {
+  margin-top: 0px !important;
+}
+
+#employment-number {
+  padding-left: 35px;
+}
 .added-foapa-number h3 {
   font-weight: 400;
   font-size: 14px;

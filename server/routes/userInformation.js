@@ -206,13 +206,11 @@ router.post("/updateAccountInfo", verifyToken, async (req, res) => {
 });
 
 router.post("/verifySignupBasicInformation", async (req, res) => {
-  console.log(req.body);
   try {
     let facultyFound = await Faculty.findOne({
       employmentNumber: "T" + req.body.employmentNumber,
     });
 
-    console.log(facultyFound);
     if (facultyFound !== null) {
       return res.status(409).send({
         message:
@@ -222,8 +220,8 @@ router.post("/verifySignupBasicInformation", async (req, res) => {
       let facultyWithSameEmail = await Faculty.findOne({
         workEmail: req.body.workEmail + "@udmercy.edu",
       });
+
       if (facultyWithSameEmail) {
-        console.log("oooo");
         return res.status(409).send({
           message: "An employee with the inputted email address already exists",
         });
