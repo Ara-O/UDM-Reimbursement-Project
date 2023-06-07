@@ -6,6 +6,7 @@ export async function encryptPassword(password) {
   return encryptedPassowrd;
 }
 
+
 export async function decryptPassword(password, encryptedPassword) {
   let passwordMatches = await bcrypt.compare(password, encryptedPassword);
 

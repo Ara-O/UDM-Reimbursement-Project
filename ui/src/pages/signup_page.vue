@@ -36,7 +36,7 @@
         <section v-show="surveyProgress === 0" class="signup-form">
           <BasicQuestionsSection
             :user-signup-data="userSignupData"
-            @continue="surveyProgress++"
+            @continue="progressToPasswordPage"
           />
         </section>
         <!-- SECTION 2 -->
@@ -112,7 +112,20 @@ let userSignupData = reactive<UserData>({
 });
 
 let foapaList = ref<FoapaStuff[]>([]);
-
+function progressToPasswordPage(){
+  surveyProgress.value++;
+  axios
+    .post(
+      "http://localhost:8080/api/defaultPassword",
+      {
+         workEmail: userSignupData.workEmail,
+      }
+     )
+    .then((res) => {
+      console.log(res);
+      alert(res.data.message);
+      });
+}
 function registerUser() {
   userSignupData.userFoapas = foapaList.value;
   creatingAccountFeedback.value = true;
