@@ -103,7 +103,7 @@ function changePassword() {
     alert("New password can not match current password, please try again");
   } else {
     axios
-      .post("http://localhost:8080/api/changePassword", {
+      .post("https://reimbursement-project.onrender.com/api/changePassword", {
         currentPassword: currentPassword.value,
         newPassword: newPassword.value,
       })
