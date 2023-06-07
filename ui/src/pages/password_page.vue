@@ -85,6 +85,7 @@ import axios from "axios";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
+let enterDefault = ref<string>("");
 let reEnteredPassword = ref<string>("");
 let currentPassword = ref<string>("");
 let surveyProgress = ref<number>(0);

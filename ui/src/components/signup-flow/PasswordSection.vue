@@ -1,6 +1,15 @@
 <template>
   <div class="input-field-wrapper">
     <div class="input-field">
+      <label for="Default Password">Default Password: *</label>
+      <input
+        type="defpassword"
+        name="defPassword"
+        id="defpassword"
+        v-model="myDefaultPassword"
+      />
+    </div>
+    <div class="input-field">
       <label for="password">Password: *</label>
       <input
         type="password"
@@ -34,7 +43,7 @@
       class="signup-button"
       type="button"
       style="margin-top: 0px"
-      @click="progress"
+      @click= "progress"
     >
       Continue
     </button>
@@ -42,9 +51,12 @@
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 import { UserData } from "../../types/types";
 import { ref } from "vue";
+
 let reEnteredPassword = ref<string>("");
+let myDefaultPassword = ref<string>("");
 
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
@@ -52,6 +64,16 @@ const { userSignupData } = defineProps<{
 
 const emits = defineEmits(["continue", "goBack"]);
 
+function checkDefault(){
+  axios
+    .post("http://localhost:8080/api/default",{
+      token: myDefaultPassword.value,
+    })
+    .then((res) => {
+        console.log(res);
+        alert(res.data.message);
+      });
+}
 function progress() {
   let dataShown = ["password"];
   for (let i = 0; i < dataShown.length; i++) {
