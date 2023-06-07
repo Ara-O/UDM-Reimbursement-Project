@@ -73,14 +73,14 @@
         <div
           class="filter"
           :class="{ selected: sortParameter === 'Date' }"
-          @click="sortBy('Date')"
+          @click="orderByDate()"
         >
           <h3>Sort by Date</h3>
         </div>
         <div
           class="filter"
           :class="{ selected: sortParameter === 'Status' }"
-          @click="sortBy('Status')"
+          @click="orderByStatus()"
         >
           <h3>Sort by Status</h3>
         </div>
@@ -91,7 +91,9 @@
         >
           <h3>Sort by Name</h3>
         </div>
-        <div class="filter" :class="{ selected: sortParameter === 'Cost' }">
+        <div class="filter" 
+        :class="{ selected: sortParameter === 'Cost' }"
+        @click="orderByCost()">
           <h3>Sort by Cost</h3>
         </div>
         <!--   <div
@@ -221,6 +223,55 @@ function orderByName() {
       return -1;
     }
     if (a.eventName.toUpperCase() > b.eventName.toUpperCase()) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
+function orderByStatus() {
+  sortParameter.value = "Status";
+  reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
+    const statusOrder = {
+      Submitted: 0,
+      InProgress: 1,
+      Approved: 2,
+      Denied: 3
+    };
+
+    const statusA = a.reimbursementStatus.toUpperCase();
+    const statusB = b.reimbursementStatus.toUpperCase();
+
+    if (statusOrder[statusA] < statusOrder[statusB]) {
+      return -1;
+    }
+    if (statusOrder[statusA] > statusOrder[statusB]) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
+function orderByCost() {
+  sortParameter.value = "Cost";
+  reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
+    if (a.totalAmount < b.totalAmount) {
+      return -1;
+    }
+    if (a.totalAmount > b.totalAmount) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
+function orderByDate() {
+  sortParameter.value = "Date";
+  reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
+    if (a.reimbursementDate < b.reimbursementDate) {
+      return -1;
+    }
+    if (a.reimbursementDate > b.reimbursementDate) {
       return 1;
     }
     return 0;
