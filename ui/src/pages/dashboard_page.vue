@@ -126,7 +126,7 @@
         <div class="reimbursement" v-for="ticket in filterReimbursements">
           <div class="total-amount">${{ ticket.totalAmount }}</div>
           <h3>{{ ticket.eventName }}</h3>
-          <h4>Status: In Progress</h4>
+          <h4>Status: ${{ showStatus() }}</h4>
           <h5>
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
@@ -225,6 +225,24 @@ function orderByName() {
     }
     return 0;
   });
+}
+
+function showStatus() {
+  let status = "";
+  reimbursementTickets.value.forEach((ticket) => {
+    if (ticket.reimbursementStatus === "Submitted") {
+      status = "Submitted"
+    }
+    else if (ticket.reimbursementStatus === "In Progress") {
+      status = "In Progress"
+    }
+    else if (ticket.reimbursementStatus === "Approved") { 
+      status = "Approved"
+    }
+    else if (ticket.reimbursementStatus === "Denied") { 
+      status = "Denied"
+    }
+  })
 }
 
 const filterReimbursements = computed(() => {

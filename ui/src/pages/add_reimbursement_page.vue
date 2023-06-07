@@ -19,7 +19,7 @@
         <button class="add-actvities-button" @click="createPdf">
           Preview Ticket
         </button>
-        <button class="add-actvities-button" @click="createPdf">
+        <button class="add-actvities-button" @click="submitTicket">
           Submit Ticket
         </button>
         <button class="add-actvities-button" @click="router.push('/dashboard')">
@@ -276,7 +276,7 @@ let currentReimbursement = ref<ReimbursementTicket>({
   reimbursementId: generateRandomId(),
   eventName: "",
   totalAmount: 0,
-  reimbursementStatus: 0,
+  reimbursementStatus: "",
   reimbursementDate: parseDate(new Date().toISOString()),
   activities: [],
   expenseReason: "",
@@ -558,6 +558,24 @@ async function saveReimbursement() {
     updateReimbursement();
   } else {
     addReimbursement();
+  }
+}
+
+async function submitTicket() {
+  try {
+    currentReimbursement.value.reimbursementStatus = "Submitted";
+
+    await axios.post(
+      "https://reimbursement-project.onrender.com/api/submitTicket",
+      {
+        currentReimbursement: currentReimbursement.value.reimbursementStatus,
+      }
+    );
+
+    router.push("/dashboard");
+    alert("Reimbursement ticket submitted successfully");
+  } catch (error) {
+    console.log(error);
   }
 }
 

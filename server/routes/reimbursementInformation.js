@@ -24,6 +24,24 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
   }
 });
 
+router.post("/submitTicket", verifyToken, async (req, res) => {
+  try {
+    let userInfo = await Faculty.findOne({
+      employmentNumber: req.user.employmentNumber,
+    });
+
+    await userInfo.reimbursementTickets.reimbursementStatus.push(req.body.reimbursementTicket.reimbursementStatus)
+
+    await userInfo.save();
+
+    res
+      .status(200)
+      .send({ message: "Reimbursement ticket submitted successfully" });
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
+});
+
 //GET /api/retrieveReimbursements
 router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
   try {

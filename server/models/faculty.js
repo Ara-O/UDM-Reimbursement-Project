@@ -34,7 +34,7 @@ const facultySchema = new Schema({
       directDeposit: Boolean,
       UDMPUVoucher: Boolean,
       totalAmount: Number,
-      reimbursementStatus: Boolean,
+      reimbursementStatus: String,
       reimbursementDate: Date,
       activities: [
         {
