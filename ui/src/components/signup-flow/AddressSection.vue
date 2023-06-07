@@ -133,12 +133,14 @@ function stateChanged() {
   let realCountryData = countries.value?.filter(
     (country) => userSignupData.country === country.name
   );
+
+  console.log(realCountryData);
   let realStateData = states.value?.filter(
     (state) => userSignupData.state === state.name
   );
 
   axios
-    .get("https://reimbursement-project.onrender.com/api/getCityFromState",{
+    .get("https://reimbursement-project.onrender.com/api/getCityFromState", {
       params: { realCountryData, realStateData },
     })
     .then((res) => {

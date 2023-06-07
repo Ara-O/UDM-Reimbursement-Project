@@ -1,4 +1,5 @@
 <template>
+  <h3 class="signup-title-description">Basic Questions</h3>
   <Form @submit="progress">
     <div class="input-field-wrapper">
       <div class="input-field">
@@ -106,7 +107,7 @@
     </button> -->
   </Form>
   <h5
-    style="font-weight: 400; margin: -24px 0px -10px 0px"
+    style="font-weight: 400; margin-bottom: 10px"
     v-if="validatingSignupFields"
   >
     Validating Employment Number...

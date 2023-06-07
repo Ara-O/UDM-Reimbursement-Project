@@ -18,83 +18,44 @@
         />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
-
-      <h3 class="signup-title-description" v-if="surveyProgress === 0">
-        Basic Questions
-      </h3>
-      <h3 class="signup-title-description" v-if="surveyProgress === 1">
-        Password Information
-      </h3>
-      <h3 class="signup-title-description" v-if="surveyProgress === 2">
-        Address Information
-      </h3>
-      <h3 class="signup-title-description" v-if="surveyProgress === 3">
-        User Foapa Information (Not Required)
-      </h3>
-
       <section class="signup-form">
-        <section v-show="surveyProgress === 0" class="signup-form">
-          <BasicQuestionsSection
-            :user-signup-data="userSignupData"
-            @continue="progressToPasswordPage"
-          />
-        </section>
-        <!-- SECTION 2 -->
-        <section v-show="surveyProgress === 1" class="signup-form">
-          <PasswordSection
-            :user-signup-data="userSignupData"
-            @continue="surveyProgress++"
-            @go-back="surveyProgress--"
-          />
-        </section>
-
-        <!-- SECTION 3 -->
-        <section v-show="surveyProgress === 2" class="signup-form">
-          <AddressSection
-            :user-signup-data="userSignupData"
-            @continue="surveyProgress++"
-            @go-back="surveyProgress--"
-          />
-        </section>
-
-        <!-- SECTION 4 -->
-        <section v-show="surveyProgress === 3" class="signup-form">
-          <FoapaSection
-            :foapa-list="foapaList"
-            @finish="registerUser"
-            @go-back="surveyProgress--"
-          />
-        </section>
-        <h5 v-if="creatingAccountFeedback" class="creating-account-feedback">
-          Creating Account...
-        </h5>
-        <router-link to="/" style="font-size: 14px; margin-top: -15px"
+        <BasicQuestionsSection
+          :user-signup-data="userSignupData"
+          @continue="sendConfirmationEmail"
+          v-if="!basicQuestionsSectionIsFinished"
+        />
+        <article v-else>
+          <h3 class="thanks-for-signing-up-msg">Thank you for signing up!</h3>
+          <h4 class="email-confirmation-text">
+            A confirmation email has being sent to
+            {{ userSignupData.workEmail.trim() }}@udmercy.edu. You should
+            receive an email in a few minutes. Please check your spam/junk
+            folder if it does not arrive. You can close out of this page.
+          </h4>
+        </article>
+      </section>
+      <span v-if="!basicQuestionsSectionIsFinished">
+        <br />
+        <router-link to="/" class="already-have-account"
           >Already have an Account</router-link
         >
-        <h5
-          class="required-field-note"
-          style="font-weight: 300; margin-top: -25px"
-        >
+        <h5 class="required-field-note">
           Note: All required fields must be filled
         </h5>
-      </section>
+      </span>
     </section>
   </section>
 </template>
 
 <script lang="ts" setup>
 import BasicQuestionsSection from "../components/signup-flow/BasicQuestionsSection.vue";
-import PasswordSection from "../components/signup-flow/PasswordSection.vue";
-import AddressSection from "../components/signup-flow/AddressSection.vue";
-import FoapaSection from "../components/signup-flow/FoapaSection.vue";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { FoapaStuff, UserData } from "../types/types";
-let surveyProgress = ref<number>(0);
+import { UserData } from "../types/types";
 
 const router = useRouter();
-let creatingAccountFeedback = ref<boolean>(false);
+let basicQuestionsSectionIsFinished = ref<boolean>(false);
 let userSignupData = reactive<UserData>({
   firstName: "",
   lastName: "",
@@ -111,41 +72,17 @@ let userSignupData = reactive<UserData>({
   userFoapas: [],
 });
 
-let foapaList = ref<FoapaStuff[]>([]);
-function progressToPasswordPage(){
-  surveyProgress.value++;
+function sendConfirmationEmail() {
+  basicQuestionsSectionIsFinished.value = true;
   axios
-    .post(
-      "http://localhost:8080/api/defaultPassword",
-      {
-         workEmail: userSignupData.workEmail,
-      }
-     )
+    .post("http://localhost:8080/api/sendConfirmationEmail", {
+      userSignupData,
+    })
     .then((res) => {
       console.log(res);
-      alert(res.data.message);
-      });
-}
-function registerUser() {
-  userSignupData.userFoapas = foapaList.value;
-  creatingAccountFeedback.value = true;
-  axios
-    .post(
-      "https://reimbursement-project.onrender.com/api/register",
-      userSignupData
-    )
-    .then((res) => {
-      alert(res.data.message);
-      localStorage.setItem("token", res.data.token);
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
-      router.push("/dashboard");
     })
     .catch((err) => {
-      alert(err.response.data.message);
-    })
-    .finally(() => {
-      creatingAccountFeedback.value = false;
+      alert(err.data.message);
     });
 }
 

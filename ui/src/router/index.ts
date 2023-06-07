@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import SignupPage from "../pages/signup_page.vue";
+import CompleteVerificationPage from "../pages/signup_post_verification_page.vue";
 import LoginPage from "../pages/login_page.vue";
 import AccountPage from "../pages/account_page.vue";
 import DashboardPage from "../pages/dashboard_page.vue";
@@ -17,6 +18,14 @@ export default createRouter({
     {
       path: "/signup",
       component: SignupPage,
+    },
+    {
+      path: "/complete-verification",
+      redirect: "/signup",
+    },
+    {
+      path: "/complete-verification/:userToken",
+      component: CompleteVerificationPage,
     },
     {
       path: "/account",

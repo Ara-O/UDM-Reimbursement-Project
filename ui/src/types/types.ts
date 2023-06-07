@@ -14,6 +14,14 @@ export type UserData = {
   userFoapas: Array<FoapaStuff>;
 };
 
+export type UserDataPreVerification = {
+  firstName: string;
+  lastName: string;
+  workEmail: string;
+  employmentNumber: number | null;
+  department: string;
+};
+
 export type UserDataAcct = {
   firstName: string;
   lastName: string;

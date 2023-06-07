@@ -235,17 +235,15 @@ router.post("/verifySignupBasicInformation", async (req, res) => {
   }
 });
 router.post("/default", async (req, res) => {
-  try{
-    let userData = ({ workEmail: req.body.workEmail });
+  try {
+    let userData = { workEmail: req.body.workEmail };
     console.log(res.body);
-    if (userData == res.body)
-      console.log("default works");
-  }catch (err) {
+    if (userData == res.body) console.log("default works");
+  } catch (err) {
     console.log("imma throw");
     console.log(err);
     res.status(400).send({ message: err.message });
   }
-
 });
 
 router.post("/forgotPassword", async (req, res) => {
@@ -297,59 +295,61 @@ router.post("/forgotPassword", async (req, res) => {
   }
 });
 
-router.post("/defaultPassword", async (req, res) => {
+router.post("/verifyUserSignupToken", async (req, res) => {
+  console.log(req.body);
+  let reversedToken = req.body.token.replaceAll("$", ".");
+
+  jwt.verify(reversedToken, process.env.JWT_SECRET, function (err, decoded) {
+    if (err) {
+      // console.log(err);
+      return res.status(400).send({
+        message:
+          "There was an error verifying your token. Please try to sign up again",
+      });
+    }
+
+    res.status(200).send({ userSignupData: decoded.userData });
+  });
+});
+
+router.post("/sendConfirmationEmail", async (req, res) => {
   console.log(req.body);
   try {
-    function generateRandomPassword(length) {
-      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
-      let password = "";
-    
-      for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * charset.length);
-        password += charset[randomIndex];
-      }
-    
-      return password;
-    }
-    const defaultPassword = generateRandomPassword(10);
-    console.log(defaultPassword);
-    console.log(req.body);
-    let userData = ({ workEmail: req.body.workEmail });
-    if (userData === null) {
-      console.log("null");
-    } else {
-      console.log(userData);
-      jwt.sign(
-        { workEmail: userData.workEmail },
-        process.env.JWT_SECRET,
-        { expiresIn: "15m" },
-        async (err, token) => {
-          if (err) {
-            res
-              .status(400)
-              .send({ message: "There has been an error, please try again" });
-          } else {
-            console.log("here token", token);
-            token = token.replaceAll(".", "$");
+    let userData = req.body.userSignupData;
+    jwt.sign({ userData }, process.env.JWT_SECRET, async (err, token) => {
+      if (err) throw err;
 
-            // send mail with defined transport object
-            let resp = await transporter.sendMail({
-              from: '"UDM Reimbursement Team" <ara@araoladipo.dev>',
-              to: req.body.workEmail.trim() + "@udmercy.edu",
-              subject: "This is your default password. DO NOT SHARE: " + defaultPassword,
-              html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We have created a default password for you to finish the signup process. To finish registering, please enter the password into the section titled "Default Password" on the password screen. </h4><br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
-            });
+      let sanitizedToken = token.replaceAll(".", "$");
+      let resp = await transporter.sendMail({
+        from: '"UDM Reimbursement Team" <ara@araoladipo.dev>',
+        // to: req.body.workEmail.trim() + "@udmercy.edu",
+        to: "oladipea@udmercy.edu",
+        subject: "Welcome to the UDM Reimbursement System!",
+        html: `<a href="http://localhost:5173/complete-verification/${sanitizedToken}" target="_blank">Create account</a>`,
+      });
 
-            console.log(resp);
+      console.log(resp);
 
-            res.status(200).send({ message: "Sent email for Default Password. Do not X out of this tab." });
-          }
-        }
-      );
-    }
+      res.status(200).send({
+        message: "Email sent successfully!",
+      });
+    });
   } catch (err) {
     console.log(err);
+    res.status(400).send(err);
   }
+  //   function generateRandomPassword(length) {
+  //     const charset =
+  //       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+  //     let password = "";
+
+  //     for (let i = 0; i < length; i++) {
+  //       const randomIndex = Math.floor(Math.random() * charset.length);
+  //       password += charset[randomIndex];
+  //     }
+
+  //     return password;
+  //   }
 });
 router.post("/resetPassword", async (req, res) => {
   console.log(req.body);

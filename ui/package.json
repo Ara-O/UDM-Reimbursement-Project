@@ -22,6 +22,7 @@
     "nodemon": "^2.0.22",
     "pdfmake": "^0.2.7",
     "pdfmake-unicode": "^0.0.1",
+    "vee-validate": "^4.9.6",
     "vue": "^3.2.47",
     "vue-cookies": "^1.8.3",
     "vue-router": "^4.1.6"

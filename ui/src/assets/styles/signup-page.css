@@ -380,14 +380,35 @@ tr td {
   border-radius: 26px;
 }
 
+.required-field-note {
+  font-weight: 300;
+}
+
+.already-have-account {
+  font-size: 14.5px;
+}
+
 .next-arrow {
   width: 20px;
+}
+
+.thanks-for-signing-up-msg {
+  font-weight: 600;
+}
+
+.email-confirmation-text {
+  font-weight: 400;
+  width: auto;
+  line-height: 30px;
+  max-width: 700px;
+  font-size: 15px;
 }
 
 .signup-form {
   display: flex;
   gap: 7px;
-  row-gap: 50px;
+  row-gap: 0px;
+  /* row-gap: 50px; */
   flex-direction: column;
   align-items: flex-start;
 }
@@ -396,6 +417,7 @@ tr td {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
+  margin-top: 20px;
 }
 
 .mt-0 {
@@ -530,6 +552,8 @@ tr td {
 
   .required-field-note {
     margin-bottom: 60px;
+    font-weight: 300;
+    margin-top: -25px;
   }
 
   .input-field-foapa-wrapper {

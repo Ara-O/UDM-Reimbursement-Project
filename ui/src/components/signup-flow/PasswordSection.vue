@@ -1,15 +1,6 @@
 <template>
   <div class="input-field-wrapper">
     <div class="input-field">
-      <label for="Default Password">Default Password: *</label>
-      <input
-        type="defpassword"
-        name="defPassword"
-        id="defpassword"
-        v-model="myDefaultPassword"
-      />
-    </div>
-    <div class="input-field">
       <label for="password">Password: *</label>
       <input
         type="password"
@@ -31,43 +22,29 @@
     </div>
   </div>
   <div class="continue-buttons">
-    <button class="signup-button mt-0" type="button" @click="regress">
-      Go Back
-    </button>
-    <button class="signup-button mt-0" type="button" @click="progress">
+    <button class="signup-button" type="button" @click="progress">
       Continue
     </button>
   </div>
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
 import { UserData } from "../../types/types";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 let reEnteredPassword = ref<string>("");
-let myDefaultPassword = ref<string>("");
 
-const { userSignupData } = defineProps<{
-  userSignupData: UserData;
-}>();
+// const props = defineProps<{
+//   userSignupData: UserData;
+// }>();
+const props = defineProps(["userSignupData"]);
 
-const emits = defineEmits(["continue", "goBack"]);
+const emits = defineEmits(["continue"]);
 
-function checkDefault() {
-  axios
-    .post("http://localhost:8080/api/default", {
-      token: myDefaultPassword.value,
-    })
-    .then((res) => {
-      console.log(res);
-      alert(res.data.message);
-    });
-}
 function progress() {
   let dataShown = ["password"];
   for (let i = 0; i < dataShown.length; i++) {
-    if (userSignupData[dataShown[i]] === "") {
+    if (props.userSignupData[dataShown[i]] === "") {
       console.log("password field empty");
       alert(
         `The ${dataShown[i]
@@ -78,21 +55,17 @@ function progress() {
     }
 
     if (i === dataShown.length - 1) {
-      if (reEnteredPassword.value !== userSignupData.password) {
+      if (reEnteredPassword.value !== props.userSignupData.password) {
         alert("Passwords do not match, please try again");
       } else {
-        if (!userSignupData.workEmail.includes("@udmercy.edu")) {
-          userSignupData.workEmail += "@udmercy.edu";
+        if (!props.userSignupData.workEmail.includes("@udmercy.edu")) {
+          props.userSignupData.workEmail += "@udmercy.edu";
         }
         emits("continue");
         window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
       }
     }
   }
-}
-
-function regress() {
-  emits("goBack");
 }
 </script>
 
