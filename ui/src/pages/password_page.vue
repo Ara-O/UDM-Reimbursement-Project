@@ -34,23 +34,26 @@
                 v-model="currentPassword"
               />
             </div>
-            <div class="input-field">
-              <label for="new-password">New password: </label>
-              <input
-                type="password"
-                name="new-password"
-                id="new-password"
-                v-model="newPassword"
-              />
-            </div>
-            <div class="input-field">
-              <label for="reenter-password">Re-enter new password: </label>
-              <input
-                type="password"
-                name="reenter-password"
-                id="reenter-password"
-                v-model="reEnteredPassword"
-              />
+            <div class="input-field-wrapper">
+              <div class="input-field">
+                <label for="new-password">New password: </label>
+                <input
+                  type="password"
+                  name="new-password"
+                  id="new-password"
+                  v-model="newPassword"
+                />
+              </div>
+              <div class="input-field">
+                <label for="reenter-password">Re-enter new password: </label>
+                <input
+                  type="password"
+                  name="reenter-password"
+                  id="reenter-password"
+                  v-model="reEnteredPassword"
+                />
+              </div>
+              
             </div>
           </div>
           <div class="continue-buttons">
