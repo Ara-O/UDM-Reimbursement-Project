@@ -178,6 +178,7 @@ import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { date } from "yup";
 
 const router = useRouter();
 const searchValue = ref<string>("");
@@ -197,6 +198,8 @@ type UserData = {
   employmentNumber: string;
   phoneNumber: string;
 };
+
+let costFlag = -1, nameFlag = -1, dateFlag = -1, statusFlag = -1
 
 let userInfo = ref<UserData>({
   employmentNumber: "",
@@ -220,13 +223,14 @@ function orderByName() {
   sortParameter.value = "Name";
   reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
     if (a.eventName.toUpperCase() < b.eventName.toUpperCase()) {
-      return -1;
+      return 1 * nameFlag;
     }
     if (a.eventName.toUpperCase() > b.eventName.toUpperCase()) {
-      return 1;
+      return -1 * nameFlag;
     }
     return 0;
   });
+  nameFlag = -nameFlag
 }
 
 function orderByStatus() {
@@ -256,26 +260,28 @@ function orderByCost() {
   sortParameter.value = "Cost";
   reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
     if (a.totalAmount < b.totalAmount) {
-      return -1;
+      return 1 * costFlag;
     }
     if (a.totalAmount > b.totalAmount) {
-      return 1;
+      return -1 * costFlag;
     }
     return 0;
   });
+  costFlag = -costFlag
 }
 
 function orderByDate() {
   sortParameter.value = "Date";
   reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
     if (a.reimbursementDate < b.reimbursementDate) {
-      return -1;
+      return 1 * dateFlag;
     }
     if (a.reimbursementDate > b.reimbursementDate) {
-      return 1;
+      return -1 * dateFlag;
     }
     return 0;
   });
+  dateFlag = -dateFlag
 }
 
 const filterReimbursements = computed(() => {
@@ -284,7 +290,7 @@ const filterReimbursements = computed(() => {
         ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
       )
     : reimbursementTickets.value;
-});
+}) ;
 
 function signOut() {
   localStorage.setItem("token", "");
