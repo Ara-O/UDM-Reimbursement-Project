@@ -126,7 +126,7 @@
         <div class="reimbursement" v-for="ticket in filterReimbursements">
           <div class="total-amount">${{ ticket.totalAmount }}</div>
           <h3>{{ ticket.eventName }}</h3>
-          <h4>Status: ${{ showStatus() }}</h4>
+          <h4>Status: {{ ticket.reimbursementStatus }}</h4>
           <h5>
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
@@ -227,31 +227,13 @@ function orderByName() {
   });
 }
 
-function showStatus() {
-  let status = "";
-  reimbursementTickets.value.forEach((ticket) => {
-    if (ticket.reimbursementStatus === "Submitted") {
-      status = "Submitted"
-    }
-    else if (ticket.reimbursementStatus === "In Progress") {
-      status = "In Progress"
-    }
-    else if (ticket.reimbursementStatus === "Approved") { 
-      status = "Approved"
-    }
-    else if (ticket.reimbursementStatus === "Denied") { 
-      status = "Denied"
-    }
-  })
-}
-
 const filterReimbursements = computed(() => {
   return searchValue.value
     ? reimbursementTickets.value.filter((ticket) =>
         ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
-      )
-    : reimbursementTickets.value;
-});
+      ) 
+    : reimbursementTickets.value ;
+}) ;
 
 function signOut() {
   localStorage.setItem("token", "");
@@ -346,7 +328,7 @@ async function sortBy(parameter: SortParameters) {
   sortParameter.value = parameter;
   try {
     let reimbursements = await axios.get(
-      "https://reimbursement-project.onrender.com/api/retrieveReimbursements",
+      "http://localhost:8080/api/retrieveReimbursements",
       {
         params: {
           sortBy: parameter,
@@ -381,7 +363,7 @@ onMounted(() => {
 function retrieveReimbursements() {
   axios
     .get(
-      "https://reimbursement-project.onrender.com/api/retrieveReimbursements"
+      "http://localhost:8080/api/retrieveReimbursements"
     )
     .then((res) => {
       console.log(res);

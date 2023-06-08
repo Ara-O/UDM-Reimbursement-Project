@@ -2,7 +2,7 @@
   <section class="add-reimbursement-section">
     <section class="all-activities-section">
       <h3 style="margin-top: 0px" class="all-activities-text">
-        All Activities
+        All Expenses
       </h3>
       <span class="activities-list">
         <ActivityContainer
@@ -14,13 +14,13 @@
       </span>
       <div class="cta-buttons">
         <button class="add-actvities-button" @click="saveReimbursement">
-          Save Ticket
+          Save Reimbursement Request
         </button>
         <button class="add-actvities-button" @click="createPdf">
-          Preview Ticket
+          Preview Reimbursement Request
         </button>
         <button class="add-actvities-button" @click="submitTicket">
-          Submit Ticket
+          Submit Reimbursement Request
         </button>
         <button class="add-actvities-button" @click="router.push('/dashboard')">
           Discard Changes
@@ -518,7 +518,7 @@ async function updateReimbursement() {
   );
 
   await axios.post(
-    "https://reimbursement-project.onrender.com/api/updateReimbursement",
+    "http://localhost:8080/api/updateReimbursement",
     {
       reimbursementTicket: currentReimbursement.value,
     }
@@ -536,7 +536,7 @@ async function addReimbursement() {
       );
 
       await axios.post(
-        "https://reimbursement-project.onrender.com/api/addReimbursement",
+        "http://localhost:8080/api/addReimbursement",
         {
           reimbursementTicket: currentReimbursement.value,
         }
@@ -554,6 +554,8 @@ async function addReimbursement() {
 }
 
 async function saveReimbursement() {
+  currentReimbursement.value.reimbursementStatus = "In Progress";
+  
   if (userIsEditingReimbursement.value === true) {
     updateReimbursement();
   } else {
@@ -566,9 +568,9 @@ async function submitTicket() {
     currentReimbursement.value.reimbursementStatus = "Submitted";
 
     await axios.post(
-      "https://reimbursement-project.onrender.com/api/submitTicket",
+      "http://localhost:8080/api/updateReimbursement",
       {
-        currentReimbursement: currentReimbursement.value.reimbursementStatus,
+        reimbursementTicket: currentReimbursement.value,
       }
     );
 

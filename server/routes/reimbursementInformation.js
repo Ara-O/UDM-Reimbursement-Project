@@ -24,55 +24,13 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/submitTicket", verifyToken, async (req, res) => {
-  try {
-    let userInfo = await Faculty.findOne({
-      employmentNumber: req.user.employmentNumber,
-    });
-
-    await userInfo.reimbursementTickets.reimbursementStatus.push(req.body.reimbursementTicket.reimbursementStatus)
-
-    await userInfo.save();
-
-    res
-      .status(200)
-      .send({ message: "Reimbursement ticket submitted successfully" });
-  } catch (err) {
-    res.status(400).send({ message: err.message });
-  }
-});
-
 //GET /api/retrieveReimbursements
 router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
   try {
-    let sortBy = req.query.sortBy;
-    console.log("sortby", sortBy);
-
     let reimbursements = await Faculty.findOne({
       employmentNumber: req.user.employmentNumber,
     }).select("reimbursementTickets");
 
-    if (sortBy === "Cost Ascending") {
-      reimbursements.reimbursementTickets =
-        reimbursements.reimbursementTickets.sort((a, b) => {
-          return a.totalAmount - b.totalAmount;
-        });
-    }
-
-    if (sortBy === "Cost Descending") {
-      reimbursements.reimbursementTickets =
-        reimbursements.reimbursementTickets.sort((a, b) => {
-          return b.totalAmount - a.totalAmount;
-        });
-    }
-
-    if (sortBy === "Date") {
-      reimbursements.reimbursementTickets =
-        reimbursements.reimbursementTickets.sort((a, b) => {
-          return b.reimbursementDate - b.reimbursementDate;
-        });
-    }
-    console.log(reimbursements);
 
     res.status(200).send(reimbursements.reimbursementTickets);
   } catch (err) {
