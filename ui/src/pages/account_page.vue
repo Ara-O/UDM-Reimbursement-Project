@@ -228,18 +228,22 @@ function save() {
     });
 }
 
-function retrieveAccountInformation() {
-  axios
+async function retrieveAccountInformation() {
+  try{
+
+    let res = await axios
     .get(
       "https://reimbursement-project.onrender.com/api/retrieveAccountInformation"
-    )
-    .then((res) => {
-      accountInfo.value = res.data;
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      )
+    accountInfo.value = res.data;
+    
+  let countriesFromApi = await axios.get("https://reimbursement-project.onrender.com/api/allCountries")
+  
+  countries.value = countriesFromApi.data;
+  countryChanged()
+}catch(err){
+  console.log(err)
+}
 }
 
 const countries = ref<AddressDetails[]>([
@@ -262,6 +266,7 @@ const cities = ref<AddressDetails[]>([
 ]);
 
 function countryChanged() {
+  console.log("account info", accountInfo.value)
   let realCountryData = countries.value?.filter(
     (country) => accountInfo.value.country === country.name
   );
@@ -273,6 +278,7 @@ function countryChanged() {
     .then((res) => {
       console.log(res.data);
       states.value = res.data;
+      stateChanged()
     })
     .catch((err) => {
       console.log(err);
@@ -302,15 +308,7 @@ function stateChanged() {
 
 onMounted(() => {
   retrieveAccountInformation();
-  axios
-    .get("https://reimbursement-project.onrender.com/api/allCountries")
-    .then((res) => {
-      console.log(res.data);
-      countries.value = res.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+
 });
 </script>
 
