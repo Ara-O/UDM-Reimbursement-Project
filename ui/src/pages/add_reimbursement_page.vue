@@ -2,7 +2,7 @@
   <section class="add-reimbursement-section">
     <section class="all-activities-section">
       <h3 style="margin-top: 0px" class="all-activities-text">
-        All Activities
+        All Expenses
       </h3>
       <span class="activities-list">
         <ActivityContainer
@@ -14,13 +14,13 @@
       </span>
       <div class="cta-buttons">
         <button class="add-actvities-button" @click="saveReimbursement">
-          Save Ticket
+          Save Reimbursement Request
         </button>
         <button class="add-actvities-button" @click="createPdf">
-          Preview Ticket
+          Preview Reimbursement Request
         </button>
-        <button class="add-actvities-button" @click="createPdf">
-          Submit Ticket
+        <button class="add-actvities-button" @click="submitTicket">
+          Submit Reimbursement Request
         </button>
         <button class="add-actvities-button" @click="router.push('/dashboard')">
           Discard Changes
@@ -276,7 +276,7 @@ let currentReimbursement = ref<ReimbursementTicket>({
   reimbursementId: generateRandomId(),
   eventName: "",
   totalAmount: 0,
-  reimbursementStatus: 0,
+  reimbursementStatus: "",
   reimbursementDate: parseDate(new Date().toISOString()),
   activities: [],
   expenseReason: "",
@@ -554,10 +554,30 @@ async function addReimbursement() {
 }
 
 async function saveReimbursement() {
+  currentReimbursement.value.reimbursementStatus = "In Progress";
+  
   if (userIsEditingReimbursement.value === true) {
     updateReimbursement();
   } else {
     addReimbursement();
+  }
+}
+
+async function submitTicket() {
+  try {
+    currentReimbursement.value.reimbursementStatus = "Submitted";
+
+    await axios.post(
+      "https://reimbursement-project.onrender.com/api/updateReimbursement",
+      {
+        reimbursementTicket: currentReimbursement.value,
+      }
+    );
+
+    router.push("/dashboard");
+    alert("Reimbursement ticket submitted successfully");
+  } catch (error) {
+    console.log(error);
   }
 }
 

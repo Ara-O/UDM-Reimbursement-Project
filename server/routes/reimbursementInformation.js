@@ -27,34 +27,10 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
 //GET /api/retrieveReimbursements
 router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
   try {
-    let sortBy = req.query.sortBy;
-    console.log("sortby", sortBy);
-
     let reimbursements = await Faculty.findOne({
       employmentNumber: req.user.employmentNumber,
     }).select("reimbursementTickets");
 
-    if (sortBy === "Cost Ascending") {
-      reimbursements.reimbursementTickets =
-        reimbursements.reimbursementTickets.sort((a, b) => {
-          return a.totalAmount - b.totalAmount;
-        });
-    }
-
-    if (sortBy === "Cost Descending") {
-      reimbursements.reimbursementTickets =
-        reimbursements.reimbursementTickets.sort((a, b) => {
-          return b.totalAmount - a.totalAmount;
-        });
-    }
-
-    if (sortBy === "Date") {
-      reimbursements.reimbursementTickets =
-        reimbursements.reimbursementTickets.sort((a, b) => {
-          return b.reimbursementDate - b.reimbursementDate;
-        });
-    }
-    console.log(reimbursements);
 
     res.status(200).send(reimbursements.reimbursementTickets);
   } catch (err) {

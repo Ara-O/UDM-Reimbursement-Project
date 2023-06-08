@@ -128,7 +128,7 @@
         <div class="reimbursement" v-for="ticket in filterReimbursements">
           <div class="total-amount">${{ ticket.totalAmount }}</div>
           <h3>{{ ticket.eventName }}</h3>
-          <h4>Status: In Progress</h4>
+          <h4>Status: {{ ticket.reimbursementStatus }}</h4>
           <h5>
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
@@ -385,7 +385,7 @@ async function sortBy(parameter: SortParameters) {
   sortParameter.value = parameter;
   try {
     let reimbursements = await axios.get(
-      "https://reimbursement-project.onrender.com/api/retrieveReimbursements",
+      "http://localhost:8080/api/retrieveReimbursements",
       {
         params: {
           sortBy: parameter,
@@ -420,7 +420,7 @@ onMounted(() => {
 function retrieveReimbursements() {
   axios
     .get(
-      "https://reimbursement-project.onrender.com/api/retrieveReimbursements"
+      "http://localhost:8080/api/retrieveReimbursements"
     )
     .then((res) => {
       console.log(res);

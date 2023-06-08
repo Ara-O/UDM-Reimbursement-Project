@@ -77,7 +77,7 @@ export type ReimbursementTicket = {
   UDMPUVoucher: Boolean;
   eventName: string;
   totalAmount: number;
-  reimbursementStatus: number;
+  reimbursementStatus: string;
   reimbursementDate: string;
   activities: Activity[];
 };

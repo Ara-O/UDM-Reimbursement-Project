@@ -30,11 +30,10 @@ const facultySchema = new Schema({
       eventName: String,
       expenseReason: String,
       destinationLocation: String,
-      holdForPickup: Boolean,
-      directDeposit: Boolean,
+      paymentRetrievalMethod: String,
       UDMPUVoucher: Boolean,
       totalAmount: Number,
-      reimbursementStatus: Boolean,
+      reimbursementStatus: String,
       reimbursementDate: Date,
       activities: [
         {
