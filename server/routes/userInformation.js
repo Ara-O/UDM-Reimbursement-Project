@@ -89,7 +89,6 @@ router.post("/login", async (req, res) => {
           },
           (err, token) => {
             if (!err) {
-              console.log("token", token);
               res.status(200).send({ message: "Login successful", token });
             }
           }
@@ -313,7 +312,6 @@ router.post("/verifyUserSignupToken", async (req, res) => {
 });
 
 router.post("/sendConfirmationEmail", async (req, res) => {
-  console.log(req.body);
   try {
     let userData = req.body.userSignupData;
     jwt.sign({ userData }, process.env.JWT_SECRET, async (err, token) => {
@@ -322,10 +320,10 @@ router.post("/sendConfirmationEmail", async (req, res) => {
       let sanitizedToken = token.replaceAll(".", "$");
       let resp = await transporter.sendMail({
         from: '"UDM Reimbursement Team" <ara@araoladipo.dev>',
-        // to: req.body.workEmail.trim() + "@udmercy.edu",
-        to: "oladipea@udmercy.edu",
+        to: userData.workEmail.trim() + "@udmercy.edu",
+        // to: "oladipea@udmercy.edu",
         subject: "Welcome to the UDM Reimbursement System!",
-        html: `<a href="http://localhost:5173/complete-verification/${sanitizedToken}" target="_blank">Create account</a>`,
+        html: `<a href="https://udm-reimbursement-project.vercel.app/complete-verification/${sanitizedToken}" target="_blank">Create account</a>`,
       });
 
       console.log(resp);
@@ -356,16 +354,13 @@ router.post("/resetPassword", async (req, res) => {
   //parsing the token
   try {
     let token = req.body.token.replaceAll("$", ".");
-    console.log(token);
     jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
       if (!err) {
-        console.log("test", userData.workEmail);
         let encryptedPassword = await encryptPassword(req.body.newPassword);
         const result = await Faculty.findOneAndUpdate(
           { workEmail: userData.workEmail },
           { password: encryptedPassword }
         );
-        console.log(result);
         res.status(200).send({ message: "Password reset successfully" });
       } else {
         console.error(err);
@@ -407,7 +402,6 @@ router.post("/changePassword", verifyToken, async (req, res) => {
 router.get("/retrieveAccountNumbers", async (req, res) => {
   try {
     let allAccountNumbers = await AccountNumbers.find();
-    console.log(allAccountNumbers);
     res.status(200).send(allAccountNumbers[0]);
   } catch (err) {
     res.status(400).send({ message: "There has been an error" });

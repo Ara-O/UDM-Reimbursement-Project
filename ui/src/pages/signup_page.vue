@@ -75,9 +75,12 @@ let userSignupData = reactive<UserData>({
 function sendConfirmationEmail() {
   basicQuestionsSectionIsFinished.value = true;
   axios
-    .post("http://localhost:8080/api/sendConfirmationEmail", {
-      userSignupData,
-    })
+    .post(
+      "https://reimbursement-project.onrender.com/api/sendConfirmationEmail",
+      {
+        userSignupData,
+      }
+    )
     .then((res) => {
       console.log(res);
     })

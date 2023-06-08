@@ -28,6 +28,8 @@
         </option>
       </select>
     </div>
+  </div>
+  <div class="input-field-wrapper">
     <div class="input-field">
       <label for="city">City: *</label>
       <select
@@ -51,6 +53,8 @@
         v-model="userSignupData.mailingAddress"
       />
     </div>
+  </div>
+  <div class="input-field-wrapper">
     <div class="input-field">
       <label for="postal-code">Postal Code: *</label>
       <input
@@ -61,6 +65,7 @@
       />
     </div>
   </div>
+
   <div class="continue-buttons">
     <button
       class="signup-button"
@@ -187,4 +192,14 @@ onMounted(() => {
 
 <style scoped>
 @import url("../../assets/styles/signup-page.css");
+
+.input-field-wrapper {
+  height: 63px;
+}
+
+.input-field label,
+.work-email-section label {
+  /* margin-top: 0px; */
+  align-items: center;
+}
 </style>

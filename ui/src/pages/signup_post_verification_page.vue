@@ -136,9 +136,12 @@ onMounted(() => {
 
   if (route.params.userToken) {
     axios
-      .post("http://localhost:8080/api/verifyUserSignupToken", {
-        token: route.params.userToken,
-      })
+      .post(
+        "https://reimbursement-project.onrender.com/api/verifyUserSignupToken",
+        {
+          token: route.params.userToken,
+        }
+      )
       .then((res) => {
         let userData = res.data.userSignupData;
         console.log(userData);
