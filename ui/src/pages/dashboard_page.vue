@@ -236,24 +236,15 @@ function orderByName() {
 function orderByStatus() {
   sortParameter.value = "Status";
   reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
-    const statusOrder = {
-      Submitted: 0,
-      InProgress: 1,
-      Approved: 2,
-      Denied: 3
-    };
-
-    const statusA = a.reimbursementStatus.toUpperCase();
-    const statusB = b.reimbursementStatus.toUpperCase();
-
-    if (statusOrder[statusA] < statusOrder[statusB]) {
-      return -1;
+    if (a.reimbursementStatus === "Submitted") {
+      return -1 * statusFlag;
     }
-    if (statusOrder[statusA] > statusOrder[statusB]) {
-      return 1;
+    if (a.reimbursementStatus === "In Progress") {
+      return 1 * statusFlag;
     }
     return 0;
   });
+  statusFlag = -statusFlag
 }
 
 function orderByCost() {
