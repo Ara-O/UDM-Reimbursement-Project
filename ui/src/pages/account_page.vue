@@ -81,13 +81,17 @@
               </select>
             </div>
             <div class="input-field">
-              <label for="country">Country:</label>
-              <input
+              <label for="country">Country: *</label>
+              <select
                 name="Country"
                 id="country"
-                v-model="accountInfo.country"
-                required
-              />
+                v-model="accountInfo.country" required
+                @change="countryChanged"
+              >
+                <option :value="country.name" v-for="country in countries">
+                  {{ country.name }}
+                </option>
+              </select>
             </div>
             <div class="input-field">
               <label for="mailing-address">Mailing Address:</label>
@@ -101,24 +105,31 @@
             </div>
 
             <div class="input-field">
-              <label for="city">City:</label>
-              <input
-                type="text"
+              <label for="city">City: *</label>
+              <select
                 name="City"
                 id="city"
-                v-model="accountInfo.city"
-                required
-              />
+                v-model="accountInfo.city" required
+                :disabled="accountInfo.state === ''"
+              >
+                <option :value="city.name" v-for="city in cities">
+                  {{ city.name }}
+                </option>
+              </select>
             </div>
             <div class="input-field">
-              <label for="state">State:</label>
-              <input
+              <label for="state">State: *</label>
+              <select
                 name="State"
                 id="state"
                 :disabled="accountInfo.country === ''"
-                v-model="accountInfo.state"
-                required
-              />
+                v-model="accountInfo.state" required
+                @change="stateChanged"
+              >
+                <option :value="state.name" v-for="state in states">
+                  {{ state.name }}
+                </option>
+              </select>
             </div>
           </div>
           <div class="input-field-wrapper">
@@ -171,8 +182,6 @@ import { useRouter } from "vue-router";
 import { UserDataAcct, AddressDetails } from "../types/types";
 
 const router = useRouter();
-let countries = ref<AddressDetails[]>();
-let states = ref<AddressDetails[]>([]);
 const departments = [
   "Architectural Engineering",
   "Biochemistry",
@@ -208,10 +217,7 @@ function back() {
 
 function save() {
   axios
-    .post(
-      "https://reimbursement-project.onrender.com/api/updateAccountInfo",
-      accountInfo.value
-    )
+    .post("https://reimbursement-project.onrender.com/api/updateAccountInfo", accountInfo.value)
     .then((res) => {
       console.log(res.data);
       alert("Account information updated!");
@@ -222,23 +228,47 @@ function save() {
     });
 }
 
-function retrieveAccountInformation() {
-  axios
+async function retrieveAccountInformation() {
+  try{
+
+    let res = await axios
     .get(
       "https://reimbursement-project.onrender.com/api/retrieveAccountInformation"
-    )
-    .then((res) => {
-      accountInfo.value = res.data;
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      )
+    accountInfo.value = res.data;
+    
+  let countriesFromApi = await axios.get("https://reimbursement-project.onrender.com/api/allCountries")
+  
+  countries.value = countriesFromApi.data;
+  countryChanged()
+}catch(err){
+  console.log(err)
+}
 }
 
+const countries = ref<AddressDetails[]>([
+  {
+    name: "Default",
+    code: "Default",
+  },
+]);
+const states = ref<AddressDetails[]>([
+  {
+    name: "Default",
+    code: "Default",
+  },
+]);
+const cities = ref<AddressDetails[]>([
+  {
+    name: "Default",
+    code: "Default",
+  },
+]);
+
 function countryChanged() {
+  console.log("account info", accountInfo.value)
   let realCountryData = countries.value?.filter(
-    (country: AddressDetails) => accountInfo.value.country === country.name
+    (country) => accountInfo.value.country === country.name
   );
 
   axios
@@ -248,6 +278,28 @@ function countryChanged() {
     .then((res) => {
       console.log(res.data);
       states.value = res.data;
+      stateChanged()
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+function stateChanged() {
+  let realCountryData = countries.value?.filter(
+    (country) => accountInfo.value.country === country.name
+  );
+  let realStateData = states.value?.filter(
+    (state) => accountInfo.value.state === state.name
+  );
+
+  axios
+    .get("https://reimbursement-project.onrender.com/api/getCityFromState", {
+      params: { realCountryData, realStateData },
+    })
+    .then((res) => {
+      console.log(res.data);
+      cities.value = res.data;
     })
     .catch((err) => {
       console.log(err);
@@ -256,15 +308,7 @@ function countryChanged() {
 
 onMounted(() => {
   retrieveAccountInformation();
-  axios
-    .get("https://reimbursement-project.onrender.com/api/allCountries")
-    .then((res) => {
-      console.log(res.data);
-      countries.value = res.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+
 });
 </script>
 
