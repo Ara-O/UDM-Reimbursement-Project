@@ -380,7 +380,7 @@ async function sortBy(parameter: SortParameters) {
   sortParameter.value = parameter;
   try {
     let reimbursements = await axios.get(
-      "http://localhost:8080/api/retrieveReimbursements",
+      "https://reimbursement-project.onrender.com/api/retrieveReimbursements",
       {
         params: {
           sortBy: parameter,
@@ -414,7 +414,9 @@ onMounted(() => {
 
 function retrieveReimbursements() {
   axios
-    .get("http://localhost:8080/api/retrieveReimbursements")
+    .get(
+      "https://reimbursement-project.onrender.com/api/retrieveReimbursements"
+    )
     .then((res) => {
       console.log(res);
       reimbursementTickets.value = res.data;
