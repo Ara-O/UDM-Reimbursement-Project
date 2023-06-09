@@ -91,9 +91,11 @@
         >
           <h3>Sort by Name</h3>
         </div>
-        <div class="filter" 
-        :class="{ selected: sortParameter === 'Cost' }"
-        @click="orderByCost()">
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Cost' }"
+          @click="orderByCost()"
+        >
           <h3>Sort by Cost</h3>
         </div>
         <!--   <div
@@ -178,7 +180,6 @@ import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { date } from "yup";
 
 const router = useRouter();
 const searchValue = ref<string>("");
@@ -199,7 +200,10 @@ type UserData = {
   phoneNumber: string;
 };
 
-let costFlag = -1, nameFlag = -1, dateFlag = -1, statusFlag = -1
+let costFlag = -1,
+  nameFlag = -1,
+  dateFlag = -1,
+  statusFlag = -1;
 
 let userInfo = ref<UserData>({
   employmentNumber: "",
@@ -230,7 +234,7 @@ function orderByName() {
     }
     return 0;
   });
-  nameFlag = -nameFlag
+  nameFlag = -nameFlag;
 }
 
 function orderByStatus() {
@@ -244,7 +248,7 @@ function orderByStatus() {
     }
     return 0;
   });
-  statusFlag = -statusFlag
+  statusFlag = -statusFlag;
 }
 
 function orderByCost() {
@@ -258,7 +262,7 @@ function orderByCost() {
     }
     return 0;
   });
-  costFlag = -costFlag
+  costFlag = -costFlag;
 }
 
 function orderByDate() {
@@ -272,7 +276,7 @@ function orderByDate() {
     }
     return 0;
   });
-  dateFlag = -dateFlag
+  dateFlag = -dateFlag;
 }
 
 const filterReimbursements = computed(() => {
@@ -281,7 +285,7 @@ const filterReimbursements = computed(() => {
         ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
       )
     : reimbursementTickets.value;
-}) ;
+});
 
 function signOut() {
   localStorage.setItem("token", "");
@@ -410,9 +414,7 @@ onMounted(() => {
 
 function retrieveReimbursements() {
   axios
-    .get(
-      "http://localhost:8080/api/retrieveReimbursements"
-    )
+    .get("http://localhost:8080/api/retrieveReimbursements")
     .then((res) => {
       console.log(res);
       reimbursementTickets.value = res.data;
