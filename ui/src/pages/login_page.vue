@@ -146,7 +146,7 @@ function loginUser() {
     loggingIn.value = true;
     axios
       .post(
-        "https://reimbursement-project.onrender.com/api/login",
+        "https://udm-reimbursement-project.onrender.com/api/login",
         userInfo.value
       )
       .then((res) => {
@@ -175,7 +175,7 @@ onMounted(() => {
 
 function sendEmail() {
   axios
-    .post("https://reimbursement-project.onrender.com/api/forgotPassword", {
+    .post("https://udm-reimbursement-project.onrender.com/api/forgotPassword", {
       workEmail: forgotPasswordWorkEmail.value,
     })
     .then((res) => {

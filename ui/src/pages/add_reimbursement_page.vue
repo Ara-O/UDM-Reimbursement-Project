@@ -1,9 +1,7 @@
 <template>
   <section class="add-reimbursement-section">
     <section class="all-activities-section">
-      <h3 style="margin-top: 0px" class="all-activities-text">
-        All Expenses
-      </h3>
+      <h3 style="margin-top: 0px" class="all-activities-text">All Expenses</h3>
       <span class="activities-list">
         <ActivityContainer
           v-for="activity in currentReimbursement.activities"
@@ -410,7 +408,7 @@ async function storeActivityImage() {
     try {
       // Send the FormData object to the server using axios
       let res = await axios.post(
-        "https://reimbursement-project.onrender.com/api/storeActivityImages",
+        "https://udm-reimbursement-project.onrender.com/api/storeActivityImages",
         formData
       );
       return res.data;
@@ -424,7 +422,9 @@ async function storeActivityImage() {
 
 function retrieveFoapaDetails() {
   axios
-    .get(`https://reimbursement-project.onrender.com/api/retrieveFoapaDetails`)
+    .get(
+      `https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails`
+    )
     .then((res) => {
       userFoapaNumbers.value = res.data;
     })
@@ -496,7 +496,7 @@ function deleteActivity(activityId: number) {
 async function userIsUpdatingReimbursement() {
   userIsEditingReimbursement.value = true;
   let reimbursement = await axios.get(
-    "https://reimbursement-project.onrender.com/api/retrieveTicketInformation",
+    "https://udm-reimbursement-project.onrender.com/api/retrieveTicketInformation",
     {
       params: {
         reimbursementId: route.query.reimbursementId,
@@ -518,7 +518,7 @@ async function updateReimbursement() {
   );
 
   await axios.post(
-    "https://reimbursement-project.onrender.com/api/updateReimbursement",
+    "https://udm-reimbursement-project.onrender.com/api/updateReimbursement",
     {
       reimbursementTicket: currentReimbursement.value,
     }
@@ -536,7 +536,7 @@ async function addReimbursement() {
       );
 
       await axios.post(
-        "https://reimbursement-project.onrender.com/api/addReimbursement",
+        "https://udm-reimbursement-project.onrender.com/api/addReimbursement",
         {
           reimbursementTicket: currentReimbursement.value,
         }
@@ -555,7 +555,7 @@ async function addReimbursement() {
 
 async function saveReimbursement() {
   currentReimbursement.value.reimbursementStatus = "In Progress";
-  
+
   if (userIsEditingReimbursement.value === true) {
     updateReimbursement();
   } else {
@@ -568,7 +568,7 @@ async function submitTicket() {
     currentReimbursement.value.reimbursementStatus = "Submitted";
 
     await axios.post(
-      "https://reimbursement-project.onrender.com/api/updateReimbursement",
+      "https://udm-reimbursement-project.onrender.com/api/updateReimbursement",
       {
         reimbursementTicket: currentReimbursement.value,
       }
@@ -632,18 +632,21 @@ function createPdf() {
 
   axios
     .get(
-      `https://reimbursement-project.onrender.com/api/retrieveAccountInformation`
+      `https://udm-reimbursement-project.onrender.com/api/retrieveAccountInformation`
     )
     .then((response) => {
       if (userIsEditingReimbursement.value === true) {
         currentReimbursement.value.totalAmount = getAllActivitiesAmount();
         axios
-          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
-            params: {
-              reimbursementData: currentReimbursement.value,
-              userInfo: response.data,
-            },
-          })
+          .get(
+            "https://udm-reimbursement-project.onrender.com/api/generatePdf",
+            {
+              params: {
+                reimbursementData: currentReimbursement.value,
+                userInfo: response.data,
+              },
+            }
+          )
           .then((res) => {
             downloadPDF(res.data);
             currentlyCreatingPDF.value = false;
@@ -653,12 +656,15 @@ function createPdf() {
           });
       } else {
         axios
-          .get("https://reimbursement-project.onrender.com/api/generatePdf", {
-            params: {
-              reimbursementData: currentReimbursement.value,
-              userInfo: response.data,
-            },
-          })
+          .get(
+            "https://udm-reimbursement-project.onrender.com/api/generatePdf",
+            {
+              params: {
+                reimbursementData: currentReimbursement.value,
+                userInfo: response.data,
+              },
+            }
+          )
           .then((res) => {
             downloadPDF(res.data);
             currentlyCreatingPDF.value = false;

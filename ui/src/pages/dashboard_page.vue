@@ -295,9 +295,12 @@ function signOut() {
 
 function deleteFoapa(foapaNumber: string) {
   axios
-    .post("https://reimbursement-project.onrender.com/api/deleteFoapaDetail", {
-      foapaNumber,
-    })
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/deleteFoapaDetail",
+      {
+        foapaNumber,
+      }
+    )
     .then(() => {
       console.log("The thing that was deleted: " + foapaNumber);
       alert("Foapa Deleted Successfully");
@@ -312,7 +315,7 @@ function deleteFoapa(foapaNumber: string) {
 function deleteReimbursement(id: string) {
   axios
     .post(
-      "https://reimbursement-project.onrender.com/api/deleteReimbursement",
+      "https://udm-reimbursement-project.onrender.com/api/deleteReimbursement",
       {
         id,
       }
@@ -328,7 +331,9 @@ let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 function retrieveUserFoapaNumbers() {
   axios
-    .get(`https://reimbursement-project.onrender.com/api/retrieveFoapaDetails`)
+    .get(
+      `https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails`
+    )
     .then((res) => {
       userFoapaNumbers.value = res.data;
       console.log(res);
@@ -341,7 +346,7 @@ function retrieveUserFoapaNumbers() {
 function retrieveUserInformationSummary() {
   axios
     .get(
-      "https://reimbursement-project.onrender.com/api/retrieveUserInformationSummary"
+      "https://udm-reimbursement-project.onrender.com/api/retrieveUserInformationSummary"
     )
     .then((res) => {
       userInfo.value = res.data;
@@ -380,7 +385,7 @@ async function sortBy(parameter: SortParameters) {
   sortParameter.value = parameter;
   try {
     let reimbursements = await axios.get(
-      "https://reimbursement-project.onrender.com/api/retrieveReimbursements",
+      "https://udm-reimbursement-project.onrender.com/api/retrieveReimbursements",
       {
         params: {
           sortBy: parameter,
@@ -415,7 +420,7 @@ onMounted(() => {
 function retrieveReimbursements() {
   axios
     .get(
-      "https://reimbursement-project.onrender.com/api/retrieveReimbursements"
+      "https://udm-reimbursement-project.onrender.com/api/retrieveReimbursements"
     )
     .then((res) => {
       console.log(res);

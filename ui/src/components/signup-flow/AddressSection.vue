@@ -122,9 +122,12 @@ function countryChanged() {
   );
 
   axios
-    .get("https://reimbursement-project.onrender.com/api/getStateFromCountry", {
-      params: { realCountryData },
-    })
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/getStateFromCountry",
+      {
+        params: { realCountryData },
+      }
+    )
     .then((res) => {
       console.log(res.data);
       states.value = res.data;
@@ -145,9 +148,12 @@ function stateChanged() {
   );
 
   axios
-    .get("https://reimbursement-project.onrender.com/api/getCityFromState", {
-      params: { realCountryData, realStateData },
-    })
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/getCityFromState",
+      {
+        params: { realCountryData, realStateData },
+      }
+    )
     .then((res) => {
       console.log(res.data);
       cities.value = res.data;
@@ -179,7 +185,7 @@ function progress() {
 
 onMounted(() => {
   axios
-    .get("https://reimbursement-project.onrender.com/api/allCountries")
+    .get("https://udm-reimbursement-project.onrender.com/api/allCountries")
     .then((res) => {
       console.log(res.data);
       countries.value = res.data;

@@ -110,7 +110,7 @@ function registerUser() {
   creatingAccountFeedback.value = true;
   axios
     .post(
-      "https://reimbursement-project.onrender.com/api/register",
+      "https://udm-reimbursement-project.onrender.com/api/register",
       userSignupData
     )
     .then((res) => {
@@ -137,7 +137,7 @@ onMounted(() => {
   if (route.params.userToken) {
     axios
       .post(
-        "https://reimbursement-project.onrender.com/api/verifyUserSignupToken",
+        "https://udm-reimbursement-project.onrender.com/api/verifyUserSignupToken",
         {
           token: route.params.userToken,
         }

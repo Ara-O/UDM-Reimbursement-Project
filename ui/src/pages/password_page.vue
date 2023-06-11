@@ -53,7 +53,6 @@
                   v-model="reEnteredPassword"
                 />
               </div>
-              
             </div>
           </div>
           <div class="continue-buttons">
@@ -104,10 +103,13 @@ function changePassword() {
     alert("New password can not match current password, please try again");
   } else {
     axios
-      .post("https://reimbursement-project.onrender.com/api/changePassword", {
-        currentPassword: currentPassword.value,
-        newPassword: newPassword.value,
-      })
+      .post(
+        "https://udm-reimbursement-project.onrender.com/api/changePassword",
+        {
+          currentPassword: currentPassword.value,
+          newPassword: newPassword.value,
+        }
+      )
       .then((res) => {
         alert(res.data.message);
         router.push("/dashboard");

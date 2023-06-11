@@ -91,7 +91,7 @@ export default function createPdfDefinition(
           {},
           {
             svg:
-              reimbursementData.paymentRetrievalMethod === "Direct Deposit"
+              reimbursementData.paymentRetrievalMethod !== "Hold for Pickup"
                 ? `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`
                 : `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg">
                 <rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/>
@@ -102,7 +102,7 @@ export default function createPdfDefinition(
           {},
           {
             svg:
-              reimbursementData.paymentRetrievalMethod === "Hold for Pickup"
+              reimbursementData.paymentRetrievalMethod !== "Direct Deposit"
                 ? `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`
                 : `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg">
             <rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/>

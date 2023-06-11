@@ -76,7 +76,7 @@ function sendConfirmationEmail() {
   basicQuestionsSectionIsFinished.value = true;
   axios
     .post(
-      "https://reimbursement-project.onrender.com/api/sendConfirmationEmail",
+      "https://udm-reimbursement-project.onrender.com/api/sendConfirmationEmail",
       {
         userSignupData,
       }

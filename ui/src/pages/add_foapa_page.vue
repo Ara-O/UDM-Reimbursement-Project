@@ -304,9 +304,12 @@ function addFoapa() {
 
 function updateFoapa() {
   axios
-    .post("https://reimbursement-project.onrender.com/api/updateFoapaDetails", {
-      foapaData: foapaList.value,
-    })
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/updateFoapaDetails",
+      {
+        foapaData: foapaList.value,
+      }
+    )
     .then((res) => {
       alert(res.data.message);
       router.push("/dashboard");
@@ -320,7 +323,9 @@ function updateFoapa() {
 function retrieveFoapaDetails() {
   //REFACTOR
   axios
-    .get(`https://reimbursement-project.onrender.com/api/retrieveFoapaDetails`)
+    .get(
+      `https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails`
+    )
     .then((res) => {
       res.data.forEach((foapa) => {
         let foapaEdited: FoapaStuff = {

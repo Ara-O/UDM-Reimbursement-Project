@@ -85,7 +85,8 @@
               <select
                 name="Country"
                 id="country"
-                v-model="accountInfo.country" required
+                v-model="accountInfo.country"
+                required
                 @change="countryChanged"
               >
                 <option :value="country.name" v-for="country in countries">
@@ -109,7 +110,8 @@
               <select
                 name="City"
                 id="city"
-                v-model="accountInfo.city" required
+                v-model="accountInfo.city"
+                required
                 :disabled="accountInfo.state === ''"
               >
                 <option :value="city.name" v-for="city in cities">
@@ -123,7 +125,8 @@
                 name="State"
                 id="state"
                 :disabled="accountInfo.country === ''"
-                v-model="accountInfo.state" required
+                v-model="accountInfo.state"
+                required
                 @change="stateChanged"
               >
                 <option :value="state.name" v-for="state in states">
@@ -217,7 +220,10 @@ function back() {
 
 function save() {
   axios
-    .post("https://reimbursement-project.onrender.com/api/updateAccountInfo", accountInfo.value)
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/updateAccountInfo",
+      accountInfo.value
+    )
     .then((res) => {
       console.log(res.data);
       alert("Account information updated!");
@@ -229,21 +235,21 @@ function save() {
 }
 
 async function retrieveAccountInformation() {
-  try{
-
-    let res = await axios
-    .get(
-      "https://reimbursement-project.onrender.com/api/retrieveAccountInformation"
-      )
+  try {
+    let res = await axios.get(
+      "https://udm-reimbursement-project.onrender.com/api/retrieveAccountInformation"
+    );
     accountInfo.value = res.data;
-    
-  let countriesFromApi = await axios.get("https://reimbursement-project.onrender.com/api/allCountries")
-  
-  countries.value = countriesFromApi.data;
-  countryChanged()
-}catch(err){
-  console.log(err)
-}
+
+    let countriesFromApi = await axios.get(
+      "https://udm-reimbursement-project.onrender.com/api/allCountries"
+    );
+
+    countries.value = countriesFromApi.data;
+    countryChanged();
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 const countries = ref<AddressDetails[]>([
@@ -266,19 +272,22 @@ const cities = ref<AddressDetails[]>([
 ]);
 
 function countryChanged() {
-  console.log("account info", accountInfo.value)
+  console.log("account info", accountInfo.value);
   let realCountryData = countries.value?.filter(
     (country) => accountInfo.value.country === country.name
   );
 
   axios
-    .get("https://reimbursement-project.onrender.com/api/getStateFromCountry", {
-      params: { realCountryData },
-    })
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/getStateFromCountry",
+      {
+        params: { realCountryData },
+      }
+    )
     .then((res) => {
       console.log(res.data);
       states.value = res.data;
-      stateChanged()
+      stateChanged();
     })
     .catch((err) => {
       console.log(err);
@@ -294,9 +303,12 @@ function stateChanged() {
   );
 
   axios
-    .get("https://reimbursement-project.onrender.com/api/getCityFromState", {
-      params: { realCountryData, realStateData },
-    })
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/getCityFromState",
+      {
+        params: { realCountryData, realStateData },
+      }
+    )
     .then((res) => {
       console.log(res.data);
       cities.value = res.data;
@@ -308,7 +320,6 @@ function stateChanged() {
 
 onMounted(() => {
   retrieveAccountInformation();
-
 });
 </script>
 
