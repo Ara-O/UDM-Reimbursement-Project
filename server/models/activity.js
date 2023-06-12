@@ -1,16 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 const activitySchema = new Schema({
-  activityId: {
-    type: Number,
-    unique: true,
-  },
-  reimbursementId: String,
-  foapaNumber: String,
+  foapaNumber: { type: mongoose.Schema.Types.ObjectId, ref: "reimbursements" },
   activityName: String,
-  activityReceipt: String,
-  activityDate: String,
-  amount: Number,
+  activityReceipt: [String],
+  activityDate: Date,
+  cost: Number,
 });
 
 const Activity = mongoose.model("Activity", activitySchema);

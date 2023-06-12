@@ -1,29 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 
 const reimbursementSchema = new Schema({
-  reimbursementId: {
-    type: Number,
-    unique: true,
-  },
-  employmentNumber: String,
-  eventName: String,
-  totalAmount: Number,
-  reimbursementStatus: Boolean,
+  reimbursementName: String,
+  reimbursementReason: String,
+  destination: String,
+  paymentRetrievalMethod: String,
+  UDMPUVoucher: Boolean,
+  totalCost: Number,
+  reimbursementStatus: String,
   reimbursementDate: Date,
-  activities: [
-    {
-      activityId: {
-        type: Number,
-        unique: true,
-      },
-      reimbursementId: String,
-      foapaNumber: String,
-      activityName: String,
-      activityReceipt: String,
-      activityDate: String,
-      amount: Number,
-    },
-  ],
+  activities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Activity" }],
 });
 
 //reimbursements
