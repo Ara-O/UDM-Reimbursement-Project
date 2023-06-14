@@ -106,7 +106,7 @@ router.post("/login", async (req, res) => {
       );
       if (passwordMatches) {
         jwt.sign(
-          { userId: faculty._id },
+          { userId: facultyInfo._id },
           process.env.JWT_SECRET,
           {
             expiresIn: "30d",

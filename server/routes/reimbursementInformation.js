@@ -2,21 +2,35 @@ import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
 import updateFoapaDetails from "../utils/updateFoapaDetails.js";
 import Faculty from "../models/faculty.js";
+import ReimbursementTicket from "../models/reimbursement.js";
 const router = Router();
+
+//GET /api/retrieveReimbursements
+router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
+  try {
+    let reimbursements = await Faculty.findById(req.user.userId)
+      .populate("reimbursementTickets")
+      .select("reimbursementTickets");
+    res.status(200).send(reimbursements.reimbursementTickets);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: err.message });
+  }
+});
 
 // POST /api/addReimbursement
 router.post("/addReimbursement", verifyToken, async (req, res) => {
   try {
-    let userInfo = await Faculty.findOne({
-      employmentNumber: req.user.employmentNumber,
-    });
+    let userInfo = await Faculty.findById(req.user.userId);
 
-    await userInfo.reimbursementTickets.push(req.body.reimbursementTicket);
+    let reimbursementTicket = new ReimbursementTicket(
+      req.body.reimbursementTicket
+    );
 
-    //Update foapa details
-    await userInfo.save();
+    await reimbursementTicket.save();
+    userInfo.reimbursementTickets.push(reimbursementTicket);
+    userInfo.save();
 
-    //Save
     res
       .status(200)
       .send({ message: "Reimbursement ticket added successfully" });
@@ -25,39 +39,20 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
   }
 });
 
-//GET /api/retrieveReimbursements
-router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
-  try {
-    let reimbursements = await Reimbursement.findById().select(
-      "reimbursementTickets"
-    );
-
-    res.status(200).send(reimbursements.reimbursementTickets);
-  } catch (err) {
-    console.error(err);
-    res.status(400).send({ message: err.message });
-  }
-});
-
+//GET /api/retrieveTicketInformation
 router.get("/retrieveTicketInformation", verifyToken, async (req, res) => {
   try {
     const reimbursementId = req.query.reimbursementId;
-    let ticketInfo = await Faculty.findOne(
-      {
-        employmentNumber: req.user.employmentNumber,
-        "reimbursementTickets.reimbursementId": reimbursementId,
-      },
-      { "reimbursementTickets.$": 1 }
-    );
-    res.status(200).send(ticketInfo.reimbursementTickets[0]);
+    let ticketInfo = await ReimbursementTicket.findById(reimbursementId);
+    res.status(200).send(ticketInfo);
   } catch (err) {
     console.error(err);
     res.status(400).send({ message: err.message });
   }
 });
 
+//POST /api/updateReimbursement
 router.post("/updateReimbursement", verifyToken, async (req, res) => {
-  //REFACTOR
   const { reimbursementId } = req.body.reimbursementTicket;
   try {
     const result = await Faculty.findOneAndUpdate(

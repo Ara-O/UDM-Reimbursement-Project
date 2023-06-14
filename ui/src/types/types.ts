@@ -53,12 +53,12 @@ export type AddressDetails = {
 };
 
 export type Activity = {
-  activityId: number;
   activityName: string;
-  amount: number;
+  cost: number;
   foapaNumber: string;
   activityDate: string;
   activityReceipt: string;
+  _id?: any;
 };
 
 export type FoapaNumbers = {
@@ -70,13 +70,12 @@ export type FoapaNumbers = {
 };
 
 export type ReimbursementTicket = {
-  reimbursementId: number;
-  expenseReason: String;
-  destinationLocation: String;
+  reimbursementName: String;
+  reimbursementReason: String;
+  destination: String;
   paymentRetrievalMethod: "Hold for Pickup" | "Direct Deposit" | "";
   UDMPUVoucher: Boolean;
-  eventName: string;
-  totalAmount: number;
+  totalCost: number;
   reimbursementStatus: string;
   reimbursementDate: string;
   activities: Activity[];

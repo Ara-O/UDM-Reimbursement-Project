@@ -19,7 +19,7 @@ router.post("/updateFoapaDetails", verifyToken, async (req, res) => {
 router.get("/retrieveFoapaDetails", verifyToken, async (req, res) => {
   try {
     let foapaDetails = await Faculty.findById(req.user.userId).select(
-      "foapaDetails"
+      "foapaDetails "
     );
 
     res.status(200).send(foapaDetails.foapaDetails);

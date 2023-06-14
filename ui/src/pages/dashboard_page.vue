@@ -73,14 +73,14 @@
       <br />
       <div class="reimbursement-wrapper">
         <div class="reimbursement" v-for="ticket in filterReimbursements">
-          <div class="total-amount">${{ ticket.totalAmount }}</div>
-          <h3>{{ ticket.eventName }}</h3>
+          <div class="total-amount">${{ ticket.totalCost }}</div>
+          <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
           <h5>
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
           <div class="reimbursement-buttons">
-            <button @click="viewTicket(ticket.reimbursementId)">Modify</button>
+            <button @click="viewTicket(ticket._id)">Modify</button>
             <button @click="deleteReimbursement(ticket.reimbursementId)">
               Delete
             </button>
@@ -163,7 +163,7 @@ let reimbursementTickets = ref<any>([
   // {
   //   reimbursementId: 169449298,
   //   eventName: "Reim3",
-  //   totalAmount: 300,
+  //   totalCost: 300,
   //   reimbursementStatus: false,
   //   reimbursementDate: "2023-05-21",
   // },
@@ -200,10 +200,10 @@ function orderByStatus() {
 function orderByCost() {
   sortParameter.value = "Cost";
   reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
-    if (a.totalAmount < b.totalAmount) {
+    if (a.totalCost < b.totalCost) {
       return 1 * costFlag;
     }
-    if (a.totalAmount > b.totalAmount) {
+    if (a.totalCost > b.totalCost) {
       return -1 * costFlag;
     }
     return 0;
@@ -281,7 +281,6 @@ function addReimbursement() {
 }
 
 function viewTicket(reimbursementId: string) {
-  console.log(reimbursementId);
   router.push({ path: "/add-reimbursement", query: { reimbursementId } });
 }
 

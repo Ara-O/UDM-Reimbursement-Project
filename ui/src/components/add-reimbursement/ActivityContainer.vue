@@ -3,13 +3,13 @@
     <h3>{{ activity.activityName }}</h3>
     <h4>
       Date: {{ parseDate(activity.activityDate) }} || Cost:
-      {{ activity.amount }}
+      {{ activity.cost }}
     </h4>
     <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
     <div class="activity-options-wrapper">
       <div
         class="activity-option"
-        @click="$emit('deleteActivity', activity.activityId)"
+        @click="$emit('deleteActivity', activity._id)"
       >
         <img
           src="../../assets/trash-icon-white.png"
@@ -18,10 +18,7 @@
           style="width: 13px"
         />
       </div>
-      <div
-        @click="$emit('editActivity', activity.activityId)"
-        class="activity-option"
-      >
+      <div @click="$emit('editActivity', activity._id)" class="activity-option">
         <img
           src="../../assets/edit-icon.png"
           class="edit-icon-button"

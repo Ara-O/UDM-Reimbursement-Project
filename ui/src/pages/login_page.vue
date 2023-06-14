@@ -57,6 +57,9 @@
     <h5 v-if="loggingIn" style="font-weight: 400">
       Logging you in...Please wait...
     </h5>
+    <h5 v-if="error && !loggingIn" style="font-weight: 400">
+      {{ errorMessage }}
+    </h5>
   </section>
   <section class="login-page" v-if="section === 'forgot-password'">
     <div class="udmercy-logo-wrapper">
@@ -127,37 +130,28 @@ import { isNotEmpty, isValidString } from "../utils/validators";
 let section = ref<"login" | "forgot-password">("login");
 let emailSent = ref<boolean>(false);
 let loggingIn = ref<boolean>(false);
+let errorMessage = ref<string>("");
+let error = ref<boolean>(false);
 let userInfo = ref<any>({ workEmail: "", password: "" });
 let forgotPasswordWorkEmail = ref<string>("");
 const router = useRouter();
 function loginUser() {
-  let pattern = /^[a-zA-Z0-9\s-]+$/;
-
-  if (userInfo.value.workEmail.trim() === "") {
-    loggingIn.value = false;
-    alert("Work Email cannot be empty");
-  } else if (!pattern.test(userInfo.value.workEmail)) {
-    loggingIn.value = false;
-    alert("Work Email contains invalid characters");
-  } else {
-    loggingIn.value = true;
-    axios
-      .post("http://localhost:8080/api/login", userInfo.value)
-      .then((res) => {
-        console.log(res);
-        alert(res.data.message);
-        loggingIn.value = false;
-        localStorage.setItem("token", res.data.token);
-        axios.defaults.headers.common["authorization"] =
-          localStorage.getItem("token");
-        router.push("/dashboard");
-      })
-      .catch((err) => {
-        loggingIn.value = false;
-        console.log(err);
-        alert(err.response.data.message);
-      });
-  }
+  loggingIn.value = true;
+  axios
+    .post("http://localhost:8080/api/login", userInfo.value)
+    .then((res) => {
+      console.log(res);
+      loggingIn.value = false;
+      localStorage.setItem("token", res.data.token);
+      axios.defaults.headers.common["authorization"] =
+        localStorage.getItem("token");
+      router.push("/dashboard");
+    })
+    .catch((err) => {
+      loggingIn.value = false;
+      error.value = true;
+      errorMessage.value = err.response.data.message;
+    });
 }
 
 onMounted(() => {

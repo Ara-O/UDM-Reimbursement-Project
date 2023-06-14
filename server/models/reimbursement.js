@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
 const reimbursementSchema = new Schema({
-  facultyId: { type: mongoose.Types.ObjectId, ref: "Faculty" },
   reimbursementName: String,
   reimbursementReason: String,
   destination: String,

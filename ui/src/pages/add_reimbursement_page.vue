@@ -35,7 +35,7 @@
       <div class="reimbursement-title">
         <input
           class="reimbursement-title-text"
-          v-model="currentReimbursement.eventName"
+          v-model="currentReimbursement.reimbursementName"
           placeholder="Reimbursement Title"
         />
         <img
@@ -52,7 +52,7 @@
           <h3 style="font-size: 14.5px">Reason for Travel/Expense:</h3>
           <input
             name="expenseReason"
-            v-model="currentReimbursement.expenseReason"
+            v-model="currentReimbursement.reimbursementReason"
             class="input-field"
           />
         </span>
@@ -60,7 +60,7 @@
           <h3 style="font-size: 14.5px">Destination-City,State,Country:</h3>
           <input
             name="expenseReason"
-            v-model="currentReimbursement.destinationLocation"
+            v-model="currentReimbursement.destination"
             class="input-field"
           />
         </span>
@@ -139,7 +139,7 @@
           <span>
             <h3 style="font-size: 14.5px">Cost:</h3>
             <input
-              v-model="currentActivity.amount"
+              v-model="currentActivity.cost"
               type="number"
               placeholder="$ Cost"
               min="0"
@@ -251,13 +251,7 @@
 import ActivityContainer from "../components/add-reimbursement/ActivityContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import {
-  Activity,
-  FoapaNumbers,
-  ReimbursementTicket,
-  FoapaStuff,
-} from "../types/types";
-import generateRandomId from "../utils/generateRandomId";
+import { Activity, ReimbursementTicket, FoapaStuff } from "../types/types";
 import parseDate from "../utils/parseDate";
 import axios from "axios";
 
@@ -267,23 +261,21 @@ const route = useRoute();
 const receiptRef = ref(null);
 
 let currentActivity = ref<Activity>({
-  activityId: generateRandomId(),
   activityName: "",
-  amount: 0,
+  cost: 0,
   activityDate: "",
   activityReceipt: "",
   foapaNumber: "",
 });
 
 let currentReimbursement = ref<ReimbursementTicket>({
-  reimbursementId: generateRandomId(),
-  eventName: "",
-  totalAmount: 0,
+  reimbursementName: "",
+  totalCost: 0,
+  reimbursementReason: "",
   reimbursementStatus: "",
   reimbursementDate: parseDate(new Date().toISOString()),
   activities: [],
-  expenseReason: "",
-  destinationLocation: "",
+  destination: "",
   paymentRetrievalMethod: "",
   UDMPUVoucher: false,
 });
@@ -337,9 +329,8 @@ const expensesDefaults = [
 
 function resetActivity() {
   currentActivity.value = {
-    activityId: generateRandomId(),
     activityName: "",
-    amount: 0,
+    cost: 0,
     activityDate: "",
     activityReceipt: "",
     foapaNumber: "",
@@ -367,8 +358,8 @@ async function addActivity() {
   if (limitReached) return;
 
   if (
-    String(currentActivity.value.amount).includes("-") ||
-    String(currentActivity.value.amount).trim() === ""
+    String(currentActivity.value.cost).includes("-") ||
+    String(currentActivity.value.cost).trim() === ""
   ) {
     alert("Invalid character/s in the cost field");
     return;
@@ -376,7 +367,7 @@ async function addActivity() {
 
   console.log(selectedFoapaAmount.value);
   if (selectedFoapaAmount.value !== undefined) {
-    if (currentActivity.value.amount > (selectedFoapaAmount.value ?? 0)) {
+    if (currentActivity.value.cost > (selectedFoapaAmount.value ?? 0)) {
       alert(
         "Warning: Activity cost exceeds the selected FOAPA's current amount"
       );
@@ -387,7 +378,7 @@ async function addActivity() {
     alert("Please type in a description of 'Other' expense.");
   } else if (
     currentActivity.value.activityName !== "" &&
-    currentActivity.value.amount !== 0 &&
+    currentActivity.value.cost !== 0 &&
     currentActivity.value.foapaNumber !== "" &&
     currentActivity.value.activityDate !== ""
   ) {
@@ -443,17 +434,16 @@ function retrieveFoapaDetails() {
 }
 
 function editActivity(activityId: number) {
-  const activity = currentReimbursement.value.activities.find(
-    (activity) => activity.activityId === activityId
-  );
-
-  if (activity) {
-    userIsEditingActivity.value = true;
-    activity.activityDate = parseDate(activity.activityDate);
-    currentActivity.value = Object.assign({}, activity);
-    //@ts-ignore
-    receiptRef.value.value = "";
-  }
+  // const activity = currentReimbursement.value.activities.find(
+  //   (activity) => activity.activityId === activityId
+  // );
+  // if (activity) {
+  //   userIsEditingActivity.value = true;
+  //   activity.activityDate = parseDate(activity.activityDate);
+  //   currentActivity.value = Object.assign({}, activity);
+  //   //@ts-ignore
+  //   receiptRef.value.value = "";
+  // }
 }
 
 function discardActivityChanges() {
@@ -464,42 +454,38 @@ function discardActivityChanges() {
 // UPDATING ACTIVITY
 
 async function updateActivity() {
-  currentlyUpdatingActivity.value = true;
-  let editedActivityIndex = currentReimbursement.value.activities.findIndex(
-    (activity) => activity.activityId === currentActivity.value.activityId
-  );
-
-  currentReimbursement.value.totalAmount = getAllActivitiesAmount();
-
-  currentReimbursement.value.activities[editedActivityIndex] =
-    currentActivity.value;
-
-  //@ts-ignore
-  const files = receiptRef.value.files;
-  if (files.length > 0) {
-    let storedImagesURL = await storeActivityImage();
-    currentReimbursement.value.activities[editedActivityIndex].activityReceipt =
-      storedImagesURL;
-  }
-
-  currentlyUpdatingActivity.value = false;
-  alert("Activity updated successfully");
-  discardActivityChanges();
+  // currentlyUpdatingActivity.value = true;
+  // let editedActivityIndex = currentReimbursement.value.activities.findIndex(
+  //   (activity) => activity.activityId === currentActivity.value.activityId
+  // );
+  // currentReimbursement.value.totalAmount = getAllActivitiesAmount();
+  // currentReimbursement.value.activities[editedActivityIndex] =
+  //   currentActivity.value;
+  // //@ts-ignore
+  // const files = receiptRef.value.files;
+  // if (files.length > 0) {
+  //   let storedImagesURL = await storeActivityImage();
+  //   currentReimbursement.value.activities[editedActivityIndex].activityReceipt =
+  //     storedImagesURL;
+  // }
+  // currentlyUpdatingActivity.value = false;
+  // alert("Activity updated successfully");
+  // discardActivityChanges();
 }
 
 function getAllActivitiesAmount(): number {
   let sum: number = 0;
   currentReimbursement.value.activities.forEach((activity) => {
-    sum += Number(activity.amount);
+    sum += Number(activity.cost);
   });
   return sum;
 }
 
 function deleteActivity(activityId: number) {
-  currentReimbursement.value.activities =
-    currentReimbursement.value.activities.filter(
-      (activity) => activity.activityId != activityId
-    );
+  // currentReimbursement.value.activities =
+  //   currentReimbursement.value.activities.filter(
+  //     (activity) => activity.activityId != activityId
+  //   );
 }
 
 async function userIsUpdatingReimbursement() {
@@ -517,11 +503,11 @@ async function userIsUpdatingReimbursement() {
 }
 
 async function updateReimbursement() {
-  if (currentReimbursement.value.eventName.trim() === "") {
+  if (currentReimbursement.value.reimbursementName.trim() === "") {
     alert("Reimbursement Title Missing");
     return;
   }
-  currentReimbursement.value.totalAmount = getAllActivitiesAmount();
+  currentReimbursement.value.totalCost = getAllActivitiesAmount();
   currentReimbursement.value.reimbursementDate = parseDate(
     new Date().toISOString()
   );
@@ -535,8 +521,8 @@ async function updateReimbursement() {
 
 async function addReimbursement() {
   try {
-    if (currentReimbursement.value.eventName.trim() !== "") {
-      currentReimbursement.value.totalAmount = getAllActivitiesAmount();
+    if (currentReimbursement.value.reimbursementName.trim() !== "") {
+      currentReimbursement.value.totalCost = getAllActivitiesAmount();
       currentReimbursement.value.reimbursementDate = parseDate(
         new Date().toISOString()
       );
@@ -634,7 +620,7 @@ function createPdf() {
     .get(`http://localhost:8080/api/retrieveAccountInformation`)
     .then((response) => {
       if (userIsEditingReimbursement.value === true) {
-        currentReimbursement.value.totalAmount = getAllActivitiesAmount();
+        currentReimbursement.value.totalCost = getAllActivitiesAmount();
         axios
           .get("http://localhost:8080/api/generatePdf", {
             params: {
