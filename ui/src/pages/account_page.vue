@@ -63,7 +63,6 @@
                 id="employment-number"
                 v-model="accountInfo.employmentNumber"
                 required
-                disabled
               />
             </div>
 
