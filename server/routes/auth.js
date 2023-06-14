@@ -29,14 +29,12 @@ router.post("/register", async (req, res) => {
     userData.password = encryptedPassword;
 
     const faculty = new Faculty(userData);
-    console.log("faculty", faculty);
     let existingUser = await Faculty.findOne({
       employmentNumber: userData.employmentNumber,
     });
 
     if (existingUser) {
-      console.log("User already exists");
-      res.status(409).send({ message: "User already exists" });
+      res.status(409).send({ message: "Error: User already exists" });
     } else {
       userData.foapaList.forEach((foapa) => {
         const foapaDetail = new Foapa(foapa);
@@ -67,6 +65,36 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     res.status(400).send({ message: error.message });
     console.error(error.message);
+  }
+});
+
+router.post("/verifySignupBasicInformation", async (req, res) => {
+  try {
+    let facultyFound = await Faculty.findOne({
+      employmentNumber: "T" + req.body.employmentNumber,
+    });
+
+    if (facultyFound !== null) {
+      return res.status(409).send({
+        message:
+          "An employee with the inputted employment number already exists",
+      });
+    } else {
+      let facultyWithSameEmail = await Faculty.findOne({
+        workEmail: req.body.workEmail + "@udmercy.edu",
+      });
+
+      if (facultyWithSameEmail) {
+        return res.status(409).send({
+          message: "An employee with the inputted email address already exists",
+        });
+      } else {
+        return res.status(200).send();
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
   }
 });
 

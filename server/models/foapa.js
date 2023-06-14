@@ -1,33 +1,14 @@
 import mongoose from "mongoose";
 
 const FoapaSchema = new mongoose.Schema({
-  fund: String,
-  organization: {
-    type: String,
-    default: null,
-  },
-  account: String,
-  program: {
-    type: String,
-    default: null,
-  },
-  activity: {
-    type: String,
-    default: null,
-  },
-  foapaName: {
-    type: String,
-    default: null,
-  },
-
-  initialAmount: {
-    type: String,
-    default: null,
-  },
-  currentAmount: {
-    type: String,
-    default: null,
-  },
+  fund: Number,
+  organization: Number,
+  account: Number,
+  program: Number,
+  activity: Number,
+  foapaName: String,
+  initialAmount: Number,
+  currentAmount: Number,
 });
 
 const Foapas = mongoose.model("Foapa", FoapaSchema);

@@ -9,7 +9,15 @@ const reimbursementSchema = new Schema({
   totalCost: Number,
   reimbursementStatus: String,
   reimbursementDate: Date,
-  activities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Activity" }],
+  activities: [
+    {
+      foapaNumber: String,
+      activityName: String,
+      activityReceipt: [String],
+      activityDate: Date,
+      cost: Number,
+    },
+  ],
 });
 
 //reimbursements

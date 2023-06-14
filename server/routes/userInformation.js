@@ -154,36 +154,6 @@ router.post("/updateAccountInfo", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/verifySignupBasicInformation", async (req, res) => {
-  try {
-    let facultyFound = await Faculty.findOne({
-      employmentNumber: "T" + req.body.employmentNumber,
-    });
-
-    if (facultyFound !== null) {
-      return res.status(409).send({
-        message:
-          "An employee with the inputted employment number already exists",
-      });
-    } else {
-      let facultyWithSameEmail = await Faculty.findOne({
-        workEmail: req.body.workEmail + "@udmercy.edu",
-      });
-
-      if (facultyWithSameEmail) {
-        return res.status(409).send({
-          message: "An employee with the inputted email address already exists",
-        });
-      } else {
-        return res.status(200).send();
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(400).send({ message: err.message });
-  }
-});
-
 router.post("/forgotPassword", async (req, res) => {
   try {
     console.log(req.body);
