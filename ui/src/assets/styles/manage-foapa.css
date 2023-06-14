@@ -24,6 +24,7 @@
   height: auto;
   align-items: center;
   column-gap: 12px;
+  row-gap: 16px;
   justify-content: flex-start;
   align-items: flex-start;
 }
@@ -150,6 +151,11 @@ tr td {
   color: rgb(238, 0, 0);
   font-size: 12px;
   max-width: 200px;
+}
+@media (max-width: 1500px) {
+  .input-field-foapa-wrapper {
+    height: auto !important;
+  }
 }
 
 @media (max-width: 780px) {

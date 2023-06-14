@@ -83,13 +83,13 @@
             placeholder="xxxx"
             v-model="currentlyInputtedFOAPA.account"
           />
+          <datalist id="account-no">
+            <option v-for="acctNo in accountNumbers" :value="acctNo.number">
+              {{ acctNo.number }} - {{ acctNo.description }}
+            </option>
+          </datalist>
           <ErrorMessage name="acct-input" class="error-field" />
         </span>
-        <datalist id="account-no">
-          <option v-for="acctNo in accountNumbers" :value="acctNo.number">
-            {{ acctNo.number }} - {{ acctNo.description }}
-          </option>
-        </datalist>
       </div>
       <h5>-</h5>
 
@@ -202,17 +202,9 @@ function retrieveAccountNumbers() {
     });
 }
 
-function addFoapa() {
+function addFoapa(values, { resetForm }) {
+  resetForm();
   let addedFoapa = Object.assign({}, currentlyInputtedFOAPA);
-  // currentlyInputtedFOAPA.account =
-  //   currentlyInputtedFOAPA.activity =
-  //   currentlyInputtedFOAPA.currentAmount =
-  //   currentlyInputtedFOAPA.foapaName =
-  //   currentlyInputtedFOAPA.fund =
-  //   currentlyInputtedFOAPA.organization =
-  //   currentlyInputtedFOAPA.program =
-  //   currentlyInputtedFOAPA.initialAmount =
-  //     "";
   props.foapaList.push(addedFoapa);
 }
 
@@ -233,4 +225,8 @@ onMounted(() => {
 
 <style scoped>
 @import url("../../assets/styles/manage-foapa.css");
+
+.input-field-foapa-wrapper {
+  height: 86px;
+}
 </style>

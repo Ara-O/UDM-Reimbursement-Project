@@ -102,6 +102,9 @@
   <h5 class="validating-signup-field" v-if="validatingSignupFields">
     Validating Employment Number...
   </h5>
+  <h5 class="error-signup-message" v-if="signupError">
+    {{ signupErrorMessage }}
+  </h5>
 </template>
 
 <script lang="ts" setup>
@@ -114,11 +117,14 @@ import {
   isValidPhoneNumber,
 } from "../../utils/validators";
 import { UserData } from "../../types/types";
+
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
 }>();
 
 let validatingSignupFields = ref<boolean>(false);
+let signupError = ref<boolean>(false);
+let signupErrorMessage = ref<string>("");
 const departments = [
   "Architectural Engineering",
   "Biochemistry",
@@ -137,19 +143,21 @@ const emits = defineEmits(["continue"]);
 
 function progress() {
   validatingSignupFields.value = true;
-
+  signupError.value = false;
+  signupErrorMessage.value = "";
   axios
     .post("http://localhost:8080/api/verifySignupBasicInformation", {
       employmentNumber: userSignupData.employmentNumber,
       workEmail: userSignupData.workEmail,
     })
     .then((res) => {
+      emits("continue");
       validatingSignupFields.value = false;
       window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-      emits("continue");
     })
     .catch((err) => {
-      alert(err.response.data.message);
+      signupError.value = true;
+      signupErrorMessage.value = err.response.data.message;
       validatingSignupFields.value = false;
     });
 }

@@ -19,6 +19,12 @@ input {
   margin-bottom: 10px;
 }
 
+.error-signup-message {
+  font-weight: 400;
+  margin-bottom: 10px;
+  color: red;
+}
+
 .signup-title {
   font-weight: 600;
   font-size: 32px;
@@ -137,7 +143,7 @@ input {
 }
 
 .creating-account-feedback {
-  margin: 0px 0px 10px;
+  margin: 0px 0px 20px;
   font-weight: 400;
 }
 
@@ -295,6 +301,16 @@ input {
 }
 
 @media (max-width: 780px) {
+  .thanks-for-signing-up-msg {
+    padding: 0px 30px;
+
+    text-align: center;
+  }
+
+  .email-confirmation-text {
+    padding: 0px 30px;
+    text-align: center;
+  }
   .signup-title-description {
     text-align: center;
   }
@@ -369,7 +385,7 @@ input {
     justify-content: center;
     flex-direction: column;
     gap: 30px;
-    height: auto;
+    height: auto !important;
     margin-bottom: 30px;
     align-items: center;
   }

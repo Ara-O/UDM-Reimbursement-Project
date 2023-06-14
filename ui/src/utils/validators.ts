@@ -1,4 +1,5 @@
 export function isValidString(value) {
+  if (value === undefined || value === null) value = "";
   const isAString = /^[a-zA-Z0-9\s-]+$/.test(value);
   switch (true) {
     case value.trim() === "":
@@ -11,6 +12,7 @@ export function isValidString(value) {
 }
 
 export function isNotEmpty(value) {
+  if (value === undefined || value === null) value = "";
   if (value.trim() === "") {
     return "Field can not be empty";
   }
@@ -18,11 +20,12 @@ export function isNotEmpty(value) {
 }
 
 export function isValidEmploymentNumber(value) {
+  if (value === undefined || value === null) value = "";
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{8}$/.test(value);
 
   switch (true) {
-    case value === null:
+    case value === null || value === "":
       return "Field cannot be empty";
     case !isValidNumber:
       return "Field only accepts numbers";
@@ -34,6 +37,7 @@ export function isValidEmploymentNumber(value) {
 }
 
 export function isValidPhoneNumber(value) {
+  if (value === undefined || value === null) value = "";
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{10}$/.test(value);
 
@@ -50,6 +54,7 @@ export function isValidPhoneNumber(value) {
 }
 
 export function isValidFundNumber(value) {
+  if (value === undefined || value === null) value = "";
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{6}$/.test(value);
 
@@ -66,16 +71,17 @@ export function isValidFundNumber(value) {
 }
 
 export function isValidNumber(value) {
+  if (value === undefined || value === null) value = "";
   let isValidNumber = /^[0-9]+$/.test(value);
 
   if (!isValidNumber && value.trim() !== "") {
     return "Numbers only";
   }
-
   return true;
 }
 
 export function isValidAccountNumber(value) {
+  if (value === undefined || value === null) value = "";
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{4}$/.test(value);
 
@@ -92,6 +98,7 @@ export function isValidAccountNumber(value) {
 }
 
 export function isValidFoapaNumber(value) {
+  if (value === undefined || value === null) value = "";
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{4}$/.test(value);
 
