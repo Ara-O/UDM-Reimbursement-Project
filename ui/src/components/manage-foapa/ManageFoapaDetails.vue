@@ -25,14 +25,18 @@
       </div>
       <div class="input-FOAPA-field">
         <label for="foapa-name">Amount</label>
-        <input
-          type="text"
-          style="width: 95px"
-          placeholder="Amount"
-          name="Amount"
-          id="foapa-amount"
-          v-model="currentlyInputtedFOAPA.initialAmount"
-        />
+        <span>
+          <Field
+            type="text"
+            style="width: 95px"
+            placeholder="Amount"
+            name="foapa-amount"
+            :rules="isValidNumber"
+            id="foapa-amount"
+            v-model="currentlyInputtedFOAPA.initialAmount"
+          />
+          <ErrorMessage name="foapa-amount" class="error-field" />
+        </span>
       </div>
       <h5>:</h5>
 
@@ -54,19 +58,21 @@
 
       <div class="input-FOAPA-field">
         <label for="foapa-name">ORG</label>
-
-        <input
-          type="text"
-          name="O input"
-          id="o-input"
-          placeholder="xxxx"
-          v-model="currentlyInputtedFOAPA.organization"
-        />
+        <span>
+          <Field
+            type="text"
+            :rules="isValidFoapaNumber"
+            name="org-input"
+            id="org-input"
+            placeholder="xxxx"
+            v-model="currentlyInputtedFOAPA.organization"
+          />
+          <ErrorMessage name="org-input" class="error-field" />
+        </span>
       </div>
       <h5>-</h5>
       <div class="input-FOAPA-field">
         <label for="foapa-name">ACCT*</label>
-
         <span>
           <Field
             type="text"
@@ -89,26 +95,32 @@
 
       <div class="input-FOAPA-field">
         <label for="foapa-name">PROG</label>
-
-        <input
-          type="text"
-          name="P input"
-          id="p-input"
-          placeholder="xxxx"
-          v-model="currentlyInputtedFOAPA.program"
-        />
+        <span>
+          <Field
+            type="text"
+            name="prog-input"
+            id="prog-input"
+            placeholder="xxxx"
+            :rules="isValidFoapaNumber"
+            v-model="currentlyInputtedFOAPA.program"
+          />
+          <ErrorMessage name="prog-input" class="error-field" />
+        </span>
       </div>
       <h5>-</h5>
       <div class="input-FOAPA-field">
         <label for="foapa-name">ACTV</label>
-
-        <input
-          type="text"
-          name="A2 input"
-          id="a2-input"
-          placeholder="xxxx"
-          v-model="currentlyInputtedFOAPA.activity"
-        />
+        <span>
+          <Field
+            type="text"
+            name="actv-input"
+            :rules="isValidFoapaNumber"
+            id="actv-input"
+            placeholder="xxxx"
+            v-model="currentlyInputtedFOAPA.activity"
+          />
+          <ErrorMessage name="actv-input" class="error-field" />
+        </span>
       </div>
       <button class="add-foapa-button" type="submit" style="width: auto">
         <img src="../../assets/add-icon.png" alt="add-icon" class="add-icon" />
@@ -160,8 +172,9 @@ import { FoapaStuff } from "../../types/types";
 import {
   isValidString,
   isValidFundNumber,
-  isValidAccountNumber,
   isValidNumber,
+  isValidAccountNumber,
+  isValidFoapaNumber,
 } from "../../utils/validators";
 import axios from "axios";
 let props = defineProps<{ foapaList: FoapaStuff[] }>();
@@ -191,6 +204,15 @@ function retrieveAccountNumbers() {
 
 function addFoapa() {
   let addedFoapa = Object.assign({}, currentlyInputtedFOAPA);
+  // currentlyInputtedFOAPA.account =
+  //   currentlyInputtedFOAPA.activity =
+  //   currentlyInputtedFOAPA.currentAmount =
+  //   currentlyInputtedFOAPA.foapaName =
+  //   currentlyInputtedFOAPA.fund =
+  //   currentlyInputtedFOAPA.organization =
+  //   currentlyInputtedFOAPA.program =
+  //   currentlyInputtedFOAPA.initialAmount =
+  //     "";
   props.foapaList.push(addedFoapa);
 }
 

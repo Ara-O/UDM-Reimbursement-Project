@@ -12,7 +12,6 @@ router.get("/allCountries", (req, res) => {
     return { name: country.name, code: country.isoCode };
   });
   res.status(200).send(formattedCountries);
-  console.log(allCountries);
 });
 
 router.get("/getStateFromCountry", (req, res) => {

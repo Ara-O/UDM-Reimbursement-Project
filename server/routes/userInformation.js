@@ -183,17 +183,6 @@ router.post("/verifySignupBasicInformation", async (req, res) => {
     res.status(400).send({ message: err.message });
   }
 });
-router.post("/default", async (req, res) => {
-  try {
-    let userData = { workEmail: req.body.workEmail };
-    console.log(res.body);
-    if (userData == res.body) console.log("default works");
-  } catch (err) {
-    console.log("imma throw");
-    console.log(err);
-    res.status(400).send({ message: err.message });
-  }
-});
 
 router.post("/forgotPassword", async (req, res) => {
   try {

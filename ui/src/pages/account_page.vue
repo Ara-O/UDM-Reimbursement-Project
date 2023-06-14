@@ -301,7 +301,6 @@ function stateChanged() {
       params: { realCountryData, realStateData },
     })
     .then((res) => {
-      console.log(res.data);
       cities.value = res.data;
     })
     .catch((err) => {

@@ -66,9 +66,9 @@ export function isValidFundNumber(value) {
 }
 
 export function isValidNumber(value) {
-  let isValidNumber = /^\d+$/.test(value);
+  let isValidNumber = /^[0-9]+$/.test(value);
 
-  if (!isValidNumber) {
+  if (!isValidNumber && value.trim() !== "") {
     return "Numbers only";
   }
 
@@ -82,6 +82,22 @@ export function isValidAccountNumber(value) {
   switch (true) {
     case value.trim() === "":
       return "Required";
+    case !isValidNumber:
+      return "Numbers only";
+    case !hasValidLength:
+      return "4-digits";
+    default:
+      return true;
+  }
+}
+
+export function isValidFoapaNumber(value) {
+  const isValidNumber = /^[0-9]+$/.test(value);
+  const hasValidLength = /^[0-9]{4}$/.test(value);
+
+  switch (true) {
+    case value.trim() === "":
+      return true;
     case !isValidNumber:
       return "Numbers only";
     case !hasValidLength:
