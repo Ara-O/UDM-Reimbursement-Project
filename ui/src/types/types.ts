@@ -11,7 +11,7 @@ export type UserData = {
   city: string;
   state: string;
   country: string;
-  userFoapas: Array<FoapaStuff>;
+  foapaList: FoapaStuff[];
 };
 
 export type UserDataPreVerification = {
@@ -37,11 +37,11 @@ export type UserDataAcct = {
 };
 
 export type FoapaStuff = {
-  fNumber: string;
-  oNumber: string;
-  aNumber: string;
-  pNumber: string;
-  a2Number: string;
+  fund: string;
+  organization: string;
+  account: string;
+  program: string;
+  activity: string;
   foapaName: string;
   initialAmount: string;
   currentAmount: string;

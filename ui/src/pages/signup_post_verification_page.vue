@@ -50,7 +50,7 @@
         <!-- SECTION 4 -->
         <section v-show="surveyProgress === 3" class="signup-form">
           <FoapaSection
-            :foapa-list="foapaList"
+            :user-signup-data="userSignupData"
             @finish="registerUser"
             @go-back="surveyProgress--"
           />
@@ -70,6 +70,7 @@
           Note: All required fields must be filled
         </h5>
       </section>
+      <!-- <ManageFoapaDetails></ManageFoapaDetails> -->
     </section>
   </section>
 </template>
@@ -78,6 +79,7 @@
 import PasswordSection from "../components/signup-flow/PasswordSection.vue";
 import AddressSection from "../components/signup-flow/AddressSection.vue";
 import FoapaSection from "../components/signup-flow/FoapaSection.vue";
+import ManageFoapaDetails from "../components/manage-foapa/ManageFoapaDetails.vue";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -100,19 +102,13 @@ let userSignupData = reactive<UserData>({
   city: "",
   state: "",
   country: "",
-  userFoapas: [],
+  foapaList: [],
 });
 
-let foapaList = ref<FoapaStuff[]>([]);
-
 function registerUser() {
-  userSignupData.userFoapas = foapaList.value;
   creatingAccountFeedback.value = true;
   axios
-    .post(
-      "https://udm-reimbursement-project.onrender.com/api/register",
-      userSignupData
-    )
+    .post("http://localhost:8080/api/register", userSignupData)
     .then((res) => {
       alert(res.data.message);
       localStorage.setItem("token", res.data.token);
@@ -136,15 +132,10 @@ onMounted(() => {
 
   if (route.params.userToken) {
     axios
-      .post(
-        "https://udm-reimbursement-project.onrender.com/api/verifyUserSignupToken",
-        {
-          token: route.params.userToken,
-        }
-      )
+      .post("http://localhost:8080/api/verifyUserSignupToken", {
+        token: route.params.userToken,
+      })
       .then((res) => {
-        let userData = res.data.userSignupData;
-        console.log(userData);
         userSignupData = Object.assign(userSignupData, res.data.userSignupData);
       })
       .catch((err) => {

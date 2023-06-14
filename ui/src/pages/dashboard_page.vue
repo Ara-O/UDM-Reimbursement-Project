@@ -295,12 +295,9 @@ function signOut() {
 
 function deleteFoapa(foapaNumber: string) {
   axios
-    .post(
-      "https://udm-reimbursement-project.onrender.com/api/deleteFoapaDetail",
-      {
-        foapaNumber,
-      }
-    )
+    .post("http://localhost:8080/api/deleteFoapaDetail", {
+      foapaNumber,
+    })
     .then(() => {
       console.log("The thing that was deleted: " + foapaNumber);
       alert("Foapa Deleted Successfully");
@@ -314,12 +311,9 @@ function deleteFoapa(foapaNumber: string) {
 
 function deleteReimbursement(id: string) {
   axios
-    .post(
-      "https://udm-reimbursement-project.onrender.com/api/deleteReimbursement",
-      {
-        id,
-      }
-    )
+    .post("http://localhost:8080/api/deleteReimbursement", {
+      id,
+    })
     .then(() => {
       retrieveReimbursements();
       console.log("Deleted reimbursement id: " + id);
@@ -331,9 +325,7 @@ let userFoapaNumbers = ref<FoapaNumbers[]>([]);
 
 function retrieveUserFoapaNumbers() {
   axios
-    .get(
-      `https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails`
-    )
+    .get(`http://localhost:8080/api/retrieveFoapaDetails`)
     .then((res) => {
       userFoapaNumbers.value = res.data;
       console.log(res);
@@ -345,9 +337,7 @@ function retrieveUserFoapaNumbers() {
 
 function retrieveUserInformationSummary() {
   axios
-    .get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveUserInformationSummary"
-    )
+    .get("http://localhost:8080/api/retrieveUserInformationSummary")
     .then((res) => {
       userInfo.value = res.data;
       console.log(res);
@@ -385,7 +375,7 @@ async function sortBy(parameter: SortParameters) {
   sortParameter.value = parameter;
   try {
     let reimbursements = await axios.get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveReimbursements",
+      "http://localhost:8080/api/retrieveReimbursements",
       {
         params: {
           sortBy: parameter,
@@ -419,9 +409,7 @@ onMounted(() => {
 
 function retrieveReimbursements() {
   axios
-    .get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveReimbursements"
-    )
+    .get("http://localhost:8080/api/retrieveReimbursements")
     .then((res) => {
       console.log(res);
       reimbursementTickets.value = res.data;

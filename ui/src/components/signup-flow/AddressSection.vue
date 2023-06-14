@@ -1,96 +1,112 @@
 <template>
-  <div class="input-field-wrapper">
-    <div class="input-field">
-      <label for="country">Country: *</label>
-      <select
-        name="Country"
-        id="country"
-        v-model="userSignupData.country"
-        @change="countryChanged"
-      >
-        <option :value="country.name" v-for="country in countries">
-          {{ country.name }}
-        </option>
-      </select>
+  <Form @submit="progress">
+    <div class="input-field-wrapper">
+      <div class="input-field">
+        <label for="country">Country: *</label>
+        <span>
+          <Field
+            name="country"
+            id="country"
+            as="select"
+            :rules="isValidString"
+            v-model="userSignupData.country"
+            @change="countryChanged"
+          >
+            <option :value="country.name" v-for="country in countries">
+              {{ country.name }}
+            </option>
+          </Field>
+          <ErrorMessage name="country" class="error-field" />
+        </span>
+      </div>
+
+      <div class="input-field">
+        <label for="state">State: *</label>
+        <span>
+          <Field
+            name="state"
+            id="state"
+            as="select"
+            :rules="isValidString"
+            :disabled="userSignupData.country === ''"
+            v-model="userSignupData.state"
+            @change="stateChanged"
+          >
+            <option :value="state.name" v-for="state in states">
+              {{ state.name }}
+            </option>
+          </Field>
+          <ErrorMessage name="state" class="error-field" />
+        </span>
+      </div>
+    </div>
+    <div class="input-field-wrapper">
+      <div class="input-field">
+        <label for="city">City: *</label>
+        <span>
+          <Field
+            name="city"
+            id="city"
+            :rules="isNotEmpty"
+            as="select"
+            v-model="userSignupData.city"
+            :disabled="userSignupData.state === ''"
+          >
+            <option :value="city.name" v-for="city in cities">
+              {{ city.name }}
+            </option>
+          </Field>
+          <ErrorMessage name="city" class="error-field" />
+        </span>
+      </div>
+
+      <div class="input-field">
+        <label for="mailing-address">Mailing Address: *</label>
+        <span>
+          <Field
+            type="text"
+            :rules="isValidString"
+            name="mailing-address"
+            id="mailing-address"
+            v-model="userSignupData.mailingAddress"
+          />
+          <ErrorMessage name="mailing-address" class="error-field" />
+        </span>
+      </div>
+    </div>
+    <div class="input-field-wrapper">
+      <div class="input-field">
+        <label for="postal-code">Postal Code: *</label>
+        <span>
+          <Field
+            type="text"
+            :rules="isValidString"
+            name="postal-code"
+            id="postal-code"
+            v-model="userSignupData.postalCode"
+          />
+          <ErrorMessage name="postal-code" class="error-field" />
+        </span>
+      </div>
     </div>
 
-    <div class="input-field">
-      <label for="state">State: *</label>
-      <select
-        name="State"
-        id="state"
-        :disabled="userSignupData.country === ''"
-        v-model="userSignupData.state"
-        @change="stateChanged"
-      >
-        <option :value="state.name" v-for="state in states">
-          {{ state.name }}
-        </option>
-      </select>
+    <div class="continue-buttons">
+      <button class="signup-button mt-0" type="button" @click="$emit('goBack')">
+        Go Back
+      </button>
+      <button class="signup-button mt-0 address-section-button" type="submit">
+        Continue
+      </button>
     </div>
-  </div>
-  <div class="input-field-wrapper">
-    <div class="input-field">
-      <label for="city">City: *</label>
-      <select
-        name="City"
-        id="city"
-        v-model="userSignupData.city"
-        :disabled="userSignupData.state === ''"
-      >
-        <option :value="city.name" v-for="city in cities">
-          {{ city.name }}
-        </option>
-      </select>
-    </div>
-
-    <div class="input-field">
-      <label for="mailing-address">Mailing Address: *</label>
-      <input
-        type="text"
-        name="Mailing Address"
-        id="mailing-address"
-        v-model="userSignupData.mailingAddress"
-      />
-    </div>
-  </div>
-  <div class="input-field-wrapper">
-    <div class="input-field">
-      <label for="postal-code">Postal Code: *</label>
-      <input
-        type="text"
-        name="Postal Code"
-        id="postal-code"
-        v-model="userSignupData.postalCode"
-      />
-    </div>
-  </div>
-
-  <div class="continue-buttons">
-    <button
-      class="signup-button"
-      type="button"
-      @click="$emit('goBack')"
-      style="margin-top: 0px"
-    >
-      Go Back
-    </button>
-    <button
-      class="signup-button"
-      type="button"
-      style="margin-top: 0px"
-      @click="progress"
-    >
-      Continue
-    </button>
-  </div>
+  </Form>
 </template>
 
 <script lang="ts" setup>
+import { Form, Field, ErrorMessage } from "vee-validate";
 import axios from "axios";
 import { UserData, AddressDetails } from "../../types/types";
 import { onMounted, ref } from "vue";
-
+import { isValidString, isNotEmpty } from "../../utils/validators";
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
 }>();
@@ -122,14 +138,10 @@ function countryChanged() {
   );
 
   axios
-    .get(
-      "https://udm-reimbursement-project.onrender.com/api/getStateFromCountry",
-      {
-        params: { realCountryData },
-      }
-    )
+    .get("http://localhost:8080/api/getStateFromCountry", {
+      params: { realCountryData },
+    })
     .then((res) => {
-      console.log(res.data);
       states.value = res.data;
     })
     .catch((err) => {
@@ -142,20 +154,15 @@ function stateChanged() {
     (country) => userSignupData.country === country.name
   );
 
-  console.log(realCountryData);
   let realStateData = states.value?.filter(
     (state) => userSignupData.state === state.name
   );
 
   axios
-    .get(
-      "https://udm-reimbursement-project.onrender.com/api/getCityFromState",
-      {
-        params: { realCountryData, realStateData },
-      }
-    )
+    .get("http://localhost:8080/api/getCityFromState", {
+      params: { realCountryData, realStateData },
+    })
     .then((res) => {
-      console.log(res.data);
       cities.value = res.data;
     })
     .catch((err) => {
@@ -164,30 +171,14 @@ function stateChanged() {
 }
 
 function progress() {
-  let dataShown = ["country", "state", "city", "mailingAddress", "zipCode"];
-  for (let i = 0; i < dataShown.length; i++) {
-    if (userSignupData[dataShown[i]] === "") {
-      console.log("field empty");
-      alert(
-        `The ${dataShown[i]
-          .replace(/([A-Z])/g, " $1")
-          .toLowerCase()} field is empty`
-      );
-      break;
-    }
-
-    if (i === dataShown.length - 1) {
-      emits("continue");
-      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-    }
-  }
+  emits("continue");
+  window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
 }
 
 onMounted(() => {
   axios
-    .get("https://udm-reimbursement-project.onrender.com/api/allCountries")
+    .get("http://localhost:8080/api/allCountries")
     .then((res) => {
-      console.log(res.data);
       countries.value = res.data;
     })
     .catch((err) => {
@@ -198,11 +189,10 @@ onMounted(() => {
 
 <style scoped>
 @import url("../../assets/styles/signup-page.css");
-
-.input-field-wrapper {
+.input-field,
+.work-email-section {
   height: 63px;
 }
-
 .input-field label,
 .work-email-section label {
   /* margin-top: 0px; */

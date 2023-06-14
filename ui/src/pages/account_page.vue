@@ -220,10 +220,7 @@ function back() {
 
 function save() {
   axios
-    .post(
-      "https://udm-reimbursement-project.onrender.com/api/updateAccountInfo",
-      accountInfo.value
-    )
+    .post("http://localhost:8080/api/updateAccountInfo", accountInfo.value)
     .then((res) => {
       console.log(res.data);
       alert("Account information updated!");
@@ -237,12 +234,12 @@ function save() {
 async function retrieveAccountInformation() {
   try {
     let res = await axios.get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveAccountInformation"
+      "http://localhost:8080/api/retrieveAccountInformation"
     );
     accountInfo.value = res.data;
 
     let countriesFromApi = await axios.get(
-      "https://udm-reimbursement-project.onrender.com/api/allCountries"
+      "http://localhost:8080/api/allCountries"
     );
 
     countries.value = countriesFromApi.data;
@@ -278,12 +275,9 @@ function countryChanged() {
   );
 
   axios
-    .get(
-      "https://udm-reimbursement-project.onrender.com/api/getStateFromCountry",
-      {
-        params: { realCountryData },
-      }
-    )
+    .get("http://localhost:8080/api/getStateFromCountry", {
+      params: { realCountryData },
+    })
     .then((res) => {
       console.log(res.data);
       states.value = res.data;
@@ -303,12 +297,9 @@ function stateChanged() {
   );
 
   axios
-    .get(
-      "https://udm-reimbursement-project.onrender.com/api/getCityFromState",
-      {
-        params: { realCountryData, realStateData },
-      }
-    )
+    .get("http://localhost:8080/api/getCityFromState", {
+      params: { realCountryData, realStateData },
+    })
     .then((res) => {
       console.log(res.data);
       cities.value = res.data;

@@ -19,11 +19,13 @@
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
       <section class="signup-form">
-        <BasicQuestionsSection
-          :user-signup-data="userSignupData"
-          @continue="sendConfirmationEmail"
-          v-if="!basicQuestionsSectionIsFinished"
-        />
+        <span v-if="!basicQuestionsSectionIsFinished">
+          <BasicQuestionsSection
+            :user-signup-data="userSignupData"
+            @continue="sendConfirmationEmail"
+          />
+          <h3 v-if="verifyingInformation">Verifying user information...</h3>
+        </span>
         <article v-else>
           <h3 class="thanks-for-signing-up-msg">Thank you for signing up!</h3>
           <h4 class="email-confirmation-text">
@@ -34,7 +36,10 @@
           </h4>
         </article>
       </section>
-      <span v-if="!basicQuestionsSectionIsFinished">
+      <span
+        v-if="!basicQuestionsSectionIsFinished"
+        class="account-feedback-message"
+      >
         <br />
         <router-link to="/" class="already-have-account"
           >Already have an Account</router-link
@@ -55,6 +60,7 @@ import { useRouter } from "vue-router";
 import { UserData } from "../types/types";
 
 const router = useRouter();
+let verifyingInformation = ref<boolean>(false);
 let basicQuestionsSectionIsFinished = ref<boolean>(false);
 let userSignupData = reactive<UserData>({
   firstName: "",
@@ -69,22 +75,20 @@ let userSignupData = reactive<UserData>({
   city: "",
   state: "",
   country: "",
-  userFoapas: [],
+  foapaList: [],
 });
 
 function sendConfirmationEmail() {
-  basicQuestionsSectionIsFinished.value = true;
   axios
-    .post(
-      "https://udm-reimbursement-project.onrender.com/api/sendConfirmationEmail",
-      {
-        userSignupData,
-      }
-    )
+    .post("http://localhost:8080/api/sendConfirmationEmail", {
+      userSignupData,
+    })
     .then((res) => {
-      console.log(res);
+      verifyingInformation.value = true;
+      basicQuestionsSectionIsFinished.value = true;
     })
     .catch((err) => {
+      verifyingInformation.value = false;
       alert(err.data.message);
     });
 }

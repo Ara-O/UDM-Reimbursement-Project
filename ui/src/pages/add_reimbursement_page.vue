@@ -408,7 +408,7 @@ async function storeActivityImage() {
     try {
       // Send the FormData object to the server using axios
       let res = await axios.post(
-        "https://udm-reimbursement-project.onrender.com/api/storeActivityImages",
+        "http://localhost:8080/api/storeActivityImages",
         formData
       );
       return res.data;
@@ -422,9 +422,7 @@ async function storeActivityImage() {
 
 function retrieveFoapaDetails() {
   axios
-    .get(
-      `https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails`
-    )
+    .get(`http://localhost:8080/api/retrieveFoapaDetails`)
     .then((res) => {
       userFoapaNumbers.value = res.data;
     })
@@ -496,7 +494,7 @@ function deleteActivity(activityId: number) {
 async function userIsUpdatingReimbursement() {
   userIsEditingReimbursement.value = true;
   let reimbursement = await axios.get(
-    "https://udm-reimbursement-project.onrender.com/api/retrieveTicketInformation",
+    "http://localhost:8080/api/retrieveTicketInformation",
     {
       params: {
         reimbursementId: route.query.reimbursementId,
@@ -517,12 +515,9 @@ async function updateReimbursement() {
     new Date().toISOString()
   );
 
-  await axios.post(
-    "https://udm-reimbursement-project.onrender.com/api/updateReimbursement",
-    {
-      reimbursementTicket: currentReimbursement.value,
-    }
-  );
+  await axios.post("http://localhost:8080/api/updateReimbursement", {
+    reimbursementTicket: currentReimbursement.value,
+  });
   alert("Reimbursement ticket saved successfully");
   router.push("/dashboard");
 }
@@ -535,12 +530,9 @@ async function addReimbursement() {
         new Date().toISOString()
       );
 
-      await axios.post(
-        "https://udm-reimbursement-project.onrender.com/api/addReimbursement",
-        {
-          reimbursementTicket: currentReimbursement.value,
-        }
-      );
+      await axios.post("http://localhost:8080/api/addReimbursement", {
+        reimbursementTicket: currentReimbursement.value,
+      });
 
       router.push("/dashboard");
 
@@ -567,12 +559,9 @@ async function submitTicket() {
   try {
     currentReimbursement.value.reimbursementStatus = "Submitted";
 
-    await axios.post(
-      "https://udm-reimbursement-project.onrender.com/api/updateReimbursement",
-      {
-        reimbursementTicket: currentReimbursement.value,
-      }
-    );
+    await axios.post("http://localhost:8080/api/updateReimbursement", {
+      reimbursementTicket: currentReimbursement.value,
+    });
 
     router.push("/dashboard");
     alert("Reimbursement ticket submitted successfully");
@@ -631,22 +620,17 @@ function createPdf() {
   }
 
   axios
-    .get(
-      `https://udm-reimbursement-project.onrender.com/api/retrieveAccountInformation`
-    )
+    .get(`http://localhost:8080/api/retrieveAccountInformation`)
     .then((response) => {
       if (userIsEditingReimbursement.value === true) {
         currentReimbursement.value.totalAmount = getAllActivitiesAmount();
         axios
-          .get(
-            "https://udm-reimbursement-project.onrender.com/api/generatePdf",
-            {
-              params: {
-                reimbursementData: currentReimbursement.value,
-                userInfo: response.data,
-              },
-            }
-          )
+          .get("http://localhost:8080/api/generatePdf", {
+            params: {
+              reimbursementData: currentReimbursement.value,
+              userInfo: response.data,
+            },
+          })
           .then((res) => {
             downloadPDF(res.data);
             currentlyCreatingPDF.value = false;
@@ -656,15 +640,12 @@ function createPdf() {
           });
       } else {
         axios
-          .get(
-            "https://udm-reimbursement-project.onrender.com/api/generatePdf",
-            {
-              params: {
-                reimbursementData: currentReimbursement.value,
-                userInfo: response.data,
-              },
-            }
-          )
+          .get("http://localhost:8080/api/generatePdf", {
+            params: {
+              reimbursementData: currentReimbursement.value,
+              userInfo: response.data,
+            },
+          })
           .then((res) => {
             downloadPDF(res.data);
             currentlyCreatingPDF.value = false;

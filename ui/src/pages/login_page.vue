@@ -145,10 +145,7 @@ function loginUser() {
   } else {
     loggingIn.value = true;
     axios
-      .post(
-        "https://udm-reimbursement-project.onrender.com/api/login",
-        userInfo.value
-      )
+      .post("http://localhost:8080/api/login", userInfo.value)
       .then((res) => {
         console.log(res);
         alert(res.data.message);
@@ -175,7 +172,7 @@ onMounted(() => {
 
 function sendEmail() {
   axios
-    .post("https://udm-reimbursement-project.onrender.com/api/forgotPassword", {
+    .post("http://localhost:8080/api/forgotPassword", {
       workEmail: forgotPasswordWorkEmail.value,
     })
     .then((res) => {
