@@ -4,6 +4,7 @@ import updateFoapaDetails from "../utils/updateFoapaDetails.js";
 import Faculty from "../models/faculty.js";
 const router = Router();
 
+// POST /api/addReimbursement
 router.post("/addReimbursement", verifyToken, async (req, res) => {
   try {
     let userInfo = await Faculty.findOne({
@@ -27,10 +28,9 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
 //GET /api/retrieveReimbursements
 router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
   try {
-    let reimbursements = await Faculty.findOne({
-      employmentNumber: req.user.employmentNumber,
-    }).select("reimbursementTickets");
-
+    let reimbursements = await Reimbursement.findById().select(
+      "reimbursementTickets"
+    );
 
     res.status(200).send(reimbursements.reimbursementTickets);
   } catch (err) {

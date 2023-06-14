@@ -6,29 +6,24 @@ import {
   decryptPassword,
 } from "../utils/authenticatePassword.js";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import formatFoapaDetails from "../utils/formatFoapaDetails.js";
-import { verifyToken } from "../middleware/auth.js";
 
 const router = Router();
 
 // Registering user - POST /api/register
 router.post("/register", async (req, res) => {
   const userData = req.body;
-  console.log(userData);
 
   if (!userData.workEmail.includes("@udmercy.edu")) {
     userData.workEmail += "@udmercy.edu";
   }
-
   userData.workEmail = userData.workEmail.toLowerCase();
   userData.employmentNumber = "T" + userData.employmentNumber;
 
   try {
     let encryptedPassword = await encryptPassword(userData.password);
     userData.password = encryptedPassword;
+    console.log(userData);
 
-    const faculty = new Faculty(userData);
     let existingUser = await Faculty.findOne({
       employmentNumber: userData.employmentNumber,
     });
@@ -36,18 +31,11 @@ router.post("/register", async (req, res) => {
     if (existingUser) {
       res.status(409).send({ message: "Error: User already exists" });
     } else {
-      userData.foapaList.forEach((foapa) => {
-        const foapaDetail = new Foapa(foapa);
-        faculty.foapaDetails.push(foapaDetail);
-        foapaDetail.save();
-      });
-
-      console.log(faculty);
-      await faculty.save();
-
+      let faculty = new Faculty(userData);
+      let savedFaculty = await faculty.save();
       //Creates a token thatll be used to authenticate the user for later api calls
       jwt.sign(
-        { employmentNumber: userData.employmentNumber },
+        { userId: savedFaculty._id },
         process.env.JWT_SECRET,
         {
           expiresIn: "30d",
@@ -68,6 +56,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+//Verifying the user's information - POST /api/verifySignupBasicInformation
 router.post("/verifySignupBasicInformation", async (req, res) => {
   try {
     let facultyFound = await Faculty.findOne({
@@ -95,6 +84,48 @@ router.post("/verifySignupBasicInformation", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(400).send({ message: err.message });
+  }
+});
+
+//Logging the user in - POST /api/login
+router.post("/login", async (req, res) => {
+  const { workEmail, password } = req.body;
+  try {
+    let facultyInfo = await Faculty.findOne({
+      workEmail: workEmail.toLowerCase() + "@udmercy.edu",
+    }).select("workEmail password employmentNumber");
+
+    if (facultyInfo === null) {
+      res.status(404).send({
+        message: "Credentials not found. Please check your email and password",
+      });
+    } else {
+      let passwordMatches = await decryptPassword(
+        password,
+        facultyInfo.password
+      );
+      if (passwordMatches) {
+        jwt.sign(
+          { userId: faculty._id },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "30d",
+          },
+          (err, token) => {
+            if (!err) {
+              res.status(200).send({ message: "Login successful", token });
+            }
+          }
+        );
+      } else {
+        res
+          .status(403)
+          .send({ message: "Incorrect Password. Please try again" });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(400).send({ message: error.message });
   }
 });
 

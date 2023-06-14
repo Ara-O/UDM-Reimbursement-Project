@@ -43,6 +43,11 @@ input {
   display: inline-flex;
 }
 
+.udmercy-logo {
+  width: 70%;
+  max-width: 14rem;
+  padding: 40px 20px;
+}
 tr th {
   font-weight: 500;
   font-size: 14px;
@@ -110,6 +115,11 @@ tr td {
   padding: 8px 20px;
 }
 
+.manage-foapa-text {
+  font-weight: 600;
+  font-size: 25px;
+}
+
 .add-foapa-page {
   height: 100vh;
   display: flex;
@@ -162,12 +172,28 @@ tr td {
   gap: 22px;
 }
 
+.add-foapa-success-message {
+  font-weight: 400;
+  margin-top: 20px;
+  font-size: 13px;
+  color: rgb(0, 176, 0);
+}
+.add-foapa-error-message {
+  font-weight: 400;
+  font-size: 13px;
+  margin-top: 20px;
+  color: rgb(179, 6, 6);
+}
+
 @media (max-width: 1350px) {
   .udmercy-logo {
     display: none;
   }
   .left-section {
     display: none;
+  }
+  .manage-foapa-div {
+    padding: 0px 60px;
   }
 }
 
@@ -192,6 +218,9 @@ tr td {
 }
 
 @media (max-width: 750px) {
+  .manage-foapa-div {
+    text-align: center;
+  }
   .add-foapa-title-descriptions {
     text-align: center;
   }

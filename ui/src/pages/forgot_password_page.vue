@@ -12,33 +12,38 @@
     <br />
     <h3 class="login-title">Detroit Mercy Reimbursement System</h3>
     <br />
-    <form @submit.prevent="resetPassword" class="login-form">
+    <Form @submit="resetPassword" class="login-form">
       <div class="login-field">
         <label for="new-password">New Password: </label>
-        <input
-          type="password"
-          class="login-password-input"
-          name="new password"
-          v-model="password"
-          id="new-password"
-          style="width: auto; margin-left: 0px"
-          required
-        />
-
-        <div class="login-field" style="margin-top: 30px; margin-bottom: 0px">
-          <label for="confirm-password" style="max-width: 150px; width: auto"
-            >Confirm New Password:</label
-          >
-          <input
+        <span style="width: auto">
+          <Field
+            type="password"
+            class="login-password-input"
+            name="new-password"
+            v-model="password"
+            id="new-password"
+            :rules="isNotEmpty"
+            style="width: auto; margin-left: 0px"
+          />
+          <ErrorMessage as="h3" name="new-password" class="error-field" />
+        </span>
+      </div>
+      <div class="login-field" style="margin-bottom: 20px">
+        <label for="confirm-password" style="max-width: 150px; width: auto"
+          >Confirm New Password:</label
+        >
+        <span style="width: auto">
+          <Field
             v-model="confirmPassword"
             type="password"
             class="login-password-input"
-            name="Confirm Password"
+            name="confirm-password"
             style="width: auto; margin-left: 0px"
-            required
+            :rules="isNotEmpty"
             id="confirm-password "
           />
-        </div>
+          <ErrorMessage as="h3" name="confirm-password" class="error-field" />
+        </span>
       </div>
       <span
         style="display: flex; align-items: center; margin-top: -20px; gap: 10px"
@@ -50,14 +55,16 @@
         <router-link to="/" style="font-size: 14px">Log In</router-link>
       </span>
       <button class="login-button" style="width: auto">Change Password</button>
-    </form>
+    </Form>
   </section>
 </template>
 
 <script lang="ts" setup>
 import axios from "axios";
+import { Form, Field, ErrorMessage } from "vee-validate";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { isNotEmpty } from "../utils/validators";
 
 let password = ref<string>("");
 let confirmPassword = ref<string>("");
@@ -101,4 +108,8 @@ onMounted(() => {
 
 <style scoped>
 @import url("../assets/styles/login-page.css");
+.error-field {
+  font-weight: 400;
+  margin-top: 4px;
+}
 </style>

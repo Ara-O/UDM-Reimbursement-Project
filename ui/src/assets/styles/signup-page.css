@@ -313,6 +313,7 @@ input {
   }
   .signup-title-description {
     text-align: center;
+    padding: 0px 20px;
   }
   .udmercy-logo-wrapper-mobile {
     display: flex;

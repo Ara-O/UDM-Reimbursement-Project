@@ -11,7 +11,7 @@ export type UserData = {
   city: string;
   state: string;
   country: string;
-  foapaList: FoapaStuff[];
+  foapaDetails: FoapaStuff[];
 };
 
 export type UserDataPreVerification = {

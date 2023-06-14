@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ManageFoapaDetails :foapa-list="userSignupData.foapaList" />
+    <ManageFoapaDetails :foapa-details="userSignupData.foapaDetails" />
     <div class="continue-buttons" style="margin-top: 20px">
       <button class="signup-button mt-0" type="button" @click="regress">
         Go Back

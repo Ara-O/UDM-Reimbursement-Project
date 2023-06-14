@@ -1,55 +1,7 @@
 <template>
   <section class="dashboard-page">
-    <section class="foapa-number-section">
-      <h3>Foapa Numbers</h3>
-      <br />
-      <div class="foapa-number-wrapper">
-        <div
-          class="foapa-number"
-          v-for="foapa in userFoapaNumbers"
-          :key="foapa.foapaNumber"
-          style="display: flex; flex-direction: column; align-items: start"
-        >
-          <span class="foapa-number-title">
-            <img
-              src="../assets/trash-icon.png"
-              alt="Trash"
-              @click="deleteFoapa(foapa.foapaNumber)"
-            />
-            <h3 style="font-weight: 500">
-              {{ foapa.foapaName }}
-            </h3>
-          </span>
-          <div
-            style="
-              display: flex;
-              flex-direction: row;
-              align-items: center;
-              justify-content: space-around;
-            "
-          >
-            <h3 style="margin-top: 10px">{{ foapa.foapaNumber }}</h3>
-          </div>
-        </div>
-        <div class="filter" @click="goToFoapaPage">
-          <h3>Manage Foapa Details</h3>
-        </div>
-        <!-- <div class="foapa-number">
-          <input
-            type="text"
-            name="Foapa Number"
-            placeholder="New FOAPA Number"
-            v-model="obj.foapaNumber"
-          />
-          <img
-            src="../assets/add-icon2.png"
-            alt="add-icon2"
-            @click="addFoapaNumber"
-          />
-        </div> -->
-      </div>
-    </section>
-
+    <!-- FOAPA numbers section -->
+    <foapa-numbers></foapa-numbers>
     <section class="reimbursement-section">
       <h3>Welcome {{ userInfo.firstName }}</h3>
       <br />
@@ -98,13 +50,6 @@
         >
           <h3>Sort by Cost</h3>
         </div>
-        <!--   <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Cost Descending' }"
-          @click="sortBy('Cost Descending')"
-        >
-          <h3>Sort by Cost ( DESC )</h3>
-        </div> -->
       </div>
       <br />
       <div style="display: flex; flex-direction: column">
@@ -176,6 +121,7 @@
 </template>
 
 <script lang="ts" setup>
+import FoapaNumbers from "../components/dashboard/FoapaNumbersDashboard.vue";
 import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
@@ -293,22 +239,6 @@ function signOut() {
   alert("Successfully signed out!");
 }
 
-function deleteFoapa(foapaNumber: string) {
-  axios
-    .post("http://localhost:8080/api/deleteFoapaDetail", {
-      foapaNumber,
-    })
-    .then(() => {
-      console.log("The thing that was deleted: " + foapaNumber);
-      alert("Foapa Deleted Successfully");
-      retrieveUserFoapaNumbers();
-    })
-    .catch((err) => {
-      console.log(err);
-      alert(err.response.data.message);
-    });
-}
-
 function deleteReimbursement(id: string) {
   axios
     .post("http://localhost:8080/api/deleteReimbursement", {
@@ -318,20 +248,6 @@ function deleteReimbursement(id: string) {
       retrieveReimbursements();
       console.log("Deleted reimbursement id: " + id);
       alert("Ticket Deleted Successfully");
-    });
-}
-
-let userFoapaNumbers = ref<FoapaNumbers[]>([]);
-
-function retrieveUserFoapaNumbers() {
-  axios
-    .get(`http://localhost:8080/api/retrieveFoapaDetails`)
-    .then((res) => {
-      userFoapaNumbers.value = res.data;
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
     });
 }
 
@@ -371,42 +287,6 @@ function viewTicket(reimbursementId: string) {
 
 let sortParameter = ref<SortParameters>("Name");
 
-async function sortBy(parameter: SortParameters) {
-  sortParameter.value = parameter;
-  try {
-    let reimbursements = await axios.get(
-      "http://localhost:8080/api/retrieveReimbursements",
-      {
-        params: {
-          sortBy: parameter,
-        },
-      }
-    );
-
-    reimbursementTickets.value = reimbursements.data;
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-function goToFoapaPage() {
-  router.push("/add-foapa");
-}
-
-onMounted(() => {
-  if (
-    localStorage.getItem("token") === null ||
-    localStorage.getItem("token") === ""
-  ) {
-    console.log("User not signed in");
-    router.push("/");
-  } else {
-    retrieveUserInformationSummary();
-    retrieveUserFoapaNumbers();
-    retrieveReimbursements();
-  }
-});
-
 function retrieveReimbursements() {
   axios
     .get("http://localhost:8080/api/retrieveReimbursements")
@@ -418,4 +298,17 @@ function retrieveReimbursements() {
       alert(err);
     });
 }
+
+onMounted(() => {
+  if (
+    localStorage.getItem("token") === null ||
+    localStorage.getItem("token") === ""
+  ) {
+    console.log("User not signed in");
+    router.push("/");
+  } else {
+    retrieveUserInformationSummary();
+    retrieveReimbursements();
+  }
+});
 </script>

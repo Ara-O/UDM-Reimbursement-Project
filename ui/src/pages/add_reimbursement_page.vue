@@ -158,10 +158,10 @@
             v-model="currentActivity.foapaNumber"
           >
             <option
-              :value="foapaNumber.foapaNumber"
-              v-for="foapaNumber in userFoapaNumbers"
+              :value="formatUserFoapa(foapaDetail)"
+              v-for="foapaDetail in userFoapaNumbers"
             >
-              {{ foapaNumber.foapaName + ":\t" + foapaNumber.foapaNumber }}
+              {{ foapaDetail.foapaName }}: {{ formatUserFoapa(foapaDetail) }}
             </option>
           </select>
         </div>
@@ -251,7 +251,12 @@
 import ActivityContainer from "../components/add-reimbursement/ActivityContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { Activity, FoapaNumbers, ReimbursementTicket } from "../types/types";
+import {
+  Activity,
+  FoapaNumbers,
+  ReimbursementTicket,
+  FoapaStuff,
+} from "../types/types";
 import generateRandomId from "../utils/generateRandomId";
 import parseDate from "../utils/parseDate";
 import axios from "axios";
@@ -287,20 +292,26 @@ let userIsEditingReimbursement = ref<boolean>(false);
 let currentlyAddingActivity = ref<boolean>(false);
 let currentlyUpdatingActivity = ref<boolean>(false);
 let currentlyCreatingPDF = ref<boolean>(false);
-let userFoapaNumbers = ref<FoapaNumbers[]>([]);
+let userFoapaNumbers = ref<FoapaStuff[]>([]);
 let userIsEditingActivity = ref<boolean>(false);
+
+function formatUserFoapa(foapa: FoapaStuff) {
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
+    foapa.program || "XXXX"
+  }-${foapa.activity || "XXXX"}`;
+}
 
 let selectedFoapaAmount = ref<number>();
 watch(
   () => currentActivity.value.foapaNumber,
   () => {
     let selectedFoapa = userFoapaNumbers.value.filter(
-      (foapa) => foapa.foapaNumber == currentActivity.value.foapaNumber
+      (foapa) => formatUserFoapa(foapa) == currentActivity.value.foapaNumber
     );
 
     if (selectedFoapa.length > 0) {
-      if (selectedFoapa[0].currentAmount != "N/A") {
-        selectedFoapaAmount.value = selectedFoapa[0].currentAmount;
+      if (selectedFoapa[0].currentAmount != null) {
+        selectedFoapaAmount.value = Number(selectedFoapa[0].currentAmount);
       } else {
         selectedFoapaAmount.value = undefined;
       }
@@ -422,7 +433,7 @@ async function storeActivityImage() {
 
 function retrieveFoapaDetails() {
   axios
-    .get(`http://localhost:8080/api/retrieveFoapaDetails`)
+    .get("http://localhost:8080/api/retrieveFoapaDetails")
     .then((res) => {
       userFoapaNumbers.value = res.data;
     })

@@ -47,6 +47,18 @@ input {
   padding: 40px 20px;
 }
 
+.account-success-message {
+  font-weight: 400;
+  margin-top: 20px;
+  font-size: 14px;
+  color: rgb(0, 176, 0);
+}
+.account-error-message {
+  font-weight: 400;
+  font-size: 14px;
+  margin-top: 20px;
+  color: rgb(179, 6, 6);
+}
 .udmercy-logo-wrapper {
   border: 1px solid #ffffff;
   padding: 30px;

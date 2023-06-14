@@ -30,7 +30,7 @@
         </span>
       </div>
     </div>
-    <div class="continue-buttons">
+    <div class="continue-buttons mt-0">
       <button class="signup-button mt-0" type="submit">Continue</button>
     </div>
   </Form>

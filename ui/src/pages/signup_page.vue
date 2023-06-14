@@ -75,7 +75,7 @@ let userSignupData = reactive<UserData>({
   city: "",
   state: "",
   country: "",
-  foapaList: [],
+  foapaDetails: [],
 });
 
 function sendConfirmationEmail() {

@@ -26,7 +26,8 @@
         Address Information
       </h3>
       <h3 class="signup-title-description" v-if="surveyProgress === 3">
-        User Foapa Information (Not Required)
+        User Foapa Information (Not Required). Hover Over Question Mark Icon For
+        Help
       </h3>
 
       <section class="signup-form">
@@ -102,7 +103,7 @@ let userSignupData = reactive<UserData>({
   city: "",
   state: "",
   country: "",
-  foapaList: [],
+  foapaDetails: [],
 });
 
 function registerUser() {

@@ -81,7 +81,7 @@
   justify-content: center;
   align-items: center;
 }
-.input-FOAPA-field span {
+.input-FOAPA-field-span {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,7 +106,7 @@
 .input-FOAPA-field input {
   width: 90px;
   height: 36px;
-  font-size: 13px;
+  font-size: 12px;
   text-align: center;
   background: #ffffff;
   border: 1px solid #f7f7f7;
@@ -137,6 +137,28 @@
   font-weight: 400;
   font-size: 14px;
   margin-bottom: 4px;
+}
+
+.foapa-title-span {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.foapa-title-span label {
+  margin-bottom: 0px;
+}
+
+.foapa-help-icon {
+  width: 15px;
+  cursor: pointer;
+}
+
+.foapa-title-span {
+  position: relative;
 }
 tr th {
   font-weight: 500;

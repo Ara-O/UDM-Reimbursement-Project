@@ -13,7 +13,18 @@ const facultySchema = new Schema({
   city: String,
   state: String,
   country: String,
-  foapaDetails: [{ type: mongoose.Schema.Types.ObjectId, ref: "Foapa" }],
+  foapaDetails: [
+    {
+      fund: Number,
+      organization: Number,
+      account: Number,
+      program: Number,
+      activity: Number,
+      foapaName: String,
+      initialAmount: Number,
+      currentAmount: Number,
+    },
+  ],
   reimbursementTickets: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Reimbursement" },
   ],

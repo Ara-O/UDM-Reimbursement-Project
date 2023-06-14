@@ -11,6 +11,6 @@ const FoapaSchema = new mongoose.Schema({
   currentAmount: Number,
 });
 
-const Foapas = mongoose.model("Foapa", FoapaSchema);
+const Foapa = mongoose.model("Foapa", FoapaSchema);
 
-export default Foapas;
+export default Foapa;

@@ -9,8 +9,16 @@
   <Form @submit="addFoapa">
     <div class="input-field-foapa-wrapper" style="text-align: center">
       <div class="input-FOAPA-field">
-        <label for="foapa-name">Name*</label>
-        <span>
+        <span class="foapa-title-span">
+          <label for="foapa-name">Name*</label>
+          <img
+            src="../../assets/user-help-icon.png"
+            alt="Help"
+            class="foapa-help-icon"
+            title="Unique identifier for FOAPA Number for easy identification. The FOAPA name is arbitrary and not related to the actual FOAPA"
+          />
+        </span>
+        <span class="input-FOAPA-field-span">
           <Field
             type="text"
             :rules="isValidString"
@@ -24,8 +32,16 @@
         </span>
       </div>
       <div class="input-FOAPA-field">
-        <label for="foapa-name">Amount</label>
-        <span>
+        <span class="foapa-title-span">
+          <label for="foapa-name">Amount</label>
+          <img
+            src="../../assets/user-help-icon.png"
+            alt="Help"
+            class="foapa-help-icon"
+            title="Optional: Current balance of FOAPA number. Can be used to keep track of FOAPA spendings"
+          />
+        </span>
+        <span class="input-FOAPA-field-span">
           <Field
             type="text"
             style="width: 95px"
@@ -41,8 +57,16 @@
       <h5>:</h5>
 
       <div class="input-FOAPA-field">
-        <label for="foapa-name">FUND*</label>
-        <span>
+        <span class="foapa-title-span">
+          <label for="foapa-name">FUND*</label>
+          <img
+            src="../../assets/user-help-icon.png"
+            alt="Help"
+            class="foapa-help-icon"
+            title="Required: fund, 6 digits"
+          />
+        </span>
+        <span class="input-FOAPA-field-span">
           <Field
             type="text"
             name="fund-input"
@@ -57,8 +81,16 @@
       <h5>-</h5>
 
       <div class="input-FOAPA-field">
-        <label for="foapa-name">ORG</label>
-        <span>
+        <span class="foapa-title-span">
+          <label for="foapa-name">ORG</label>
+          <img
+            src="../../assets/user-help-icon.png"
+            alt="Help"
+            class="foapa-help-icon"
+            title="Optional: Organization, 4 digits"
+          />
+        </span>
+        <span class="input-FOAPA-field-span">
           <Field
             type="text"
             :rules="isValidFoapaNumber"
@@ -72,8 +104,16 @@
       </div>
       <h5>-</h5>
       <div class="input-FOAPA-field">
-        <label for="foapa-name">ACCT*</label>
-        <span>
+        <span class="foapa-title-span">
+          <label for="foapa-name">ACCT*</label>
+          <img
+            src="../../assets/user-help-icon.png"
+            alt="Help"
+            class="foapa-help-icon"
+            title="Required: Account number, 4 digits"
+          />
+        </span>
+        <span class="input-FOAPA-field-span">
           <Field
             type="text"
             name="acct-input"
@@ -94,8 +134,16 @@
       <h5>-</h5>
 
       <div class="input-FOAPA-field">
-        <label for="foapa-name">PROG</label>
-        <span>
+        <span class="foapa-title-span">
+          <label for="foapa-name">Program</label>
+          <img
+            src="../../assets/user-help-icon.png"
+            alt="Help"
+            class="foapa-help-icon"
+            title="Optional: Program, 4 digits"
+          />
+        </span>
+        <span class="input-FOAPA-field-span">
           <Field
             type="text"
             name="prog-input"
@@ -109,8 +157,16 @@
       </div>
       <h5>-</h5>
       <div class="input-FOAPA-field">
-        <label for="foapa-name">ACTV</label>
-        <span>
+        <span class="foapa-title-span">
+          <label for="foapa-name">ACTV</label>
+          <img
+            src="../../assets/user-help-icon.png"
+            alt="Help"
+            class="foapa-help-icon"
+            title="Optional: Activity, 4 digits"
+          />
+        </span>
+        <span class="input-FOAPA-field-span">
           <Field
             type="text"
             name="actv-input"
@@ -140,7 +196,7 @@
         <th>ACTV</th>
         <th></th>
       </tr>
-      <tr v-for="foapa in props.foapaList">
+      <tr v-for="foapa in props.foapaDetails">
         <td>
           {{ foapa.foapaName }}
         </td>
@@ -177,7 +233,7 @@ import {
   isValidFoapaNumber,
 } from "../../utils/validators";
 import axios from "axios";
-let props = defineProps<{ foapaList: FoapaStuff[] }>();
+let props = defineProps<{ foapaDetails: FoapaStuff[] }>();
 let currentlyInputtedFOAPA = reactive<FoapaStuff>({
   fund: "",
   organization: "",
@@ -204,17 +260,18 @@ function retrieveAccountNumbers() {
 
 function addFoapa(values, { resetForm }) {
   resetForm();
+  currentlyInputtedFOAPA.currentAmount = currentlyInputtedFOAPA.initialAmount;
   let addedFoapa = Object.assign({}, currentlyInputtedFOAPA);
-  props.foapaList.push(addedFoapa);
+  props.foapaDetails.push(addedFoapa);
 }
 
 function deleteFoapa(foapaName, fund) {
-  let index = props.foapaList.findIndex(
+  let index = props.foapaDetails.findIndex(
     (foapa) => foapa.foapaName === foapaName && foapa.fund === fund
   );
 
   if (index > -1) {
-    props.foapaList.splice(index, 1);
+    props.foapaDetails.splice(index, 1);
   }
 }
 
