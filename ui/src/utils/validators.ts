@@ -74,6 +74,19 @@ export function isValidNumber(value) {
   if (value === undefined || value === null) value = "";
   let isValidNumber = /^[0-9]+$/.test(value);
 
+  if (!isValidNumber && String(value).trim() !== "") {
+    return "Numbers only";
+  }
+
+  if (String(value).trim() === "") {
+    return "Field can not be empty";
+  }
+  return true;
+}
+export function isValidFoapaAmount(value) {
+  if (value === undefined || value === null) value = "";
+  let isValidNumber = /^[0-9]+$/.test(value);
+
   if (!isValidNumber && value.trim() !== "") {
     return "Numbers only";
   }

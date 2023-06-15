@@ -47,7 +47,7 @@
             style="width: 95px"
             placeholder="Amount"
             name="foapa-amount"
-            :rules="isValidNumber"
+            :rules="isValidFoapaAmount"
             id="foapa-amount"
             v-model="currentlyInputtedFOAPA.initialAmount"
           />
@@ -228,9 +228,9 @@ import { FoapaStuff } from "../../types/types";
 import {
   isValidString,
   isValidFundNumber,
-  isValidNumber,
   isValidAccountNumber,
   isValidFoapaNumber,
+  isValidFoapaAmount,
 } from "../../utils/validators";
 import axios from "axios";
 let props = defineProps<{ foapaDetails: FoapaStuff[] }>();

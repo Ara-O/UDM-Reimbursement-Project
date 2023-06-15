@@ -103,131 +103,195 @@
           >
         </span>
       </div>
+      <section class="upload-receipts-section">
+        <h3 class="upload-receipts-here">Upload all receipts here</h3>
+        <div style="display: flex; flex-wrap: wrap; column-gap: 20px">
+          <div style="display: flex; align-items: center">
+            <div style="display: flex; flex-direction: column">
+              <input
+                type="file"
+                id="receipt"
+                class="custom-file-input"
+                ref="receiptRef"
+                name="receipt"
+                @change="receiptAdded"
+                accept="image/png, image/jpeg"
+                multiple
+              />
+              <h3 v-if="fileWasSelected" style="font-size: 13px">
+                File chosen
+              </h3>
+            </div>
+            <button
+              class="save-uploaded-receipts-button"
+              @click="storeReceiptImages"
+            >
+              Save uploaded receipts
+            </button>
+          </div>
+          <div style="display: flex; gap: 30px; align-items: flex-start">
+            <a
+              :href="(receipt as string)"
+              target="_blank"
+              style="display: flex; gap: 30px"
+              v-for="receipt in currentReimbursement.reimbursementReceipts"
+            >
+              <img
+                :src="(receipt as string)"
+                style="
+                  width: 40px;
+                  aspect-ratio: 1/1;
+                  border-radius: 5px;
+                  cursor: pointer;
+                "
+              />
+            </a>
+          </div>
+        </div>
+      </section>
       <div class="divider"></div>
       <!-- ACTIVITY SPECIFIC -->
-      <h3>Add Activity</h3>
-      <div style="display: flex; gap: 20px 40px; flex-wrap: wrap">
-        <div>
-          <div style="display: flex; align-items: center; gap: 12px">
-            <h3 style="font-size: 14.5px">Expenses</h3>
-            <img
-              src="../assets/user-help-icon.png"
-              alt="Help icon"
-              title=" Choose from one of the default options below or select other to create another type of expense"
-              class="help-icon"
-            />
-            <h3 style="font-size: 14px; font-weight: 400">
-              &lt;- Hover for help
-            </h3>
-          </div>
-          <div class="expenses-section">
-            <input
-              list="defaults"
-              name="defaultOptions"
-              v-model="currentActivity.activityName"
-              class="input-field"
-            />
+      <Form @submit="addActivity">
+        <h3>Add Expense</h3>
+        <div style="display: flex; gap: 20px 40px; flex-wrap: wrap">
+          <div>
+            <div style="display: flex; align-items: center; gap: 12px">
+              <h3 style="font-size: 14.5px">Expense Title*</h3>
+              <img
+                src="../assets/user-help-icon.png"
+                alt="Help icon"
+                title=" Choose from one of the default options below or select other to create another type of expense"
+                class="help-icon"
+              />
+              <h3 style="font-size: 14px; font-weight: 400">
+                &lt;- Hover for help
+              </h3>
+            </div>
+            <div class="expenses-section activity-field">
+              <span>
+                <Field
+                  list="defaults"
+                  name="default-options"
+                  :rules="isNotEmpty"
+                  v-model="currentActivity.activityName"
+                  class="input-field"
+                />
 
-            <datalist id="defaults">
-              <option :value="expense" v-for="expense in expensesDefaults">
-                {{ expense }}
-              </option>
-            </datalist>
+                <datalist id="defaults">
+                  <option :value="expense" v-for="expense in expensesDefaults">
+                    {{ expense }}
+                  </option>
+                </datalist>
+                <ErrorMessage name="default-options" class="error-field" />
+              </span>
+            </div>
+          </div>
+          <div class="cost-and-other-section">
+            <span class="activity-field">
+              <h3 style="font-size: 14.5px">Cost *</h3>
+              <span>
+                <Field
+                  v-model="currentActivity.cost"
+                  type="text"
+                  name="current-activity-cost"
+                  placeholder="$ Cost"
+                  :rules="isValidNumber"
+                  class="input-field"
+                />
+                <ErrorMessage
+                  name="current-activity-cost"
+                  class="error-field"
+                />
+              </span>
+            </span>
           </div>
         </div>
-        <div class="cost-and-other-section">
-          <span>
-            <h3 style="font-size: 14.5px">Cost:</h3>
-            <input
-              v-model="currentActivity.cost"
-              type="number"
-              placeholder="$ Cost"
-              min="0"
-              class="input-field"
-            />
-          </span>
-        </div>
-      </div>
-      <br />
-      <div class="foapa-and-date-section">
-        <div>
-          <h3>FOAPA Number to use:</h3>
-          <select
-            placeholder="Select FOAPA to pay for activity with"
-            class="input-field"
-            v-model="currentActivity.foapaNumber"
-          >
-            <option
-              :value="formatUserFoapa(foapaDetail)"
-              v-for="foapaDetail in userFoapaNumbers"
-            >
-              {{ foapaDetail.foapaName }}: {{ formatUserFoapa(foapaDetail) }}
-            </option>
-          </select>
-        </div>
+        <br />
+        <div class="foapa-and-date-section">
+          <div class="activity-field" style="height: 105px">
+            <h3>FOAPA Number to use *</h3>
+            <span>
+              <Field
+                placeholder="Select FOAPA to pay for activity with"
+                as="select"
+                class="input-field"
+                name="foapa-field"
+                :rules="isNotEmpty"
+                v-model="currentActivity.foapaNumber"
+              >
+                <option
+                  :value="formatUserFoapa(foapaDetail)"
+                  v-for="foapaDetail in userFoapaNumbers"
+                >
+                  {{ foapaDetail.foapaName }}:
+                  {{ formatUserFoapa(foapaDetail) }}
+                </option>
+              </Field>
+              <ErrorMessage name="foapa-field" class="error-field" />
+            </span>
+          </div>
 
-        <div>
-          <h3>Date Of Activity:</h3>
+          <div class="activity-field" style="height: 105px">
+            <h3>Date Of Activity *</h3>
+            <span>
+              <Field
+                type="date"
+                v-model="currentActivity.activityDate"
+                placeholder="Date of Activity"
+                class="input-field"
+                :rules="isNotEmpty"
+                name="date-of-activity"
+              />
+              <ErrorMessage name="date-of-activity" class="error-field" />
+            </span>
+          </div>
+        </div>
+        <h3 v-if="selectedFoapaAmount" class="selected-foapa-amount">
+          The Selected FOAPA has ${{ selectedFoapaAmount }}
+        </h3>
+        <!-- <div class="add-receipt">
+          <div class="add-receipt-text">Add Receipt:</div>
           <input
-            type="date"
-            v-model="currentActivity.activityDate"
-            placeholder="Date of Activity"
-            class="input-field"
+            type="file"
+            id="receipt"
+            ref="receiptRef"
+            name="receipt"
+            accept="image/png, image/jpeg"
+            multiple
           />
-        </div>
-      </div>
-      <h3
-        v-if="selectedFoapaAmount"
-        style="
-          margin-bottom: -15px;
-          font-weight: 500;
-          font-size: 13px;
-          margin-top: 27px;
-        "
-      >
-        The Selected FOAPA has ${{ selectedFoapaAmount }}
-      </h3>
-      <div class="add-receipt">
-        <div class="add-receipt-text">Add Receipt:</div>
-        <input
-          type="file"
-          id="receipt"
-          ref="receiptRef"
-          name="receipt"
-          accept="image/png, image/jpeg"
-          multiple
-        />
-      </div>
+        </div> -->
 
-      <h5 class="terms-and-conditions">
-        By adding an activity; I hereby certify that this claim is correct and
-        reimbursable under published travel expense Policies & Procedures of UDM
-      </h5>
-      <br />
-      <button
-        class="add-reimbursement-button"
-        @click="addActivity"
-        :disabled="currentlyAddingActivity"
-        v-if="!userIsEditingActivity"
-      >
-        Add Activity
-      </button>
-      <span style="display: flex; gap: 30px">
+        <h5 class="terms-and-conditions">
+          By adding an activity; I hereby certify that this claim is correct and
+          reimbursable under published travel expense Policies & Procedures of
+          UDM
+        </h5>
+        <br />
         <button
           class="add-reimbursement-button"
-          @click="updateActivity"
-          v-if="userIsEditingActivity"
+          type="submit"
+          :disabled="currentlyAddingActivity"
+          v-if="!userIsEditingActivity"
         >
-          Update Activity
+          Add Activity
         </button>
-        <button
-          class="add-reimbursement-button"
-          @click="discardActivityChanges"
-          v-if="userIsEditingActivity"
-        >
-          Discard Changes
-        </button>
-      </span>
+        <span style="display: flex; gap: 30px">
+          <button
+            class="add-reimbursement-button"
+            @click="updateActivity"
+            v-if="userIsEditingActivity"
+          >
+            Update Activity
+          </button>
+          <button
+            class="add-reimbursement-button"
+            @click="discardActivityChanges"
+            v-if="userIsEditingActivity"
+          >
+            Discard Changes
+          </button>
+        </span>
+      </Form>
 
       <h5 style="font-weight: 400" v-show="currentlyAddingActivity">
         Adding activity, please wait...
@@ -251,15 +315,17 @@
 import ActivityContainer from "../components/add-reimbursement/ActivityContainer.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { Form, Field, ErrorMessage } from "vee-validate";
 import { Activity, ReimbursementTicket, FoapaStuff } from "../types/types";
 import parseDate from "../utils/parseDate";
 import axios from "axios";
+import { isNotEmpty, isValidNumber } from "../utils/validators";
 
 const router = useRouter();
 const route = useRoute();
 
 const receiptRef = ref(null);
-
+let fileWasSelected = ref<boolean>(false);
 let currentActivity = ref<Activity>({
   activityName: "",
   cost: 0,
@@ -275,10 +341,25 @@ let currentReimbursement = ref<ReimbursementTicket>({
   reimbursementStatus: "",
   reimbursementDate: parseDate(new Date().toISOString()),
   activities: [],
+  reimbursementReceipts: [],
   destination: "",
-  paymentRetrievalMethod: "",
+  paymentRetrievalMethod: "Direct Deposit",
   UDMPUVoucher: false,
 });
+
+const expensesDefaults = [
+  "Air/Train",
+  "Breakfast",
+  "Business Guest Meals",
+  "Dinner",
+  "Lodging",
+  "Lunch",
+  "Mileage",
+  "Other",
+  "Parking",
+  "Registration",
+  "Taxi/Bus/Car Rental",
+];
 
 let userIsEditingReimbursement = ref<boolean>(false);
 let currentlyAddingActivity = ref<boolean>(false);
@@ -311,22 +392,15 @@ watch(
   }
 );
 
-const expensesDefaults = [
-  "Air/Train",
-  "Breakfast",
-  "Business Guest Meals",
-  "Dinner",
-  "Lodging",
-  "Lunch",
-  "Mileage",
-  "Other",
-  "Parking",
-  "Registration",
-  "Taxi/Bus/Car Rental",
-];
+function receiptAdded() {
+  fileWasSelected.value = true;
+  console.log(receiptRef.value);
+  // @ts-ignore
+  const files = receiptRef.value.files;
+  console.log(files);
+}
 
 // ACTIVITY RELATED
-
 function resetActivity() {
   currentActivity.value = {
     activityName: "",
@@ -340,7 +414,7 @@ function resetActivity() {
   receiptRef.value.value = "";
 }
 
-async function addActivity() {
+async function addActivity(values, { resetForm }) {
   let allActivitiesOccurence = {};
   let limitReached: boolean = false;
   currentReimbursement.value.activities.forEach((activity) => {
@@ -357,15 +431,6 @@ async function addActivity() {
 
   if (limitReached) return;
 
-  if (
-    String(currentActivity.value.cost).includes("-") ||
-    String(currentActivity.value.cost).trim() === ""
-  ) {
-    alert("Invalid character/s in the cost field");
-    return;
-  }
-
-  console.log(selectedFoapaAmount.value);
   if (selectedFoapaAmount.value !== undefined) {
     if (currentActivity.value.cost > (selectedFoapaAmount.value ?? 0)) {
       alert(
@@ -376,49 +441,48 @@ async function addActivity() {
 
   if (currentActivity.value.activityName === "Other") {
     alert("Please type in a description of 'Other' expense.");
-  } else if (
-    currentActivity.value.activityName !== "" &&
-    currentActivity.value.cost !== 0 &&
-    currentActivity.value.foapaNumber !== "" &&
-    currentActivity.value.activityDate !== ""
-  ) {
+  } else {
     selectedFoapaAmount.value = 0;
     currentlyAddingActivity.value = true;
-    currentActivity.value.activityReceipt = await storeActivityImage();
+    // currentActivity.value.activityReceipt = await storeActivityImage();
     currentReimbursement.value.activities.push(
       Object.assign({}, currentActivity.value)
     );
 
-    resetActivity();
+    resetForm();
     currentlyAddingActivity.value = false;
-  } else {
-    alert("Missing field, please check to make sure all fields are filled");
   }
 }
 
-async function storeActivityImage() {
+async function storeReceiptImages() {
   let formData = new FormData();
 
   //@ts-ignore
   const files = receiptRef.value.files;
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    formData.append("receipts", file);
+    formData.append("receipt", file);
   }
 
   if (files.length > 0) {
     try {
       // Send the FormData object to the server using axios
       let res = await axios.post(
-        "http://localhost:8080/api/storeActivityImages",
+        "http://localhost:8080/api/storeReceiptImages",
         formData
       );
-      return res.data;
+      fileWasSelected.value = false;
+
+      if (currentReimbursement.value.reimbursementReceipts.length === 0) {
+        currentReimbursement.value.reimbursementReceipts = res.data;
+      } else {
+        currentReimbursement.value.reimbursementReceipts.push(...res.data);
+      }
     } catch (err) {
       console.log(err);
     }
   } else {
-    return "";
+    return [];
   }
 }
 

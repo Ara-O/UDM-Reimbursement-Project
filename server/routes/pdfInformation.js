@@ -128,21 +128,19 @@ router.get("/generatePdf", verifyToken, (req, res) => {
   });
 });
 
-router.post("/storeActivityImages", upload.array("receipts"), (req, res) => {
+router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
   console.log(req.files);
 
   const buffers = req.files.map((file) => {
     return fs.readFileSync(file.path);
   });
 
-  console.log(buffers);
   const promises = [];
   buffers.forEach((buffer) => {
     promises.push(
       imagekit.upload({
         file: buffer, // It accepts remote URL, base_64 string or file buffer
-        fileName: "plswork.jpg", // required
-        tags: ["tag1", "tag2"], // optional
+        fileName: "receipt", // required
         isPrivateFile: false,
       })
     );
@@ -150,12 +148,11 @@ router.post("/storeActivityImages", upload.array("receipts"), (req, res) => {
 
   Promise.all(promises)
     .then((imagesData) => {
-      let imageUrl = "";
-      imagesData.forEach((image) => {
-        imageUrl += image.url + "%%%%%";
+      let imageLinks = imagesData.map((image) => {
+        return image.url;
       });
-      console.log("Image url", imageUrl);
-      res.status(200).send(imageUrl);
+      console.log("Image url", imageLinks);
+      res.status(200).send(imageLinks);
     })
     .catch((err) => {
       console.log(err);

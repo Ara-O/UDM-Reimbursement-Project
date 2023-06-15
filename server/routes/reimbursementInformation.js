@@ -66,7 +66,7 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
     oldTicket.UDMPUVoucher = reimbursementTicket.UDMPUVoucher;
     oldTicket.reimbursementDate = reimbursementTicket.reimbursementDate;
     oldTicket.reimbursementStatus = reimbursementTicket.reimbursementStatus;
-
+    oldTicket.reimbursementReceipts = reimbursementTicket.reimbursementReceipts;
     oldTicket.save();
 
     res.status(200).send({ message: "Reimbursement updated successfully!" });

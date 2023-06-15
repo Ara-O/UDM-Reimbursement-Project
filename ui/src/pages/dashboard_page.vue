@@ -170,10 +170,10 @@ let reimbursementTickets = ref<any>([
 function orderByName() {
   sortParameter.value = "Name";
   reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
-    if (a.eventName.toUpperCase() < b.eventName.toUpperCase()) {
+    if (a.reimbursementName.toUpperCase() < b.reimbursementName.toUpperCase()) {
       return 1 * nameFlag;
     }
-    if (a.eventName.toUpperCase() > b.eventName.toUpperCase()) {
+    if (a.reimbursementName.toUpperCase() > b.reimbursementName.toUpperCase()) {
       return -1 * nameFlag;
     }
     return 0;
@@ -226,7 +226,9 @@ function orderByDate() {
 const filterReimbursements = computed(() => {
   return searchValue.value
     ? reimbursementTickets.value.filter((ticket) =>
-        ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
+        ticket.reimbursementName
+          .toLowerCase()
+          .includes(searchValue.value.toLowerCase())
       )
     : reimbursementTickets.value;
 });

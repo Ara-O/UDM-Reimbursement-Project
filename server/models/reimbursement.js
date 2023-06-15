@@ -8,12 +8,12 @@ const reimbursementSchema = new Schema({
   UDMPUVoucher: Boolean,
   totalCost: Number,
   reimbursementStatus: String,
+  reimbursementReceipts: [String],
   reimbursementDate: Date,
   activities: [
     {
       foapaNumber: String,
       activityName: String,
-      activityReceipt: [String],
       activityDate: Date,
       cost: Number,
     },
