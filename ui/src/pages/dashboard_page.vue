@@ -81,9 +81,7 @@
           </h5>
           <div class="reimbursement-buttons">
             <button @click="viewTicket(ticket._id)">Modify</button>
-            <button @click="deleteReimbursement(ticket.reimbursementId)">
-              Delete
-            </button>
+            <button @click="deleteReimbursement(ticket._id)">Delete</button>
           </div>
         </div>
       </div>
@@ -246,8 +244,9 @@ function deleteReimbursement(id: string) {
     })
     .then(() => {
       retrieveReimbursements();
-      console.log("Deleted reimbursement id: " + id);
-      alert("Ticket Deleted Successfully");
+    })
+    .catch((err) => {
+      alert(err.response.data.message);
     });
 }
 

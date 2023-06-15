@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
-import updateFoapaDetails from "../utils/updateFoapaDetails.js";
 import Faculty from "../models/faculty.js";
 import ReimbursementTicket from "../models/reimbursement.js";
 const router = Router();
@@ -53,24 +52,22 @@ router.get("/retrieveTicketInformation", verifyToken, async (req, res) => {
 
 //POST /api/updateReimbursement
 router.post("/updateReimbursement", verifyToken, async (req, res) => {
-  const { reimbursementId } = req.body.reimbursementTicket;
+  const reimbursementTicket = req.body.reimbursementTicket;
   try {
-    const result = await Faculty.findOneAndUpdate(
-      {
-        employmentNumber: req.user.employmentNumber,
-        reimbursementTickets: { $elemMatch: { reimbursementId } },
-      },
-      {
-        $set: {
-          "reimbursementTickets.$": req.body.reimbursementTicket,
-        },
-      },
-      { new: true }
-    );
+    let oldTicket = await ReimbursementTicket.findById(reimbursementTicket._id);
 
-    // await updateFoapaDetails(req.user.employmentNumber);
+    //find a better way ;-;
+    oldTicket.reimbursementName = reimbursementTicket.reimbursementName;
+    oldTicket.activities = reimbursementTicket.activities;
+    oldTicket.reimbursementReason = reimbursementTicket.reimbursementReason;
+    oldTicket.paymentRetrievalMethod =
+      reimbursementTicket.paymentRetrievalMethod;
+    oldTicket.totalCost = reimbursementTicket.totalCost;
+    oldTicket.UDMPUVoucher = reimbursementTicket.UDMPUVoucher;
+    oldTicket.reimbursementDate = reimbursementTicket.reimbursementDate;
+    oldTicket.reimbursementStatus = reimbursementTicket.reimbursementStatus;
 
-    console.log("up", result);
+    oldTicket.save();
 
     res.status(200).send({ message: "Reimbursement updated successfully!" });
   } catch (err) {
@@ -79,31 +76,26 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
   }
 });
 
+//POST /api/deleteReimbursement
 router.post("/deleteReimbursement", verifyToken, async (req, res) => {
   const reimbursementId = req.body.id;
-  // console.log(reimbursementId)
-
+  console.log("rem id", reimbursementId);
   try {
-    let userInfo = await Faculty.findOne({
-      employmentNumber: req.user.employmentNumber,
-    });
-
-    await userInfo.reimbursementTickets.pull({
-      reimbursementId,
-    });
-
-    await userInfo.save();
-    console.log(userInfo);
+    let faculty = await Faculty.findById(req.user.userId);
+    faculty.reimbursementTickets.pull(reimbursementId);
+    await ReimbursementTicket.findByIdAndDelete(reimbursementId);
+    await faculty.save();
 
     res
       .status(200)
       .send({ message: "Reimbursement ticket deleted successfully" });
   } catch (err) {
-    // console.log(err)
+    console.log(err);
     res.status(400).send({ message: err.message });
   }
 });
 
+//CHANGE
 router.post("/editActivity", verifyToken, async (req, res) => {
   const activityId = req.body.id;
   // console.log(activityId)
