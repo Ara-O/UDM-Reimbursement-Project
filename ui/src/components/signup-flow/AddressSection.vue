@@ -143,6 +143,7 @@ function countryChanged() {
     })
     .then((res) => {
       states.value = res.data;
+      cities.value = [];
     })
     .catch((err) => {
       console.log(err);

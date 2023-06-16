@@ -54,20 +54,10 @@ router.get("/retrieveTicketInformation", verifyToken, async (req, res) => {
 router.post("/updateReimbursement", verifyToken, async (req, res) => {
   const reimbursementTicket = req.body.reimbursementTicket;
   try {
-    let oldTicket = await ReimbursementTicket.findById(reimbursementTicket._id);
-
-    //find a better way ;-;
-    oldTicket.reimbursementName = reimbursementTicket.reimbursementName;
-    oldTicket.activities = reimbursementTicket.activities;
-    oldTicket.reimbursementReason = reimbursementTicket.reimbursementReason;
-    oldTicket.paymentRetrievalMethod =
-      reimbursementTicket.paymentRetrievalMethod;
-    oldTicket.totalCost = reimbursementTicket.totalCost;
-    oldTicket.UDMPUVoucher = reimbursementTicket.UDMPUVoucher;
-    oldTicket.reimbursementDate = reimbursementTicket.reimbursementDate;
-    oldTicket.reimbursementStatus = reimbursementTicket.reimbursementStatus;
-    oldTicket.reimbursementReceipts = reimbursementTicket.reimbursementReceipts;
-    oldTicket.save();
+    await ReimbursementTicket.findByIdAndUpdate(
+      reimbursementTicket._id,
+      reimbursementTicket
+    );
 
     res.status(200).send({ message: "Reimbursement updated successfully!" });
   } catch (err) {

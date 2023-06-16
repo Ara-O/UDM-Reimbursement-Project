@@ -45,6 +45,8 @@ let props = defineProps<{
   userIsEditingReimbursement: Boolean;
 }>();
 
+let emits = defineEmits(["userIsEditingActivity", "userIsDeletingActivity"]);
+
 function getAllActivitiesAmount(): number {
   let sum: number = 0;
   props.currentReimbursement.activities.forEach((activity) => {
@@ -95,16 +97,7 @@ async function addReimbursement() {
 }
 
 function editActivity(activityId: number) {
-  // const activity = currentReimbursement.value.activities.find(
-  //   (activity) => activity.activityId === activityId
-  // );
-  // if (activity) {
-  //   userIsEditingActivity.value = true;
-  //   activity.activityDate = parseDate(activity.activityDate);
-  //   currentActivity.value = Object.assign({}, activity);
-  //   //@ts-ignore
-  //   receiptRef.value.value = "";
-  // }
+  emits("userIsEditingActivity", activityId);
 }
 
 async function saveReimbursement() {
@@ -196,11 +189,12 @@ function createPdf() {
     });
 }
 
-function deleteActivity(activityId: number) {
-  // currentReimbursement.value.activities =
-  //   currentReimbursement.value.activities.filter(
-  //     (activity) => activity.activityId != activityId
-  //   );
+function deleteActivity(activityId: string) {
+  console.log(activityId);
+  props.currentReimbursement.activities =
+    props.currentReimbursement.activities.filter(
+      (activity) => activity.activityId != activityId
+    );
 }
 </script>
 

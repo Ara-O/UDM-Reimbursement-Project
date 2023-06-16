@@ -56,11 +56,10 @@
             </div>
           </div>
           <div class="continue-buttons">
-            <router-link to="/dashboard" custom v-slot="{ navigate }">
+            <router-link to="/dashboard">
               <button
                 class="signup-button"
                 type="button"
-                @click="navigate"
                 role="link"
                 style="margin-top: 0px"
               >
@@ -77,6 +76,9 @@
             </button>
           </div>
         </section>
+        <h3 style="font-weight: 400; font-size: 14px; margin-top: 25px">
+          {{ feedback }}
+        </h3>
       </section>
     </section>
   </section>
@@ -88,6 +90,7 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
 let enterDefault = ref<string>("");
+let feedback = ref<string>("");
 let reEnteredPassword = ref<string>("");
 let currentPassword = ref<string>("");
 let surveyProgress = ref<number>(0);
@@ -98,21 +101,23 @@ let newPassword = ref<string>("");
 
 function changePassword() {
   if (reEnteredPassword.value !== newPassword.value) {
-    alert("Passwords do not match, please try again");
+    feedback.value = "Passwords do not match, please try again";
   } else if (newPassword.value === currentPassword.value) {
-    alert("New password can not match current password, please try again");
+    feedback.value =
+      "New password can not match current password, please try again";
   } else {
+    feedback.value = "Updating password...";
     axios
       .post("http://localhost:8080/api/changePassword", {
         currentPassword: currentPassword.value,
         newPassword: newPassword.value,
       })
       .then((res) => {
-        alert(res.data.message);
-        router.push("/dashboard");
+        feedback.value = res.data.message;
+        // router.push("/dashboard");
       })
       .catch((err) => {
-        alert(err.response.data.message);
+        feedback.value = err.response.data.message;
         console.log(err);
       });
   }
@@ -121,4 +126,20 @@ function changePassword() {
 
 <style scoped>
 @import url("../assets/styles/signup-page.css");
+label {
+  margin-top: 0px !important;
+  width: 130px !important;
+}
+
+.input-field-wrapper {
+  gap: 32px;
+}
+.input-field {
+  align-items: center;
+}
+@media (min-width: 800px) {
+  .continue-buttons {
+    margin-top: 45px;
+  }
+}
 </style>

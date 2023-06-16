@@ -111,7 +111,6 @@ function registerUser() {
   axios
     .post("http://localhost:8080/api/register", userSignupData)
     .then((res) => {
-      alert(res.data.message);
       localStorage.setItem("token", res.data.token);
       axios.defaults.headers.common["authorization"] =
         localStorage.getItem("token");

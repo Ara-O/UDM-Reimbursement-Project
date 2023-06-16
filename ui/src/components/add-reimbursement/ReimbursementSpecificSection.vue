@@ -12,7 +12,7 @@
     />
   </div>
   <h3 style="margin-top: 0px">Reimbursement Ticket Information</h3>
-  <div style="display: flex; column-gap: 40px; row-gap: 20px">
+  <div class="expenses-fields-wrapper">
     <span>
       <h3 style="font-size: 14.5px">Reason for Travel/Expense:</h3>
       <input
@@ -31,28 +31,33 @@
     </span>
   </div>
   <br />
-  <div style="display: flex; column-gap: 30px; row-gap: 20px">
-    <span style="display: flex; gap: 3px">
-      <input
-        type="radio"
-        value="Hold for Pickup"
-        id="hold-for-pickup"
-        v-model="currentReimbursement.paymentRetrievalMethod"
-      />
-      <label for="hold-for-pickup" style="font-size: 14px"
-        >Hold for Pickup</label
-      >
-    </span>
-    <span style="display: flex; gap: 7px">
-      <input
-        type="radio"
-        value="Direct Deposit"
-        id="direct-deposit"
-        v-model="currentReimbursement.paymentRetrievalMethod"
-      />
-      <label for="direct-deposit" style="font-size: 14px">Direct Deposit</label>
-    </span>
-    <span style="display: flex; gap: 7px">
+  <div>
+    <div class="reimbursement-additional-info-wrapper">
+      <span style="display: flex; gap: 3px">
+        <input
+          type="radio"
+          value="Hold for Pickup"
+          id="hold-for-pickup"
+          v-model="currentReimbursement.paymentRetrievalMethod"
+        />
+        <label for="hold-for-pickup" style="font-size: 14px"
+          >Hold for Pickup</label
+        >
+      </span>
+      <span style="display: flex; gap: 7px">
+        <input
+          type="radio"
+          value="Direct Deposit"
+          id="direct-deposit"
+          v-model="currentReimbursement.paymentRetrievalMethod"
+        />
+        <label for="direct-deposit" style="font-size: 14px"
+          >Direct Deposit</label
+        >
+      </span>
+    </div>
+    <br />
+    <span>
       <input
         type="checkbox"
         id="udmpu-voucher"

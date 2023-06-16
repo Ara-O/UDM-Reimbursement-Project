@@ -1,7 +1,7 @@
 <template>
-  <Form @submit="addActivity">
+  <Form @submit="submitActivityForm">
     <h3>Add Expense</h3>
-    <div style="display: flex; gap: 20px 40px">
+    <div class="expenses-fields-wrapper">
       <div>
         <div style="display: flex; align-items: center; gap: 12px">
           <h3 style="font-size: 14.5px">Expense Title*</h3>
@@ -91,20 +91,32 @@
         </span>
       </div>
     </div>
-    <h3 v-if="selectedFoapaAmount" class="selected-foapa-amount">
+    <!-- <h3 v-if="selectedFoapaAmount" class="selected-foapa-amount">
       The Selected FOAPA has ${{ selectedFoapaAmount }}
-    </h3>
-    <!-- <div class="add-receipt">
-          <div class="add-receipt-text">Add Receipt:</div>
-          <input
-            type="file"
-            id="receipt"
-            ref="receiptRef"
-            name="receipt"
-            accept="image/png, image/jpeg"
-            multiple
-          />
-        </div> -->
+    </h3> -->
+    <br />
+    <div class="activity-add-receipt-section">
+      <div class="activity-field">
+        <div class="add-receipt-text">Add Receipt:</div>
+        <span>
+          <Field
+            as="select"
+            class="input-field"
+            name="receipt-field"
+            v-model="currentActivity.activityReceipt"
+          >
+            <option
+              v-for="(receipt, index) in props.currentReimbursement
+                .reimbursementReceipts"
+              :value="receipt.url"
+            >
+              Receipt #{{ index + 1 }}
+            </option>
+          </Field>
+          <ErrorMessage name="receipt-field" class="error-field" />
+        </span>
+      </div>
+    </div>
 
     <h5 class="terms-and-conditions">
       By adding an activity; I hereby certify that this claim is correct and
@@ -115,11 +127,10 @@
       class="add-reimbursement-button"
       type="submit"
       :disabled="currentlyAddingActivity"
-      v-if="!userIsEditingActivity"
     >
-      Add Activity
+      {{ !userIsEditingActivity ? "Add Activity" : "Update Activity" }}
     </button>
-    <span style="display: flex; gap: 30px">
+    <!-- <span style="display: flex; gap: 30px">
       <button
         class="add-reimbursement-button"
         @click="updateActivity"
@@ -134,7 +145,7 @@
       >
         Discard Changes
       </button>
-    </span>
+    </span> -->
   </Form>
 
   <h5 style="font-weight: 400" v-show="currentlyAddingActivity">
@@ -151,23 +162,18 @@ import { ref, watch, toRefs, onMounted } from "vue";
 import axios from "axios";
 import { Activity, ReimbursementTicket, FoapaStuff } from "../../types/types";
 import { Form, Field, ErrorMessage } from "vee-validate";
-
-let currentActivity = ref<Activity>({
-  activityName: "",
-  cost: 0,
-  activityDate: "",
-  activityReceipt: "",
-  foapaNumber: "",
-});
-
+import { generateRandomStringId } from "../../utils/generateRandomId";
 let currentlyAddingActivity = ref<boolean>(false);
 let currentlyUpdatingActivity = ref<boolean>(false);
-let userIsEditingActivity = ref<boolean>(false);
 
 let props = defineProps<{
   currentReimbursement: ReimbursementTicket;
+  currentActivity: Activity;
+  userIsEditingActivity: Boolean;
 }>();
-const { currentReimbursement } = toRefs(props);
+let emits = defineEmits(["userHasFinishedEditingActivity"]);
+const { currentReimbursement, currentActivity, userIsEditingActivity } =
+  toRefs(props);
 
 const expensesDefaults = [
   "Air/Train",
@@ -185,7 +191,6 @@ const expensesDefaults = [
 
 let selectedFoapaAmount = ref<number>();
 let userFoapaNumbers = ref<FoapaStuff[]>([]);
-
 function formatUserFoapa(foapa: FoapaStuff) {
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
     foapa.program || "XXXX"
@@ -208,38 +213,23 @@ watch(
     }
   }
 );
+// let allActivitiesOccurence = {};
+//   let limitReached: boolean = false;
+//   currentReimbursement.value.activities.forEach((activity) => {
+//     if (allActivitiesOccurence[activity.activityName] === undefined) {
+//       allActivitiesOccurence[activity.activityName] = 1;
+//     } else {
+//       allActivitiesOccurence[activity.activityName]++;
+//     }
+//   });
+//   if (allActivitiesOccurence[currentActivity.value.activityName] >= 7) {
+//     alert("You have reached the limit of expenses with this activity");
+//     limitReached = true;
+//   }
 
-// ACTIVITY RELATED
-function resetActivity() {
-  currentActivity.value = {
-    activityName: "",
-    cost: 0,
-    activityDate: "",
-    activityReceipt: "",
-    foapaNumber: "",
-  };
+//   if (limitReached) return;
 
-  //@ts-ignore
-  // receiptRef.value.value = "";
-}
-
-async function addActivity(values, { resetForm }) {
-  let allActivitiesOccurence = {};
-  let limitReached: boolean = false;
-  currentReimbursement.value.activities.forEach((activity) => {
-    if (allActivitiesOccurence[activity.activityName] === undefined) {
-      allActivitiesOccurence[activity.activityName] = 1;
-    } else {
-      allActivitiesOccurence[activity.activityName]++;
-    }
-  });
-  if (allActivitiesOccurence[currentActivity.value.activityName] >= 7) {
-    alert("You have reached the limit of expenses with this activity");
-    limitReached = true;
-  }
-
-  if (limitReached) return;
-
+function addActivity(resetForm) {
   if (selectedFoapaAmount.value !== undefined) {
     if (currentActivity.value.cost > (selectedFoapaAmount.value ?? 0)) {
       alert(
@@ -257,34 +247,42 @@ async function addActivity(values, { resetForm }) {
       Object.assign({}, currentActivity.value)
     );
 
-    resetForm();
     currentlyAddingActivity.value = false;
+    resetForm();
   }
 }
-
-function discardActivityChanges() {
-  resetActivity();
-  userIsEditingActivity.value = false;
+function getAllActivitiesAmount(): number {
+  let sum: number = 0;
+  props.currentReimbursement.activities.forEach((activity) => {
+    sum += Number(activity.cost);
+  });
+  return sum;
 }
 
-async function updateActivity() {
-  // currentlyUpdatingActivity.value = true;
-  // let editedActivityIndex = currentReimbursement.value.activities.findIndex(
-  //   (activity) => activity.activityId === currentActivity.value.activityId
-  // );
-  // currentReimbursement.value.totalAmount = getAllActivitiesAmount();
-  // currentReimbursement.value.activities[editedActivityIndex] =
-  //   currentActivity.value;
-  // //@ts-ignore
-  // const files = receiptRef.value.files;
-  // if (files.length > 0) {
-  //   let storedImagesURL = await storeActivityImage();
-  //   currentReimbursement.value.activities[editedActivityIndex].activityReceipt =
-  //     storedImagesURL;
-  // }
-  // currentlyUpdatingActivity.value = false;
-  // alert("Activity updated successfully");
-  // discardActivityChanges();
+function updateActivity(resetForm) {
+  let changedActivity = Object.assign({}, currentActivity.value);
+  currentlyUpdatingActivity.value = true;
+  let editedActivityIndex = currentReimbursement.value.activities.findIndex(
+    (activity) => activity.activityId === changedActivity.activityId
+  );
+  currentReimbursement.value.totalCost = getAllActivitiesAmount();
+  currentReimbursement.value.activities[editedActivityIndex] = changedActivity;
+  currentlyUpdatingActivity.value = false;
+
+  if (currentActivity.value._id) {
+    delete currentActivity.value._id;
+  }
+  emits("userHasFinishedEditingActivity");
+  resetForm();
+}
+
+async function submitActivityForm(values, { resetForm }) {
+  if (userIsEditingActivity.value) {
+    updateActivity(resetForm);
+  } else {
+    addActivity(resetForm);
+  }
+  currentActivity.value.activityId = generateRandomStringId(24);
 }
 
 function retrieveFoapaDetails() {

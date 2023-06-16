@@ -6,6 +6,7 @@ const activitySchema = new Schema({
   activityReceipt: [String],
   activityDate: Date,
   cost: Number,
+  _id: mongoose.Schema.Types.ObjectId,
 });
 
 const Activity = mongoose.model("Activity", activitySchema);

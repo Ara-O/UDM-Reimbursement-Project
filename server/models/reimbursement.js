@@ -8,7 +8,12 @@ const reimbursementSchema = new Schema({
   UDMPUVoucher: Boolean,
   totalCost: Number,
   reimbursementStatus: String,
-  reimbursementReceipts: [String],
+  reimbursementReceipts: [
+    {
+      url: String,
+      id: String,
+    },
+  ],
   reimbursementDate: Date,
   activities: [
     {
@@ -17,6 +22,7 @@ const reimbursementSchema = new Schema({
       activityName: String,
       activityDate: Date,
       cost: Number,
+      activityId: String,
     },
   ],
 });

@@ -190,7 +190,7 @@ router.post("/resetPassword", async (req, res) => {
 router.post("/changePassword", verifyToken, async (req, res) => {
   try {
     let facultyInfo = await Faculty.findOne({
-      employmentNumber: req.user.employmentNumber,
+      id: req.user._id,
     });
 
     if (facultyInfo) {

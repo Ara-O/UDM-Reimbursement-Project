@@ -9,7 +9,7 @@
     <div class="activity-options-wrapper">
       <div
         class="activity-option"
-        @click="$emit('deleteActivity', activity._id)"
+        @click="$emit('deleteActivity', activity.activityId)"
       >
         <img
           src="../../assets/trash-icon-white.png"
@@ -18,7 +18,10 @@
           style="width: 13px"
         />
       </div>
-      <div @click="$emit('editActivity', activity._id)" class="activity-option">
+      <div
+        @click="$emit('editActivity', activity.activityId)"
+        class="activity-option"
+      >
         <img
           src="../../assets/edit-icon.png"
           class="edit-icon-button"
