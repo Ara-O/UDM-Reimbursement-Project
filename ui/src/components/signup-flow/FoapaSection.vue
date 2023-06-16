@@ -14,8 +14,8 @@
 
 <script lang="ts" setup>
 import ManageFoapaDetails from "../manage-foapa/ManageFoapaDetails.vue";
-const emits = defineEmits(["finish", "goBack"]);
 import { UserData } from "../../types/types";
+const emits = defineEmits(["finish", "goBack"]);
 defineProps<{ userSignupData: UserData }>();
 
 function regress() {

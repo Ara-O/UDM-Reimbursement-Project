@@ -41,8 +41,9 @@ import axios from "axios";
 import ReimbursementSpecificSection from "../components/add-reimbursement/ReimbursementSpecificSection.vue";
 import ActivitySpecificSection from "../components/add-reimbursement/ActivitySpecificSection.vue";
 import AddReceiptSection from "../components/add-reimbursement/AddReceiptSection.vue";
-const route = useRoute();
 import { generateRandomStringId } from "../utils/generateRandomId";
+
+const route = useRoute();
 
 let currentReimbursement = ref<ReimbursementTicket>({
   reimbursementName: "",
