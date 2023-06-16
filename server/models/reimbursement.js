@@ -12,6 +12,7 @@ const reimbursementSchema = new Schema({
   reimbursementDate: Date,
   activities: [
     {
+      activityReceipt: String,
       foapaNumber: String,
       activityName: String,
       activityDate: Date,
