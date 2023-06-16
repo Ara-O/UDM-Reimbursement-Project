@@ -1,7 +1,7 @@
 <template>
   <Form @submit="addActivity">
     <h3>Add Expense</h3>
-    <div style="display: flex; gap: 20px 40px; flex-wrap: wrap">
+    <div style="display: flex; gap: 20px 40px">
       <div>
         <div style="display: flex; align-items: center; gap: 12px">
           <h3 style="font-size: 14.5px">Expense Title*</h3>

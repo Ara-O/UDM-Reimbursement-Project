@@ -7,13 +7,20 @@
       ></activities-list>
     </section>
     <section class="reimbursement-section">
-      <reimbursement-specific-section
-        :current-reimbursement="currentReimbursement"
-      ></reimbursement-specific-section>
-      <div class="divider"></div>
-      <activity-specific-section
-        :current-reimbursement="currentReimbursement"
-      ></activity-specific-section>
+      <article>
+        <reimbursement-specific-section
+          :current-reimbursement="currentReimbursement"
+        ></reimbursement-specific-section>
+        <div class="divider"></div>
+        <activity-specific-section
+          :current-reimbursement="currentReimbursement"
+        ></activity-specific-section>
+      </article>
+      <article>
+        <add-receipt-section
+          :current-reimbursement="currentReimbursement"
+        ></add-receipt-section>
+      </article>
     </section>
   </section>
 </template>
@@ -27,7 +34,7 @@ import parseDate from "../utils/parseDate";
 import axios from "axios";
 import ReimbursementSpecificSection from "../components/add-reimbursement/ReimbursementSpecificSection.vue";
 import ActivitySpecificSection from "../components/add-reimbursement/ActivitySpecificSection.vue";
-
+import AddReceiptSection from "../components/add-reimbursement/AddReceiptSection.vue";
 const route = useRoute();
 
 let currentReimbursement = ref<ReimbursementTicket>({
