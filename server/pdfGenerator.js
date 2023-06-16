@@ -48,7 +48,7 @@ export default function createPdfDefinition(
   //   Faculty information section
   let ticketTotal = 0;
   reimbursementData.activities.forEach((activity) => {
-    ticketTotal += Number(activity.amount);
+    ticketTotal += Number(activity.cost);
   });
   content.push({
     table: {
@@ -163,7 +163,7 @@ export default function createPdfDefinition(
           {},
           {},
           {
-            text: reimbursementData.expenseReason,
+            text: reimbursementData.reimbursementReason,
             colSpan: 10,
             italics: false,
           },
@@ -182,7 +182,7 @@ export default function createPdfDefinition(
           {},
           {},
           {
-            text: reimbursementData.destinationLocation,
+            text: reimbursementData.destination,
             colSpan: 10,
             italics: false,
           },
@@ -287,7 +287,7 @@ export default function createPdfDefinition(
         fontSize: 7.5,
       });
     }
-    arrayField.total += Number(activity.amount);
+    arrayField.total += Number(activity.cost);
   });
 
   //Put data in right format
@@ -416,11 +416,12 @@ export default function createPdfDefinition(
   //FOAPA Number section
   let foapaDetails = {};
   let foapaArray = [];
+
   reimbursementData.activities.forEach((activity) => {
     if (foapaDetails[activity.foapaNumber]) {
-      foapaDetails[activity.foapaNumber] += Number(activity.amount);
+      foapaDetails[activity.foapaNumber] += Number(activity.cost);
     } else {
-      foapaDetails[activity.foapaNumber] = Number(activity.amount);
+      foapaDetails[activity.foapaNumber] = Number(activity.cost);
     }
   });
 

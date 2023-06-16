@@ -11,7 +11,7 @@ export type UserData = {
   city: string;
   state: string;
   country: string;
-  userFoapas: Array<FoapaStuff>;
+  foapaDetails: FoapaStuff[];
 };
 
 export type UserDataPreVerification = {
@@ -37,11 +37,11 @@ export type UserDataAcct = {
 };
 
 export type FoapaStuff = {
-  fNumber: string;
-  oNumber: string;
-  aNumber: string;
-  pNumber: string;
-  a2Number: string;
+  fund: string;
+  organization: string;
+  account: string;
+  program: string;
+  activity: string;
   foapaName: string;
   initialAmount: string;
   currentAmount: string;
@@ -53,12 +53,13 @@ export type AddressDetails = {
 };
 
 export type Activity = {
-  activityId: number;
   activityName: string;
-  amount: number;
+  cost: number;
   foapaNumber: string;
   activityDate: string;
   activityReceipt: string;
+  activityId: string;
+  _id?: string;
 };
 
 export type FoapaNumbers = {
@@ -70,13 +71,13 @@ export type FoapaNumbers = {
 };
 
 export type ReimbursementTicket = {
-  reimbursementId: number;
-  expenseReason: String;
-  destinationLocation: String;
+  reimbursementName: String;
+  reimbursementReason: String;
+  destination: String;
   paymentRetrievalMethod: "Hold for Pickup" | "Direct Deposit" | "";
   UDMPUVoucher: Boolean;
-  eventName: string;
-  totalAmount: number;
+  totalCost: number;
+  reimbursementReceipts: { url: String; id: String }[];
   reimbursementStatus: string;
   reimbursementDate: string;
   activities: Activity[];

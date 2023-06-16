@@ -98,19 +98,12 @@
       </div>
     </div>
     <button class="signup-button" type="submit">Continue</button>
-    <!-- <button class="signup-button-arrow" type="submit">
-      <img
-        src="../../assets/next-arrow.png"
-        alt="Next arrow"
-        class="next-arrow"
-      />
-    </button> -->
   </Form>
-  <h5
-    style="font-weight: 400; margin-bottom: 10px"
-    v-if="validatingSignupFields"
-  >
+  <h5 class="validating-signup-field" v-if="validatingSignupFields">
     Validating Employment Number...
+  </h5>
+  <h5 class="error-signup-message" v-if="signupError">
+    {{ signupErrorMessage }}
   </h5>
 </template>
 
@@ -118,12 +111,20 @@
 import { Form, Field, ErrorMessage } from "vee-validate";
 import axios from "axios";
 import { ref } from "vue";
+import {
+  isValidEmploymentNumber,
+  isValidString,
+  isValidPhoneNumber,
+} from "../../utils/validators";
 import { UserData } from "../../types/types";
+
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
 }>();
 
 let validatingSignupFields = ref<boolean>(false);
+let signupError = ref<boolean>(false);
+let signupErrorMessage = ref<string>("");
 const departments = [
   "Architectural Engineering",
   "Biochemistry",
@@ -140,54 +141,10 @@ const departments = [
 ];
 const emits = defineEmits(["continue"]);
 
-function isValidString(value) {
-  const isAString = /^[a-zA-Z0-9\s-]+$/.test(value);
-  switch (true) {
-    case value.trim() === "":
-      return "Field can not be empty";
-    case !isAString:
-      return "Invalid Characters";
-    default:
-      return true;
-  }
-}
-
-function isValidPhoneNumber(value) {
-  const isValidNumber = /^[0-9]+$/.test(value);
-  const hasValidLength = /^[0-9]{10}$/.test(value);
-
-  switch (true) {
-    case value.trim() === "":
-      return "Field cannot be empty";
-    case !isValidNumber:
-      return "Field only accepts numbers";
-    case !hasValidLength:
-      return "Please use the format xxxxxxxxxx";
-    default:
-      return true;
-  }
-}
-
-function isValidEmploymentNumber(value) {
-  const isValidNumber = /^[0-9]+$/.test(value);
-  const hasValidLength = /^[0-9]{8}$/.test(value);
-
-  switch (true) {
-    case value === null:
-      return "Field cannot be empty";
-    case !isValidNumber:
-      return "Field only accepts numbers";
-    case !hasValidLength:
-      return "Employment number must be 8 numbers";
-    default:
-      return true;
-  }
-}
-
-//Manually doing it, going to use a better validation library next semester
 function progress() {
   validatingSignupFields.value = true;
-
+  signupError.value = false;
+  signupErrorMessage.value = "";
   axios
     .post(
       "https://udm-reimbursement-project.onrender.com/api/verifySignupBasicInformation",
@@ -197,12 +154,13 @@ function progress() {
       }
     )
     .then((res) => {
+      emits("continue");
       validatingSignupFields.value = false;
       window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-      emits("continue");
     })
     .catch((err) => {
-      alert(err.response.data.message);
+      signupError.value = true;
+      signupErrorMessage.value = err.response.data.message;
       validatingSignupFields.value = false;
     });
 }

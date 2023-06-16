@@ -15,41 +15,18 @@ const facultySchema = new Schema({
   country: String,
   foapaDetails: [
     {
+      fund: Number,
+      organization: Number,
+      account: Number,
+      program: Number,
+      activity: Number,
       foapaName: String,
-      foapaNumber: String,
-      initialAmount: mongoose.Schema.Types.Mixed,
-      currentAmount: mongoose.Schema.Types.Mixed,
+      initialAmount: Number,
+      currentAmount: Number,
     },
   ],
   reimbursementTickets: [
-    {
-      //refactor, make true
-      reimbursementId: {
-        type: Number,
-      },
-      eventName: String,
-      expenseReason: String,
-      destinationLocation: String,
-      paymentRetrievalMethod: String,
-      UDMPUVoucher: Boolean,
-      totalAmount: Number,
-      reimbursementStatus: String,
-      reimbursementDate: Date,
-      activities: [
-        {
-          //likewise, id unique here
-          activityId: {
-            type: Number,
-          },
-          reimbursementId: String,
-          foapaNumber: String,
-          activityName: String,
-          activityReceipt: String,
-          activityDate: Date,
-          amount: Number,
-        },
-      ],
-    },
+    { type: mongoose.Schema.Types.ObjectId, ref: "Reimbursement" },
   ],
 });
 

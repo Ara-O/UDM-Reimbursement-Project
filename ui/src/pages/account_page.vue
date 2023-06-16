@@ -173,6 +173,8 @@
           <!-- <h6 class="trademark-text">Made with love by the Duckateers TM</h6> -->
         </section>
       </form>
+      <h3 class="account-success-message">{{ successMessage }}</h3>
+      <h3 class="account-error-message">{{ errorMessage }}</h3>
     </section>
   </section>
 </template>
@@ -183,6 +185,8 @@ import { onMounted, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { UserDataAcct, AddressDetails } from "../types/types";
 
+let successMessage = ref<string>("");
+let errorMessage = ref<string>("");
 const router = useRouter();
 const departments = [
   "Architectural Engineering",
@@ -213,6 +217,25 @@ let accountInfo = ref<UserDataAcct>({
   country: "",
 });
 
+const countries = ref<AddressDetails[]>([
+  {
+    name: "Default",
+    code: "Default",
+  },
+]);
+const states = ref<AddressDetails[]>([
+  {
+    name: "Default",
+    code: "Default",
+  },
+]);
+const cities = ref<AddressDetails[]>([
+  {
+    name: "Default",
+    code: "Default",
+  },
+]);
+
 function back() {
   router.push("/dashboard");
 }
@@ -221,15 +244,17 @@ function save() {
   axios
     .post(
       "https://udm-reimbursement-project.onrender.com/api/updateAccountInfo",
-      accountInfo.value
+      {
+        accountInformation: accountInfo.value,
+      }
     )
     .then((res) => {
       console.log(res.data);
-      alert("Account information updated!");
+      successMessage.value = res.data.message;
     })
     .catch((err) => {
       console.log(err);
-      alert(err.response.data.message);
+      errorMessage.value = err.response.data.message;
     });
 }
 
@@ -250,25 +275,6 @@ async function retrieveAccountInformation() {
     console.log(err);
   }
 }
-
-const countries = ref<AddressDetails[]>([
-  {
-    name: "Default",
-    code: "Default",
-  },
-]);
-const states = ref<AddressDetails[]>([
-  {
-    name: "Default",
-    code: "Default",
-  },
-]);
-const cities = ref<AddressDetails[]>([
-  {
-    name: "Default",
-    code: "Default",
-  },
-]);
 
 function countryChanged() {
   console.log("account info", accountInfo.value);
@@ -309,7 +315,6 @@ function stateChanged() {
       }
     )
     .then((res) => {
-      console.log(res.data);
       cities.value = res.data;
     })
     .catch((err) => {

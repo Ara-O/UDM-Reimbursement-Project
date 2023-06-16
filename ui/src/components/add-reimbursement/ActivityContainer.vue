@@ -3,7 +3,7 @@
     <h3>{{ activity.activityName }}</h3>
     <h4>
       Date: {{ parseDate(activity.activityDate) }} || Cost:
-      {{ activity.amount }}
+      {{ activity.cost }}
     </h4>
     <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
     <div class="activity-options-wrapper">

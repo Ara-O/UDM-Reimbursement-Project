@@ -1,55 +1,7 @@
 <template>
   <section class="dashboard-page">
-    <section class="foapa-number-section">
-      <h3>Foapa Numbers</h3>
-      <br />
-      <div class="foapa-number-wrapper">
-        <div
-          class="foapa-number"
-          v-for="foapa in userFoapaNumbers"
-          :key="foapa.foapaNumber"
-          style="display: flex; flex-direction: column; align-items: start"
-        >
-          <span class="foapa-number-title">
-            <img
-              src="../assets/trash-icon.png"
-              alt="Trash"
-              @click="deleteFoapa(foapa.foapaNumber)"
-            />
-            <h3 style="font-weight: 500">
-              {{ foapa.foapaName }}
-            </h3>
-          </span>
-          <div
-            style="
-              display: flex;
-              flex-direction: row;
-              align-items: center;
-              justify-content: space-around;
-            "
-          >
-            <h3 style="margin-top: 10px">{{ foapa.foapaNumber }}</h3>
-          </div>
-        </div>
-        <div class="filter" @click="goToFoapaPage">
-          <h3>Manage Foapa Details</h3>
-        </div>
-        <!-- <div class="foapa-number">
-          <input
-            type="text"
-            name="Foapa Number"
-            placeholder="New FOAPA Number"
-            v-model="obj.foapaNumber"
-          />
-          <img
-            src="../assets/add-icon2.png"
-            alt="add-icon2"
-            @click="addFoapaNumber"
-          />
-        </div> -->
-      </div>
-    </section>
-
+    <!-- FOAPA numbers section -->
+    <foapa-numbers></foapa-numbers>
     <section class="reimbursement-section">
       <h3>Welcome {{ userInfo.firstName }}</h3>
       <br />
@@ -98,13 +50,6 @@
         >
           <h3>Sort by Cost</h3>
         </div>
-        <!--   <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Cost Descending' }"
-          @click="sortBy('Cost Descending')"
-        >
-          <h3>Sort by Cost ( DESC )</h3>
-        </div> -->
       </div>
       <br />
       <div style="display: flex; flex-direction: column">
@@ -128,17 +73,15 @@
       <br />
       <div class="reimbursement-wrapper">
         <div class="reimbursement" v-for="ticket in filterReimbursements">
-          <div class="total-amount">${{ ticket.totalAmount }}</div>
-          <h3>{{ ticket.eventName }}</h3>
+          <div class="total-amount">${{ ticket.totalCost }}</div>
+          <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
           <h5>
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
           <div class="reimbursement-buttons">
-            <button @click="viewTicket(ticket.reimbursementId)">Modify</button>
-            <button @click="deleteReimbursement(ticket.reimbursementId)">
-              Delete
-            </button>
+            <button @click="viewTicket(ticket._id)">Modify</button>
+            <button @click="deleteReimbursement(ticket._id)">Delete</button>
           </div>
         </div>
       </div>
@@ -176,6 +119,7 @@
 </template>
 
 <script lang="ts" setup>
+import FoapaNumbers from "../components/dashboard/FoapaNumbersDashboard.vue";
 import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
@@ -217,7 +161,7 @@ let reimbursementTickets = ref<any>([
   // {
   //   reimbursementId: 169449298,
   //   eventName: "Reim3",
-  //   totalAmount: 300,
+  //   totalCost: 300,
   //   reimbursementStatus: false,
   //   reimbursementDate: "2023-05-21",
   // },
@@ -226,10 +170,10 @@ let reimbursementTickets = ref<any>([
 function orderByName() {
   sortParameter.value = "Name";
   reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
-    if (a.eventName.toUpperCase() < b.eventName.toUpperCase()) {
+    if (a.reimbursementName.toUpperCase() < b.reimbursementName.toUpperCase()) {
       return 1 * nameFlag;
     }
-    if (a.eventName.toUpperCase() > b.eventName.toUpperCase()) {
+    if (a.reimbursementName.toUpperCase() > b.reimbursementName.toUpperCase()) {
       return -1 * nameFlag;
     }
     return 0;
@@ -254,10 +198,10 @@ function orderByStatus() {
 function orderByCost() {
   sortParameter.value = "Cost";
   reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
-    if (a.totalAmount < b.totalAmount) {
+    if (a.totalCost < b.totalCost) {
       return 1 * costFlag;
     }
-    if (a.totalAmount > b.totalAmount) {
+    if (a.totalCost > b.totalCost) {
       return -1 * costFlag;
     }
     return 0;
@@ -282,7 +226,9 @@ function orderByDate() {
 const filterReimbursements = computed(() => {
   return searchValue.value
     ? reimbursementTickets.value.filter((ticket) =>
-        ticket.eventName.toLowerCase().includes(searchValue.value.toLowerCase())
+        ticket.reimbursementName
+          .toLowerCase()
+          .includes(searchValue.value.toLowerCase())
       )
     : reimbursementTickets.value;
 });
@@ -291,25 +237,6 @@ function signOut() {
   localStorage.setItem("token", "");
   router.push("/");
   alert("Successfully signed out!");
-}
-
-function deleteFoapa(foapaNumber: string) {
-  axios
-    .post(
-      "https://udm-reimbursement-project.onrender.com/api/deleteFoapaDetail",
-      {
-        foapaNumber,
-      }
-    )
-    .then(() => {
-      console.log("The thing that was deleted: " + foapaNumber);
-      alert("Foapa Deleted Successfully");
-      retrieveUserFoapaNumbers();
-    })
-    .catch((err) => {
-      console.log(err);
-      alert(err.response.data.message);
-    });
 }
 
 function deleteReimbursement(id: string) {
@@ -322,24 +249,9 @@ function deleteReimbursement(id: string) {
     )
     .then(() => {
       retrieveReimbursements();
-      console.log("Deleted reimbursement id: " + id);
-      alert("Ticket Deleted Successfully");
-    });
-}
-
-let userFoapaNumbers = ref<FoapaNumbers[]>([]);
-
-function retrieveUserFoapaNumbers() {
-  axios
-    .get(
-      `https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails`
-    )
-    .then((res) => {
-      userFoapaNumbers.value = res.data;
-      console.log(res);
     })
     .catch((err) => {
-      console.log(err);
+      alert(err.response.data.message);
     });
 }
 
@@ -375,47 +287,10 @@ function addReimbursement() {
 }
 
 function viewTicket(reimbursementId: string) {
-  console.log(reimbursementId);
   router.push({ path: "/add-reimbursement", query: { reimbursementId } });
 }
 
 let sortParameter = ref<SortParameters>("Name");
-
-async function sortBy(parameter: SortParameters) {
-  sortParameter.value = parameter;
-  try {
-    let reimbursements = await axios.get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveReimbursements",
-      {
-        params: {
-          sortBy: parameter,
-        },
-      }
-    );
-
-    reimbursementTickets.value = reimbursements.data;
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-function goToFoapaPage() {
-  router.push("/add-foapa");
-}
-
-onMounted(() => {
-  if (
-    localStorage.getItem("token") === null ||
-    localStorage.getItem("token") === ""
-  ) {
-    console.log("User not signed in");
-    router.push("/");
-  } else {
-    retrieveUserInformationSummary();
-    retrieveUserFoapaNumbers();
-    retrieveReimbursements();
-  }
-});
 
 function retrieveReimbursements() {
   axios
@@ -430,4 +305,17 @@ function retrieveReimbursements() {
       alert(err);
     });
 }
+
+onMounted(() => {
+  if (
+    localStorage.getItem("token") === null ||
+    localStorage.getItem("token") === ""
+  ) {
+    console.log("User not signed in");
+    router.push("/");
+  } else {
+    retrieveUserInformationSummary();
+    retrieveReimbursements();
+  }
+});
 </script>

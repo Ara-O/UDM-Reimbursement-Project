@@ -26,7 +26,8 @@
         Address Information
       </h3>
       <h3 class="signup-title-description" v-if="surveyProgress === 3">
-        User Foapa Information (Not Required)
+        User Foapa Information (Not Required). Hover Over Question Mark Icon For
+        Help
       </h3>
 
       <section class="signup-form">
@@ -50,7 +51,7 @@
         <!-- SECTION 4 -->
         <section v-show="surveyProgress === 3" class="signup-form">
           <FoapaSection
-            :foapa-list="foapaList"
+            :user-signup-data="userSignupData"
             @finish="registerUser"
             @go-back="surveyProgress--"
           />
@@ -70,6 +71,7 @@
           Note: All required fields must be filled
         </h5>
       </section>
+      <!-- <ManageFoapaDetails></ManageFoapaDetails> -->
     </section>
   </section>
 </template>
@@ -78,6 +80,7 @@
 import PasswordSection from "../components/signup-flow/PasswordSection.vue";
 import AddressSection from "../components/signup-flow/AddressSection.vue";
 import FoapaSection from "../components/signup-flow/FoapaSection.vue";
+import ManageFoapaDetails from "../components/manage-foapa/ManageFoapaDetails.vue";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -100,13 +103,10 @@ let userSignupData = reactive<UserData>({
   city: "",
   state: "",
   country: "",
-  userFoapas: [],
+  foapaDetails: [],
 });
 
-let foapaList = ref<FoapaStuff[]>([]);
-
 function registerUser() {
-  userSignupData.userFoapas = foapaList.value;
   creatingAccountFeedback.value = true;
   axios
     .post(
@@ -114,7 +114,6 @@ function registerUser() {
       userSignupData
     )
     .then((res) => {
-      alert(res.data.message);
       localStorage.setItem("token", res.data.token);
       axios.defaults.headers.common["authorization"] =
         localStorage.getItem("token");
@@ -143,8 +142,6 @@ onMounted(() => {
         }
       )
       .then((res) => {
-        let userData = res.data.userSignupData;
-        console.log(userData);
         userSignupData = Object.assign(userSignupData, res.data.userSignupData);
       })
       .catch((err) => {

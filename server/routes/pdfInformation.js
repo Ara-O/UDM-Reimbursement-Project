@@ -5,8 +5,10 @@ import createPdfDefinition from "../pdfGenerator.js";
 import Pdfmake from "pdfmake";
 import multer from "multer";
 import ImageKit from "imagekit";
+import ReimbursementTicket from "../models/reimbursement.js";
 import fs from "fs";
 import { verifyToken } from "../middleware/auth.js";
+import { request } from "http";
 const upload = multer({ dest: "uploads/" });
 
 let imagekit = new ImageKit({
@@ -59,34 +61,27 @@ function generatePdf(docDefinition, callback) {
 
 router.get("/generatePdf", verifyToken, (req, res) => {
   console.log(req.query);
-  let activities = req.query.reimbursementData.activities;
-  console.log("activities", activities);
+  let receipts = req.query.reimbursementData.reimbursementReceipts;
   let promises = [];
-  activities.forEach((activity) => {
-    if (!activity.activityReceipt) return;
-    let receipts = [...activity.activityReceipt.split("%%%%%")];
-    receipts.pop();
-    receipts.forEach((receipt) => {
-      console.log(receipt);
-      promises.push(
-        new Promise((resolve, reject) => {
-          https.get(receipt, (response) => {
-            let imageData = [];
+  receipts.forEach((receipt) => {
+    promises.push(
+      new Promise((resolve, reject) => {
+        https.get(receipt.url, (response) => {
+          let imageData = [];
 
-            response.on("data", (chunk) => {
-              imageData.push(chunk);
-            });
-
-            response.on("end", () => {
-              imageData = Buffer.concat(imageData);
-              const base64Image = imageData.toString("base64");
-              let fullImageUrl = "data:image/png;base64," + base64Image;
-              resolve(fullImageUrl);
-            });
+          response.on("data", (chunk) => {
+            imageData.push(chunk);
           });
-        })
-      );
-    });
+
+          response.on("end", () => {
+            imageData = Buffer.concat(imageData);
+            const base64Image = imageData.toString("base64");
+            let fullImageUrl = "data:image/png;base64," + base64Image;
+            resolve(fullImageUrl);
+          });
+        });
+      })
+    );
   });
 
   Promise.all(promises).then((response) => {
@@ -100,7 +95,7 @@ router.get("/generatePdf", verifyToken, (req, res) => {
     const docDefinition = {
       content: createPdfDefinition(
         req.query.reimbursementData,
-        { ...req.query.userInfo, employmentNumber: req.user.employmentNumber },
+        req.query.userInfo,
         allImageIds
       ),
       defaultStyle: {
@@ -128,21 +123,19 @@ router.get("/generatePdf", verifyToken, (req, res) => {
   });
 });
 
-router.post("/storeActivityImages", upload.array("receipts"), (req, res) => {
+router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
   console.log(req.files);
 
   const buffers = req.files.map((file) => {
     return fs.readFileSync(file.path);
   });
 
-  console.log(buffers);
   const promises = [];
   buffers.forEach((buffer) => {
     promises.push(
       imagekit.upload({
         file: buffer, // It accepts remote URL, base_64 string or file buffer
-        fileName: "plswork.jpg", // required
-        tags: ["tag1", "tag2"], // optional
+        fileName: "receipt", // required
         isPrivateFile: false,
       })
     );
@@ -150,15 +143,40 @@ router.post("/storeActivityImages", upload.array("receipts"), (req, res) => {
 
   Promise.all(promises)
     .then((imagesData) => {
-      let imageUrl = "";
-      imagesData.forEach((image) => {
-        imageUrl += image.url + "%%%%%";
+      console.log(imagesData);
+      let imageLinks = imagesData.map((image) => {
+        return { url: image.url, id: image.fileId };
       });
-      console.log("Image url", imageUrl);
-      res.status(200).send(imageUrl);
+      console.log("Image url", imageLinks);
+      res.status(200).send(imageLinks);
     })
     .catch((err) => {
       console.log(err);
     });
+});
+
+router.post("/deleteReceiptImage", verifyToken, async (req, res) => {
+  try {
+    if (req.body.reimbursementId) {
+      await ReimbursementTicket.findByIdAndUpdate(req.body.reimbursementId, {
+        $pull: {
+          reimbursementReceipts: {
+            id: req.body.receiptId,
+          },
+        },
+      });
+    }
+
+    imagekit.deleteFile(req.body.receiptId, function (error, result) {
+      if (error) {
+        throw error;
+      } else {
+        console.log(result);
+        res.status(200).send({ message: "Activity deleted successfully" });
+      }
+    });
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
 });
 export default router;

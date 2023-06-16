@@ -8,124 +8,15 @@ import {
 } from "../utils/authenticatePassword.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import formatFoapaDetails from "../utils/formatFoapaDetails.js";
 import { verifyToken } from "../middleware/auth.js";
 dotenv.config();
 
 const router = Router();
 
-// Registering user - POST /api/register
-router.post("/register", async (req, res) => {
-  const userData = req.body;
-
-  //Formatting the user's foapa information
-  userData.foapaDetails = formatFoapaDetails(userData.userFoapas);
-  console.log(userData.foapaDetails);
-
-  //Formatting email input
-  if (!userData.workEmail.includes("@udmercy.edu")) {
-    userData.workEmail += "@udmercy.edu";
-  }
-
-  userData.workEmail = userData.workEmail.toLowerCase();
-  userData.employmentNumber = "T" + userData.employmentNumber;
-
-  try {
-    let encryptedPassword = await encryptPassword(userData.password);
-    userData.password = encryptedPassword;
-
-    const faculty = new Faculty(userData);
-
-    let existingUser = await Faculty.findOne({
-      employmentNumber: userData.employmentNumber,
-    });
-
-    if (existingUser) {
-      console.log("User already exists");
-      res.status(409).send({ message: "User already exists" });
-    } else {
-      await faculty.save();
-
-      //Creates a token thatll be used to authenticate the user for later api calls
-      jwt.sign(
-        { employmentNumber: userData.employmentNumber },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "30d",
-        },
-        (err, token) => {
-          res.status(200).send({ message: "Registration successful!", token });
-        }
-      );
-    }
-  } catch (error) {
-    res.status(400).send({ message: error.message });
-    console.error(error.message);
-  }
-});
-
-router.post("/login", async (req, res) => {
-  const { workEmail, password } = req.body;
-  try {
-    let facultyInfo = await Faculty.findOne({
-      workEmail: workEmail.toLowerCase() + "@udmercy.edu",
-    }).select("workEmail password employmentNumber");
-
-    if (facultyInfo === null) {
-      res.status(404).send({
-        message: "Credentials not found. Please check your email and password",
-      });
-    } else {
-      let passwordMatches = await decryptPassword(
-        password,
-        facultyInfo.password
-      );
-      if (passwordMatches) {
-        jwt.sign(
-          { employmentNumber: facultyInfo.employmentNumber },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: "30d",
-          },
-          (err, token) => {
-            if (!err) {
-              res.status(200).send({ message: "Login successful", token });
-            }
-          }
-        );
-      } else {
-        res
-          .status(403)
-          .send({ message: "Incorrect Password. Please try again" });
-      }
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(400).send({ message: error.message });
-  }
-});
-
 // Retrieve user information - GET /api/retrieveUserInformationSummary
 router.get("/retrieveUserInformationSummary", verifyToken, async (req, res) => {
   try {
-    let facultyInfo = await Faculty.findOne(
-      {
-        employmentNumber: req.user.employmentNumber,
-      },
-      {
-        // All to stop the _id from showing, might remove/refactor later ;-;
-        _id: 0,
-        city: 0,
-        foapaDetails: 0,
-        mailingAddress: 0,
-        password: 0,
-        reimbursementTickets: 0,
-        state: 0,
-        postalCode: 0,
-        country: 0,
-        department: 0,
-      }
-    );
+    let facultyInfo = await Faculty.findById(req.user.userId);
     if (facultyInfo === null) {
       res.status(404).send({
         message: "Unable to retrieve account information",
@@ -139,11 +30,10 @@ router.get("/retrieveUserInformationSummary", verifyToken, async (req, res) => {
   }
 });
 
+//Retrieve account infoemation - GET /api/retrieveAccountInformation
 router.get("/retrieveAccountInformation", verifyToken, async (req, res) => {
   try {
-    let facultyInfo = await Faculty.findOne({
-      employmentNumber: req.user.employmentNumber,
-    });
+    let facultyInfo = await Faculty.findById(req.user.userId);
 
     if (facultyInfo === null) {
       res.status(404).send({
@@ -160,36 +50,12 @@ router.get("/retrieveAccountInformation", verifyToken, async (req, res) => {
 });
 
 router.post("/updateAccountInfo", verifyToken, async (req, res) => {
-  const {
-    firstName,
-    lastName,
-    workEmail,
-    phoneNumber,
-    employmentNumber,
-    mailingAddress,
-    department,
-    postalCode,
-    city,
-    state,
-    country,
-  } = req.body;
+  console.log(req.body);
 
   try {
-    let facultyInfo = await Faculty.updateOne(
-      { employmentNumber: req.user.employmentNumber },
-      {
-        firstName,
-        lastName,
-        workEmail,
-        phoneNumber,
-        employmentNumber,
-        mailingAddress,
-        department,
-        postalCode,
-        city,
-        state,
-        country,
-      }
+    let facultyInfo = await Faculty.findByIdAndUpdate(
+      req.user.userId,
+      req.body.accountInformation
     );
 
     if (facultyInfo === null) {
@@ -203,47 +69,6 @@ router.post("/updateAccountInfo", verifyToken, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(400).send({ message: error.message });
-  }
-});
-
-router.post("/verifySignupBasicInformation", async (req, res) => {
-  try {
-    let facultyFound = await Faculty.findOne({
-      employmentNumber: "T" + req.body.employmentNumber,
-    });
-
-    if (facultyFound !== null) {
-      return res.status(409).send({
-        message:
-          "An employee with the inputted employment number already exists",
-      });
-    } else {
-      let facultyWithSameEmail = await Faculty.findOne({
-        workEmail: req.body.workEmail + "@udmercy.edu",
-      });
-
-      if (facultyWithSameEmail) {
-        return res.status(409).send({
-          message: "An employee with the inputted email address already exists",
-        });
-      } else {
-        return res.status(200).send();
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(400).send({ message: err.message });
-  }
-});
-router.post("/default", async (req, res) => {
-  try {
-    let userData = { workEmail: req.body.workEmail };
-    console.log(res.body);
-    if (userData == res.body) console.log("default works");
-  } catch (err) {
-    console.log("imma throw");
-    console.log(err);
-    res.status(400).send({ message: err.message });
   }
 });
 
@@ -338,18 +163,6 @@ router.post("/sendConfirmationEmail", async (req, res) => {
     console.log(err);
     res.status(400).send(err);
   }
-  //   function generateRandomPassword(length) {
-  //     const charset =
-  //       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
-  //     let password = "";
-
-  //     for (let i = 0; i < length; i++) {
-  //       const randomIndex = Math.floor(Math.random() * charset.length);
-  //       password += charset[randomIndex];
-  //     }
-
-  //     return password;
-  //   }
 });
 router.post("/resetPassword", async (req, res) => {
   console.log(req.body);
@@ -375,10 +188,9 @@ router.post("/resetPassword", async (req, res) => {
 });
 
 router.post("/changePassword", verifyToken, async (req, res) => {
-  console.log(req.body);
   try {
     let facultyInfo = await Faculty.findOne({
-      employmentNumber: req.user.employmentNumber,
+      id: req.user._id,
     });
 
     if (facultyInfo) {
