@@ -48,7 +48,9 @@ function formatUserFoapa(foapa: FoapaStuff) {
 
 function retrieveUserFoapaDetails() {
   axios
-    .get("http://localhost:8080/api/retrieveFoapaDetails")
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails"
+    )
     .then((res) => {
       userFoapaNumbers.value = res.data;
       console.log(res);
@@ -60,9 +62,12 @@ function retrieveUserFoapaDetails() {
 
 function deleteFoapa(foapa: FoapaStuff) {
   axios
-    .post("http://localhost:8080/api/deleteFoapaDetail", {
-      foapa,
-    })
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/deleteFoapaDetail",
+      {
+        foapa,
+      }
+    )
     .then(() => {
       retrieveUserFoapaDetails();
     })

@@ -138,7 +138,10 @@ const router = useRouter();
 function loginUser() {
   loggingIn.value = true;
   axios
-    .post("http://localhost:8080/api/login", userInfo.value)
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/login",
+      userInfo.value
+    )
     .then((res) => {
       console.log(res);
       loggingIn.value = false;
@@ -163,7 +166,7 @@ onMounted(() => {
 
 function sendEmail() {
   axios
-    .post("http://localhost:8080/api/forgotPassword", {
+    .post("https://udm-reimbursement-project.onrender.com/api/forgotPassword", {
       workEmail: forgotPasswordWorkEmail.value,
     })
     .then((res) => {

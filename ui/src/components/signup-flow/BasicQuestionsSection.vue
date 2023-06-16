@@ -146,10 +146,13 @@ function progress() {
   signupError.value = false;
   signupErrorMessage.value = "";
   axios
-    .post("http://localhost:8080/api/verifySignupBasicInformation", {
-      employmentNumber: userSignupData.employmentNumber,
-      workEmail: userSignupData.workEmail,
-    })
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/verifySignupBasicInformation",
+      {
+        employmentNumber: userSignupData.employmentNumber,
+        workEmail: userSignupData.workEmail,
+      }
+    )
     .then((res) => {
       emits("continue");
       validatingSignupFields.value = false;

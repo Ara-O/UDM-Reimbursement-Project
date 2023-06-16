@@ -241,9 +241,12 @@ function signOut() {
 
 function deleteReimbursement(id: string) {
   axios
-    .post("http://localhost:8080/api/deleteReimbursement", {
-      id,
-    })
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/deleteReimbursement",
+      {
+        id,
+      }
+    )
     .then(() => {
       retrieveReimbursements();
     })
@@ -254,7 +257,9 @@ function deleteReimbursement(id: string) {
 
 function retrieveUserInformationSummary() {
   axios
-    .get("http://localhost:8080/api/retrieveUserInformationSummary")
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/retrieveUserInformationSummary"
+    )
     .then((res) => {
       userInfo.value = res.data;
       console.log(res);
@@ -289,7 +294,9 @@ let sortParameter = ref<SortParameters>("Name");
 
 function retrieveReimbursements() {
   axios
-    .get("http://localhost:8080/api/retrieveReimbursements")
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/retrieveReimbursements"
+    )
     .then((res) => {
       console.log(res);
       reimbursementTickets.value = res.data;

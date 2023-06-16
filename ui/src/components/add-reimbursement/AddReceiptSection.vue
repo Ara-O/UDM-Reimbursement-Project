@@ -93,7 +93,7 @@ async function storeReceiptImages() {
     try {
       // Send the FormData object to the server using axios
       let res = await axios.post(
-        "http://localhost:8080/api/storeReceiptImages",
+        "https://udm-reimbursement-project.onrender.com/api/storeReceiptImages",
         formData
       );
       fileWasSelected.value = false;
@@ -116,10 +116,13 @@ async function deleteReceipt(receiptId: String) {
 
   try {
     deletingReceipt.value = true;
-    let res = await axios.post("http://localhost:8080/api/deleteReceiptImage", {
-      receiptId,
-      reimbursementId: route.query.reimbursementId,
-    });
+    let res = await axios.post(
+      "https://udm-reimbursement-project.onrender.com/api/deleteReceiptImage",
+      {
+        receiptId,
+        reimbursementId: route.query.reimbursementId,
+      }
+    );
     props.currentReimbursement.reimbursementReceipts =
       props.currentReimbursement.reimbursementReceipts.filter(
         (receipt) => receipt.id != receiptId

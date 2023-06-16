@@ -287,7 +287,9 @@ async function submitActivityForm(values, { resetForm }) {
 
 function retrieveFoapaDetails() {
   axios
-    .get("http://localhost:8080/api/retrieveFoapaDetails")
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails"
+    )
     .then((res) => {
       userFoapaNumbers.value = res.data;
     })

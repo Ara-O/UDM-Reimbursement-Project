@@ -249,7 +249,9 @@ let accountNumbers = ref<{ number: string; description: string }[]>([]);
 
 function retrieveAccountNumbers() {
   axios
-    .get("http://localhost:8080/api/retrieveAccountNumbers")
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/retrieveAccountNumbers"
+    )
     .then((res) => {
       accountNumbers.value = res.data.accountNumbers;
     })

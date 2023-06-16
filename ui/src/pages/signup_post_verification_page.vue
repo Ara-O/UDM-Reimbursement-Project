@@ -109,7 +109,10 @@ let userSignupData = reactive<UserData>({
 function registerUser() {
   creatingAccountFeedback.value = true;
   axios
-    .post("http://localhost:8080/api/register", userSignupData)
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/register",
+      userSignupData
+    )
     .then((res) => {
       localStorage.setItem("token", res.data.token);
       axios.defaults.headers.common["authorization"] =
@@ -132,9 +135,12 @@ onMounted(() => {
 
   if (route.params.userToken) {
     axios
-      .post("http://localhost:8080/api/verifyUserSignupToken", {
-        token: route.params.userToken,
-      })
+      .post(
+        "https://udm-reimbursement-project.onrender.com/api/verifyUserSignupToken",
+        {
+          token: route.params.userToken,
+        }
+      )
       .then((res) => {
         userSignupData = Object.assign(userSignupData, res.data.userSignupData);
       })

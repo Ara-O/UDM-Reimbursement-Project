@@ -80,9 +80,12 @@ let userSignupData = reactive<UserData>({
 
 function sendConfirmationEmail() {
   axios
-    .post("http://localhost:8080/api/sendConfirmationEmail", {
-      userSignupData,
-    })
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/sendConfirmationEmail",
+      {
+        userSignupData,
+      }
+    )
     .then((res) => {
       verifyingInformation.value = true;
       basicQuestionsSectionIsFinished.value = true;

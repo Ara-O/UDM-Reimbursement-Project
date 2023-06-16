@@ -84,7 +84,7 @@ function userIsEditingActivity(activityId: String) {
 async function userIsUpdatingReimbursement() {
   userIsEditingReimbursement.value = true;
   let reimbursement = await axios.get(
-    "http://localhost:8080/api/retrieveTicketInformation",
+    "https://udm-reimbursement-project.onrender.com/api/retrieveTicketInformation",
     {
       params: {
         reimbursementId: route.query.reimbursementId,

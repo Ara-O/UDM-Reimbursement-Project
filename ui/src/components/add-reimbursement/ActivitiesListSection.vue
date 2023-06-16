@@ -66,9 +66,12 @@ async function updateReimbursement() {
     new Date().toISOString()
   );
 
-  await axios.post("http://localhost:8080/api/updateReimbursement", {
-    reimbursementTicket: props.currentReimbursement,
-  });
+  await axios.post(
+    "https://udm-reimbursement-project.onrender.com/api/updateReimbursement",
+    {
+      reimbursementTicket: props.currentReimbursement,
+    }
+  );
   alert("Reimbursement ticket saved successfully");
   router.push("/dashboard");
 }
@@ -81,9 +84,12 @@ async function addReimbursement() {
         new Date().toISOString()
       );
 
-      await axios.post("http://localhost:8080/api/addReimbursement", {
-        reimbursementTicket: props.currentReimbursement,
-      });
+      await axios.post(
+        "https://udm-reimbursement-project.onrender.com/api/addReimbursement",
+        {
+          reimbursementTicket: props.currentReimbursement,
+        }
+      );
 
       router.push("/dashboard");
 
@@ -138,9 +144,12 @@ async function submitTicket() {
   try {
     props.currentReimbursement.reimbursementStatus = "Submitted";
 
-    await axios.post("http://localhost:8080/api/updateReimbursement", {
-      reimbursementTicket: props.currentReimbursement,
-    });
+    await axios.post(
+      "https://udm-reimbursement-project.onrender.com/api/updateReimbursement",
+      {
+        reimbursementTicket: props.currentReimbursement,
+      }
+    );
 
     router.push("/dashboard");
     alert("Reimbursement ticket submitted successfully");
@@ -169,11 +178,13 @@ function createPdf() {
   }
 
   axios
-    .get(`http://localhost:8080/api/retrieveAccountInformation`)
+    .get(
+      `https://udm-reimbursement-project.onrender.com/api/retrieveAccountInformation`
+    )
     .then((response) => {
       props.currentReimbursement.totalCost = getAllActivitiesAmount();
       axios
-        .get("http://localhost:8080/api/generatePdf", {
+        .get("https://udm-reimbursement-project.onrender.com/api/generatePdf", {
           params: {
             reimbursementData: props.currentReimbursement,
             userInfo: response.data,

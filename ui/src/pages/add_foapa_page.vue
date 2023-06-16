@@ -35,7 +35,9 @@ let successMessage = ref<string>("");
 let errorMessage = ref<string>("");
 function retrieveUserFoapaDetails() {
   axios
-    .get("http://localhost:8080/api/retrieveFoapaDetails")
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails"
+    )
     .then((res) => {
       foapaDetails.value = res.data;
       console.log(res);
@@ -47,9 +49,12 @@ function retrieveUserFoapaDetails() {
 
 function updateFoapa() {
   axios
-    .post("http://localhost:8080/api/updateFoapaDetails", {
-      foapaDetails: foapaDetails.value,
-    })
+    .post(
+      "https://udm-reimbursement-project.onrender.com/api/updateFoapaDetails",
+      {
+        foapaDetails: foapaDetails.value,
+      }
+    )
     .then((res) => {
       successMessage.value = res.data.message;
       // alert(res.data.message);

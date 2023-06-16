@@ -75,10 +75,13 @@ let userToken = ref<string>("");
 function resetPassword() {
   if (password.value === confirmPassword.value) {
     axios
-      .post("http://localhost:8080/api/resetPassword", {
-        token: userToken.value,
-        newPassword: password.value,
-      })
+      .post(
+        "https://udm-reimbursement-project.onrender.com/api/resetPassword",
+        {
+          token: userToken.value,
+          newPassword: password.value,
+        }
+      )
       .then((res) => {
         console.log(res);
         alert(res.data.message);
