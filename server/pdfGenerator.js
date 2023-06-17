@@ -1,6 +1,5 @@
 function parseDate(dateString) {
-  const dateParsed = new Date(dateString);
-  const formattedDate = dateParsed.toISOString().slice(0, 10);
+  const formattedDate = dateString.slice(0, 10);
   return formattedDate;
 }
 
@@ -9,7 +8,7 @@ export default function createPdfDefinition(
   userInfo,
   allImageIds
 ) {
-  console.log("DATA", reimbursementData);
+  // console.log("DATA", reimbursementData);
   const today = new Date();
   const yyyy = today.getFullYear();
   let mm = today.getMonth() + 1; // Months start at 0!
@@ -214,102 +213,125 @@ export default function createPdfDefinition(
   content.push({ text: " " }, { text: " " });
 
   //Calculate activities section
-
-  let activitiesClassification = {
-    Lodging: {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    Breakfast: {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    Lunch: {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    Dinner: {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    "Business Guest Meals": {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    "Air/Train": {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    "Taxi/Bus/Car Rental": {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    Parking: {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    Registration: {
-      dates: [],
-      total: 0,
-      finalData: [],
-    },
-    Mileage: {
-      explanation: "",
-      total: 0,
-      finalData: [],
-    },
-    Other: {
-      explanation: "",
-      total: 0,
-      finalData: [],
-    },
-  };
+  const activitiesClassification = {};
 
   activities.forEach((activity) => {
-    let arrayField = activitiesClassification[`${activity.activityName}`];
-
-    if (arrayField === undefined) {
-      arrayField = activitiesClassification[`Other`];
-      arrayField.explanation += activity.activityName + ". ";
-    } else if (activity.activityName === "Mileage") {
-      arrayField.explanation += "Something goes here i spos";
+    if (!activitiesClassification[`${parseDate(activity.activityDate)}`]) {
+      activitiesClassification[`${parseDate(activity.activityDate)}`] = {
+        activities: [activity],
+      };
     } else {
-      arrayField.dates.push({
-        text: parseDate(activity.activityDate),
-        fontSize: 7.5,
-      });
+      activitiesClassification[
+        `${parseDate(activity.activityDate)}`
+      ].activities.push(activity);
     }
-    arrayField.total += Number(activity.cost);
   });
 
-  //Put data in right format
-  for (const property in activitiesClassification) {
-    if (property !== "Other" && property !== "Mileage") {
-      activitiesClassification[property].finalData = [
-        property,
-        ...activitiesClassification[property].dates,
-      ];
-    }
+  //thanks chat gippity
+  const activitiesSortedByDate = Object.fromEntries(
+    Object.entries(activitiesClassification).sort(
+      ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
+    )
+  );
 
-    for (let i = 0; i < 9; i++) {
-      if (activitiesClassification[property].finalData[i] === undefined) {
-        activitiesClassification[property].finalData[i] = "";
-      }
+  console.log(
+    "All activites",
+    activitiesClassification,
+    activitiesSortedByDate
+  );
+  // console.log(activitiesClassification["2023-01-01"].activities);
+  //   if (arrayField === undefined) {
+  //     arrayField = activitiesClassification[`Other`];
+  //     arrayField.explanation += activity.activityName + ". ";
+  //   } else if (activity.activityName === "Mileage") {
+  //     arrayField.explanation += "Something goes here i spos";
+  //   } else {
+  //     arrayField.dates.push({
+  //       text: parseDate(activity.activityDate),
+  //       fontSize: 7.5,
+  //     });
+  //   }
+  //   arrayField.total += Number(activity.cost);
+  // });
 
-      activitiesClassification[property].finalData[8] = {
-        text: `$ ${activitiesClassification[property].total}`,
-        fontSize: 7.5,
-      };
-    }
-  }
+  // //Put data in right format
+  // for (const property in activitiesClassification) {
+  //   if (property !== "Other" && property !== "Mileage") {
+  //     activitiesClassification[property].finalData = [
+  //       property,
+  //       ...activitiesClassification[property].dates,
+  //     ];
+  //   }
+
+  //   for (let i = 0; i < 9; i++) {
+  //     if (activitiesClassification[property].finalData[i] === undefined) {
+  //       activitiesClassification[property].finalData[i] = "";
+  //     }
+
+  //     activitiesClassification[property].finalData[8] = {
+  //       text: `$ ${activitiesClassification[property].total}`,
+  //       fontSize: 7.5,
+  //     };
+  //   }
+  // }
+
+  // let activityTables = {
+  //   Lodging: {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   Breakfast: {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   Lunch: {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   Dinner: {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   "Business Guest Meals": {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   "Air/Train": {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   "Taxi/Bus/Car Rental": {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   Parking: {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   Registration: {
+  //     dates: [],
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   Mileage: {
+  //     explanation: "",
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  //   Other: {
+  //     explanation: "",
+  //     total: 0,
+  //     finalData: [],
+  //   },
+  // };
 
   //Expenses section
   content.push({
@@ -338,28 +360,28 @@ export default function createPdfDefinition(
           "",
           "",
         ],
-        activitiesClassification["Lodging"].finalData,
-        // ["Lodging", "", "", "", "", "", "", "", "0.00"],
-        activitiesClassification["Breakfast"].finalData,
-        // ["Breakfast", "", "", "", "", "", "", "", "0.00"],
-        activitiesClassification["Lunch"].finalData,
-        // ["Lunch", "", "", "", "", "", "", "", "0.00"],
-        activitiesClassification["Dinner"].finalData,
-        // ["Dinner", "", "", "", "", "", "", "", "0.00"],
-        activitiesClassification["Business Guest Meals"].finalData,
-        // ["Business Guest Meals **", "", "", "", "", "", "", "", "0.00"],
-        activitiesClassification["Air/Train"].finalData,
-        // ["Air/Train", "", "", "", "", "", "", "", "0.00"],
-        activitiesClassification["Taxi/Bus/Car Rental"].finalData,
-        // ["Taxi/Bus/Car Rental", "", "", "", "", "", "", "", "0.00"],
-        activitiesClassification["Parking"].finalData,
-        // ["Parking", "", "", "", "", "", "", "", "0.00"],
-        activitiesClassification["Registration"].finalData,
-        // ["Registration", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Lodging"].finalData,
+        ["Lodging", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Breakfast"].finalData,
+        ["Breakfast", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Lunch"].finalData,
+        ["Lunch", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Dinner"].finalData,
+        ["Dinner", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Business Guest Meals"].finalData,
+        ["Business Guest Meals **", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Air/Train"].finalData,
+        ["Air/Train", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Taxi/Bus/Car Rental"].finalData,
+        ["Taxi/Bus/Car Rental", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Parking"].finalData,
+        ["Parking", "", "", "", "", "", "", "", "0.00"],
+        // activitiesClassification["Registration"].finalData,
+        ["Registration", "", "", "", "", "", "", "", "0.00"],
         [
           "Mileage (Include destination)",
           {
-            text: activitiesClassification["Mileage"].explanation,
+            text: "",
             colSpan: 7,
             fontSize: 9,
           },
@@ -370,7 +392,7 @@ export default function createPdfDefinition(
           "",
           "",
           {
-            text: `$${activitiesClassification["Mileage"].total}`,
+            text: ``,
             colSpan: 1,
             fontSize: 7.5,
           },
@@ -379,7 +401,7 @@ export default function createPdfDefinition(
         [
           "Other (Explain what expense is for )",
           {
-            text: activitiesClassification["Other"].explanation,
+            text: "",
             colSpan: 7,
             fontSize: 7.5,
           },
@@ -390,7 +412,7 @@ export default function createPdfDefinition(
           "",
           "",
           {
-            text: `$ ${activitiesClassification["Other"].total}`,
+            text: ``,
             colSpan: 1,
             fontSize: 7.5,
           },

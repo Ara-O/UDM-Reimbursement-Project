@@ -97,7 +97,7 @@
     <br />
     <div class="activity-add-receipt-section">
       <div class="activity-field">
-        <div class="add-receipt-text">Add Receipt:</div>
+        <div class="add-receipt-text">Assign Receipt:</div>
         <span>
           <Field
             as="select"

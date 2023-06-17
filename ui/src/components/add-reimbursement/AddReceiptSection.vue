@@ -34,7 +34,7 @@
             <h3>Receipt #{{ index + 1 }}</h3>
             <span>
               <a :href="(receipt.url as string)" target="_blank">View </a>
-              <button @click="deleteReceipt(receipt.id)">Delete</button>
+              <button @click="deleteReceipt(receipt)">Delete</button>
             </span>
           </span>
         </div>
@@ -44,6 +44,9 @@
         v-if="deletingReceipt"
       >
         Deleting..
+      </h3>
+      <h3 class="dependency-message" v-if="depedencyMessage">
+        {{ depedencyMessage }}
       </h3>
       <br />
       <!-- <button
@@ -111,21 +114,38 @@ async function storeReceiptImages() {
   }
 }
 
-async function deleteReceipt(receiptId: String) {
-  console.log(receiptId);
+let dependencies = 0;
+let depedencyMessage = ref<string>("");
+async function deleteReceipt(receipt) {
+  dependencies = 0;
+  props.currentReimbursement.activities.forEach((activity) => {
+    if (receipt.url === activity.activityReceipt) {
+      dependencies++;
+    }
+  });
+
+  if (dependencies > 0) {
+    depedencyMessage.value = `${dependencies} ${
+      dependencies === 1 ? "activity depends" : "activities depend"
+    } on this receipt. Please re-assign them an activity before you delete this activity.`;
+    setTimeout(() => {
+      depedencyMessage.value = "";
+    }, 2000);
+    return;
+  }
 
   try {
     deletingReceipt.value = true;
     let res = await axios.post(
       "https://udm-reimbursement-project.onrender.com/api/deleteReceiptImage",
       {
-        receiptId,
+        receiptId: receipt.id,
         reimbursementId: route.query.reimbursementId,
       }
     );
     props.currentReimbursement.reimbursementReceipts =
       props.currentReimbursement.reimbursementReceipts.filter(
-        (receipt) => receipt.id != receiptId
+        (receiptL) => receiptL.id != receipt.id
       );
     console.log(res);
     deletingReceipt.value = false;

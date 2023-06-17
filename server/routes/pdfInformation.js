@@ -60,8 +60,8 @@ function generatePdf(docDefinition, callback) {
 }
 
 router.get("/generatePdf", verifyToken, (req, res) => {
-  console.log(req.query);
-  let receipts = req.query.reimbursementData.reimbursementReceipts;
+  // console.log(req.query);
+  let receipts = req.query.reimbursementData.reimbursementReceipts || [];
   let promises = [];
   receipts.forEach((receipt) => {
     promises.push(
@@ -143,11 +143,11 @@ router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
 
   Promise.all(promises)
     .then((imagesData) => {
-      console.log(imagesData);
+      // console.log(imagesData);
       let imageLinks = imagesData.map((image) => {
         return { url: image.url, id: image.fileId };
       });
-      console.log("Image url", imageLinks);
+      // console.log("Image url", imageLinks);
       res.status(200).send(imageLinks);
     })
     .catch((err) => {
@@ -157,6 +157,10 @@ router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
 
 router.post("/deleteReceiptImage", verifyToken, async (req, res) => {
   try {
+    //If user is editing a ticket, delete the image directly from the database
+    //and image kits database because if they refresh the page after they delete a receipt
+    //in an edited reimbursement and dont save, itll delete from imagekit but not from
+    //the database
     if (req.body.reimbursementId) {
       await ReimbursementTicket.findByIdAndUpdate(req.body.reimbursementId, {
         $pull: {
@@ -171,7 +175,7 @@ router.post("/deleteReceiptImage", verifyToken, async (req, res) => {
       if (error) {
         throw error;
       } else {
-        console.log(result);
+        // console.log(result);
         res.status(200).send({ message: "Activity deleted successfully" });
       }
     });

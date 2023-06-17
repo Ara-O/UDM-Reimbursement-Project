@@ -384,6 +384,13 @@ input#direct-deposit {
   margin-bottom: 10px;
 }
 
+.dependency-message {
+  margin-top: 0px;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 26px;
+}
+
 .selected-foapa-amount {
   margin-bottom: 0px;
   font-weight: 500;

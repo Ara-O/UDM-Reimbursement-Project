@@ -22,10 +22,16 @@
       Discard Changes
     </button>
     <h5
-      style="font-weight: 400; margin-top: 2px; text-align: center"
+      style="
+        font-weight: 400;
+        margin-top: 2px;
+        font-size: 14px;
+        text-align: center;
+      "
       v-show="currentlyCreatingPDF"
     >
-      Creating PDF, please wait, this may take a few seconds...
+      Creating PDF, please wait, this may take a minute... Pop-ups may need to
+      be enabled to view the PDF
     </h5>
   </div>
 </template>
@@ -184,7 +190,7 @@ function createPdf() {
     .then((response) => {
       props.currentReimbursement.totalCost = getAllActivitiesAmount();
       axios
-        .get("https://udm-reimbursement-project.onrender.com/api/generatePdf", {
+        .get("http://localhost:8080/api/generatePdf", {
           params: {
             reimbursementData: props.currentReimbursement,
             userInfo: response.data,
