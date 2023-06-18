@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import bodyParser from "body-parser";
 import * as dotenv from "dotenv";
 import connectToDB from "./db.js";
@@ -28,6 +29,7 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
+app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
