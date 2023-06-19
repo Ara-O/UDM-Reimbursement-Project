@@ -21,7 +21,7 @@
         <span class="input-FOAPA-field-span">
           <Field
             type="text"
-            :rules="isValidString"
+            :rules="(value) => isValidFoapaName(value, 10)"
             style="width: 150px"
             placeholder="Name"
             name="foapa-name"
@@ -216,6 +216,14 @@
             @click="deleteFoapa(foapa.foapaName, foapa.fund)"
           />
         </td>
+        <td>
+          <img
+            src="../../assets/edit-icon-red.png"
+            alt="Trash"
+            class="delete-icon"
+            @click=""
+          />
+        </td>
       </tr>
     </table>
   </section>
@@ -226,11 +234,11 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, reactive, onMounted } from "vue";
 import { FoapaStuff } from "../../types/types";
 import {
-  isValidString,
   isValidFundNumber,
   isValidAccountNumber,
   isValidFoapaNumber,
   isValidFoapaAmount,
+  isValidFoapaName,
 } from "../../utils/validators";
 import axios from "axios";
 let props = defineProps<{ foapaDetails: FoapaStuff[] }>();

@@ -110,6 +110,7 @@ export function isValidAccountNumber(value) {
   }
 }
 
+//Non required foapa numebrs
 export function isValidFoapaNumber(value) {
   if (value === undefined || value === null) value = "";
   const isValidNumber = /^[0-9]+$/.test(value);
@@ -124,5 +125,27 @@ export function isValidFoapaNumber(value) {
       return "4-digits";
     default:
       return true;
+  }
+}
+
+export function isValidFoapaName(value, maxLength) {
+  if (value === undefined || value === null) value = "";
+  switch (true) {
+    case value.trim() === "":
+      return "Required";
+    case value.length > maxLength:
+      return "Too many characters";
+    default:
+      return true;
+  }
+}
+
+export function isLessThan(value, maxLength: number) {
+  if (value === undefined || value === null) value = "";
+
+  if (value.length > maxLength) {
+    return "Too many characters";
+  } else {
+    return true;
   }
 }
