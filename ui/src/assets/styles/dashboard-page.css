@@ -295,7 +295,10 @@
   bottom: 20px;
   background-color: #a5093e;
   border-radius: 19px;
-  width: 50px;
+  min-width: 50px;
+  padding: 0px 17px;
+  box-sizing: border-box;
+  width: auto;
   height: 28px;
   display: flex;
   justify-content: center;

@@ -190,7 +190,7 @@ function createPdf() {
     .then((response) => {
       props.currentReimbursement.totalCost = getAllActivitiesAmount();
       axios
-        .get("https://udm-reimbursement-project.onrender.com/api/generatePdf", {
+        .get("http://localhost:8080/api/generatePdf", {
           params: {
             reimbursementData: props.currentReimbursement,
             userInfo: response.data,

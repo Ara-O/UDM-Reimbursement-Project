@@ -43,7 +43,7 @@
               type="text"
               name="current-activity-cost"
               placeholder="$ Cost"
-              :rules="isValidNumber"
+              :rules="isValidFloat"
               class="input-field"
             />
             <ErrorMessage name="current-activity-cost" class="error-field" />
@@ -157,7 +157,11 @@
 </template>
 
 <script setup lang="ts">
-import { isNotEmpty, isValidNumber } from "../../utils/validators";
+import {
+  isNotEmpty,
+  isValidFloat,
+  isValidNumber,
+} from "../../utils/validators";
 import { ref, watch, toRefs, onMounted } from "vue";
 import axios from "axios";
 import { Activity, ReimbursementTicket, FoapaStuff } from "../../types/types";

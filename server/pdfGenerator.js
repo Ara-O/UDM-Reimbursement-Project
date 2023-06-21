@@ -3,6 +3,36 @@ function parseDate(dateString) {
   return formattedDate;
 }
 
+function fillArray(arrayToBeFilled, length) {
+  for (let i = 0; i < length; i++) {
+    if (!arrayToBeFilled[i]) {
+      arrayToBeFilled[i] = { text: "", fontSize: 7.8 };
+    } else {
+      if (typeof arrayToBeFilled[i] !== "object") {
+        arrayToBeFilled[i] = { text: arrayToBeFilled[i], fontSize: 7.8 };
+      }
+    }
+  }
+
+  return arrayToBeFilled;
+}
+
+function combineOtherField(data) {
+  let parsedField = [
+    {
+      text: "",
+      colSpan: 7,
+      fontSize: 9,
+    },
+  ];
+
+  data.forEach((activity) => {
+    activity.text != "" ? (parsedField[0].text += activity.text + ". ") : "";
+  });
+
+  return parsedField;
+}
+
 export default function createPdfDefinition(
   reimbursementData,
   userInfo,
@@ -213,125 +243,109 @@ export default function createPdfDefinition(
   content.push({ text: " " }, { text: " " });
 
   //Calculate activities section
-  const activitiesClassification = {};
+  let parsedActivity = {};
+  let pdfStructure = {
+    Lodging: [{ text: "Lodging", fontSize: 10 }],
+    Breakfast: [{ text: "Breakfast", fontSize: 10 }],
+    Lunch: [{ text: "Lunch", fontSize: 10 }],
+    Dinner: [{ text: "Dinner", fontSize: 10 }],
+    "Business Guest Meals": [{ text: "Business Guest Meals **", fontSize: 10 }],
+    "Air/Train": [{ text: "Air/Train", fontSize: 10 }],
+    "Taxi/Bus/Car Rental": [{ text: "Taxi/Bus/Car Rental", fontSize: 10 }],
+    Parking: [{ text: "Parking", fontSize: 10 }],
+    Registration: [{ text: "Registration", fontSize: 10 }],
+    Mileage: [{ text: "Mileage", fontSize: 10 }],
+    Other: [],
+  };
 
+  //Calculating all the costs based on activity based ond date
   activities.forEach((activity) => {
-    if (!activitiesClassification[`${parseDate(activity.activityDate)}`]) {
-      activitiesClassification[`${parseDate(activity.activityDate)}`] = {
-        activities: [activity],
-      };
+    let activityDate = parseDate(activity.activityDate);
+    if (!parsedActivity[activityDate]) {
+      parsedActivity[activityDate] = {};
+    }
+
+    if (!parsedActivity[activityDate][activity.activityName]) {
+      parsedActivity[activityDate][activity.activityName] = Number(
+        activity.cost
+      );
     } else {
-      activitiesClassification[
-        `${parseDate(activity.activityDate)}`
-      ].activities.push(activity);
+      parsedActivity[activityDate][activity.activityName] += Number(
+        activity.cost
+      );
     }
   });
 
-  //thanks chat gippity
-  const activitiesSortedByDate = Object.fromEntries(
-    Object.entries(activitiesClassification).sort(
+  parsedActivity = Object.fromEntries(
+    Object.entries(parsedActivity).sort(
       ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
     )
   );
 
-  console.log(
-    "All activites",
-    activitiesClassification,
-    activitiesSortedByDate
-  );
-  // console.log(activitiesClassification["2023-01-01"].activities);
-  //   if (arrayField === undefined) {
-  //     arrayField = activitiesClassification[`Other`];
-  //     arrayField.explanation += activity.activityName + ". ";
-  //   } else if (activity.activityName === "Mileage") {
-  //     arrayField.explanation += "Something goes here i spos";
-  //   } else {
-  //     arrayField.dates.push({
-  //       text: parseDate(activity.activityDate),
-  //       fontSize: 7.5,
-  //     });
-  //   }
-  //   arrayField.total += Number(activity.cost);
-  // });
+  if (Object.keys(parsedActivity).length > 7) {
+    console.log("Should be throwing an error");
+  }
 
-  // //Put data in right format
-  // for (const property in activitiesClassification) {
-  //   if (property !== "Other" && property !== "Mileage") {
-  //     activitiesClassification[property].finalData = [
-  //       property,
-  //       ...activitiesClassification[property].dates,
-  //     ];
-  //   }
+  let datesArray = [];
+  for (const key in parsedActivity) {
+    datesArray.push(key);
+  }
 
-  //   for (let i = 0; i < 9; i++) {
-  //     if (activitiesClassification[property].finalData[i] === undefined) {
-  //       activitiesClassification[property].finalData[i] = "";
-  //     }
+  datesArray = fillArray(datesArray, 8);
+  console.log(parsedActivity);
+  for (const parsedActivityDate in parsedActivity) {
+    for (const expenseTitle in pdfStructure) {
+      if (parsedActivity[parsedActivityDate][expenseTitle]) {
+        pdfStructure[expenseTitle].push(
+          `$${parsedActivity[parsedActivityDate][expenseTitle]}`
+        );
+      } else {
+        pdfStructure[expenseTitle].push("");
+      }
+    }
+  }
 
-  //     activitiesClassification[property].finalData[8] = {
-  //       text: `$ ${activitiesClassification[property].total}`,
-  //       fontSize: 7.5,
-  //     };
-  //   }
-  // }
+  pdfStructure.Other = pdfStructure.Other.filter((val) => val != "");
 
-  // let activityTables = {
-  //   Lodging: {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   Breakfast: {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   Lunch: {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   Dinner: {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   "Business Guest Meals": {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   "Air/Train": {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   "Taxi/Bus/Car Rental": {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   Parking: {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   Registration: {
-  //     dates: [],
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   Mileage: {
-  //     explanation: "",
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  //   Other: {
-  //     explanation: "",
-  //     total: 0,
-  //     finalData: [],
-  //   },
-  // };
+  for (const parsedActivityDate in parsedActivity) {
+    for (const activity in parsedActivity[parsedActivityDate]) {
+      if (!pdfStructure[activity]) {
+        pdfStructure.Other.push(activity);
+      }
+    }
+  }
+
+  for (const activity in pdfStructure) {
+    pdfStructure[activity] = fillArray(pdfStructure[activity], 8);
+  }
+
+  let totalActivityCosts = {
+    Lodging: { cost: 0 },
+    Breakfast: { cost: 0 },
+    Lunch: { cost: 0 },
+    Dinner: { cost: 0 },
+    "Business Guest Meals": { cost: 0 },
+    "Air/Train": { cost: 0 },
+    "Taxi/Bus/Car Rental": { cost: 0 },
+    Parking: { cost: 0 },
+    Registration: { cost: 0 },
+    Mileage: { cost: 0 },
+    Other: { cost: 0 },
+  };
+
+  for (const activityDate in parsedActivity) {
+    for (const activityName in parsedActivity[activityDate]) {
+      if (totalActivityCosts[activityName]) {
+        totalActivityCosts[activityName].cost +=
+          parsedActivity[activityDate][activityName];
+      } else {
+        totalActivityCosts.Other.cost +=
+          parsedActivity[activityDate][activityName];
+      }
+    }
+  }
+  console.log("costs", totalActivityCosts);
+  console.log(pdfStructure);
 
   //Expenses section
   content.push({
@@ -351,33 +365,73 @@ export default function createPdfDefinition(
         ],
         [
           { text: "All receipts MUST be original", italics: true },
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
+          ...datesArray,
         ],
-        // activitiesClassification["Lodging"].finalData,
-        ["Lodging", "", "", "", "", "", "", "", "0.00"],
-        // activitiesClassification["Breakfast"].finalData,
-        ["Breakfast", "", "", "", "", "", "", "", "0.00"],
-        // activitiesClassification["Lunch"].finalData,
-        ["Lunch", "", "", "", "", "", "", "", "0.00"],
-        // activitiesClassification["Dinner"].finalData,
-        ["Dinner", "", "", "", "", "", "", "", "0.00"],
-        // activitiesClassification["Business Guest Meals"].finalData,
-        ["Business Guest Meals **", "", "", "", "", "", "", "", "0.00"],
-        // activitiesClassification["Air/Train"].finalData,
-        ["Air/Train", "", "", "", "", "", "", "", "0.00"],
-        // activitiesClassification["Taxi/Bus/Car Rental"].finalData,
-        ["Taxi/Bus/Car Rental", "", "", "", "", "", "", "", "0.00"],
-        // activitiesClassification["Parking"].finalData,
-        ["Parking", "", "", "", "", "", "", "", "0.00"],
-        // activitiesClassification["Registration"].finalData,
-        ["Registration", "", "", "", "", "", "", "", "0.00"],
+        [
+          ...pdfStructure.Lodging,
+          {
+            text: `$${totalActivityCosts.Lodging.cost.toFixed(2)}`,
+            fontSize: 8,
+          },
+        ],
+        [
+          ...pdfStructure.Breakfast,
+          {
+            fontSize: 8,
+            text: `$${totalActivityCosts.Breakfast.cost.toFixed(2)}`,
+          },
+        ],
+        [
+          ...pdfStructure.Lunch,
+          { text: `$${totalActivityCosts.Lunch.cost.toFixed(2)}`, fontSize: 8 },
+        ],
+        [
+          ...pdfStructure.Dinner,
+          {
+            text: `$${totalActivityCosts.Dinner.cost.toFixed(2)}`,
+            fontSize: 8,
+          },
+        ],
+        [
+          ...pdfStructure["Business Guest Meals"],
+          {
+            text: `$${totalActivityCosts["Business Guest Meals"].cost.toFixed(
+              2
+            )}`,
+            fontSize: 8,
+          },
+        ],
+        [
+          ...pdfStructure["Air/Train"],
+          {
+            text: `$${totalActivityCosts["Air/Train"].cost.toFixed(2)}`,
+            fontSize: 8,
+          },
+        ],
+        [
+          ...pdfStructure["Taxi/Bus/Car Rental"],
+          {
+            text: `$${totalActivityCosts["Taxi/Bus/Car Rental"].cost.toFixed(
+              2
+            )}`,
+            fontSize: 8,
+          },
+        ],
+        [
+          ...pdfStructure.Parking,
+          {
+            text: `$${totalActivityCosts.Parking.cost.toFixed(2)}`,
+            fontSize: 8,
+          },
+        ],
+        [
+          ...pdfStructure.Registration,
+          {
+            text: `$${totalActivityCosts.Registration.cost.toFixed(2)}`,
+            fontSize: 8,
+          },
+        ],
+        // [, ...pdfStructure.Mileage, "0.00"],
         [
           "Mileage (Include destination)",
           {
@@ -398,13 +452,10 @@ export default function createPdfDefinition(
           },
         ],
         // activitiesClassification["Mileage"].finalData,
+        // ["Other (Explain what expense is for )", ...pdfStructure.Other],
         [
           "Other (Explain what expense is for )",
-          {
-            text: "",
-            colSpan: 7,
-            fontSize: 7.5,
-          },
+          ...combineOtherField(pdfStructure.Other),
           "",
           "",
           "",
@@ -412,21 +463,10 @@ export default function createPdfDefinition(
           "",
           "",
           {
-            text: ``,
+            text: `$${totalActivityCosts.Other.cost.toFixed(2)}`,
             colSpan: 1,
-            fontSize: 7.5,
+            fontSize: 8,
           },
-        ],
-        [
-          "Other (Explain what expense is for )",
-          { text: "", colSpan: 7 },
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          { text: "", colSpan: 1 },
         ],
       ],
     },
@@ -453,7 +493,7 @@ export default function createPdfDefinition(
     if (subFoapaArray.length === 4) {
       subFoapaArray[4] = "";
     }
-    subFoapaArray[5] = foapaDetails[foapa];
+    subFoapaArray[5] = foapaDetails[foapa].toFixed(2);
     foapaArray.push(subFoapaArray);
   }
 
@@ -640,7 +680,7 @@ export default function createPdfDefinition(
           [
             {
               text: `${userInfo.firstName} ${userInfo.lastName}`,
-              border: [false, false, false, true],
+              border: [false, false, false, false],
               italics: false,
               fontSize: 9,
             },
@@ -654,6 +694,44 @@ export default function createPdfDefinition(
             {
               text: `${formattedToday}`,
               border: [false, false, false, true],
+              italics: false,
+              fontSize: 9,
+            },
+            { text: "", border: [false, false, false, false] },
+            {
+              text: "",
+              border: [false, false, false, false],
+              italics: false,
+              fontSize: 9,
+            },
+            { text: "", border: [false, false, false, false] },
+            {
+              text: "",
+              border: [false, false, false, false],
+              italics: false,
+              fontSize: 9,
+            },
+          ],
+        ],
+      },
+    },
+    {
+      table: {
+        widths: [180, 10, 50, 10, 180, 10, 50],
+        heights: [10],
+        body: [
+          [
+            {
+              text: `Signature of Employee`,
+              border: [false, true, false, false],
+              italics: false,
+              fontSize: 9,
+            },
+
+            { text: "", border: [false, false, false, false] },
+            {
+              text: `Date`,
+              border: [false, false, false, false],
               italics: false,
               fontSize: 9,
             },

@@ -195,6 +195,7 @@
         <th>PROG</th>
         <th>ACTV</th>
         <th></th>
+        <th></th>
       </tr>
       <tr v-for="foapa in props.foapaDetails">
         <td>
