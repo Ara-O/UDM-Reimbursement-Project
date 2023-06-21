@@ -127,7 +127,7 @@ async function deleteReceipt(receipt) {
   if (dependencies > 0) {
     depedencyMessage.value = `${dependencies} ${
       dependencies === 1 ? "activity depends" : "activities depend"
-    } on this receipt. Please re-assign them an activity before you delete this activity.`;
+    } on this receipt. Please re-assign a receipt before you delete this receipt.`;
     setTimeout(() => {
       depedencyMessage.value = "";
     }, 2000);
