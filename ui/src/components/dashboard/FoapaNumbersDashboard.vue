@@ -1,5 +1,12 @@
 <template>
   <section class="foapa-number-section">
+    <div class="logo-container">
+      <img
+        src="../../assets/detroit-mercy-logo.png"
+        class="udmercy-logo" @click="$router.push('/dashboard')"
+        alt="Detroit Mercy logo"
+      />
+    </div>
     <h3>Foapa Numbers</h3>
     <br />
     <div class="foapa-number-wrapper">

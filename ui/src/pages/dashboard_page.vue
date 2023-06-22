@@ -118,6 +118,18 @@
   </section>
 </template>
 
+<style>
+
+.image-container {
+  text-align: center;
+  margin-top: 20px;
+}
+.udmercy-logo {
+  width: 60px; /* Adjust the width to your desired size */
+  height: auto; /* Maintain the aspect ratio */
+}
+</style>
+
 <script lang="ts" setup>
 import FoapaNumbers from "../components/dashboard/FoapaNumbersDashboard.vue";
 import axios from "axios";
