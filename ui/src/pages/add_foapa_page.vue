@@ -2,7 +2,7 @@
   <section class="add-foapa-page">
     <img
       src="../assets/detroit-mercy-logo.png"
-      class="udmercy-logo"
+      class="udmercy-logo" @click="$router.push('/dashboard')"
       alt="Detroit mercy logo"
     />
     <div class="manage-foapa-div">

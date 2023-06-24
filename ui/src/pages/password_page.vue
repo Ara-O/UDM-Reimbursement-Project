@@ -5,7 +5,7 @@
         <img
           src="../assets/detroit-mercy-logo.png"
           alt="Detroit mercy logo"
-          class="udmercy-logo"
+          class="udmercy-logo" @click="$router.push('/dashboard')"
         />
       </div>
     </section>
