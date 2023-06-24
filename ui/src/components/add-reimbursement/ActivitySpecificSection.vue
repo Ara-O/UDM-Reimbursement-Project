@@ -97,7 +97,7 @@
     <br />
     <div class="activity-add-receipt-section">
       <div class="activity-field">
-        <div class="add-receipt-text">Assign Receipt:</div>
+        <div class="add-receipt-text">Assign Receipt</div>
         <span>
           <Field
             as="select"
@@ -114,6 +114,19 @@
             </option>
           </Field>
           <ErrorMessage name="receipt-field" class="error-field" />
+        </span>
+      </div>
+      <div class="activity-field" style="height: 105px">
+        <div class="add-receipt-text">Enter Mileage Information</div>
+        <span>
+          <Field
+            placeholder="Mileage information"
+            class="input-field"
+            name="mileage-info"
+            :rules="isNotEmpty"
+          />
+
+          <ErrorMessage name="mileage-info" class="error-field" />
         </span>
       </div>
     </div>

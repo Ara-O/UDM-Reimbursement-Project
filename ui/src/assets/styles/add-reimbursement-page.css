@@ -540,9 +540,12 @@ input#direct-deposit {
   }
 }
 @media (max-width: 800px) {
-  .foapa-and-date-section,
-  .activity-add-receipt-section {
+  .foapa-and-date-section {
     margin-top: 50px;
+  }
+
+  .receipt {
+    width: 95%;
   }
 }
 

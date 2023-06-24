@@ -4,6 +4,9 @@
     <foapa-numbers></foapa-numbers>
     <section class="reimbursement-section">
       <h3>Welcome {{ userInfo.firstName }}</h3>
+      <router-link to="/profile-page">
+        <img src="../assets/user-icon.png" alt="User help" class="user-icon"
+      /></router-link>
       <br />
       <div class="reimbursement-search-input">
         <input
@@ -119,7 +122,6 @@
 </template>
 
 <style>
-
 .image-container {
   text-align: center;
   margin-top: 20px;

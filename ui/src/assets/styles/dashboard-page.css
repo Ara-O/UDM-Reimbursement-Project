@@ -6,6 +6,10 @@
   gap: 0px;
 }
 
+.user-icon {
+  display: none;
+}
+
 /* FOAPA SECTION */
 
 .foapa-number-section {
@@ -336,6 +340,20 @@
 }
 
 @media (max-width: 900px) {
+  .user-icon {
+    height: 30px;
+    /* box-shadow: 0 2px 2px #5353532b; */
+    object-fit: contain;
+    border-radius: 90px;
+    opacity: 0.8;
+    cursor: pointer;
+    padding: 8px;
+    display: block;
+    position: absolute;
+    top: 35px;
+    right: 40px;
+    width: 30px;
+  }
   .foapa-number-section {
     display: none;
   }

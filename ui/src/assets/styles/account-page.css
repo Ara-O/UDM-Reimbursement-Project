@@ -228,6 +228,10 @@ input {
     width: auto;
   }
 
+  .signup-form {
+    margin-bottom: 40px;
+  }
+
   .input-field input,
   .input-field select {
     text-align: center;

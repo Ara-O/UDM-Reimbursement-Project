@@ -59,10 +59,12 @@ function formatUserFoapa(foapa: FoapaStuff) {
 watch(
   () => props.foapaDetails,
   (details) => {
-    if (details && details.length > 0) {
-      const formattedFoapa = details?.map((foapa) => formatUserFoapa(foapa));
+    if (props.foapaDetails && props.foapaDetails.length > 0) {
+      const formattedFoapa = props.foapaDetails?.map((foapa) =>
+        formatUserFoapa(foapa)
+      );
       if (!formattedFoapa.includes(props.activity.foapaNumber)) {
-        console.log("mismatch");
+        activityHasError.value = true;
       }
     }
   }
