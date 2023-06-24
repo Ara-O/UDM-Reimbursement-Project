@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "helmet": "^7.0.0",
-    "vee-validate": "^4.9.6"
-  }
-}

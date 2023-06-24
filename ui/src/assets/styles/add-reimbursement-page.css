@@ -62,6 +62,14 @@
   padding: 8px 20px;
 }
 
+.activity-error {
+  position: absolute;
+  top: 20px;
+  cursor: pointer;
+  width: 4px;
+  right: 20px;
+}
+
 .reimbursement-section {
   display: flex;
   flex-wrap: wrap;

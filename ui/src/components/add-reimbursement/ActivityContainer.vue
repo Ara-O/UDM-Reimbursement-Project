@@ -1,5 +1,12 @@
 <template>
   <div class="activity">
+    <img
+      src="../../assets/exclamation-mark.png"
+      alt="Error"
+      class="activity-error"
+      v-if="activityHasError"
+      title="Deleted FOAPA number is in use. Please reassign a FOAPA number"
+    />
     <h3>{{ activity.activityName }}</h3>
     <h4>
       Date: {{ parseDate(activity.activityDate) }} || Cost:
@@ -34,10 +41,32 @@
 </template>
 
 <script lang="ts" setup>
-import { Activity } from "../../types/types";
-defineProps<{
+import { Activity, FoapaStuff } from "../../types/types";
+import { onMounted, watch, ref } from "vue";
+
+let activityHasError = ref<boolean>(false);
+const props = defineProps<{
   activity: Activity;
+  foapaDetails: FoapaStuff[] | undefined;
 }>();
+
+function formatUserFoapa(foapa: FoapaStuff) {
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
+    foapa.program || "XXXX"
+  }-${foapa.activity || "XXXX"}`;
+}
+
+watch(
+  () => props.foapaDetails,
+  (details) => {
+    if (details && details.length > 0) {
+      const formattedFoapa = details?.map((foapa) => formatUserFoapa(foapa));
+      if (!formattedFoapa.includes(props.activity.foapaNumber)) {
+        console.log("mismatch");
+      }
+    }
+  }
+);
 
 function parseDate(dateString: string) {
   const dateParsed = new Date(dateString);
@@ -46,6 +75,17 @@ function parseDate(dateString: string) {
 }
 
 defineEmits(["deleteActivity", "editActivity"]);
+
+onMounted(() => {
+  if (props.foapaDetails && props.foapaDetails.length > 0) {
+    const formattedFoapa = props.foapaDetails?.map((foapa) =>
+      formatUserFoapa(foapa)
+    );
+    if (!formattedFoapa.includes(props.activity.foapaNumber)) {
+      activityHasError.value = true;
+    }
+  }
+});
 </script>
 
 <style scoped>

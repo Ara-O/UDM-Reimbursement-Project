@@ -104,7 +104,7 @@ router.get("/generatePdf", verifyToken, (req, res) => {
       },
       images: images,
 
-      pageMargins: [15, 15, 0, 0],
+      pageMargins: [17, 15, 0, 0],
     };
     generatePdf(
       docDefinition,

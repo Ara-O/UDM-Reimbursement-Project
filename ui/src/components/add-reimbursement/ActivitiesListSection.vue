@@ -4,6 +4,7 @@
     <ActivityContainer
       v-for="activity in props.currentReimbursement.activities"
       :activity="activity"
+      :foapa-details="foapaDetails"
       @edit-activity="editActivity"
       @delete-activity="deleteActivity"
     />
@@ -38,9 +39,9 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { ReimbursementTicket } from "../../types/types";
+import { FoapaStuff, ReimbursementTicket } from "../../types/types";
 import parseDate from "../../utils/parseDate";
 import ActivityContainer from "./ActivityContainer.vue";
 
@@ -213,6 +214,25 @@ function deleteActivity(activityId: string) {
       (activity) => activity.activityId != activityId
     );
 }
+
+let foapaDetails = ref<FoapaStuff[]>([]);
+
+function retrieveFoapaDetails() {
+  axios
+    .get(
+      "https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails"
+    )
+    .then((res) => {
+      foapaDetails.value = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+onMounted(() => {
+  retrieveFoapaDetails();
+});
 </script>
 
 <style scoped>
