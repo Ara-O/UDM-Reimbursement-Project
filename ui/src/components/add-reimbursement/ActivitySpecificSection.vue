@@ -116,7 +116,11 @@
           <ErrorMessage name="receipt-field" class="error-field" />
         </span>
       </div>
-      <div class="activity-field" style="height: 105px">
+      <div
+        class="activity-field"
+        style="height: auto"
+        v-if="currentActivity.activityName === 'Mileage'"
+      >
         <div class="add-receipt-text">Enter Mileage Information</div>
         <span>
           <Field
