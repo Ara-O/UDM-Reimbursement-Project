@@ -76,7 +76,7 @@
       <br />
       <div class="reimbursement-wrapper">
         <div class="reimbursement" v-for="ticket in filterReimbursements">
-          <div class="total-amount">${{ ticket.totalCost }}</div>
+          <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
           <h5>

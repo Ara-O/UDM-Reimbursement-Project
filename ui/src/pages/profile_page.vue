@@ -36,14 +36,17 @@
     <router-link to="/account">
       <h3 class="view-account-info">View User information</h3></router-link
     >
+    <br />
     <router-link to="/dashboard" style="text-decoration: none"
       ><button
         class="filter"
         style="border: 0px; padding: 0px 30px; text-decoration: none"
       >
-        back
+        Back to home
       </button></router-link
     >
+    <br />
+    <button class="filter sign-out-button" @click="signOut">Sign Out</button>
   </section>
 </template>
 
@@ -99,6 +102,12 @@ function goToFoapaPage() {
   router.push("/add-foapa");
 }
 
+function signOut() {
+  localStorage.setItem("token", "");
+  router.push("/");
+  alert("Successfully signed out!");
+}
+
 onMounted(() => {
   retrieveUserFoapaDetails();
 });
@@ -124,5 +133,12 @@ onMounted(() => {
 .view-account-info {
   font-weight: 400;
   font-size: 14px;
+}
+
+.sign-out-button {
+  border: 0px;
+  padding: 0px 30px;
+  text-decoration: none;
+  background-color: var(--udmercy-red);
 }
 </style>

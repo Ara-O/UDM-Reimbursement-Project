@@ -21,6 +21,7 @@ const reimbursementSchema = new Schema({
       foapaNumber: String,
       activityName: String,
       activityDate: Date,
+      additionalInformation: String,
       cost: Number,
       activityId: String,
     },

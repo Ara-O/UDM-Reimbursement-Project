@@ -128,6 +128,7 @@
             class="input-field"
             name="mileage-info"
             :rules="isNotEmpty"
+            v-model="currentActivity.additionalInformation"
           />
 
           <ErrorMessage name="mileage-info" class="error-field" />
@@ -145,7 +146,7 @@
       type="submit"
       :disabled="currentlyAddingActivity"
     >
-      {{ !userIsEditingActivity ? "Add Activity" : "Update Activity" }}
+      {{ !userIsEditingActivity ? "Add Expense" : "Update Expense" }}
     </button>
     <!-- <span style="display: flex; gap: 30px">
       <button

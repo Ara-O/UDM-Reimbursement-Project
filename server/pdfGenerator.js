@@ -79,6 +79,8 @@ export default function createPdfDefinition(
   reimbursementData.activities.forEach((activity) => {
     ticketTotal += Number(activity.cost);
   });
+
+  ticketTotal = ticketTotal.toFixed(2);
   content.push({
     table: {
       //13
@@ -258,8 +260,12 @@ export default function createPdfDefinition(
     Other: [],
   };
 
+  let mileageExplanation = [];
   //Calculating all the costs based on activity based ond date
   activities.forEach((activity) => {
+    if (activity.activityName === "Mileage") {
+      mileageExplanation.push(activity.additionalInformation);
+    }
     let activityDate = parseDate(activity.activityDate);
     if (!parsedActivity[activityDate]) {
       parsedActivity[activityDate] = {};
@@ -435,7 +441,7 @@ export default function createPdfDefinition(
         [
           "Mileage (Include destination)",
           {
-            text: "",
+            text: mileageExplanation.join(". "),
             colSpan: 7,
             fontSize: 9,
           },
@@ -446,9 +452,9 @@ export default function createPdfDefinition(
           "",
           "",
           {
-            text: ``,
+            text: `$${totalActivityCosts.Mileage.cost.toFixed(2)}`,
             colSpan: 1,
-            fontSize: 7.5,
+            fontSize: 8,
           },
         ],
         // activitiesClassification["Mileage"].finalData,

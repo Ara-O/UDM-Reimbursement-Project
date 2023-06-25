@@ -55,6 +55,7 @@ export type AddressDetails = {
 export type Activity = {
   activityName: string;
   cost: number;
+  additionalInformation?: string;
   foapaNumber: string;
   activityDate: string;
   activityReceipt: string;
