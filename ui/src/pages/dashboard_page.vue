@@ -83,7 +83,12 @@
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
           <div class="reimbursement-buttons">
-            <button @click="viewTicket(ticket._id)">Modify</button>
+            <button
+              @click="viewTicket(ticket._id)"
+              v-if="ticket.reimbursementStatus !== 'Submitted'"
+            >
+              Modify
+            </button>
             <button @click="deleteReimbursement(ticket._id)">Delete</button>
           </div>
         </div>
@@ -104,7 +109,7 @@
           <h3>Employment Number: {{ userInfo.employmentNumber }}</h3>
         </div>
         <div>
-          <h3>Phone Number: {{ userInfo.phoneNumber }}</h3>
+          <h3>Phone Number: {{ formatPhoneNumber(userInfo.phoneNumber) }}</h3>
         </div>
       </div>
       <router-link to="/account" style="font-size: 14px"
@@ -180,6 +185,14 @@ let reimbursementTickets = ref<any>([
   //   reimbursementDate: "2023-05-21",
   // },
 ]);
+
+function formatPhoneNumber(phoneNumber: string) {
+  const formattedPhoneNumber = `(${phoneNumber.slice(
+    0,
+    3
+  )})-${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6)}`;
+  return formattedPhoneNumber;
+}
 
 function orderByName() {
   sortParameter.value = "Name";

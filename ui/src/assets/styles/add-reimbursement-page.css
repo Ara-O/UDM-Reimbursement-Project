@@ -80,6 +80,7 @@
 
 .help-icon {
   width: 20px;
+  cursor: pointer;
 }
 
 .activities-list {

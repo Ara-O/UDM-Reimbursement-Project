@@ -163,7 +163,7 @@
   flex-direction: column;
   gap: 10px;
   position: relative;
-  padding-top: 32px;
+  padding-top: 30px;
   justify-content: flex-start;
   align-items: flex-start;
 }

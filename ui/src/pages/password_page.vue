@@ -5,7 +5,8 @@
         <img
           src="../assets/detroit-mercy-logo.png"
           alt="Detroit mercy logo"
-          class="udmercy-logo" @click="$router.push('/dashboard')"
+          class="udmercy-logo"
+          @click="$router.push('/dashboard')"
         />
       </div>
     </section>
@@ -108,13 +109,10 @@ function changePassword() {
   } else {
     feedback.value = "Updating password...";
     axios
-      .post(
-        "https://udm-reimbursement-project.onrender.com/api/changePassword",
-        {
-          currentPassword: currentPassword.value,
-          newPassword: newPassword.value,
-        }
-      )
+      .post("http://localhost:8080/api/changePassword", {
+        currentPassword: currentPassword.value,
+        newPassword: newPassword.value,
+      })
       .then((res) => {
         feedback.value = res.data.message;
         // router.push("/dashboard");

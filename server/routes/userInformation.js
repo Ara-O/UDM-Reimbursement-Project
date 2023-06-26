@@ -189,10 +189,7 @@ router.post("/resetPassword", async (req, res) => {
 
 router.post("/changePassword", verifyToken, async (req, res) => {
   try {
-    let facultyInfo = await Faculty.findOne({
-      id: req.user._id,
-    });
-
+    let facultyInfo = await Faculty.findById(req.user.userId);
     if (facultyInfo) {
       let passwordMatches = await decryptPassword(
         req.body.currentPassword,

@@ -124,7 +124,10 @@
             v-model="currentlyInputtedFOAPA.account"
           />
           <datalist id="account-no">
-            <option v-for="acctNo in accountNumbers" :value="acctNo.number">
+            <option
+              v-for="acctNo in accountNumbers"
+              :value="String(acctNo.number).padStart(4, '0')"
+            >
               {{ acctNo.number }} - {{ acctNo.description }}
             </option>
           </datalist>

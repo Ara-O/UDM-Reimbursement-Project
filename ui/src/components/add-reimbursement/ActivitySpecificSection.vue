@@ -11,9 +11,6 @@
             title=" Choose from one of the default options below or select other to create another type of expense"
             class="help-icon"
           />
-          <h3 style="font-size: 14px; font-weight: 400">
-            &lt;- Hover for help
-          </h3>
         </div>
         <div class="expenses-section activity-field">
           <span>
