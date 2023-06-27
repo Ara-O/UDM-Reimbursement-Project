@@ -52,6 +52,8 @@ router.get("/retrieveAccountInformation", verifyToken, async (req, res) => {
 router.post("/updateAccountInfo", verifyToken, async (req, res) => {
   console.log(req.body);
 
+  req.body.accountInformation.employmentNumber =
+    "T" + req.body.accountInformation.employmentNumber;
   try {
     let facultyInfo = await Faculty.findByIdAndUpdate(
       req.user.userId,

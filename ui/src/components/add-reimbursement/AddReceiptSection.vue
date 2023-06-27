@@ -3,6 +3,14 @@
     <h3 style="font-weight: 600">Add Receipt</h3>
     <section class="upload-receipts-section">
       <h3 class="upload-receipts-here">Upload all receipts here</h3>
+      <h3
+        class="upload-receipts-here"
+        style="font-weight: 400; line-height: 30px"
+      >
+        Note: If an expense has multiple receipts. it is sufficient to assign a
+        single receipt to the expense. However, please ensure that all required
+        receipts are uploaded accordingly.
+      </h3>
       <div style="display: flex; align-items: center; height: 40px">
         <input
           type="file"

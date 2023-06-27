@@ -109,10 +109,13 @@ function changePassword() {
   } else {
     feedback.value = "Updating password...";
     axios
-      .post("http://localhost:8080/api/changePassword", {
-        currentPassword: currentPassword.value,
-        newPassword: newPassword.value,
-      })
+      .post(
+        "https://udm-reimbursement-project.onrender.com/api/changePassword",
+        {
+          currentPassword: currentPassword.value,
+          newPassword: newPassword.value,
+        }
+      )
       .then((res) => {
         feedback.value = res.data.message;
         // router.push("/dashboard");

@@ -67,6 +67,14 @@ input {
   font-size: 13px;
   color: rgb(0, 176, 0);
 }
+
+.account-loading-message {
+  font-weight: 400;
+  margin-top: 20px;
+  font-size: 13px;
+  color: black;
+}
+
 .account-error-message {
   font-weight: 400;
   font-size: 13px;

@@ -2,22 +2,34 @@
   <section class="add-foapa-page">
     <img
       src="../assets/detroit-mercy-logo.png"
-      class="udmercy-logo" @click="$router.push('/dashboard')"
+      class="udmercy-logo"
+      @click="$router.push('/dashboard')"
       alt="Detroit mercy logo"
     />
     <div class="manage-foapa-div">
       <h3 class="manage-foapa-text">Manage FOAPA</h3>
       <ManageFoapaDetails :foapa-details="foapaDetails" />
       <div class="add-foapa-button-wrapper">
-        <button class="add-foapa-button" @click="$router.push('/dashboard')">
-          Discard Changes
+        <button
+          class="add-foapa-button"
+          style="width: auto; padding: 0px 30px"
+          @click="$router.push('/dashboard')"
+        >
+          Go to Dashboard
         </button>
         <button class="add-foapa-button" @click="updateFoapa">
           Save FOAPAs
         </button>
       </div>
-      <h3 class="add-foapa-success-message">{{ successMessage }}</h3>
-      <h3 class="add-foapa-error-message">{{ errorMessage }}</h3>
+      <h3 class="add-foapa-success-message" v-if="successMessage">
+        {{ successMessage }}
+      </h3>
+      <h3 class="add-foapa-loading-message" v-if="loadingMessage">
+        {{ loadingMessage }}
+      </h3>
+      <h3 class="add-foapa-error-message" v-if="errorMessage">
+        {{ errorMessage }}
+      </h3>
     </div>
   </section>
 </template>
@@ -33,6 +45,7 @@ const router = useRouter();
 let foapaDetails = ref<FoapaStuff[]>([]);
 let successMessage = ref<string>("");
 let errorMessage = ref<string>("");
+let loadingMessage = ref<string>("");
 function retrieveUserFoapaDetails() {
   axios
     .get(
@@ -48,6 +61,9 @@ function retrieveUserFoapaDetails() {
 }
 
 function updateFoapa() {
+  successMessage.value = "";
+  errorMessage.value = "";
+  loadingMessage.value = "Updating FOAPA details...";
   axios
     .post(
       "https://udm-reimbursement-project.onrender.com/api/updateFoapaDetails",
@@ -56,6 +72,7 @@ function updateFoapa() {
       }
     )
     .then((res) => {
+      loadingMessage.value = "";
       successMessage.value = res.data.message;
       // alert(res.data.message);
       // router.push("/dashboard");

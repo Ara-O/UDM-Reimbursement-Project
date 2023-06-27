@@ -15,7 +15,10 @@
         </span>
       </div>
       <div class="input-field">
-        <label for="reenter-password" style="width: auto"
+        <label
+          for="reenter-password"
+          class="re-enter-password-label"
+          style="width: auto"
           >Re-enter password: *</label
         >
         <span>
@@ -37,7 +40,7 @@
       </div>
     </div>
 
-    <div class="continue-buttons mt-s-0">
+    <div class="continue-buttons mt-s-0" style="margin-top: 5px">
       <button class="signup-button mt-0" type="submit">Continue</button>
     </div>
   </Form>
@@ -83,13 +86,23 @@ function progress() {
 .input-field-wrapper {
   height: 65px;
 }
-@media (max-width: 812px) {
+@media (max-width: 813px) {
   .input-field-wrapper {
     height: auto;
   }
 
+  .re-enter-password-label {
+    width: 100px !important;
+    margin-top: 0px !important;
+  }
+
   .continue-buttons {
-    margin-top: 40px;
+    margin-top: 30px !important;
+  }
+}
+@media (max-width: 780px) {
+  .re-enter-password-label {
+    width: auto !important;
   }
 }
 </style>

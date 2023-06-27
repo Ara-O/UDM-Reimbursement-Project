@@ -31,8 +31,8 @@
           <h4 class="email-confirmation-text">
             A confirmation email has being sent to
             {{ userSignupData.workEmail.trim() }}@udmercy.edu. You should
-            receive an email in a few minutes. Please check your spam/junk
-            folder if it does not arrive. You can close out of this page.
+            receive an email in 3-5 minutes. Please check your spam/junk folder
+            if it does not arrive. You can close out of this page.
           </h4>
         </article>
       </section>

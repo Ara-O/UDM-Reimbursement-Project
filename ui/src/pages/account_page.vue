@@ -232,8 +232,15 @@
           <!-- <h6 class="trademark-text">Made with love by the Duckateers TM</h6> -->
         </section>
       </Form>
-      <h3 class="account-success-message">{{ successMessage }}</h3>
-      <h3 class="account-error-message">{{ errorMessage }}</h3>
+      <h3 class="account-success-message" v-if="successMessage">
+        {{ successMessage }}
+      </h3>
+      <h3 class="account-loading-message" v-if="loadingMessage">
+        {{ loadingMessage }}
+      </h3>
+      <h3 class="account-error-message" v-if="errorMessage">
+        {{ errorMessage }}
+      </h3>
     </section>
   </section>
 </template>
@@ -248,6 +255,7 @@ import { UserDataAcct, AddressDetails } from "../types/types";
 import { isNotEmpty, isValidNumber, isValidString } from "../utils/validators";
 
 let successMessage = ref<string>("");
+let loadingMessage = ref<string>("");
 let errorMessage = ref<string>("");
 const router = useRouter();
 const departments = [
@@ -303,6 +311,9 @@ function back() {
 }
 
 function save() {
+  successMessage.value = "";
+  errorMessage.value = "";
+  loadingMessage.value = "Updating account data...";
   axios
     .post(
       "https://udm-reimbursement-project.onrender.com/api/updateAccountInfo",
@@ -311,7 +322,7 @@ function save() {
       }
     )
     .then((res) => {
-      console.log(res.data);
+      loadingMessage.value = "";
       successMessage.value = res.data.message;
     })
     .catch((err) => {
@@ -326,7 +337,6 @@ async function retrieveAccountInformation() {
       "https://udm-reimbursement-project.onrender.com/api/retrieveAccountInformation"
     );
 
-    console.log(accountInfo.value);
     res.data.employmentNumber = res.data.employmentNumber.replace("T", "");
     accountInfo.value = res.data;
 
@@ -342,7 +352,7 @@ async function retrieveAccountInformation() {
 }
 
 function countryChanged() {
-  console.log("account info", accountInfo.value);
+  console.log("country changed");
   let realCountryData = countries.value?.filter(
     (country) => accountInfo.value.country === country.name
   );
@@ -355,7 +365,6 @@ function countryChanged() {
       }
     )
     .then((res) => {
-      console.log(res.data);
       states.value = res.data;
       stateChanged();
     })

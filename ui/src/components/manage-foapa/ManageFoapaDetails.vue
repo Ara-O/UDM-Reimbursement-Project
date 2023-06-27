@@ -15,7 +15,7 @@
             src="../../assets/user-help-icon.png"
             alt="Help"
             class="foapa-help-icon"
-            title="Unique identifier for FOAPA Number for easy identification. The FOAPA name is arbitrary and not related to the actual FOAPA"
+            title="Unique identifier for FOAPA Number for easy identification. The FOAPA name is arbitrary and not related to the FOAPA number"
           />
         </span>
         <span class="input-FOAPA-field-span">

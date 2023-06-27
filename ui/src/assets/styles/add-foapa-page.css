@@ -178,6 +178,12 @@ tr td {
   font-size: 13px;
   color: rgb(0, 176, 0);
 }
+.add-foapa-loading-message {
+  font-weight: 400;
+  margin-top: 20px;
+  font-size: 13px;
+  color: black;
+}
 .add-foapa-error-message {
   font-weight: 400;
   font-size: 13px;
@@ -217,9 +223,10 @@ tr td {
   }
 }
 
-@media (max-width: 750px) {
+@media (max-width: 780px) {
   .manage-foapa-div {
     text-align: center;
+    padding: 0px;
   }
   .add-foapa-title-descriptions {
     text-align: center;
