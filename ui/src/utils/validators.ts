@@ -1,5 +1,7 @@
 export function isValidString(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   const isAString = /^[a-zA-Z0-9\s-]+$/.test(value);
   switch (true) {
     case value.trim() === "":
@@ -13,6 +15,7 @@ export function isValidString(value) {
 
 export function isNotEmpty(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
   if (value.trim() === "") {
     return "Field can not be empty";
   }
@@ -21,6 +24,7 @@ export function isNotEmpty(value) {
 
 export function isValidEmploymentNumber(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{8}$/.test(value);
 
@@ -38,6 +42,8 @@ export function isValidEmploymentNumber(value) {
 
 export function isValidPhoneNumber(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{10}$/.test(value);
 
@@ -55,6 +61,8 @@ export function isValidPhoneNumber(value) {
 
 export function isValidFundNumber(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{6}$/.test(value);
 
@@ -72,6 +80,8 @@ export function isValidFundNumber(value) {
 
 export function isValidNumber(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   let isValidNumber = /^[0-9]+$/.test(value);
 
   if (!isValidNumber && String(value).trim() !== "") {
@@ -86,6 +96,8 @@ export function isValidNumber(value) {
 
 export function isValidFloat(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   let isValidNumber = /^[0-9.]+$/.test(value);
 
   if (!isValidNumber && String(value).trim() !== "") {
@@ -99,6 +111,8 @@ export function isValidFloat(value) {
 }
 export function isValidFoapaAmount(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   let isValidNumber = /^[0-9]+$/.test(value);
 
   if (!isValidNumber && value.trim() !== "") {
@@ -109,6 +123,8 @@ export function isValidFoapaAmount(value) {
 
 export function isValidAccountNumber(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{4}$/.test(value);
 
@@ -127,6 +143,8 @@ export function isValidAccountNumber(value) {
 //Non required foapa numebrs
 export function isValidFoapaNumber(value) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   const isValidNumber = /^[0-9]+$/.test(value);
   const hasValidLength = /^[0-9]{4}$/.test(value);
 
@@ -144,6 +162,8 @@ export function isValidFoapaNumber(value) {
 
 export function isValidFoapaName(value, maxLength) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
+
   switch (true) {
     case value.trim() === "":
       return "Required";
@@ -156,6 +176,7 @@ export function isValidFoapaName(value, maxLength) {
 
 export function isLessThan(value, maxLength: number) {
   if (value === undefined || value === null) value = "";
+  value = String(value);
 
   if (value.length > maxLength) {
     return "Too many characters";
