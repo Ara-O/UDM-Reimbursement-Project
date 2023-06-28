@@ -232,21 +232,6 @@ watch(
     }
   }
 );
-// let allActivitiesOccurence = {};
-//   let limitReached: boolean = false;
-//   currentReimbursement.value.activities.forEach((activity) => {
-//     if (allActivitiesOccurence[activity.activityName] === undefined) {
-//       allActivitiesOccurence[activity.activityName] = 1;
-//     } else {
-//       allActivitiesOccurence[activity.activityName]++;
-//     }
-//   });
-//   if (allActivitiesOccurence[currentActivity.value.activityName] >= 7) {
-//     alert("You have reached the limit of expenses with this activity");
-//     limitReached = true;
-//   }
-
-//   if (limitReached) return;
 
 function addActivity(resetForm) {
   if (selectedFoapaAmount.value !== undefined) {

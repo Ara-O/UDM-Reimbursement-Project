@@ -15,7 +15,7 @@
             src="../../assets/user-help-icon.png"
             alt="Help"
             class="foapa-help-icon"
-            title="Unique identifier for FOAPA Number for easy identification. The FOAPA name is arbitrary and not related to the FOAPA number"
+            title="Unique identifier for FOAPA Number for easy identification. The FOAPA name is arbitrary and not related to the actual FOAPA"
           />
         </span>
         <span class="input-FOAPA-field-span">
@@ -223,9 +223,9 @@
         <td>
           <img
             src="../../assets/edit-icon-red.png"
-            alt="Trash"
+            alt="Edit"
             class="delete-icon"
-            @click=""
+            @click="editFoapa(foapa)"
           />
         </td>
       </tr>
@@ -287,6 +287,16 @@ function deleteFoapa(foapaName, fund) {
   if (index > -1) {
     props.foapaDetails.splice(index, 1);
   }
+}
+
+function editFoapa(foapa) {
+  currentlyInputtedFOAPA.fund = foapa.fund;
+  currentlyInputtedFOAPA.organization = foapa.organization;
+  currentlyInputtedFOAPA.account = foapa.account;
+  currentlyInputtedFOAPA.program = foapa.program;
+  currentlyInputtedFOAPA.activity = foapa.activity;
+  currentlyInputtedFOAPA.foapaName = foapa.foapaName;
+  currentlyInputtedFOAPA.currentAmount = foapa.currentAmount;
 }
 
 onMounted(() => {

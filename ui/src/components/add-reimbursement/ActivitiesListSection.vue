@@ -79,7 +79,6 @@ async function updateReimbursement() {
       reimbursementTicket: props.currentReimbursement,
     }
   );
-  alert("Reimbursement ticket saved successfully");
   router.push("/dashboard");
 }
 
@@ -99,8 +98,6 @@ async function addReimbursement() {
       );
 
       router.push("/dashboard");
-
-      alert("Reimbursement saved successfully");
     } else {
       alert("Reimbursement Title Missing");
     }
