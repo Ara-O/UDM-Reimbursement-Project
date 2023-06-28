@@ -296,7 +296,8 @@ function editFoapa(foapa) {
   currentlyInputtedFOAPA.program = foapa.program;
   currentlyInputtedFOAPA.activity = foapa.activity;
   currentlyInputtedFOAPA.foapaName = foapa.foapaName;
-  currentlyInputtedFOAPA.currentAmount = foapa.currentAmount;
+  currentlyInputtedFOAPA.initialAmount = foapa.currentAmount;
+  deleteFoapa(foapa.foapaName, foapa.fund);
 }
 
 onMounted(() => {
