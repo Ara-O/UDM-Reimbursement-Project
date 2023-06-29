@@ -5,7 +5,7 @@
       alt="Error"
       class="activity-error"
       v-if="activityHasError"
-      title="Deleted FOAPA number is in use. Please reassign a FOAPA number"
+      title="Deleted/Updated FOAPA number is in use. Please reassign a FOAPA number"
     />
     <h3>{{ activity.activityName }}</h3>
     <h4>
