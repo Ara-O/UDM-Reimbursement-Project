@@ -97,7 +97,7 @@ router.post("/login", async (req, res) => {
 
     if (facultyInfo === null) {
       res.status(404).send({
-        message: "Credentials not found. Please check your email and password",
+        message: "Credentials not found. Please check that your email and password are correct.",
       });
     } else {
       let passwordMatches = await decryptPassword(
