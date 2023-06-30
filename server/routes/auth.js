@@ -7,6 +7,7 @@ import {
 } from "../utils/authenticatePassword.js";
 import jwt from "jsonwebtoken";
 
+
 const router = Router();
 
 // Registering user - POST /api/register
