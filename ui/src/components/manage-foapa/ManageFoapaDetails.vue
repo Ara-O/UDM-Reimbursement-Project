@@ -233,9 +233,8 @@
   </section>
 </template>
 
-
-<ConfirmDialog id="confirm" />
-<Button @click="openDialog()" label="Confirm" :aria-expanded="visible" :aria-controls="visible ? 'confirm' : null"></Button>
+<!-- <ConfirmDialog id="confirm" />
+<Button @click="openDialog()" label="Confirm" :aria-expanded="visible" :aria-controls="visible ? 'confirm' : null"></Button> -->
 
 <script setup lang="ts">
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -250,13 +249,10 @@ import {
 } from "../../utils/validators";
 import axios from "axios";
 
-import ConfirmDialog from 'primevue/confirmdialog';
-import {createApp} from 'vue';
-import ConfirmationService from 'primevue/confirmationservice';
-import { useConfirm } from "primevue/useconfirm";
-const app = createApp(App);
-app.use(ConfirmationService);
-const confirm = useConfirm();
+// import ConfirmDialog from 'primevue/confirmdialog';
+import { createApp } from "vue";
+// import ConfirmationService from 'primevue/confirmationservice';
+// import { useConfirm } from "primevue/useconfirm";
 
 let props = defineProps<{ foapaDetails: FoapaStuff[] }>();
 let currentlyInputtedFOAPA = reactive<FoapaStuff>({
@@ -311,23 +307,22 @@ function editFoapa(foapa) {
   currentlyInputtedFOAPA.foapaName = foapa.foapaName;
   currentlyInputtedFOAPA.initialAmount = foapa.currentAmount;
   deleteFoapa(foapa.foapaName, foapa.fund);
-  
-  const confirm = useConfirm();
-  const isVisible = ref(false);
-  const openDialog =() => {
-    confirm.require({
-      message: 'WARNING! If the FOAPA you are editing has already been used in a request, you will need to change it before submission.',
-      header: 'WARNING',
-      onShow: () => {
-        isVisible.value = true;
-      },
-      onHide: () => {
-        isVisible.value=false;
-      }
-    });
-  };
-  openDialog();
-  
+
+  // const confirm = useConfirm();
+  // const isVisible = ref(false);
+  // const openDialog =() => {
+  //   confirm.require({
+  //     message: 'WARNING! If the FOAPA you are editing has already been used in a request, you will need to change it before submission.',
+  //     header: 'WARNING',
+  //     onShow: () => {
+  //       isVisible.value = true;
+  //     },
+  //     onHide: () => {
+  //       isVisible.value=false;
+  //     }
+  //   });
+  // };
+  // openDialog();
 }
 
 onMounted(() => {
