@@ -7,7 +7,19 @@
       :foapa-details="foapaDetails"
       @edit-activity="editActivity"
       @delete-activity="deleteActivity"
+      v-if="props.currentReimbursement.activities.length > 0"
     />
+    <h3
+      v-else
+      style="
+        font-size: 14px;
+        margin-top: 0px;
+        margin-bottom: 20px;
+        font-weight: 500;
+      "
+    >
+      No Expense Added
+    </h3>
   </span>
   <div class="cta-buttons">
     <button class="add-actvities-button" @click="saveReimbursement">

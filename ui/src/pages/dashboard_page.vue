@@ -59,29 +59,39 @@
         <h3 style="font-weight: 500; font-size: 14.5px">
           All Reimbursements -
         </h3>
-        <button
-          @click="$router.push('/add-reimbursement')"
-          class="filter"
-          style="
-            border: 0px;
-            padding: 0px 20px;
-            width: 300px;
-            font-weight: 300;
-            font-size: 12.5px;
-          "
-        >
-          Click here to add reimbursement ticket
-        </button>
+        <span style="display: flex; gap: 10px">
+          <button
+            @click="$router.push('/add-reimbursement')"
+            class="filter add-reimbursement-ticket-button"
+            style="width: auto"
+          >
+            Click to add reimbursement ticket
+          </button>
+          <button
+            v-if="filterReimbursements.length > 0"
+            style="width: auto"
+            @click="changeView"
+            class="filter add-reimbursement-ticket-button"
+          >
+            View as {{ currentView == "grid" ? "list" : "grid" }}
+          </button>
+        </span>
       </div>
       <br />
-      <div class="reimbursement-wrapper">
+      <div
+        :class="
+          currentView === 'list'
+            ? 'reimbursement-wrapper-list'
+            : 'reimbursement-wrapper-grid'
+        "
+      >
         <div class="reimbursement" v-for="ticket in filterReimbursements">
-          <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
           <h5>
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
+          <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <div class="reimbursement-buttons">
             <button
               @click="viewTicket(ticket._id)"
@@ -185,6 +195,15 @@ let reimbursementTickets = ref<any>([
   //   reimbursementDate: "2023-05-21",
   // },
 ]);
+
+let currentView = ref<"grid" | "list">("grid");
+function changeView() {
+  if (currentView.value === "list") {
+    currentView.value = "grid";
+  } else {
+    currentView.value = "list";
+  }
+}
 
 function formatPhoneNumber(phoneNumber: string) {
   const formattedPhoneNumber = `(${phoneNumber.slice(

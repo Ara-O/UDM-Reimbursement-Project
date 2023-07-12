@@ -56,5 +56,6 @@ export default createRouter({
       path: "/forgot-password/:userToken",
       component: ForgotPassword,
     },
+    { path: "/:pathMatch(.*)*", redirect: "/" },
   ],
 });
