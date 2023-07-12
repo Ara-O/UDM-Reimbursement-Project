@@ -217,7 +217,7 @@ function createPdf() {
 }
 
 function deleteActivity(activityId: string) {
-  console.log(activityId);
+  // console.log(activityId);
   props.currentReimbursement.activities =
     props.currentReimbursement.activities.filter(
       (activity) => activity.activityId != activityId

@@ -344,7 +344,7 @@ function retrieveReimbursements() {
       "https://udm-reimbursement-project.onrender.com/api/retrieveReimbursements"
     )
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       reimbursementTickets.value = res.data;
     })
     .catch((err) => {

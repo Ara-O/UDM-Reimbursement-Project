@@ -98,7 +98,7 @@ function sendConfirmationEmail() {
 
 onMounted(() => {
   if (localStorage.getItem("token")?.length ?? 0 > 0) {
-    console.log("user is already signed in");
+    // console.log("user is already signed in");
     router.push("/dashboard");
   }
 });

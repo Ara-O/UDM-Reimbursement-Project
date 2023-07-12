@@ -105,7 +105,7 @@ onMounted(() => {
   } else {
     userToken.value = route.params.userToken as string;
   }
-  console.log(route.params.userToken);
+  // console.log(route.params.userToken);
 });
 </script>
 
