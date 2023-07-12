@@ -352,7 +352,6 @@ async function retrieveAccountInformation() {
 }
 
 function countryChanged() {
-  console.log("country changed");
   let realCountryData = countries.value?.filter(
     (country) => accountInfo.value.country === country.name
   );

@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import ActivitiesList from "../components/add-reimbursement/ActivitiesListSection.vue";
 import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ReimbursementTicket, Activity } from "../types/types";
 import parseDate from "../utils/parseDate";
 import axios from "axios";
@@ -43,6 +43,7 @@ import ActivitySpecificSection from "../components/add-reimbursement/ActivitySpe
 import AddReceiptSection from "../components/add-reimbursement/AddReceiptSection.vue";
 import { generateRandomStringId } from "../utils/generateRandomId";
 
+const router = useRouter();
 const route = useRoute();
 
 let currentReimbursement = ref<ReimbursementTicket>({
@@ -97,6 +98,13 @@ async function userIsUpdatingReimbursement() {
 }
 
 onMounted(() => {
+  if (
+    localStorage.getItem("token") === null ||
+    localStorage.getItem("token") === ""
+  ) {
+    console.log("User not signed in");
+    router.push("/");
+  }
   if (route.query.reimbursementId) {
     userIsUpdatingReimbursement();
   }

@@ -83,7 +83,7 @@ function resetPassword() {
         }
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         alert(res.data.message);
       })
       .catch((err) => {

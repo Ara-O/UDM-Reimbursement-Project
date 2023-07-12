@@ -82,12 +82,12 @@ let props = defineProps<{ currentReimbursement: ReimbursementTicket }>();
 
 async function receiptAdded() {
   fileWasSelected.value = true;
-  console.log(receiptRef.value);
+  // console.log(receiptRef.value);
   // @ts-ignore
   const files = receiptRef.value.files;
   await storeReceiptImages();
   fileWasSelected.value = false;
-  console.log(files);
+  // console.log(files);
 }
 
 async function storeReceiptImages() {
@@ -155,7 +155,7 @@ async function deleteReceipt(receipt) {
       props.currentReimbursement.reimbursementReceipts.filter(
         (receiptL) => receiptL.id != receipt.id
       );
-    console.log(res);
+    // console.log(res);
     deletingReceipt.value = false;
   } catch (err) {
     console.log(err);

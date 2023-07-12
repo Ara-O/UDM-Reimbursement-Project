@@ -143,7 +143,7 @@ function loginUser() {
       userInfo.value
     )
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       loggingIn.value = false;
       localStorage.setItem("token", res.data.token);
       axios.defaults.headers.common["authorization"] =
@@ -171,7 +171,7 @@ function sendEmail() {
     })
     .then((res) => {
       emailSent.value = true;
-      console.log(res);
+      // console.log(res);
     })
     .catch((err) => {
       console.log(err);

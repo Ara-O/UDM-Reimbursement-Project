@@ -59,7 +59,7 @@
         <h3 style="font-weight: 500; font-size: 14.5px">
           All Reimbursements -
         </h3>
-        <span style="display: flex; gap: 10px">
+        <span class="view-choice">
           <button
             @click="$router.push('/add-reimbursement')"
             class="filter add-reimbursement-ticket-button"
@@ -308,7 +308,7 @@ function retrieveUserInformationSummary() {
     )
     .then((res) => {
       userInfo.value = res.data;
-      console.log(res);
+      // console.log(res);
     })
     .catch((err) => {
       console.log(err);
@@ -322,7 +322,7 @@ function retrieveUserInformationSummary() {
 }
 
 function parseDate(dateString: string) {
-  console.log(dateString);
+  // console.log(dateString);
   const dateParsed = new Date(dateString);
   const formattedDate = dateParsed.toISOString().slice(0, 10);
   return formattedDate;

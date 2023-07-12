@@ -3,7 +3,8 @@
     <div class="logo-container">
       <img
         src="../../assets/detroit-mercy-logo.png"
-        class="udmercy-logo" @click="$router.push('/dashboard')"
+        class="udmercy-logo"
+        @click="$router.push('/dashboard')"
         alt="Detroit Mercy logo"
       />
     </div>
@@ -47,7 +48,7 @@ let userFoapaNumbers = ref<FoapaStuff[]>([]);
 const router = useRouter();
 
 function formatUserFoapa(foapa: FoapaStuff) {
-  console.log(foapa);
+  // console.log(foapa);
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
     foapa.program || "XXXX"
   }-${foapa.activity || "XXXX"}`;
@@ -60,7 +61,7 @@ function retrieveUserFoapaDetails() {
     )
     .then((res) => {
       userFoapaNumbers.value = res.data;
-      console.log(res);
+      // console.log(res);
     })
     .catch((err) => {
       console.log(err);
