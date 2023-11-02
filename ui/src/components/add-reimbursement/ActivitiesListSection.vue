@@ -1,23 +1,15 @@
 <template>
   <h3 style="margin-top: 0px" class="all-activities-text">All Expenses</h3>
   <span class="activities-list">
-    <ActivityContainer
-      v-for="activity in props.currentReimbursement.activities"
-      :activity="activity"
-      :foapa-details="foapaDetails"
-      @edit-activity="editActivity"
-      @delete-activity="deleteActivity"
-      v-if="props.currentReimbursement.activities.length > 0"
-    />
-    <h3
-      v-else
-      style="
+    <ActivityContainer v-for="activity in props.currentReimbursement.activities" :activity="activity"
+      :foapa-details="foapaDetails" @edit-activity="editActivity" @delete-activity="deleteActivity"
+      @duplicate-activity="duplicateActivity" v-if="props.currentReimbursement.activities.length > 0" />
+    <h3 v-else style="
         font-size: 14px;
         margin-top: 0px;
         margin-bottom: 20px;
         font-weight: 500;
-      "
-    >
+      ">
       No Expense Added
     </h3>
   </span>
@@ -34,15 +26,12 @@
     <button class="add-actvities-button" @click="router.push('/dashboard')">
       Discard Changes
     </button>
-    <h5
-      style="
+    <h5 style="
         font-weight: 400;
         margin-top: 2px;
         font-size: 14px;
         text-align: center;
-      "
-      v-show="currentlyCreatingPDF"
-    >
+      " v-show="currentlyCreatingPDF">
       Creating PDF, please wait, this may take a minute... Pop-ups may need to
       be enabled to view the PDF
     </h5>
@@ -56,6 +45,7 @@ import { useRouter } from "vue-router";
 import { FoapaStuff, ReimbursementTicket } from "../../types/types";
 import parseDate from "../../utils/parseDate";
 import ActivityContainer from "./ActivityContainer.vue";
+import generateRandomId, { generateRandomStringId } from "../../utils/generateRandomId";
 
 let currentlyCreatingPDF = ref<boolean>(false);
 const router = useRouter();
@@ -154,6 +144,26 @@ function downloadPDF(pdfData: string) {
   }
 `;
   }
+}
+
+function duplicateActivity(activityId: string) {
+  console.log(activityId)
+  let activityToDuplicate = props.currentReimbursement.activities.filter((activity) => activity.activityId === activityId)
+  if (activityToDuplicate.length === 0) {
+    alert('There was an error, please try again')
+    return
+  }
+
+  let newActivity = JSON.parse(JSON.stringify(activityToDuplicate[0]))
+
+  newActivity.activityId = generateRandomStringId(24)
+  newActivity.activityName += " - Copy"
+  delete newActivity._id
+
+  console.log(newActivity)
+
+  props.currentReimbursement.activities.push(newActivity)
+  console.log(activityToDuplicate)
 }
 
 async function submitTicket() {

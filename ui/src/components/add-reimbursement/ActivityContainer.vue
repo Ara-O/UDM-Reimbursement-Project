@@ -1,40 +1,24 @@
 <template>
   <div class="activity">
-    <img
-      src="../../assets/exclamation-mark.png"
-      alt="Error"
-      class="activity-error"
-      v-if="activityHasError"
-      title="Deleted/Updated FOAPA number is in use. Please reassign a FOAPA number"
-    />
+    <img src="../../assets/exclamation-mark.png" alt="Error" class="activity-error" v-if="activityHasError"
+      title="Deleted/Updated FOAPA number is in use. Please reassign a FOAPA number" />
     <h3>{{ activity.activityName }}</h3>
     <h4>
       Date: {{ parseDate(activity.activityDate) }} || Cost:
       {{ activity.cost }}
     </h4>
     <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
-    <div class="activity-options-wrapper">
-      <div
-        class="activity-option"
-        @click="$emit('deleteActivity', activity.activityId)"
-      >
-        <img
-          src="../../assets/trash-icon-white.png"
-          alt="Trash icon"
-          class="trash-icon"
-          style="width: 13px"
-        />
+    <div title="Delete activity" class="activity-options-wrapper">
+      <div class="activity-option" @click="$emit('deleteActivity', activity.activityId)">
+        <img src="../../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon" style="width: 13px" />
       </div>
-      <div
-        @click="$emit('editActivity', activity.activityId)"
-        class="activity-option"
-      >
-        <img
-          src="../../assets/edit-icon.png"
-          class="edit-icon-button"
-          alt="Edit icon"
-          style="filter: invert(); width: 20px"
-        />
+      <div title="Edit activity" @click="$emit('editActivity', activity.activityId)" class="activity-option">
+        <img src="../../assets/edit-icon.png" class="edit-icon-button" alt="Edit icon"
+          style="filter: invert(); width: 20px" />
+      </div>
+      <div title="Duplicate activity" @click="$emit('duplicateActivity', activity.activityId)" class="activity-option">
+        <img src="../../assets/duplicate-icon.png" class="edit-icon-button" alt="Edit icon"
+          style="filter: invert(); width: 20px" />
       </div>
     </div>
   </div>
@@ -51,9 +35,8 @@ const props = defineProps<{
 }>();
 
 function formatUserFoapa(foapa: FoapaStuff) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
-    foapa.program || "XXXX"
-  }-${foapa.activity || "XXXX"}`;
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${foapa.program || "XXXX"
+    }-${foapa.activity || "XXXX"}`;
 }
 
 watch(
@@ -76,7 +59,7 @@ function parseDate(dateString: string) {
   return formattedDate;
 }
 
-defineEmits(["deleteActivity", "editActivity"]);
+defineEmits(["deleteActivity", "editActivity", "duplicateActivity"]);
 
 onMounted(() => {
   if (props.foapaDetails && props.foapaDetails.length > 0) {
