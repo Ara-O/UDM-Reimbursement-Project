@@ -67,6 +67,47 @@
         >Check if using UDMPU 11.6 voucher (please attach voucher/log)</label
       >
     </span>
+    <br />
+    <br />
+    <div>
+      <span>
+        <input
+          type="checkbox"
+          id="guest-checkbox"
+          v-model="currentReimbursement.guest"
+        />
+        <label for="guest-checkbox" style="font-size: 14px"
+          >Check if adding Guest</label
+        >
+      </span>
+
+      <div class="additional-fields" v-if="currentReimbursement.guest">
+        <div class="input-field-wrapper">
+          <input
+            type="text"
+            v-model="currentReimbursement.employeeName"
+            placeholder="Employee Name"
+            class="input-field"
+          />
+        </div>
+        <div class="input-field-wrapper">
+          <input
+            type="text"
+            v-model="currentReimbursement.guestName"
+            placeholder="Guest Name"
+            class="input-field"
+          />
+        </div>
+        <div class="input-field-wrapper">
+          <input
+            type="text"
+            v-model="currentReimbursement.guestAssociation"
+            placeholder="Guest Association"
+            class="input-field"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

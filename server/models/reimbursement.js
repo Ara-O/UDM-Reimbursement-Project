@@ -6,6 +6,10 @@ const reimbursementSchema = new Schema({
   destination: String,
   paymentRetrievalMethod: String,
   UDMPUVoucher: Boolean,
+  guest: Boolean,
+  employeeName: String,
+  guestName: String,
+  guestAssociation: String,
   totalCost: Number,
   reimbursementStatus: String,
   reimbursementReceipts: [

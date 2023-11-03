@@ -57,6 +57,10 @@ let currentReimbursement = ref<ReimbursementTicket>({
   destination: "",
   paymentRetrievalMethod: "Direct Deposit",
   UDMPUVoucher: false,
+  guest: false,
+  employeeName: "",
+  guestName: "",
+  guestAssociation: "",
 });
 
 let currentActivity = ref<Activity>({
