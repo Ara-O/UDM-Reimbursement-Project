@@ -53,6 +53,12 @@ export default function createPdfDefinition(
 
   const { activities } = reimbursementData;
   let content = [];
+
+  const guestFirstName = reimbursementData.guestFirstName || '';
+  const guestLastName = reimbursementData.guestLastName || '';
+  const employeeFirstName = reimbursementData.employeeFirstName || '';
+  const employeeLastName = reimbursementData.employeeLastName || '';
+  const guestAssociation = reimbursementData.guestAssociation || '';
   //Top section
   content.push(
     {
@@ -563,7 +569,7 @@ export default function createPdfDefinition(
               },
               {},
             ],
-            ["", "", "", "", "", ""],
+            [`${employeeFirstName}`, `${employeeLastName}`,`${guestFirstName}`, `${guestLastName}`, `${guestAssociation}`, ""],
             ["", "", "", "", "", ""],
             ["", "", "", "", "", ""],
             ["", "", "", "", "", ""],

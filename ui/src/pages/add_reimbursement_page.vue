@@ -58,8 +58,10 @@ let currentReimbursement = ref<ReimbursementTicket>({
   paymentRetrievalMethod: "Direct Deposit",
   UDMPUVoucher: false,
   guest: false,
-  employeeName: "",
-  guestName: "",
+  employeeFirstName: "",
+  employeeLastName: "",
+  guestFirstName: "",
+  guestLastName: "",
   guestAssociation: "",
 });
 

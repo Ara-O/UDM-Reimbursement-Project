@@ -85,16 +85,32 @@
         <div class="input-field-wrapper">
           <input
             type="text"
-            v-model="currentReimbursement.employeeName"
-            placeholder="Employee Name"
+            v-model="currentReimbursement.employeeFirstName"
+            placeholder="Employee First Name"
             class="input-field"
           />
         </div>
         <div class="input-field-wrapper">
           <input
             type="text"
-            v-model="currentReimbursement.guestName"
+            v-model="currentReimbursement.employeeLastName"
+            placeholder="Employee Last Name"
+            class="input-field"
+          />
+        </div>
+        <div class="input-field-wrapper">
+          <input
+            type="text"
+            v-model="currentReimbursement.guestFirstName"
             placeholder="Guest Name"
+            class="input-field"
+          />
+        </div>
+        <div class="input-field-wrapper">
+          <input
+            type="text"
+            v-model="currentReimbursement.guestLastName"
+            placeholder="Guest Last Name"
             class="input-field"
           />
         </div>

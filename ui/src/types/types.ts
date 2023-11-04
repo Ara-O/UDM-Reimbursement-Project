@@ -78,8 +78,10 @@ export type ReimbursementTicket = {
   paymentRetrievalMethod: "Hold for Pickup" | "Direct Deposit" | "";
   UDMPUVoucher: Boolean;
   guest: Boolean;
-  employeeName: String,
-  guestName: String,
+  employeeFirstName: String,
+  employeeLastName: String,
+  guestFirstName: String,
+  guestLastName: String,
   guestAssociation: String,
   totalCost: number;
   reimbursementReceipts: { url: String; id: String }[];
