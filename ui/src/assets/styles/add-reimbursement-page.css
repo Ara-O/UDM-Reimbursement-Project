@@ -13,6 +13,37 @@
   display: none;
 }
 
+.input-field-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-field-wrapper input {
+  margin-right: 40px;
+  margin-top: 10px;
+}
+
+.add-guest-button {
+  background-color: var(--udmercy-red);
+  background: #a5093e;
+  padding: 10px;
+  border: solid 1px var(--udmercy-red);
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 2px;
+  height: 36px;
+  margin-bottom: 0px;
+  display: inline-flex;
+  /* justify-content: center; */
+  align-items: center;
+}
+
+.delete-guest-button {
+}
+
+.edit-guest-button {
+}
+
 .all-activities-section {
   display: flex;
   flex-direction: column;
@@ -296,6 +327,7 @@
   border: solid 1px var(--udmercy-red);
   padding: 8px 20px;
 }
+
 
 .cost-and-other-section {
   height: 45px;

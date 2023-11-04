@@ -83,44 +83,117 @@
 
       <div class="additional-fields" v-if="currentReimbursement.guest">
         <div class="input-field-wrapper">
-          <input
-            type="text"
-            v-model="currentReimbursement.employeeFirstName"
-            placeholder="Employee First Name"
-            class="input-field"
-          />
-        </div>
-        <div class="input-field-wrapper">
-          <input
-            type="text"
-            v-model="currentReimbursement.employeeLastName"
-            placeholder="Employee Last Name"
-            class="input-field"
-          />
-        </div>
-        <div class="input-field-wrapper">
-          <input
-            type="text"
-            v-model="currentReimbursement.guestFirstName"
-            placeholder="Guest Name"
-            class="input-field"
-          />
-        </div>
-        <div class="input-field-wrapper">
-          <input
-            type="text"
-            v-model="currentReimbursement.guestLastName"
-            placeholder="Guest Last Name"
-            class="input-field"
-          />
-        </div>
-        <div class="input-field-wrapper">
-          <input
-            type="text"
-            v-model="currentReimbursement.guestAssociation"
-            placeholder="Guest Association"
-            class="input-field"
-          />
+          <div class="row1">
+            <input
+              type="text"
+              v-model="currentReimbursement.employeeFirstName"
+              placeholder="Employee First Name"
+              class="input-field"
+            />
+            <input
+              type="text"
+              v-model="currentReimbursement.employeeLastName"
+              placeholder="Employee Last Name"
+              class="input-field"
+            />
+          </div>
+          <div class="row2">
+            <input
+              type="text"
+              v-model="currentReimbursement.guestFirstName"
+              placeholder="Guest Name"
+              class="input-field"
+            />
+            <input
+              type="text"
+              v-model="currentReimbursement.guestLastName"
+              placeholder="Guest Last Name"
+              class="input-field"
+            />
+            <input
+              type="text"
+              v-model="currentReimbursement.guestAssociation"
+              placeholder="Guest Association"
+              class="input-field"
+            />
+            <button
+              class="add-guest-button"
+              @click="addGuest"
+              style="width: auto"
+            >
+              <img
+                src="../../assets/add-icon.png"
+                alt="add-icon"
+                class="add-icon"
+              />
+            </button>
+          </div>
+          <div
+            v-for="(guestData, index) in guestList"
+            :key="index"
+            class="past-guest-info"
+          >
+            <div class="input-field-wrapper">
+              <div class="row1">
+                <input
+                  type="text"
+                  v-model="guestData[index]"
+                  class="input-field"
+                  placeholder="Employee First Name"
+                />
+                <input
+                  type="text"
+                  v-model="guestData[index]"
+                  class="input-field"
+                  placeholder="Employee Last Name"
+                />
+              </div>
+              <div class="row2">
+                <input
+                  type="text"
+                  v-model="guestData[index]"
+                  class="input-field"
+                  placeholder="Guest Name"
+                />
+                <input
+                  type="text"
+                  v-model="guestData[index]"
+                  class="input-field"
+                  placeholder="Guest Last Name"
+                />
+                <input
+                  type="text"
+                  v-model="guestData[index]"
+                  class="input-field"
+                  placeholder="Guest Association"
+                />
+                <button class="delete-guest-button">
+                  <img
+                    src="../../assets/trash-icon.png"
+                    alt="Trash"
+                    class="delete-icon"
+                    @click="
+                      deleteGuest(
+                        guestData.employeeFirstName,
+                        guestData.employeeLastName,
+                        guestData.guestFirstName,
+                        guestData.guestLastName,
+                        guestData.guestAssociation
+                      )
+                    "
+                  />
+                </button>
+                <button class="edit-guest-button">
+                  <img
+                    src="../../assets/edit-icon-red.png"
+                    alt="Edit"
+                    class="delete-icon"
+                    @click="editGuest(guestData)"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -129,10 +202,43 @@
 
 <script setup lang="ts">
 import { ReimbursementTicket } from "../../types/types";
-import { toRefs, ref } from "vue";
+import { toRefs, ref, Ref } from "vue";
 let props = defineProps<{ currentReimbursement: ReimbursementTicket }>();
+const currentReimbursement = toRefs(props).currentReimbursement;
 
-const { currentReimbursement } = toRefs(props);
+const guestList: Ref<string[]> = ref([]);
+const guestData = ref({
+  employeeFirstName: "",
+  employeeLastName: "",
+  guestFirstName: "",
+  guestLastName: "",
+  guestAssociation: "",
+});
+
+const addGuest = () => {
+  guestList.value.push(JSON.stringify({ ...currentReimbursement.value }));
+  guestData.value = {
+    employeeFirstName: "",
+    employeeLastName: "",
+    guestFirstName: "",
+    guestLastName: "",
+    guestAssociation: "",
+  };
+};
+
+const deleteGuest = (
+  employeeFirstName,
+  employeeLastName,
+  guestFirstName,
+  guestLastName,
+  guestAssociation
+) => {
+  // TODO
+};
+
+const editGuest = (guest) => {
+  // TODO
+};
 </script>
 
 <style scoped>
