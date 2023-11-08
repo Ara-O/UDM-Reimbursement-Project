@@ -1,6 +1,6 @@
 <template>
   <!-- Top section for returning -->
-  <div class="flex items-center gap-4 absolute top-8 left-32">
+  <div class="flex items-center gap-4 absolute top-8 left-32 cursor-pointer" @click="goToDashboard">
     <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4">
     <h4 class="font-normal text-sm text-gray-600">Return to dashboard</h4>
   </div>
@@ -23,14 +23,26 @@
 
     <!-- INFO SECTION -->
     <section>
-      <claim-information v-if="selectedSection === 1"></claim-information>
+      <claim-information :claim="currentReimbursement" v-if="selectedSection === 1"
+        @move-to-next-section="selectedSection++"></claim-information>
+      <manage-expenses :claim="currentReimbursement" v-if="selectedSection === 2"></manage-expenses>
     </section>
   </main>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
+import { useRouter } from "vue-router";
+import { ReimbursementTicket, Activity } from "../types/types";
 import claimInformation from "../components/add-reimbursement/ClaimInformation.vue"
+import manageExpenses from "../components/add-reimbursement/ManageExpenses.vue"
+import parseDate from "../utils/parseDate";
+
+function goToDashboard() {
+  router.push('/')
+}
+
+const router = useRouter()
 let selectedSection = ref<number>(1)
 
 let sections = ref([
@@ -66,8 +78,6 @@ function changeSection(section: number) {
 // import ActivitiesList from "../components/add-reimbursement/ActivitiesListSection.vue";
 // import { onMounted, ref, watch } from "vue";
 // import { useRoute, useRouter } from "vue-router";
-// import { ReimbursementTicket, Activity } from "../types/types";
-// import parseDate from "../utils/parseDate";
 // import axios from "axios";
 // import ReimbursementSpecificSection from "../components/add-reimbursement/ReimbursementSpecificSection.vue";
 // import ActivitySpecificSection from "../components/add-reimbursement/ActivitySpecificSection.vue";
@@ -77,24 +87,19 @@ function changeSection(section: number) {
 // const router = useRouter();
 // const route = useRoute();
 
-// let currentReimbursement = ref<ReimbursementTicket>({
-//   reimbursementName: "",
-//   totalCost: 0,
-//   reimbursementReason: "",
-//   reimbursementStatus: "",
-//   reimbursementDate: parseDate(new Date().toISOString()),
-//   activities: [],
-//   reimbursementReceipts: [],
-//   destination: "",
-//   paymentRetrievalMethod: "Direct Deposit",
-//   UDMPUVoucher: false,
-//   guest: false,
-//   employeeFirstName: "",
-//   employeeLastName: "",
-//   guestFirstName: "",
-//   guestLastName: "",
-//   guestAssociation: "",
-// });
+let currentReimbursement = ref<ReimbursementTicket>({
+  reimbursementName: "",
+  totalCost: 0,
+  reimbursementReason: "",
+  reimbursementStatus: "",
+  reimbursementDate: parseDate(new Date().toISOString()),
+  activities: [],
+  reimbursementReceipts: [],
+  destination: "",
+  paymentRetrievalMethod: "Direct Deposit",
+  UDMPUVoucher: false,
+  guestInformation: []
+});
 
 // let currentActivity = ref<Activity>({
 //   activityName: "",
@@ -134,18 +139,11 @@ function changeSection(section: number) {
 //   currentReimbursement.value = reimbursement.data;
 // }
 
-// onMounted(() => {
-//   if (
-//     localStorage.getItem("token") === null ||
-//     localStorage.getItem("token") === ""
-//   ) {
-//     console.log("User not signed in");
-//     router.push("/");
-//   }
-//   if (route.query.reimbursementId) {
-//     userIsUpdatingReimbursement();
-//   }
-// });
+onMounted(() => {
+  // if (route.query.reimbursementId) {
+  //   userIsUpdatingReimbursement();
+  // }
+});
 </script>
 
 <style scoped>

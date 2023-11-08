@@ -6,7 +6,12 @@ export default {
   ],
   theme:
   {
-    extend: {},
+    extend: {
+      colors: {
+        "udmercy-blue": "#002d72",
+        "udmercy-red": "#a5093e"
+      }
+    },
   },
   corePlugins: {
     preflight: false

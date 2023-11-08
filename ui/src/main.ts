@@ -10,11 +10,12 @@ configure({
   validateOnInput: true,
 });
 
-if (localStorage.getItem("token")?.length ?? 0 > 0) {
+if (localStorage.getItem("token") !== null && (localStorage.getItem("token")?.length ?? 0 > 0)) {
   axios.defaults.headers.common["authorization"] =
     localStorage.getItem("token");
+  console.log("User is logged in")
 } else {
-  console.log("not logged in");
+  console.log("User is not logged in");
 }
 
 createApp(App).use(Router).mount("#app");

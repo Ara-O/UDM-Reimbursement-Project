@@ -54,12 +54,19 @@ export type AddressDetails = {
 
 export type Activity = {
   activityName: string;
+  activityCost: number;
+  additionalInformation?: string;
+  activityDate: string;
+  activityId: string;
+  _id?: string;
+};
+
+export type Expense = {
+  name: string;
   cost: number;
   additionalInformation?: string;
-  foapaNumber: string;
-  activityDate: string;
-  activityReceipt: string;
-  activityId: string;
+  date: string;
+  id: string;
   _id?: string;
 };
 
@@ -71,21 +78,25 @@ export type FoapaNumbers = {
   initialAmount: number | "N/A";
 };
 
+type GuestInfo = {
+  employeeFirstName: string
+  employeeLastName: string,
+  guestFirstName: string,
+  guestLastName: string,
+  guestAssociation: string,
+}
+
 export type ReimbursementTicket = {
   reimbursementName: String;
   reimbursementReason: String;
   destination: String;
   paymentRetrievalMethod: "Hold for Pickup" | "Direct Deposit" | "";
   UDMPUVoucher: Boolean;
-  guest: Boolean;
-  employeeFirstName: String,
-  employeeLastName: String,
-  guestFirstName: String,
-  guestLastName: String,
-  guestAssociation: String,
+  guestInformation: GuestInfo[],
   totalCost: number;
   reimbursementReceipts: { url: String; id: String }[];
   reimbursementStatus: string;
   reimbursementDate: string;
-  activities: Activity[];
+  activities: Expense[];
 };
+
