@@ -1,57 +1,34 @@
 <template>
   <div class="activity">
-    <img src="../../assets/exclamation-mark.png" alt="Error" class="activity-error" v-if="activityHasError"
-      title="Deleted/Updated FOAPA number is in use. Please reassign a FOAPA number" />
-    <h3>{{ activity.activityName }}</h3>
-    <h4>
-      Date: {{ parseDate(activity.activityDate) }} || Cost:
-      {{ activity.cost }}
+    <!-- <img src="../../assets/exclamation-mark.png" alt="Error" class="activity-error" v-if="activityHasError" -->
+    <!-- title="Deleted/Updated FOAPA number is in use. Please reassign a FOAPA number" /> -->
+    <h3 class="overflow-hidden text-ellipsis whitespace-nowrap" :title="expense.name">{{ expense.name }}</h3>
+    <h4 class="overflow-hidden text-ellipsis whitespace-nowrap" :title="'' + expense.cost">
+      Date: {{ parseDate(expense.date) }} || Cost:
+      ${{ expense.cost }}
     </h4>
-    <h4>Foapa Number: {{ activity.foapaNumber }}</h4>
-    <div title="Delete activity" class="activity-options-wrapper">
-      <div class="activity-option" @click="$emit('deleteActivity', activity.activityId)">
-        <img src="../../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon" style="width: 13px" />
+    <div class="activity-options-wrapper">
+      <div title="Delete activity" class="activity-option" @click="$emit('deleteActivity', expense.id)">
+        <img src="../../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon" />
       </div>
-      <div title="Edit activity" @click="$emit('editActivity', activity.activityId)" class="activity-option">
-        <img src="../../assets/edit-icon.png" class="edit-icon-button" alt="Edit icon"
-          style="filter: invert(); width: 20px" />
+      <div title="Edit activity" @click="$emit('editActivity', expense.id)" class="activity-option">
+        <img src="../../assets/edit-icon.png" class="edit-icon-button invert w-4" alt="Edit icon" />
       </div>
-      <div title="Duplicate activity" @click="$emit('duplicateActivity', activity.activityId)" class="activity-option">
-        <img src="../../assets/duplicate-icon.png" class="edit-icon-button" alt="Edit icon"
-          style="filter: invert(); width: 20px" />
+      <div title="Duplicate activity" @click="$emit('duplicateActivity', expense.id)" class="activity-option">
+        <img src="../../assets/duplicate-icon.png" class="edit-icon-button invert w-5" alt="Edit icon" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Activity, FoapaStuff } from "../../types/types";
-import { onMounted, watch, ref } from "vue";
+import { Expense } from "../../types/types";
+import { ref } from "vue";
 
-let activityHasError = ref<boolean>(false);
 const props = defineProps<{
-  activity: Activity;
-  foapaDetails: FoapaStuff[] | undefined;
+  expense: Expense;
 }>();
 
-function formatUserFoapa(foapa: FoapaStuff) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${foapa.program || "XXXX"
-    }-${foapa.activity || "XXXX"}`;
-}
-
-watch(
-  () => props.foapaDetails,
-  (details) => {
-    if (props.foapaDetails && props.foapaDetails.length > 0) {
-      const formattedFoapa = props.foapaDetails?.map((foapa) =>
-        formatUserFoapa(foapa)
-      );
-      if (!formattedFoapa.includes(props.activity.foapaNumber)) {
-        activityHasError.value = true;
-      }
-    }
-  }
-);
 
 function parseDate(dateString: string) {
   const dateParsed = new Date(dateString);
@@ -61,16 +38,6 @@ function parseDate(dateString: string) {
 
 defineEmits(["deleteActivity", "editActivity", "duplicateActivity"]);
 
-onMounted(() => {
-  if (props.foapaDetails && props.foapaDetails.length > 0) {
-    const formattedFoapa = props.foapaDetails?.map((foapa) =>
-      formatUserFoapa(foapa)
-    );
-    if (!formattedFoapa.includes(props.activity.foapaNumber)) {
-      activityHasError.value = true;
-    }
-  }
-});
 </script>
 
 <style scoped>

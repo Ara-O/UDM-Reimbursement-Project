@@ -11,7 +11,7 @@
             <span>
                 <h4 class="font-normal text-sm">Expense Name</h4>
                 <input type="text" list="default-list" name="expense-name" placeholder="Expense Name" v-model="expense.name"
-                    class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border pl-5 text-xs border-solid shadow-md"
+                    class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
                 <datalist id="default-list">
                     <option :value="expense" v-for="expense in defaultExpenses">
@@ -22,7 +22,7 @@
             <span>
                 <h4 class="font-normal text-sm">Expense Cost</h4>
                 <input type="text" name="expense-cost" placeholder="$ Expense Cost" v-model="expense.cost"
-                    class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border pl-5 text-xs border-solid shadow-md"
+                    class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
             </span>
         </div>
@@ -42,22 +42,41 @@
             <button type="submit"
                 class=" bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Add
                 Expense</button>
-            <button class=" bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
+            <button type="button"
+                class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
                 Section</button>
         </div>
     </form>
 
+    <!-- ALL EXPENSES SECTION -->
     <h4 class="underline font-semibold text-lg text-gray-800">All Expenses</h4>
+    <div class="h-56 overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
+        <div v-if="props.claim.activities.length === 0">
+            <h5 class="mt-0 font-medium text-gray-500">Added expenses will be listed
+                here</h5>
+            <activity-container :expense="exampleExpense"></activity-container>
+        </div>
+
+        <activity-container :expense="expense" v-for=" expense  in  props.claim.activities "></activity-container>
+    </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { ReimbursementTicket, Expense } from '../../types/types';
+import ActivityContainer from './ActivityContainer.vue';
 import { generateRandomStringId } from '../../utils/generateRandomId';
 
 const props = defineProps<{
     claim: ReimbursementTicket
 }>()
+
+const exampleExpense = ref({
+    name: "An Expense Title",
+    cost: 0,
+    date: "2023-12-12",
+    id: generateRandomStringId(24)
+})
 
 let expense = ref<Expense>({
     name: "Lunch",
@@ -81,8 +100,38 @@ const defaultExpenses = [
 ];
 
 function addExpense() {
-    props.claim.activities.push(expense.value)
+    // Pushing a duplicate of the inputted expense to the main reimbursement data
+    props.claim.activities.push(JSON.parse(JSON.stringify(expense.value)))
+    expense.value = {
+        name: "",
+        cost: 0,
+        date: "",
+        id: generateRandomStringId(24)
+    }
 }
 
 
 </script>
+
+<style scoped>
+.custom-scroll-bar::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* Track */
+.custom-scroll-bar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+.custom-scroll-bar::-webkit-scrollbar-thumb,
+.receipt-preview::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #acacac;
+}
+
+/* Handle on hover */
+.activities-list::-webkit-scrollbar-thumb:hover {
+    background: #9e9e9e;
+}
+</style>
