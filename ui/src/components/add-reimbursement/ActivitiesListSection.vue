@@ -177,7 +177,7 @@ async function submitTicket() {
       }
     );
 
-    router.push("/dashboard");
+    // router.push("/dashboard");
     alert("Reimbursement ticket submitted successfully");
   } catch (error) {
     console.log(error);
