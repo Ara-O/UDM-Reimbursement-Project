@@ -64,14 +64,20 @@
             <td>{{ guest.employeeFirstName + " " + guest.employeeLastName }} </td>
             <td>{{ guest.guestFirstName + " " + guest.guestLastName }} </td>
             <td>{{ guest.guestAssociation }} </td>
-            <td>delete & stuff</td>
+            <td>
+                <img src="../../assets/edit-icon-red.png" alt="Edit icon" class="w-3 cursor-pointer">
+                <img src="../../assets/trash-icon.png" alt="Delete icon" @click="deleteGuest(guest)"
+                    class="w-3 ml-4 cursor-pointer">
+            </td>
         </tr>
     </table>
 </template>
 
+<!-- TODO: MAKE USER NOT BE ABLE TO ADD DUPLICATE, ALSO EDIT -->
 <script lang="ts" setup>
 import { ReimbursementTicket, GuestInfo } from '../../types/types';
 import { ref } from 'vue';
+import { objectsAreEqual } from "../../utils/objectsAreEqual"
 
 const emits = defineEmits(["move-to-next-section"])
 const props = defineProps<{
@@ -94,6 +100,14 @@ function addGuestInformation() {
 
     props.claim.guestInformation.push(JSON.parse(JSON.stringify(guestInfo.value)))
 }
+
+function deleteGuest(guest: GuestInfo) {
+    props.claim.guestInformation = props.claim.guestInformation.filter((currGuest) => {
+        return !objectsAreEqual(guest, currGuest)
+
+    })
+}
+
 </script>
 
 <style scoped>

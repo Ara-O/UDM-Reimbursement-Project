@@ -37,7 +37,7 @@
             </span>
         </div>
         <button type="submit"
-            class="mt-7 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
+            class="mt-7 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs ">Next
             Section</button>
     </form>
 </template>

@@ -13,7 +13,7 @@
           <div class="h-20 w-100 flex justify-between items-center box-border px-10"
             @click="changeSection(section.section)">
             <h4 class="font-normal text-sm">{{ section.title }}</h4>
-            <img src="../assets/right-arrow.png" alt="Next arrow" class="w-4"
+            <img src="../assets/right-arrow.png" alt="Next arrow" class="w-4 transition-all duration-500"
               :class="{ ' contrast-0': selectedSection != section.section }">
           </div>
           <hr class="border-solid border-[0.5px] text-gray-200 h-[1] m-0">
@@ -30,6 +30,7 @@
       <assign-foapa-information v-if="selectedSection === 3"></assign-foapa-information>
       <manage-receipts :claim="currentReimbursement" v-if="selectedSection === 4"></manage-receipts>
       <guest-information :claim="currentReimbursement" v-if="selectedSection === 5"></guest-information>
+      <finish v-if="selectedSection === 6"></finish>
     </section>
   </main>
 </template>
@@ -42,6 +43,7 @@ import claimInformation from "../components/add-reimbursement/ClaimInformation.v
 import manageExpenses from "../components/add-reimbursement/ManageExpenses.vue"
 import GuestInformation from "../components/add-reimbursement/GuestInformation.vue";
 import ManageReceipts from "../components/add-reimbursement/ManageReceipts.vue";
+import Finish from "../components/add-reimbursement/Finish.vue";
 import AssignFoapaInformation from "../components/add-reimbursement/AssignFoapaInformation.vue";
 import parseDate from "../utils/parseDate";
 
