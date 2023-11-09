@@ -42,7 +42,7 @@
             <button type="submit"
                 class=" bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Add
                 Expense</button>
-            <button type="button"
+            <button type="button" @click="emits('move-to-next-section')"
                 class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
                 Section</button>
         </div>
@@ -53,11 +53,11 @@
     <div class="h-56 overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
         <div v-if="props.claim.activities.length === 0">
             <h5 class="mt-0 font-medium text-gray-500">Added expenses will be listed
-                here</h5>
+                here. They will look like the one shown below</h5>
             <activity-container :expense="exampleExpense"></activity-container>
         </div>
 
-        <activity-container :expense="expense" v-for=" expense  in  props.claim.activities "></activity-container>
+        <activity-container :expense="expense" v-for=" expense in props.claim.activities "></activity-container>
     </div>
 </template>
 
@@ -71,8 +71,10 @@ const props = defineProps<{
     claim: ReimbursementTicket
 }>()
 
+const emits = defineEmits(["move-to-next-section"])
+
 const exampleExpense = ref({
-    name: "An Expense Title",
+    name: "Example",
     cost: 0,
     date: "2023-12-12",
     id: generateRandomStringId(24)

@@ -78,7 +78,7 @@ export type FoapaNumbers = {
   initialAmount: number | "N/A";
 };
 
-type GuestInfo = {
+export type GuestInfo = {
   employeeFirstName: string
   employeeLastName: string,
   guestFirstName: string,

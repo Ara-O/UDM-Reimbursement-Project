@@ -25,7 +25,11 @@
     <section>
       <claim-information :claim="currentReimbursement" v-if="selectedSection === 1"
         @move-to-next-section="selectedSection++"></claim-information>
-      <manage-expenses :claim="currentReimbursement" v-if="selectedSection === 2"></manage-expenses>
+      <manage-expenses :claim="currentReimbursement" v-if="selectedSection === 2"
+        @move-to-next-section="selectedSection++"></manage-expenses>
+      <assign-foapa-information v-if="selectedSection === 3"></assign-foapa-information>
+      <manage-receipts :claim="currentReimbursement" v-if="selectedSection === 4"></manage-receipts>
+      <guest-information :claim="currentReimbursement" v-if="selectedSection === 5"></guest-information>
     </section>
   </main>
 </template>
@@ -36,6 +40,9 @@ import { useRouter } from "vue-router";
 import { ReimbursementTicket, Activity } from "../types/types";
 import claimInformation from "../components/add-reimbursement/ClaimInformation.vue"
 import manageExpenses from "../components/add-reimbursement/ManageExpenses.vue"
+import GuestInformation from "../components/add-reimbursement/GuestInformation.vue";
+import ManageReceipts from "../components/add-reimbursement/ManageReceipts.vue";
+import AssignFoapaInformation from "../components/add-reimbursement/AssignFoapaInformation.vue";
 import parseDate from "../utils/parseDate";
 
 function goToDashboard() {

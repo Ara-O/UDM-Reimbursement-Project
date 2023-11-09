@@ -23,7 +23,6 @@
 
 <script lang="ts" setup>
 import { Expense } from "../../types/types";
-import { ref } from "vue";
 
 const props = defineProps<{
   expense: Expense;
