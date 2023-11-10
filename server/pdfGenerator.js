@@ -1,4 +1,5 @@
 function parseDate(dateString) {
+  if (!dateString) return
   const formattedDate = dateString.slice(0, 10);
   return formattedDate;
 }
@@ -54,11 +55,6 @@ export default function createPdfDefinition(
   const { activities } = reimbursementData;
   let content = [];
 
-  const guestFirstName = reimbursementData.guestFirstName || '';
-  const guestLastName = reimbursementData.guestLastName || '';
-  const employeeFirstName = reimbursementData.employeeFirstName || '';
-  const employeeLastName = reimbursementData.employeeLastName || '';
-  const guestAssociation = reimbursementData.guestAssociation || '';
   //Top section
   content.push(
     {
@@ -82,9 +78,13 @@ export default function createPdfDefinition(
 
   //   Faculty information section
   let ticketTotal = 0;
-  reimbursementData.activities.forEach((activity) => {
-    ticketTotal += Number(activity.cost);
-  });
+
+  console.log("Reimbursement data", reimbursementData)
+  if (reimbursementData?.activities) {
+    reimbursementData.activities.forEach((activity) => {
+      ticketTotal += Number(activity.cost);
+    });
+  }
 
   ticketTotal = ticketTotal.toFixed(2);
   content.push({
@@ -268,25 +268,29 @@ export default function createPdfDefinition(
 
   let mileageExplanation = [];
   //Calculating all the costs based on activity based ond date
-  activities.forEach((activity) => {
-    if (activity.activityName === "Mileage") {
-      mileageExplanation.push(activity.additionalInformation);
-    }
-    let activityDate = parseDate(activity.activityDate);
-    if (!parsedActivity[activityDate]) {
-      parsedActivity[activityDate] = {};
-    }
 
-    if (!parsedActivity[activityDate][activity.activityName]) {
-      parsedActivity[activityDate][activity.activityName] = Number(
-        activity.cost
-      );
-    } else {
-      parsedActivity[activityDate][activity.activityName] += Number(
-        activity.cost
-      );
-    }
-  });
+  if (activities) {
+
+    activities.forEach((activity) => {
+      if (activity.activityName === "Mileage") {
+        mileageExplanation.push(activity?.additionalInformation || "");
+      }
+      let activityDate = parseDate(activity.date);
+      if (!parsedActivity[activityDate]) {
+        parsedActivity[activityDate] = {};
+      }
+
+      if (!parsedActivity[activityDate][activity.name]) {
+        parsedActivity[activityDate][activity.name] = Number(
+          activity.cost
+        );
+      } else {
+        parsedActivity[activityDate][activity.name] += Number(
+          activity.cost
+        );
+      }
+    });
+  }
 
   parsedActivity = Object.fromEntries(
     Object.entries(parsedActivity).sort(
@@ -491,13 +495,16 @@ export default function createPdfDefinition(
   let foapaDetails = {};
   let foapaArray = [];
 
-  reimbursementData.activities.forEach((activity) => {
-    if (foapaDetails[activity.foapaNumber]) {
-      foapaDetails[activity.foapaNumber] += Number(activity.cost);
-    } else {
-      foapaDetails[activity.foapaNumber] = Number(activity.cost);
-    }
-  });
+  if (reimbursementData?.activities) {
+
+    reimbursementData.activities.forEach((activity) => {
+      if (foapaDetails[activity.foapaNumber]) {
+        foapaDetails[activity.foapaNumber] += Number(activity.cost);
+      } else {
+        foapaDetails[activity.foapaNumber] = Number(activity.cost);
+      }
+    });
+  }
 
   for (const foapa in foapaDetails) {
     let subFoapaArray = [];
@@ -509,6 +516,7 @@ export default function createPdfDefinition(
     foapaArray.push(subFoapaArray);
   }
 
+  console.log(foapaArray)
   content.push({
     columns: [
       {
@@ -534,10 +542,10 @@ export default function createPdfDefinition(
               { text: "ACTV", alignment: "center", fillColor: "#d9d9d9" },
               { text: "$", alignment: "center", fillColor: "#d9d9d9" },
             ],
-            foapaArray[0] || ["", "", "", "", "", ""],
-            foapaArray[1] || ["", "", "", "", "", ""],
-            foapaArray[2] || ["", "", "", "", "", ""],
-            foapaArray[3] || ["", "", "", "", "", ""],
+            ["", "", "", "", "", ""],
+            ["", "", "", "", "", ""],
+            ["", "", "", "", "", ""],
+            ["", "", "", "", "", ""],
             [
               { text: "", colSpan: 6, border: [0, 0, 0, 0] },
               {},
@@ -569,7 +577,7 @@ export default function createPdfDefinition(
               },
               {},
             ],
-            [`${employeeFirstName}`, `${employeeLastName}`,`${guestFirstName}`, `${guestLastName}`, `${guestAssociation}`, ""],
+            [`jack`, `bower`, `briggs`, `bob`, `stepson`, ""],
             ["", "", "", "", "", ""],
             ["", "", "", "", "", ""],
             ["", "", "", "", "", ""],

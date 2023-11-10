@@ -13,7 +13,8 @@
           <div class="h-20 w-100 flex justify-between items-center box-border px-10"
             @click="changeSection(section.section)">
             <h4 class="font-normal text-sm">{{ section.title }}</h4>
-            <img src="../assets/right-arrow.png" alt="Next arrow" class="w-4 transition-all duration-500"
+            <img src="../assets/right-arrow.png" alt="Next arrow"
+              class="hover:contrast-50 w-4 transition-all duration-500"
               :class="{ ' contrast-0': selectedSection != section.section }">
           </div>
           <hr class="border-solid border-[0.5px] text-gray-200 h-[1] m-0">
@@ -30,7 +31,7 @@
       <assign-foapa-information v-if="selectedSection === 3"></assign-foapa-information>
       <manage-receipts :claim="currentReimbursement" v-if="selectedSection === 4"></manage-receipts>
       <guest-information :claim="currentReimbursement" v-if="selectedSection === 5"></guest-information>
-      <finish v-if="selectedSection === 6"></finish>
+      <finish :claim="currentReimbursement" v-if="selectedSection === 6"></finish>
     </section>
   </main>
 </template>

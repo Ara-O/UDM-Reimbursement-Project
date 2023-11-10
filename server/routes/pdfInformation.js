@@ -117,6 +117,7 @@ router.get("/generatePdf", verifyToken, (req, res) => {
         res.send(base64String);
       },
       function (error) {
+        console.log(error)
         res.send("ERROR:" + error);
       }
     );
