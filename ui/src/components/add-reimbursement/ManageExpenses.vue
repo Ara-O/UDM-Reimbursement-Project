@@ -138,7 +138,7 @@ function duplicateExpense(id: string) {
 
     if (activityToDuplicate.length === 0) return;
 
-    expense.value = activityToDuplicate[0];
+    expense.value = JSON.parse(JSON.stringify(activityToDuplicate[0]));
 }
 
 </script>

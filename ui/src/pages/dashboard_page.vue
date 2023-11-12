@@ -69,11 +69,11 @@
       </div>
 
       <!-- TEMPLATES -->
+      <h3 class="mt-0">Templates</h3>
       <div v-if="viewingTemplates" :class="currentView === 'list'
         ? 'reimbursement-wrapper-list'
         : 'reimbursement-wrapper-grid'
         ">
-        <h3 class="mt-0">Templates</h3>
         <div class="reimbursement" v-for="ticket in userInfo.reimbursementTemplates">
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
