@@ -93,7 +93,11 @@ let guestInfo = ref<GuestInfo>({
 })
 
 function addGuestInformation() {
-    if (props.claim.guestInformation.length === 4) {
+    if (!props.claim.guestInformation) {
+        props.claim.guestInformation = []
+    }
+
+    if (props.claim?.guestInformation.length === 4) {
         alert("Maximum guests: 4");
         return
     }

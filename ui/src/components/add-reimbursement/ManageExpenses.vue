@@ -64,7 +64,8 @@
             <activity-container :expense="exampleExpense"></activity-container>
         </div>
 
-        <activity-container :expense="expense" v-for=" expense in props.claim.activities "></activity-container>
+        <activity-container :expense="expense" v-for=" expense in props.claim.activities" @delete-activity="deleteExpense"
+            @edit-activity="editExpense" @duplicate-activity="duplicateExpense"></activity-container>
     </div>
 </template>
 
@@ -119,6 +120,26 @@ function addExpense() {
     }
 }
 
+function deleteExpense(id: string) {
+    props.claim.activities = props.claim.activities.filter((activity) => activity.id !== id)
+}
+
+function editExpense(id: string) {
+    let activityToEdit = props.claim.activities.filter((activity) => activity.id === id)
+
+    if (activityToEdit.length === 0) return;
+
+    expense.value = activityToEdit[0]
+    deleteExpense(activityToEdit[0].id)
+}
+
+function duplicateExpense(id: string) {
+    let activityToDuplicate = props.claim.activities.filter((activity) => activity.id === id)
+
+    if (activityToDuplicate.length === 0) return;
+
+    expense.value = activityToDuplicate[0];
+}
 
 </script>
 
@@ -133,14 +154,8 @@ function addExpense() {
 }
 
 /* Handle */
-.custom-scroll-bar::-webkit-scrollbar-thumb,
-.receipt-preview::-webkit-scrollbar-thumb {
+.custom-scroll-bar::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background: #acacac;
-}
-
-/* Handle on hover */
-.activities-list::-webkit-scrollbar-thumb:hover {
-    background: #9e9e9e;
 }
 </style>

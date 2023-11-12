@@ -516,7 +516,40 @@ export default function createPdfDefinition(
     foapaArray.push(subFoapaArray);
   }
 
-  console.log(foapaArray)
+  // EMployee section
+  console.log("=========")
+  console.log(reimbursementData.guestInformation)
+
+  let guestSection = []
+  if (!reimbursementData?.guestInformation || reimbursementData?.guestInformation.length == 0) {
+    guestSection = [
+      ["", "", "", "", "", ""],
+      ["", "", "", "", "", ""],
+      ["", "", "", "", "", ""],
+      ["", "", "", "", "", ""],
+      ["", "", "", "", "", ""]
+    ]
+  } else {
+    reimbursementData.guestInformation.forEach((guest) => {
+      let arr = [];
+
+      arr.push({ text: guest.employeeFirstName, fontSize: 7.5 })
+      arr.push({ text: guest.employeeLastName, fontSize: 7.5 })
+      arr.push({ text: guest.guestAssociation, fontSize: 7.5 })
+      arr.push({ text: guest.guestFirstName, fontSize: 7.5 })
+      arr.push({ text: guest.guestLastName, fontSize: 7.5 })
+      arr.push("")
+
+      guestSection.push(arr)
+    })
+  }
+
+
+  for (let i = 0; i <= (5 - guestSection.length); i++) {
+    guestSection.push(["", "", "", "", "", ""],
+    )
+  }
+
   content.push({
     columns: [
       {
@@ -577,11 +610,7 @@ export default function createPdfDefinition(
               },
               {},
             ],
-            [`jack`, `bower`, `briggs`, `bob`, `stepson`, ""],
-            ["", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
+            ...[...guestSection],
           ],
         },
       },

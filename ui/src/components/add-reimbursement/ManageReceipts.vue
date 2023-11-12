@@ -27,16 +27,18 @@
                 <h3 class="mt-0 text-sm font-medium">Receipt #{{ index + 1 }}</h3>
                 <span class="flex gap-3">
                     <a :href="(receipt.url as string)" target="_blank"><button
-                            class="bg-udmercy-red text-xs text-white rounded-full border-none px-5 py-2"> View</button> </a>
-                    <button class="bg-udmercy-red text-xs text-white rounded-full border-none px-5 py-2">Delete</button>
+                            class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-5 py-2">
+                            View</button> </a>
+                    <button @click="deleteReceipt(receipt.id)"
+                        class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-5 py-2">Delete</button>
                 </span>
             </span>
         </div>
-
-        <button type="button" @click="emits('move-to-next-section')"
-            class=" bg-udmercy-blue  text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
-            Section</button>
     </div>
+
+    <button type="button" @click="emits('move-to-next-section')"
+        class=" bg-udmercy-blue mt-5 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
+        Section</button>
 </template>
 
 <script lang="ts" setup>
@@ -95,6 +97,10 @@ async function storeReceiptImages() {
     } else {
         return [];
     }
+}
+
+function deleteReceipt(id: string) {
+    props.claim.reimbursementReceipts = props.claim.reimbursementReceipts.filter((receipt) => receipt.id !== id)
 }
 </script>
 

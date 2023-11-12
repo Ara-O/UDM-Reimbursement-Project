@@ -23,6 +23,8 @@
                 class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Discard
                 Changes</button>
         </span>
+
+        <h5 class="font-normal" v-if="currentlyCreatingPDF">Generating PDF, please wait...</h5>
     </div>
 </template>
 
@@ -141,12 +143,16 @@ async function updateReimbursement() {
             reimbursementTicket: props.claim,
         }
     );
+
+
+    alert('Claim updated')
+    router.push("/dashboard")
 }
 
 async function addReimbursement() {
     try {
         if (props.claim.reimbursementName.trim() == "") {
-            alert("Reimbursement Title Missing");
+            alert("Reimbursement Name Missing");
             return;
         }
 
@@ -163,6 +169,7 @@ async function addReimbursement() {
         );
 
         alert('Claim saved')
+        router.push("/dashboard")
 
     } catch (error) {
         console.log(error);

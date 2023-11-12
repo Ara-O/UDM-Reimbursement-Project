@@ -7,6 +7,14 @@ const reimbursementSchema = new Schema({
   paymentRetrievalMethod: String,
   UDMPUVoucher: Boolean,
   totalCost: Number,
+  guestInformation: [{
+    employeeFirstName: String,
+    employeeLastName: String,
+    guestAssociation: String,
+    guestFirstName: String,
+    guestLastName: String
+  }
+  ],
   reimbursementStatus: String,
   reimbursementReceipts: [
     {

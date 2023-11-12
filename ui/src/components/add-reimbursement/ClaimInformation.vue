@@ -7,8 +7,9 @@
     <form @submit.prevent="emits('move-to-next-section')">
         <div class="flex gap-x-16 flex-wrap">
             <span>
-                <h4 class="font-normal text-sm ">Reimbursment Name</h4>
+                <h4 class="font-normal text-sm ">Reimbursment Name *</h4>
                 <input type="text" name="name" placeholder="Reimbursement Name" v-model="props.claim.reimbursementName"
+                    required
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border pl-5 text-xs border-solid shadow-md">
             </span>
             <span>

@@ -87,14 +87,14 @@ export type GuestInfo = {
 }
 
 export type ReimbursementTicket = {
-  reimbursementName: String;
-  reimbursementReason: String;
-  destination: String;
+  reimbursementName: string;
+  reimbursementReason: string;
+  destination: string;
   paymentRetrievalMethod: "Hold for Pickup" | "Direct Deposit" | "";
   UDMPUVoucher: Boolean;
   guestInformation: GuestInfo[],
   totalCost: number;
-  reimbursementReceipts: { url: String; id: String }[];
+  reimbursementReceipts: { url: string; id: string }[];
   reimbursementStatus: string;
   reimbursementDate: string;
   activities: Expense[];

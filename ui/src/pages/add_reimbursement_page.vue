@@ -40,8 +40,9 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from "vue"
-import { useRouter } from "vue-router";
-import { ReimbursementTicket, Activity } from "../types/types";
+import axios from "axios";
+import { useRouter, useRoute } from "vue-router";
+import { ReimbursementTicket } from "../types/types";
 import claimInformation from "../components/add-reimbursement/ClaimInformation.vue"
 import manageExpenses from "../components/add-reimbursement/ManageExpenses.vue"
 import GuestInformation from "../components/add-reimbursement/GuestInformation.vue";
@@ -55,6 +56,8 @@ function goToDashboard() {
 }
 
 const router = useRouter()
+const route = useRoute()
+
 let selectedSection = ref<number>(1)
 
 let sections = ref([
@@ -87,17 +90,6 @@ let sections = ref([
 function changeSection(section: number) {
   selectedSection.value = section;
 }
-// import ActivitiesList from "../components/add-reimbursement/ActivitiesListSection.vue";
-// import { onMounted, ref, watch } from "vue";
-// import { useRoute, useRouter } from "vue-router";
-// import axios from "axios";
-// import ReimbursementSpecificSection from "../components/add-reimbursement/ReimbursementSpecificSection.vue";
-// import ActivitySpecificSection from "../components/add-reimbursement/ActivitySpecificSection.vue";
-// import AddReceiptSection from "../components/add-reimbursement/AddReceiptSection.vue";
-// import { generateRandomStringId } from "../utils/generateRandomId";
-
-// const router = useRouter();
-// const route = useRoute();
 
 let currentReimbursement = ref<ReimbursementTicket>({
   reimbursementName: "",
@@ -113,48 +105,23 @@ let currentReimbursement = ref<ReimbursementTicket>({
   guestInformation: []
 });
 
-// let currentActivity = ref<Activity>({
-//   activityName: "",
-//   cost: 0,
-//   activityDate: "",
-//   activityReceipt: "",
-//   foapaNumber: "",
-//   activityId: generateRandomStringId(24),
-// });
+async function userIsUpdatingReimbursement() {
+  let reimbursement = await axios.get(
+    "https://udm-reimbursement-project.onrender.com/api/retrieveTicketInformation",
+    {
+      params: {
+        reimbursementId: route.query.reimbursementId,
+      },
+    }
+  );
 
-// let userIsEditingReimbursement = ref<boolean>(false);
-// let userIsEditingActivityFlag = ref<boolean>(false);
-
-// function userIsEditingActivity(activityId: String) {
-//   const activity = currentReimbursement.value.activities.find(
-//     (activity) => activity.activityId === activityId
-//   );
-
-//   if (activity) {
-//     activity.activityDate = parseDate(activity.activityDate);
-//     currentActivity.value = Object.assign({}, activity);
-//     userIsEditingActivityFlag.value = true;
-//   }
-// }
-
-// async function userIsUpdatingReimbursement() {
-//   userIsEditingReimbursement.value = true;
-//   let reimbursement = await axios.get(
-//     "https://udm-reimbursement-project.onrender.com/api/retrieveTicketInformation",
-//     {
-//       params: {
-//         reimbursementId: route.query.reimbursementId,
-//       },
-//     }
-//   );
-
-//   currentReimbursement.value = reimbursement.data;
-// }
+  currentReimbursement.value = reimbursement.data;
+}
 
 onMounted(() => {
-  // if (route.query.reimbursementId) {
-  //   userIsUpdatingReimbursement();
-  // }
+  if (route.query.reimbursementId) {
+    userIsUpdatingReimbursement();
+  }
 });
 </script>
 
