@@ -124,4 +124,31 @@ router.get("/retrieveActivity", verifyToken, async (req, res) => {
   }
 });
 
+router.post("/saveAsTemplate", verifyToken, async (req, res) => {
+
+  if (req.body._id) {
+    delete req.body._id
+  }
+
+  if (req?.body?.activities) {
+    req.body.activities.forEach((actv) => {
+      delete actv._id
+    })
+  }
+
+  if (req?.body?.guestInformation) {
+    req.body.guestInformation.forEach((guest) => {
+      delete guest._id
+    })
+  }
+
+  let user = await Faculty.findByIdAndUpdate(req.user.userId, {
+    $push: {
+      reimbursementTemplates: req.body
+    }
+  })
+  console.log(user)
+
+})
+
 export default router;

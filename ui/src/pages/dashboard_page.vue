@@ -38,6 +38,9 @@
             style="width: auto">
             Click to add reimbursement ticket
           </button>
+          <button @click="viewingTemplates = !viewingTemplates" class="w-auto filter add-reimbursement-ticket-button">
+            {{ viewingTemplates === false ? "View Templates" : "View Claims" }}
+          </button>
           <button v-if="filterReimbursements.length > 0" style="width: auto" @click="changeView"
             class="filter add-reimbursement-ticket-button">
             View as {{ currentView == "grid" ? "list" : "grid" }}
@@ -46,9 +49,9 @@
       </div>
       <br />
       <div :class="currentView === 'list'
-          ? 'reimbursement-wrapper-list'
-          : 'reimbursement-wrapper-grid'
-        ">
+        ? 'reimbursement-wrapper-list'
+        : 'reimbursement-wrapper-grid'
+        " v-if="!viewingTemplates">
         <div class="reimbursement" v-for="ticket in filterReimbursements">
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
@@ -64,7 +67,31 @@
           </div>
         </div>
       </div>
+
+      <!-- TEMPLATES -->
+      <div v-if="viewingTemplates" :class="currentView === 'list'
+        ? 'reimbursement-wrapper-list'
+        : 'reimbursement-wrapper-grid'
+        ">
+        <h3 class="mt-0">Templates</h3>
+        <div class="reimbursement" v-for="ticket in userInfo.reimbursementTemplates">
+          <h3>{{ ticket.reimbursementName }}</h3>
+          <h4>Status: {{ ticket.reimbursementStatus }}</h4>
+          <h5>
+            {{ parseDate(ticket.reimbursementDate) }}
+          </h5>
+          <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
+          <div class="reimbursement-buttons">
+            <button v-if="ticket.reimbursementStatus !== 'Submitted'">
+              Use as Template
+            </button>
+            <button>Delete</button>
+          </div>
+        </div>
+      </div>
     </section>
+
+    <!-- USER INFORMATION -->
     <section class="user-information-section">
       <div class="user-information-header">
         <h3>User Information</h3>
@@ -138,13 +165,15 @@ let costFlag = -1,
   dateFlag = -1,
   statusFlag = -1;
 
-let userInfo = ref<UserData>({
+let userInfo = ref<any>({
   employmentNumber: "",
   firstName: "",
   lastName: "",
   phoneNumber: "",
   workEmail: "",
 });
+
+let viewingTemplates = ref<boolean>(false)
 
 let reimbursementTickets = ref<any>([
   // {

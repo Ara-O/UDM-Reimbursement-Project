@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const reimbursementSchema = new Schema({
+export const reimbursementSchema = new Schema({
   reimbursementName: String,
   reimbursementReason: String,
   destination: String,
@@ -31,7 +31,7 @@ const reimbursementSchema = new Schema({
       additionalInformation: String,
       cost: Number,
     },
-  ],
+  ]
 });
 
 //reimbursements

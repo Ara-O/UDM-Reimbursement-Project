@@ -19,11 +19,17 @@
             <button @click="submitTicket"
                 class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Submit
                 Reimbursement Request</button>
+
+        </span>
+        <br>
+        <span class="flex gap-5">
+            <button @click="saveAsTemplate"
+                class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save as
+                Template</button>
             <button
                 class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Discard
                 Changes</button>
         </span>
-
         <h5 class="font-normal" v-if="currentlyCreatingPDF">Generating PDF, please wait...</h5>
     </div>
 </template>
@@ -68,6 +74,15 @@ function downloadPDF(pdfData: string) {
     }
 }
 
+async function saveAsTemplate() {
+    try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/saveAsTemplate`, props.claim)
+    } catch (error) {
+        alert(error)
+        console.log(error);
+    }
+}
+
 async function submitTicket() {
     try {
         props.claim.reimbursementStatus = "Submitted";
@@ -82,6 +97,7 @@ async function submitTicket() {
         // router.push("/dashboard");
         alert("Reimbursement ticket submitted successfully");
     } catch (error) {
+        alert(error)
         console.log(error);
     }
 }
