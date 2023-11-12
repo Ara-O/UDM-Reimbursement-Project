@@ -2,20 +2,12 @@
   <section class="signup-page">
     <section class="left-section">
       <div class="udmercy-logo-wrapper">
-        <img
-          src="../assets/detroit-mercy-logo.png"
-          alt="Detroit mercy logo"
-          class="udmercy-logo"
-        />
+        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo" />
       </div>
     </section>
     <section class="right-section">
       <div class="udmercy-logo-wrapper-mobile">
-        <img
-          src="../assets/detroit-mercy-logo.png"
-          alt="Detroit mercy logo"
-          class="udmercy-logo-mobile"
-        />
+        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo-mobile" />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
 
@@ -33,41 +25,25 @@
       <section class="signup-form">
         <!-- SECTION 2 -->
         <section v-show="surveyProgress === 1" class="signup-form">
-          <PasswordSection
-            :user-signup-data="userSignupData"
-            @continue="surveyProgress++"
-          />
+          <PasswordSection :user-signup-data="userSignupData" @continue="surveyProgress++" />
         </section>
 
         <!-- SECTION 3 -->
         <section v-show="surveyProgress === 2" class="signup-form">
-          <AddressSection
-            :user-signup-data="userSignupData"
-            @continue="surveyProgress++"
-            @go-back="surveyProgress--"
-          />
+          <AddressSection :user-signup-data="userSignupData" @continue="surveyProgress++" @go-back="surveyProgress--" />
         </section>
 
         <!-- SECTION 4 -->
         <section v-show="surveyProgress === 3" class="signup-form">
-          <FoapaSection
-            :user-signup-data="userSignupData"
-            @finish="registerUser"
-            @go-back="surveyProgress--"
-          />
+          <FoapaSection :user-signup-data="userSignupData" @finish="registerUser" @go-back="surveyProgress--" />
         </section>
         <br />
         <h5 v-if="creatingAccountFeedback" class="creating-account-feedback">
           Creating Account...
         </h5>
 
-        <router-link to="/" class="already-have-account"
-          >Already have an Account</router-link
-        >
-        <h5
-          class="required-field-note"
-          style="font-weight: 300; margin-top: 25px"
-        >
+        <router-link to="/" class="already-have-account">Already have an Account</router-link>
+        <h5 class="required-field-note" style="font-weight: 300; margin-top: 25px">
           Note: All required fields must be filled
         </h5>
       </section>
@@ -110,7 +86,7 @@ function registerUser() {
   creatingAccountFeedback.value = true;
   axios
     .post(
-      "https://udm-reimbursement-project.onrender.com/api/register",
+      `${import.meta.env.VITE_API_URL}/api/register`,
       userSignupData
     )
     .then((res) => {
@@ -136,7 +112,7 @@ onMounted(() => {
   if (route.params.userToken) {
     axios
       .post(
-        "https://udm-reimbursement-project.onrender.com/api/verifyUserSignupToken",
+        `${import.meta.env.VITE_API_URL}/api/verifyUserSignupToken`,
         {
           token: route.params.userToken,
         }

@@ -29,8 +29,10 @@
       <manage-expenses :claim="currentReimbursement" v-if="selectedSection === 2"
         @move-to-next-section="selectedSection++"></manage-expenses>
       <assign-foapa-information v-if="selectedSection === 3"></assign-foapa-information>
-      <manage-receipts :claim="currentReimbursement" v-if="selectedSection === 4"></manage-receipts>
-      <guest-information :claim="currentReimbursement" v-if="selectedSection === 5"></guest-information>
+      <manage-receipts :claim="currentReimbursement" v-if="selectedSection === 4"
+        @move-to-next-section="selectedSection++"></manage-receipts>
+      <guest-information :claim="currentReimbursement" v-if="selectedSection === 5"
+        @move-to-next-section="selectedSection++"></guest-information>
       <finish :claim="currentReimbursement" v-if="selectedSection === 6"></finish>
     </section>
   </main>

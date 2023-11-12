@@ -5,52 +5,26 @@
     <section class="reimbursement-section">
       <h3>Welcome {{ userInfo.firstName }}</h3>
       <router-link to="/profile-page">
-        <img src="../assets/user-icon.png" alt="User help" class="user-icon"
-      /></router-link>
+        <img src="../assets/user-icon.png" alt="User help" class="user-icon" /></router-link>
       <br />
       <div class="reimbursement-search-input">
-        <input
-          type="text"
-          v-model="searchValue"
-          class="reimbusement-search"
-          onchange="filterReimbursements"
-          placeholder="Search Reimbursement"
-        />
+        <input type="text" v-model="searchValue" class="reimbusement-search" onchange="filterReimbursements"
+          placeholder="Search Reimbursement" />
         <div class="search-button">
-          <img
-            src="../assets/search-icon.png"
-            alt="Search icon"
-            class="search-icon"
-          />
+          <img src="../assets/search-icon.png" alt="Search icon" class="search-icon" />
         </div>
       </div>
       <div class="search-filters">
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Date' }"
-          @click="orderByDate()"
-        >
+        <div class="filter" :class="{ selected: sortParameter === 'Date' }" @click="orderByDate()">
           <h3>Sort by Date</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Status' }"
-          @click="orderByStatus()"
-        >
+        <div class="filter" :class="{ selected: sortParameter === 'Status' }" @click="orderByStatus()">
           <h3>Sort by Status</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Name' }"
-          @click="orderByName()"
-        >
+        <div class="filter" :class="{ selected: sortParameter === 'Name' }" @click="orderByName()">
           <h3>Sort by Name</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Cost' }"
-          @click="orderByCost()"
-        >
+        <div class="filter" :class="{ selected: sortParameter === 'Cost' }" @click="orderByCost()">
           <h3>Sort by Cost</h3>
         </div>
       </div>
@@ -60,31 +34,21 @@
           All Reimbursements -
         </h3>
         <span class="view-choice">
-          <button
-            @click="$router.push('/add-reimbursement')"
-            class="filter add-reimbursement-ticket-button"
-            style="width: auto"
-          >
+          <button @click="$router.push('/add-reimbursement')" class="filter add-reimbursement-ticket-button"
+            style="width: auto">
             Click to add reimbursement ticket
           </button>
-          <button
-            v-if="filterReimbursements.length > 0"
-            style="width: auto"
-            @click="changeView"
-            class="filter add-reimbursement-ticket-button"
-          >
+          <button v-if="filterReimbursements.length > 0" style="width: auto" @click="changeView"
+            class="filter add-reimbursement-ticket-button">
             View as {{ currentView == "grid" ? "list" : "grid" }}
           </button>
         </span>
       </div>
       <br />
-      <div
-        :class="
-          currentView === 'list'
-            ? 'reimbursement-wrapper-list'
-            : 'reimbursement-wrapper-grid'
-        "
-      >
+      <div :class="currentView === 'list'
+          ? 'reimbursement-wrapper-list'
+          : 'reimbursement-wrapper-grid'
+        ">
         <div class="reimbursement" v-for="ticket in filterReimbursements">
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
@@ -93,10 +57,7 @@
           </h5>
           <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <div class="reimbursement-buttons">
-            <button
-              @click="viewTicket(ticket._id)"
-              v-if="ticket.reimbursementStatus !== 'Submitted'"
-            >
+            <button @click="viewTicket(ticket._id)" v-if="ticket.reimbursementStatus !== 'Submitted'">
               Modify
             </button>
             <button @click="deleteReimbursement(ticket._id)">Delete</button>
@@ -122,13 +83,9 @@
           <h3>Phone Number: {{ formatPhoneNumber(userInfo.phoneNumber) }}</h3>
         </div>
       </div>
-      <router-link to="/account" style="font-size: 14px"
-        >Manage account information</router-link
-      >
+      <router-link to="/account" style="font-size: 14px">Manage account information</router-link>
 
-      <router-link to="/change-password" style="font-size: 14px"
-        >Change password</router-link
-      >
+      <router-link to="/change-password" style="font-size: 14px">Change password</router-link>
       <button @click="signOut">Sign Out</button>
     </section>
     <!-- <h3>hi</h3>
@@ -141,9 +98,12 @@
   text-align: center;
   margin-top: 20px;
 }
+
 .udmercy-logo {
-  width: 60px; /* Adjust the width to your desired size */
-  height: auto; /* Maintain the aspect ratio */
+  width: 60px;
+  /* Adjust the width to your desired size */
+  height: auto;
+  /* Maintain the aspect ratio */
 }
 </style>
 
@@ -272,10 +232,10 @@ function orderByDate() {
 const filterReimbursements = computed(() => {
   return searchValue.value
     ? reimbursementTickets.value.filter((ticket) =>
-        ticket.reimbursementName
-          .toLowerCase()
-          .includes(searchValue.value.toLowerCase())
-      )
+      ticket.reimbursementName
+        .toLowerCase()
+        .includes(searchValue.value.toLowerCase())
+    )
     : reimbursementTickets.value;
 });
 
@@ -288,7 +248,7 @@ function signOut() {
 function deleteReimbursement(id: string) {
   axios
     .post(
-      "https://udm-reimbursement-project.onrender.com/api/deleteReimbursement",
+      `${import.meta.env.VITE_API_URL}/api/deleteReimbursement`,
       {
         id,
       }
@@ -304,7 +264,7 @@ function deleteReimbursement(id: string) {
 function retrieveUserInformationSummary() {
   axios
     .get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveUserInformationSummary"
+      `${import.meta.env.VITE_API_URL}/api/retrieveUserInformationSummary`
     )
     .then((res) => {
       userInfo.value = res.data;
@@ -341,7 +301,7 @@ let sortParameter = ref<SortParameters>("Name");
 function retrieveReimbursements() {
   axios
     .get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveReimbursements"
+      `${import.meta.env.VITE_API_URL}/api/retrieveReimbursements`
     )
     .then((res) => {
       // console.log(res);

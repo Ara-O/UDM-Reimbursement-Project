@@ -1,27 +1,16 @@
 <template>
   <section class="foapa-number-section">
     <div class="logo-container">
-      <img
-        src="../../assets/detroit-mercy-logo.png"
-        class="udmercy-logo"
-        @click="$router.push('/dashboard')"
-        alt="Detroit Mercy logo"
-      />
+      <img src="../../assets/detroit-mercy-logo.png" class="udmercy-logo" @click="$router.push('/dashboard')"
+        alt="Detroit Mercy logo" />
     </div>
     <h3>Foapa Numbers</h3>
     <br />
     <div class="foapa-number-wrapper">
-      <div
-        class="foapa-number"
-        v-for="foapa in userFoapaNumbers"
-        style="display: flex; flex-direction: column; align-items: start"
-      >
+      <div class="foapa-number" v-for="foapa in userFoapaNumbers"
+        style="display: flex; flex-direction: column; align-items: start">
         <span class="foapa-number-title">
-          <img
-            src="../../assets/trash-icon.png"
-            alt="Trash"
-            @click="deleteFoapa(foapa)"
-          />
+          <img src="../../assets/trash-icon.png" alt="Trash" @click="deleteFoapa(foapa)" />
           <h3 style="font-weight: 500">
             {{ foapa.foapaName }}
           </h3>
@@ -49,15 +38,14 @@ const router = useRouter();
 
 function formatUserFoapa(foapa: FoapaStuff) {
   // console.log(foapa);
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
-    foapa.program || "XXXX"
-  }-${foapa.activity || "XXXX"}`;
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${foapa.program || "XXXX"
+    }-${foapa.activity || "XXXX"}`;
 }
 
 function retrieveUserFoapaDetails() {
   axios
     .get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails"
+      `${import.meta.env.VITE_API_URL}/api/retrieveFoapaDetails`
     )
     .then((res) => {
       userFoapaNumbers.value = res.data;
@@ -71,7 +59,7 @@ function retrieveUserFoapaDetails() {
 function deleteFoapa(foapa: FoapaStuff) {
   axios
     .post(
-      "https://udm-reimbursement-project.onrender.com/api/deleteFoapaDetail",
+      `${import.meta.env.VITE_API_URL}/api/deleteFoapaDetail`,
       {
         foapa,
       }

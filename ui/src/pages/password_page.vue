@@ -2,21 +2,13 @@
   <section class="signup-page">
     <section class="left-section">
       <div class="udmercy-logo-wrapper">
-        <img
-          src="../assets/detroit-mercy-logo.png"
-          alt="Detroit mercy logo"
-          class="udmercy-logo"
-          @click="$router.push('/dashboard')"
-        />
+        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo"
+          @click="$router.push('/dashboard')" />
       </div>
     </section>
     <section class="right-section">
       <div class="udmercy-logo-wrapper-mobile">
-        <img
-          src="../assets/detroit-mercy-logo.png"
-          alt="Detroit mercy logo"
-          class="udmercy-logo-mobile"
-        />
+        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo-mobile" />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
       <h3 class="signup-title-description" v-if="surveyProgress === 0">
@@ -28,51 +20,26 @@
           <div class="input-field-wrapper">
             <div class="input-field">
               <label for="password">Current Password: </label>
-              <input
-                type="password"
-                name="Password"
-                id="password"
-                v-model="currentPassword"
-              />
+              <input type="password" name="Password" id="password" v-model="currentPassword" />
             </div>
             <div class="input-field-wrapper">
               <div class="input-field">
                 <label for="new-password">New password: </label>
-                <input
-                  type="password"
-                  name="new-password"
-                  id="new-password"
-                  v-model="newPassword"
-                />
+                <input type="password" name="new-password" id="new-password" v-model="newPassword" />
               </div>
               <div class="input-field">
                 <label for="reenter-password">Re-enter new password: </label>
-                <input
-                  type="password"
-                  name="reenter-password"
-                  id="reenter-password"
-                  v-model="reEnteredPassword"
-                />
+                <input type="password" name="reenter-password" id="reenter-password" v-model="reEnteredPassword" />
               </div>
             </div>
           </div>
           <div class="continue-buttons">
             <router-link to="/dashboard">
-              <button
-                class="signup-button"
-                type="button"
-                role="link"
-                style="margin-top: 0px"
-              >
+              <button class="signup-button" type="button" role="link" style="margin-top: 0px">
                 Go To Dashboard
               </button>
             </router-link>
-            <button
-              class="signup-button"
-              type="button"
-              style="margin-top: 0px"
-              @click="changePassword"
-            >
+            <button class="signup-button" type="button" style="margin-top: 0px" @click="changePassword">
               Update
             </button>
           </div>
@@ -110,7 +77,7 @@ function changePassword() {
     feedback.value = "Updating password...";
     axios
       .post(
-        "https://udm-reimbursement-project.onrender.com/api/changePassword",
+        `${import.meta.env.VITE_API_URL}/api/changePassword`,
         {
           currentPassword: currentPassword.value,
           newPassword: newPassword.value,
@@ -130,6 +97,7 @@ function changePassword() {
 
 <style scoped>
 @import url("../assets/styles/signup-page.css");
+
 label {
   margin-top: 0px !important;
   width: 130px !important;
@@ -138,9 +106,11 @@ label {
 .input-field-wrapper {
   gap: 32px;
 }
+
 .input-field {
   align-items: center;
 }
+
 @media (min-width: 800px) {
   .continue-buttons {
     margin-top: 45px;

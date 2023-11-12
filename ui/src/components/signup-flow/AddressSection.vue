@@ -4,14 +4,8 @@
       <div class="input-field">
         <label for="country">Country: *</label>
         <span>
-          <Field
-            name="country"
-            id="country"
-            as="select"
-            :rules="isValidString"
-            v-model="userSignupData.country"
-            @change="countryChanged"
-          >
+          <Field name="country" id="country" as="select" :rules="isValidString" v-model="userSignupData.country"
+            @change="countryChanged">
             <option :value="country.name" v-for="country in countries">
               {{ country.name }}
             </option>
@@ -23,15 +17,8 @@
       <div class="input-field">
         <label for="state">State: *</label>
         <span>
-          <Field
-            name="state"
-            id="state"
-            as="select"
-            :rules="isValidString"
-            :disabled="userSignupData.country === ''"
-            v-model="userSignupData.state"
-            @change="stateChanged"
-          >
+          <Field name="state" id="state" as="select" :rules="isValidString" :disabled="userSignupData.country === ''"
+            v-model="userSignupData.state" @change="stateChanged">
             <option :value="state.name" v-for="state in states">
               {{ state.name }}
             </option>
@@ -44,14 +31,8 @@
       <div class="input-field">
         <label for="city">City: *</label>
         <span>
-          <Field
-            name="city"
-            id="city"
-            :rules="isNotEmpty"
-            as="select"
-            v-model="userSignupData.city"
-            :disabled="userSignupData.state === ''"
-          >
+          <Field name="city" id="city" :rules="isNotEmpty" as="select" v-model="userSignupData.city"
+            :disabled="userSignupData.state === ''">
             <option :value="city.name" v-for="city in cities">
               {{ city.name }}
             </option>
@@ -63,13 +44,8 @@
       <div class="input-field">
         <label for="mailing-address">Mailing Address: *</label>
         <span>
-          <Field
-            type="text"
-            :rules="isValidString"
-            name="mailing-address"
-            id="mailing-address"
-            v-model="userSignupData.mailingAddress"
-          />
+          <Field type="text" :rules="isValidString" name="mailing-address" id="mailing-address"
+            v-model="userSignupData.mailingAddress" />
           <ErrorMessage name="mailing-address" class="error-field" />
         </span>
       </div>
@@ -78,13 +54,8 @@
       <div class="input-field">
         <label for="postal-code">Postal Code: *</label>
         <span>
-          <Field
-            type="text"
-            :rules="isValidString"
-            name="postal-code"
-            id="postal-code"
-            v-model="userSignupData.postalCode"
-          />
+          <Field type="text" :rules="isValidString" name="postal-code" id="postal-code"
+            v-model="userSignupData.postalCode" />
           <ErrorMessage name="postal-code" class="error-field" />
         </span>
       </div>
@@ -139,7 +110,7 @@ function countryChanged() {
 
   axios
     .get(
-      "https://udm-reimbursement-project.onrender.com/api/getStateFromCountry",
+      `${import.meta.env.VITE_API_URL}/api/getStateFromCountry`,
       {
         params: { realCountryData },
       }
@@ -164,7 +135,7 @@ function stateChanged() {
 
   axios
     .get(
-      "https://udm-reimbursement-project.onrender.com/api/getCityFromState",
+      `${import.meta.env.VITE_API_URL}/api/getCityFromState`,
       {
         params: { realCountryData, realStateData },
       }
@@ -184,7 +155,7 @@ function progress() {
 
 onMounted(() => {
   axios
-    .get("https://udm-reimbursement-project.onrender.com/api/allCountries")
+    .get(`${import.meta.env.VITE_API_URL}/api/allCountries`)
     .then((res) => {
       countries.value = res.data;
     })
@@ -196,10 +167,12 @@ onMounted(() => {
 
 <style scoped>
 @import url("../../assets/styles/signup-page.css");
+
 .input-field,
 .work-email-section {
   height: 63px;
 }
+
 .input-field label,
 .work-email-section label {
   /* margin-top: 0px; */

@@ -1,20 +1,12 @@
 <template>
   <section class="add-foapa-page">
-    <img
-      src="../assets/detroit-mercy-logo.png"
-      class="udmercy-logo"
-      @click="$router.push('/dashboard')"
-      alt="Detroit mercy logo"
-    />
+    <img src="../assets/detroit-mercy-logo.png" class="udmercy-logo" @click="$router.push('/dashboard')"
+      alt="Detroit mercy logo" />
     <div class="manage-foapa-div">
       <h3 class="manage-foapa-text">Manage FOAPA</h3>
       <ManageFoapaDetails :foapa-details="foapaDetails" />
       <div class="add-foapa-button-wrapper">
-        <button
-          class="add-foapa-button"
-          style="width: auto; padding: 0px 30px"
-          @click="$router.push('/dashboard')"
-        >
+        <button class="add-foapa-button" style="width: auto; padding: 0px 30px" @click="$router.push('/dashboard')">
           Go to Dashboard
         </button>
         <button class="add-foapa-button" @click="updateFoapa">
@@ -49,7 +41,7 @@ let loadingMessage = ref<string>("");
 function retrieveUserFoapaDetails() {
   axios
     .get(
-      "https://udm-reimbursement-project.onrender.com/api/retrieveFoapaDetails"
+      `${import.meta.env.VITE_API_URL}/api/retrieveFoapaDetails`
     )
     .then((res) => {
       foapaDetails.value = res.data;
@@ -66,7 +58,7 @@ function updateFoapa() {
   loadingMessage.value = "Updating FOAPA details...";
   axios
     .post(
-      "https://udm-reimbursement-project.onrender.com/api/updateFoapaDetails",
+      `${import.meta.env.VITE_API_URL}/api/updateFoapaDetails`,
       {
         foapaDetails: foapaDetails.value,
       }

@@ -29,7 +29,7 @@
 <script lang="ts" setup>
 import { ReimbursementTicket } from '../../types/types';
 import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import parseDate from '../../utils/parseDate';
 
@@ -37,6 +37,7 @@ const props = defineProps<{
     claim: ReimbursementTicket
 }>()
 const route = useRoute()
+const router = useRouter();
 
 let currentlyCreatingPDF = ref<boolean>(false);
 let userIsEditingReimbursement = ref<boolean>(false);
@@ -70,7 +71,7 @@ async function submitTicket() {
         props.claim.reimbursementStatus = "Submitted";
 
         await axios.post(
-            "https://udm-reimbursement-project.onrender.com/api/updateReimbursement",
+            `${import.meta.env.VITE_API_URL}/api/updateReimbursement`,
             {
                 reimbursementTicket: props.claim,
             }
@@ -125,6 +126,7 @@ function createPdf() {
 async function updateReimbursement() {
     if (props.claim.reimbursementName.trim() === "") {
         alert("Reimbursement Title Missing");
+        router.push("/dashboard")
         return;
     }
 
@@ -134,7 +136,7 @@ async function updateReimbursement() {
     );
 
     await axios.post(
-        "https://udm-reimbursement-project.onrender.com/api/updateReimbursement",
+        `${import.meta.env.VITE_API_URL}/api/updateReimbursement`,
         {
             reimbursementTicket: props.claim,
         }
@@ -143,21 +145,25 @@ async function updateReimbursement() {
 
 async function addReimbursement() {
     try {
-        if (props.claim.reimbursementName.trim() !== "") {
-            props.claim.totalCost = getAllActivitiesAmount();
-            props.claim.reimbursementDate = parseDate(
-                new Date().toISOString()
-            );
-
-            await axios.post(
-                "https://udm-reimbursement-project.onrender.com/api/addReimbursement",
-                {
-                    reimbursementTicket: props.claim,
-                }
-            );
-        } else {
+        if (props.claim.reimbursementName.trim() == "") {
             alert("Reimbursement Title Missing");
+            return;
         }
+
+        props.claim.totalCost = getAllActivitiesAmount();
+        props.claim.reimbursementDate = parseDate(
+            new Date().toISOString()
+        );
+
+        await axios.post(
+            `${import.meta.env.VITE_API_URL}/api/addReimbursement`,
+            {
+                reimbursementTicket: props.claim,
+            }
+        );
+
+        alert('Claim saved')
+
     } catch (error) {
         console.log(error);
     }

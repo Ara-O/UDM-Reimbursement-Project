@@ -2,28 +2,17 @@
   <section class="signup-page">
     <section class="left-section">
       <div class="udmercy-logo-wrapper">
-        <img
-          src="../assets/detroit-mercy-logo.png"
-          alt="Detroit mercy logo"
-          class="udmercy-logo"
-        />
+        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo" />
       </div>
     </section>
     <section class="right-section">
       <div class="udmercy-logo-wrapper-mobile">
-        <img
-          src="../assets/detroit-mercy-logo.png"
-          alt="Detroit mercy logo"
-          class="udmercy-logo-mobile"
-        />
+        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo-mobile" />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
       <section class="signup-form">
         <span v-if="!basicQuestionsSectionIsFinished">
-          <BasicQuestionsSection
-            :user-signup-data="userSignupData"
-            @continue="sendConfirmationEmail"
-          />
+          <BasicQuestionsSection :user-signup-data="userSignupData" @continue="sendConfirmationEmail" />
           <h3 v-if="verifyingInformation">Verifying user information...</h3>
         </span>
         <article v-else>
@@ -36,14 +25,9 @@
           </h4>
         </article>
       </section>
-      <span
-        v-if="!basicQuestionsSectionIsFinished"
-        class="account-feedback-message"
-      >
+      <span v-if="!basicQuestionsSectionIsFinished" class="account-feedback-message">
         <br />
-        <router-link to="/" class="already-have-account"
-          >Already have an Account</router-link
-        >
+        <router-link to="/" class="already-have-account">Already have an Account</router-link>
         <h5 class="required-field-note">
           Note: All required fields must be filled
         </h5>
@@ -81,7 +65,7 @@ let userSignupData = reactive<UserData>({
 function sendConfirmationEmail() {
   axios
     .post(
-      "https://udm-reimbursement-project.onrender.com/api/sendConfirmationEmail",
+      `${import.meta.env.VITE_API_URL}/api/sendConfirmationEmail`,
       {
         userSignupData,
       }

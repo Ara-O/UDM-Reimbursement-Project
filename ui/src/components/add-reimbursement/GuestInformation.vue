@@ -48,7 +48,7 @@
             <button type="submit"
                 class=" bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Add
                 Information</button>
-            <button type="submit"
+            <button type="button" @click="emits('move-to-next-section')"
                 class=" bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
                 Section</button>
         </div>

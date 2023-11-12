@@ -26,10 +26,17 @@
                     required>
             </span>
         </div>
-        <div>
+        <div class="flex gap-14">
             <span>
                 <h4 class="font-normal text-sm">Activity Date</h4>
                 <input type="date" name="activity-date" placeholder="Activity Date" v-model="expense.date"
+                    class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
+                    required>
+            </span>
+            <span v-if="expense.name === 'Other'">
+                <h4 class="font-normal text-sm">Additional Information</h4>
+                <input type="text" name="additional-information" placeholder="Other..."
+                    v-model="expense.additionalInformation"
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
             </span>

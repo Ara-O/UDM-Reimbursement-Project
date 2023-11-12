@@ -32,6 +32,10 @@
                 </span>
             </span>
         </div>
+
+        <button type="button" @click="emits('move-to-next-section')"
+            class=" bg-udmercy-blue  text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
+            Section</button>
     </div>
 </template>
 
@@ -43,6 +47,8 @@ import axios from 'axios';
 const props = defineProps<{
     claim: ReimbursementTicket
 }>()
+
+const emits = defineEmits(['move-to-next-section'])
 
 let fileWasSelected = ref<boolean>(false);
 const receiptRef = ref(null);
@@ -72,7 +78,7 @@ async function storeReceiptImages() {
         try {
             // Send the FormData object to the server using axios
             let res = await axios.post(
-                "https://udm-reimbursement-project.onrender.com/api/storeReceiptImages",
+                `${import.meta.env.VITE_API_URL}/api/storeReceiptImages`,
                 formData
             );
             fileWasSelected.value = false;

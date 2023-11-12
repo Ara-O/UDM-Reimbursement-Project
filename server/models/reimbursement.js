@@ -6,12 +6,6 @@ const reimbursementSchema = new Schema({
   destination: String,
   paymentRetrievalMethod: String,
   UDMPUVoucher: Boolean,
-  guest: Boolean,
-  employeeFirstName: String,
-  employeeLastName: String,
-  guestFirstName: String,
-  guestLastName: String,
-  guestAssociation: String,
   totalCost: Number,
   reimbursementStatus: String,
   reimbursementReceipts: [
@@ -23,13 +17,11 @@ const reimbursementSchema = new Schema({
   reimbursementDate: Date,
   activities: [
     {
-      activityReceipt: String,
-      foapaNumber: String,
-      activityName: String,
-      activityDate: Date,
+      id: String,
+      name: String,
+      date: Date,
       additionalInformation: String,
       cost: Number,
-      activityId: String,
     },
   ],
 });
