@@ -79,6 +79,8 @@ const props = defineProps<{
     claim: ReimbursementTicket
 }>()
 
+console.log(props.claim)
+
 const emits = defineEmits(["move-to-next-section"])
 
 const exampleExpense = ref({

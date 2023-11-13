@@ -22,7 +22,7 @@
     <div class="mt-6 flex gap-10 w-auto max-w-[1000px] overflow-auto flex-wrap">
         <div class="shadow border border-solid border-gray-100 rounded-md flex items-center box-border w-auto px-5 gap-5 h-auto py-5 pr-10"
             v-for="(receipt, index) in props.claim.reimbursementReceipts">
-            <img :src="(receipt.url as string)" class="rounded-md h-20 object-contain w-20" />
+            <img :src="(receipt.url as string)" class="rounded-md h-20 object-cover w-20" />
             <span>
                 <h3 class="mt-0 text-sm font-medium">Receipt #{{ index + 1 }}</h3>
                 <span class="flex gap-3">

@@ -48,6 +48,8 @@
         </span>
       </div>
       <br />
+
+      <!-- MAIN LIST -->
       <div :class="currentView === 'list'
         ? 'reimbursement-wrapper-list'
         : 'reimbursement-wrapper-grid'
@@ -69,7 +71,7 @@
       </div>
 
       <!-- TEMPLATES -->
-      <h3 class="mt-0">Templates</h3>
+      <h3 class="mt-0" v-if="viewingTemplates">Templates</h3>
       <div v-if="viewingTemplates" :class="currentView === 'list'
         ? 'reimbursement-wrapper-list'
         : 'reimbursement-wrapper-grid'
@@ -82,7 +84,7 @@
           </h5>
           <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <div class="reimbursement-buttons">
-            <button v-if="ticket.reimbursementStatus !== 'Submitted'">
+            <button v-if="ticket.reimbursementStatus !== 'Submitted'" @click="useClaimAsTemplate(ticket)">
               Use as Template
             </button>
             <button>Delete</button>
@@ -339,6 +341,10 @@ function retrieveReimbursements() {
     .catch((err) => {
       alert(err);
     });
+}
+
+function useClaimAsTemplate(template) {
+  router.push({ path: "/add-reimbursement", query: { templateData: JSON.stringify(template) } });
 }
 
 onMounted(() => {

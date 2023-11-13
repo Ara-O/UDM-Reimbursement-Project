@@ -121,6 +121,29 @@ async function userIsUpdatingReimbursement() {
 onMounted(() => {
   if (route.query.reimbursementId) {
     userIsUpdatingReimbursement();
+  } else if (route.query.templateData) {
+    currentReimbursement.value = JSON.parse(route.query.templateData as string)
+
+    // Clearing the id properties from mongo so it doesnt throw duplicate errors
+    // @ts-expect-error
+    if (currentReimbursement.value._id) {
+      //@ts-expect-error
+      delete currentReimbursement.value._id
+    }
+
+    if (currentReimbursement.value.activities) {
+      currentReimbursement.value.activities.forEach((actv) => {
+        delete actv._id
+      })
+    }
+
+    if (currentReimbursement.value.guestInformation) {
+      currentReimbursement.value.guestInformation.forEach((guest) => {
+        // @ts-expect-error
+        delete guest._id
+      })
+    }
+
   }
 });
 </script>
