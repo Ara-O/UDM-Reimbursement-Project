@@ -184,3 +184,19 @@ export function isLessThan(value, maxLength: number) {
     return true;
   }
 }
+
+export function isValidActvNumber(value) {
+  if (value === undefined || value === null) value = "";
+  value = String(value);
+
+  const hasValidLength = /^[a-zA-Z0-9]{1,4}$/.test(value);
+
+  switch (true) {
+    case value.trim() === "":
+      return "Required";
+    case !hasValidLength:
+      return "4-characters";
+    default:
+      return true;
+  }
+}

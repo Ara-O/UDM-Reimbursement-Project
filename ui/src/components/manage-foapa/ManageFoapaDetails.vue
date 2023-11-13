@@ -98,7 +98,7 @@
             title="Optional: Activity, 4 digits" />
         </span>
         <span class="input-FOAPA-field-span">
-          <Field type="text" name="actv-input" :rules="isValidFoapaNumber" id="actv-input" placeholder="xxxx"
+          <Field type="text" name="actv-input" :rules="isValidActvNumber" id="actv-input" placeholder="xxxx"
             v-model="currentlyInputtedFOAPA.activity" />
           <ErrorMessage name="actv-input" class="error-field" />
         </span>
@@ -159,6 +159,7 @@ import {
   isValidFoapaNumber,
   isValidFoapaAmount,
   isValidFoapaName,
+  isValidActvNumber
 } from "../../utils/validators";
 import axios from "axios";
 
