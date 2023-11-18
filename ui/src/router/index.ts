@@ -26,10 +26,6 @@ export default createRouter({
     },
     {
       path: "/complete-verification",
-      redirect: "/signup",
-    },
-    {
-      path: "/complete-verification/:userToken",
       component: CompleteVerificationPage,
     },
     {

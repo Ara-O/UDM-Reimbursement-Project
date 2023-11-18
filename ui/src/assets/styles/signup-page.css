@@ -64,6 +64,7 @@ input {
 .foapa-section {
   margin-top: 40px;
 }
+
 .employment-number-section h3 {
   font-size: 14px;
   font-weight: 400;
@@ -85,10 +86,12 @@ input {
   display: flex;
   align-items: center;
 }
+
 .signup-page-foapa h3 {
   font-weight: 400;
   font-size: 14.5px;
 }
+
 .employment-number-section {
   position: absolute;
   top: 50%;
@@ -133,6 +136,7 @@ input {
   font-size: 12px;
   max-width: 200px;
 }
+
 .work-email-descriptor {
   position: absolute;
   top: 50%;
@@ -240,6 +244,23 @@ input {
   font-weight: 600;
 }
 
+.verify-code-section {
+  text-align: left;
+}
+
+.verify-button {
+  background-color: var(--udmercy-blue);
+  color: white;
+  padding: 10px 70px;
+  border: solid 1px;
+
+  height: 50px;
+  margin-top: 20px;
+  cursor: pointer;
+  background: #a5093e;
+  border-radius: 26px;
+}
+
 .email-confirmation-text {
   font-weight: 400;
   width: auto;
@@ -276,6 +297,7 @@ input {
   .udmercy-logo {
     display: none;
   }
+
   .left-section {
     display: none;
   }
@@ -286,6 +308,7 @@ input {
     padding-left: 75px;
   }
 }
+
 @media (max-width: 900px) {
   .input-field-wrapper {
     width: auto;
@@ -301,6 +324,15 @@ input {
 }
 
 @media (max-width: 780px) {
+  .verify-code-section {
+    text-align: center;
+  }
+
+  .verify-code-section input {
+    text-align: center;
+    padding-left: 0px;
+  }
+
   .thanks-for-signing-up-msg {
     padding: 0px 30px;
 
@@ -312,10 +344,12 @@ input {
     font-size: 14px;
     text-align: center;
   }
+
   .signup-title-description {
     text-align: center;
     padding: 0px 20px;
   }
+
   .udmercy-logo-wrapper-mobile {
     display: flex;
     height: auto;
@@ -368,7 +402,7 @@ input {
   }
 
   .input-field span,
-  .work-email-section > span {
+  .work-email-section>span {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -402,6 +436,7 @@ input {
     align-items: center;
     flex-direction: column;
   }
+
   .continue-buttons {
     justify-content: center;
     align-items: center;

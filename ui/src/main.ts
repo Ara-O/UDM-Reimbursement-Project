@@ -4,6 +4,7 @@ import "./style.css";
 import App from "./App.vue";
 import { configure } from "vee-validate";
 import axios from "axios";
+import { createPinia } from "pinia";
 
 configure({
   validateOnChange: true,
@@ -18,4 +19,6 @@ if (localStorage.getItem("token") !== null && (localStorage.getItem("token")?.le
   console.log("User is not logged in");
 }
 
-createApp(App).use(Router).mount("#app");
+const pinia = createPinia()
+
+createApp(App).use(Router).use(pinia).mount("#app");

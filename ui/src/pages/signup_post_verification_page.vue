@@ -61,10 +61,13 @@ import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { FoapaStuff, UserData } from "../types/types";
+import { useUserInfoStore } from "../store";
 let surveyProgress = ref<number>(1);
 
 const router = useRouter();
 const route = useRoute();
+const store = useUserInfoStore()
+
 let creatingAccountFeedback = ref<boolean>(false);
 let userSignupData = reactive<UserData>({
   firstName: "",
@@ -104,27 +107,21 @@ function registerUser() {
 }
 
 onMounted(() => {
+  if (Object.keys(store.userData).length === 0) {
+    router.push("/signup")
+    return
+  }
+
+  Object.assign(userSignupData, store.userData as UserData)
+
   if (localStorage.getItem("token")?.length ?? 0 > 0) {
     // console.log("user is already signed in");
     router.push("/dashboard");
   }
 
+  console.log(route.params)
   if (route.params.userToken) {
-    axios
-      .post(
-        `${import.meta.env.VITE_API_URL}/api/verifyUserSignupToken`,
-        {
-          token: route.params.userToken,
-        }
-      )
-      .then((res) => {
-        userSignupData = Object.assign(userSignupData, res.data.userSignupData);
-      })
-      .catch((err) => {
-        console.log(err);
-        alert(err.response.data.message);
-        router.push("/signup");
-      });
+
   }
 });
 </script>

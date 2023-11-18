@@ -9,6 +9,8 @@ import {
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { verifyToken } from "../middleware/auth.js";
+import { generateRandomStringId } from "../utils/generateRandomString.js";
+import { Auth } from "../models/auth.js";
 dotenv.config();
 
 const router = Router();
@@ -144,24 +146,42 @@ router.post("/verifyUserSignupToken", async (req, res) => {
 router.post("/sendConfirmationEmail", async (req, res) => {
   try {
     let userData = req.body.userSignupData;
-    jwt.sign({ userData }, process.env.JWT_SECRET, async (err, token) => {
-      if (err) throw err;
+    // jwt.sign({ userData }, process.env.JWT_SECRET, async (err, token) => {
 
-      let sanitizedToken = token.replaceAll(".", "$");
-      let resp = await transporter.sendMail({
-        from: '"UDM Reimbursement Team" <ara@araoladipo.dev>',
-        to: userData.workEmail.trim() + "@udmercy.edu",
-        // to: "oladipea@udmercy.edu",
-        subject: "Welcome to the UDM Reimbursement System!",
-        html: `<a href="https://udm-reimbursement-project.vercel.app/complete-verification/${sanitizedToken}" target="_blank">Create account</a>`,
-      });
+    let userAuthString = generateRandomStringId(6)
 
-      console.log(resp);
-
-      res.status(200).send({
-        message: "Email sent successfully!",
-      });
+    let resp = await transporter.sendMail({
+      from: '"UDM Reimbursement Team" <udm-reimbursement-system@em2297.araoladipo.dev>',
+      to: userData.workEmail.trim() + "@udmercy.edu",
+      subject: "Welcome to the UDM Reimbursement System!",
+      html:
+        `
+          <div style="background: white">
+          <h3 style="font-weight: 500">Verify your Account</h3>
+          <h4 style="font-weight: 300">Hello,</h4>
+          <h4 style="font-weight: 300">Thanks for signing up for the University of Detroit Mercy Reimbursement System!</h4>
+          <h4 style="font-weight: 300">You can verify your account using this key</h4>
+          <h3 style="font-weight: 500">${userAuthString}</h3>
+        </div>
+        `
     });
+
+    console.log(resp);
+
+    //Store key in database along with email and emp number
+
+    const auth = new Auth({
+      workEmail: userData.workEmail.trim() + "@udmercy.edu",
+      employmentNumber: "T" + userData.employmentNumber.trim(),
+      authString: userAuthString
+    })
+
+    await auth.save()
+
+    res.status(200).send({
+      message: "Email sent successfully!",
+    });
+    // });
   } catch (err) {
     console.log(err);
     res.status(400).send(err);
@@ -221,4 +241,29 @@ router.get("/retrieveAccountNumbers", async (req, res) => {
     res.status(400).send({ message: "There has been an error" });
   }
 });
+
+router.post("/verifyCode", async (req, res) => {
+  console.log(req.body)
+
+  let authInfo = await Auth.findOne({
+    workEmail: req.body.workEmail.trim() + "@udmercy.edu",
+    employmentNumber: "T" + req.body.employmentNumber,
+  })
+
+  if (authInfo === null) {
+    res.status(500).send("There was an error")
+    return
+  }
+
+  console.log(authInfo)
+
+  if (authInfo?.authString === req.body.userCode.trim()) {
+    res.status(200).send("Code verified")
+    return
+  } else {
+    res.status(404).send("Incorrect code")
+    return
+  }
+})
+
 export default router;
