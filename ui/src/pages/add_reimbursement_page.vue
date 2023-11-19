@@ -28,7 +28,8 @@
         @move-to-next-section="selectedSection++"></claim-information>
       <manage-expenses :claim="currentReimbursement" v-if="selectedSection === 2"
         @move-to-next-section="selectedSection++"></manage-expenses>
-      <assign-foapa-information v-if="selectedSection === 3"></assign-foapa-information>
+      <assign-foapa-information :claim="currentReimbursement" v-if="selectedSection === 3"
+        @move-to-next-section="selectedSection++"></assign-foapa-information>
       <manage-receipts :claim="currentReimbursement" v-if="selectedSection === 4"
         @move-to-next-section="selectedSection++"></manage-receipts>
       <guest-information :claim="currentReimbursement" v-if="selectedSection === 5"
@@ -102,7 +103,8 @@ let currentReimbursement = ref<ReimbursementTicket>({
   destination: "",
   paymentRetrievalMethod: "Direct Deposit",
   UDMPUVoucher: false,
-  guestInformation: []
+  guestInformation: [],
+  foapaInfo: []
 });
 
 async function userIsUpdatingReimbursement() {

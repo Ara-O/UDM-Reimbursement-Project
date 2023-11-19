@@ -78,6 +78,11 @@ export type FoapaNumbers = {
   initialAmount: number | "N/A";
 };
 
+export type FoapaInput = {
+  foapaNumber: string;
+  assignedCost: string;
+};
+
 export type GuestInfo = {
   employeeFirstName: string
   employeeLastName: string,
@@ -98,5 +103,6 @@ export type ReimbursementTicket = {
   reimbursementStatus: string;
   reimbursementDate: string;
   activities: Expense[];
+  foapaInfo: FoapaInput[];
 };
 

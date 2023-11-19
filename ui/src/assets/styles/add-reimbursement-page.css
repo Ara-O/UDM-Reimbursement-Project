@@ -497,6 +497,28 @@ input#direct-deposit {
   background-color: white;
 }
 
+.foapa {
+  background: var(--udmercy-blue);
+  color: white;
+  width: 320px;
+  height: 100px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  padding: 30px;
+  position: relative;
+}
+
+.foapa h3 {
+  font-weight: 500;
+  margin-top: 0px;
+  font-size: 15px;
+}
+
+.foapa h4 {
+  font-weight: 300;
+  font-size: 12px;
+}
+
 @media (max-width: 1750px) {
   .reimbursement-section {
     column-gap: 70px;
