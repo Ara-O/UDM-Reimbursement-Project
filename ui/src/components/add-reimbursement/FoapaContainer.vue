@@ -12,6 +12,7 @@
     </div>
 </template>
   
+
 <script lang="ts" setup>
 import { FoapaInput } from "../../types/types";
 

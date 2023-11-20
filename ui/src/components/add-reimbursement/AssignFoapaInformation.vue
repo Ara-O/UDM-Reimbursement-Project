@@ -1,6 +1,6 @@
 <template>
     <span class="flex items-center gap-6 mb-2">
-        <h2 class="font-semibold my-0 text-[27px]">Assign FOAPA Information</h2>
+        <h2 class="font-semibold my-0 text-[27px]">Manage FOAPA Information</h2>
         <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7">
     </span>
 
@@ -41,19 +41,27 @@
     <!-- ALL FOAPA SECTION -->
     <div class="flex gap-28">
         <div>
-            <h4 class="underline mb-2 font-semibold text-lg text-gray-800">Assigned FOAPA</h4>
-            <div class="h-56 overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
+            <h4 class="underline mb-2 font-semibold text-lg text-gray-800">All FOAPA</h4>
+            <div class=" overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
                 <div v-if="props.claim.activities.length === 0">
                     <h5 class="mt-0 font-medium text-gray-500">Added FOAPA numbers will be listed</h5>
                 </div>
 
-                <foapa-container :foapa="foapa" v-for=" foapa in props.claim.foapaInfo" @delete-activity="deleteFOAPA">
+            </div>
+            <div class="flex gap-3 flex-col max-h-72 overflow-auto">
+                <foapa-container :foapa="foapa"  v-for=" foapa in props.claim.foapaInfo" @delete-activity="deleteFOAPA">
                 </foapa-container>
             </div>
         </div>
         <!-- BALANCE SECTION -->
-        <h4 class="underline font-semibold text-lg text-gray-800">Ticket Balance</h4>
-
+        <div>
+        <h4 class="underline font-semibold mb-0 text-lg text-gray-800">Balance</h4>
+        <div class=" overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
+            <div class="flex gap-3 flex-col max-h-72 overflow-auto">
+                <balance-container >
+                </balance-container>
+            </div>
+            </div></div>
     </div>
 </template>
 
@@ -62,8 +70,7 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import FoapaContainer from "./FoapaContainer.vue";
 import { ReimbursementTicket, FoapaStuff, FoapaInput } from "../../types/types";
-import FoapaContainerVue from "./FoapaContainer.vue";
-
+import BalanceContainer from "./BalanceContainer.vue";
 let props = defineProps<{
     claim: ReimbursementTicket
 }>();

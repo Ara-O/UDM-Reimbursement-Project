@@ -501,7 +501,7 @@ input#direct-deposit {
   background: var(--udmercy-blue);
   color: white;
   width: 320px;
-  height: 100px;
+  height: fit-content;
   border-radius: 20px;
   box-sizing: border-box;
   padding: 30px;
