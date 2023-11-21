@@ -1,13 +1,12 @@
 <template>
-    <div class="foapa">
+    <div class="foapa relative">
         <h3 class="overflow-hidden text-ellipsis whitespace-nowrap" :title="foapa.foapaNumber">{{ foapa.foapaNumber }}</h3>
-        <h4 class="overflow-hidden text-ellipsis whitespace-nowrap" :title="'' + foapa.assignedCost">
-            Cost: ${{ foapa.assignedCost }}
+        <h4 class="overflow-hidden text-ellipsis !text-[14px] whitespace-nowrap" :title="'' + foapa.cost">
+            Cost: ${{ foapa.cost }}
         </h4>
-        <div class="activity-options-wrapper">
-            <div title="Delete activity" class="activity-option" @click="$emit('deleteActivity', foapa.foapaNumber)">
-                <img src="../../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon w-5" />
-            </div>
+        <div title="Delete activity" class="activity-option absolute right-10 bottom-5"
+            @click="$emit('deleteActivity', foapa.foapaNumber)">
+            <img src="../../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon w-3.5" />
         </div>
     </div>
 </template>

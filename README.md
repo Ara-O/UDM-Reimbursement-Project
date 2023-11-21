@@ -15,3 +15,10 @@
 - Enter the server folder with the ```cd server``` command
 - Run ```npm install```
 - Run ```nodemon app.js```
+
+# How to push
+- Cd into the main directory - that contains both ui and server
+- Note: You may need to run ```git pull``` first
+- Run ```git add .``` 
+- Run ```git commit -m "meaningful message"```
+- Run ```git push```

@@ -517,6 +517,7 @@ input#direct-deposit {
 .foapa h4 {
   font-weight: 300;
   font-size: 12px;
+  margin-bottom: 0px;
 }
 
 @media (max-width: 1750px) {

@@ -80,7 +80,7 @@ export type FoapaNumbers = {
 
 export type FoapaInput = {
   foapaNumber: string;
-  assignedCost: string;
+  cost: string;
 };
 
 export type GuestInfo = {
@@ -103,6 +103,6 @@ export type ReimbursementTicket = {
   reimbursementStatus: string;
   reimbursementDate: string;
   activities: Expense[];
-  foapaInfo: FoapaInput[];
+  foapaDetails: FoapaInput[];
 };
 

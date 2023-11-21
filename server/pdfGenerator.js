@@ -575,7 +575,7 @@ export default function createPdfDefinition(
               { text: "ACTV", alignment: "center", fillColor: "#d9d9d9" },
               { text: "$", alignment: "center", fillColor: "#d9d9d9" },
             ],
-            ["", "", "", "", "", ""],
+            ["TEST", "", "", "", "", ""],
             ["", "", "", "", "", ""],
             ["", "", "", "", "", ""],
             ["", "", "", "", "", ""],

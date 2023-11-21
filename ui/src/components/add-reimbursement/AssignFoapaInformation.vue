@@ -7,9 +7,9 @@
     <form @submit.prevent="addFoapa">
         <div class="flex gap-14">
             <span>
-                <h4 class="font-normal text-sm">FOAPA</h4>
+                <h4 class="font-normal text-sm">Select FOAPA</h4>
                 <select name="foapa" id="foapa" v-model="assignedFoapa.foapaNumber"
-                    class=" border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
+                    class=" border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
                     <!-- <option disabled selected value="">Select FOAPA</option> -->
                     <option :value="formatUserFoapa(foapa)" v-for="foapa in userFoapas">
@@ -19,8 +19,7 @@
             </span>
             <span>
                 <h4 class="font-normal text-sm">Quantity to use from FOAPA</h4>
-                <input type="text" name="quantity-assigned" placeholder="Desired Amount"
-                    v-model="assignedFoapa.assignedCost"
+                <input type="text" name="quantity-assigned" placeholder="Desired Amount" v-model="assignedFoapa.cost"
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
             </span>
@@ -40,8 +39,8 @@
 
     <!-- ALL FOAPA SECTION -->
     <div class="flex gap-28">
-        <div>
-            <h4 class="underline mb-2 font-semibold text-lg text-gray-800">All FOAPA</h4>
+        <div class="w-[330px]">
+            <h4 class="underline mb-5 font-semibold text-lg text-gray-800">All FOAPA</h4>
             <div class=" overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
                 <div v-if="props.claim.activities.length === 0">
                     <h5 class="mt-0 font-medium text-gray-500">Added FOAPA numbers will be listed</h5>
@@ -49,19 +48,20 @@
 
             </div>
             <div class="flex gap-3 flex-col max-h-72 overflow-auto">
-                <foapa-container :foapa="foapa"  v-for=" foapa in props.claim.foapaInfo" @delete-activity="deleteFOAPA">
+                <foapa-container :foapa="foapa" v-for=" foapa in props.claim.foapaDetails" @delete-activity="deleteFOAPA">
                 </foapa-container>
             </div>
         </div>
         <!-- BALANCE SECTION -->
         <div>
-        <h4 class="underline font-semibold mb-0 text-lg text-gray-800">Balance</h4>
-        <div class=" overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
-            <div class="flex gap-3 flex-col max-h-72 overflow-auto">
-                <balance-container >
-                </balance-container>
+            <h4 class="underline font-semibold mb-0 text-lg text-gray-800">Balance</h4>
+            <div class="overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
+                <div class="flex gap-3 flex-col max-h-72 overflow-auto">
+                    <balance-container :claim="props.claim">
+                    </balance-container>
+                </div>
             </div>
-            </div></div>
+        </div>
     </div>
 </template>
 
@@ -88,7 +88,7 @@ let foapa = ref<FoapaStuff>({
 
 let assignedFoapa = ref<FoapaInput>({
     foapaNumber: "",
-    assignedCost: ""
+    cost: ""
 })
 
 let userFoapas = ref<FoapaStuff[]>()
@@ -101,10 +101,10 @@ const exampleFOAPA = ref({
 })
 
 function addFoapa() {
-    props.claim.foapaInfo.push(JSON.parse(JSON.stringify(assignedFoapa.value)));
+    props.claim.foapaDetails.push(JSON.parse(JSON.stringify(assignedFoapa.value)));
     assignedFoapa.value = {
         foapaNumber: "",
-        assignedCost: ""
+        cost: ""
     }
 }
 
@@ -132,6 +132,6 @@ function formatUserFoapa(foapa: FoapaStuff) {
 }
 
 function deleteFOAPA(id: string) {
-    props.claim.foapaInfo = props.claim.foapaInfo.filter((foapaTrash) => foapaTrash.foapaNumber !== id)
+    props.claim.foapaDetails = props.claim.foapaDetails.filter((foapaTrash) => foapaTrash.foapaNumber !== id)
 }
 </script>

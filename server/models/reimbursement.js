@@ -15,6 +15,10 @@ export const reimbursementSchema = new Schema({
     guestLastName: String
   }
   ],
+  foapaDetails: [{
+    foapaNumber: String,
+    cost: Number
+  }],
   reimbursementStatus: String,
   reimbursementReceipts: [
     {

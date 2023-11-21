@@ -10,4 +10,5 @@ authSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
 
 const Auth = mongoose.model('auth', authSchema, 'auth')
 
+// In honor of Andre
 export { Auth }
