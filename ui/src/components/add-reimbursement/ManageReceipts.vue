@@ -13,7 +13,7 @@
             automatically extract
             expenses from receipts, go to the ‘add or view’ expenses</h4>
 
-        <input id="receipt" class="custom-file-input" ref="receiptRef" name="receipt" @change="receiptAdded"
+        <input id="receipt" type="file" class="custom-file-input" ref="receiptRef" name="receipt" @change="receiptAdded"
             accept="image/png, image/jpeg" multiple />
         <h3 class="font-normal text-sm inline" v-if="fileWasSelected">Uploading...</h3>
     </div>
