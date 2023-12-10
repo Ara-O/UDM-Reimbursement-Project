@@ -13,7 +13,7 @@
             automatically extract
             expenses from receipts, go to the ‘add or view’ expenses</h4>
 
-        <input type="file" id="receipt" class="custom-file-input" ref="receiptRef" name="receipt" @change="receiptAdded"
+        <input id="receipt" class="custom-file-input" ref="receiptRef" name="receipt" @change="receiptAdded"
             accept="image/png, image/jpeg" multiple />
         <h3 class="font-normal text-sm inline" v-if="fileWasSelected">Uploading...</h3>
     </div>
@@ -104,13 +104,4 @@ function deleteReceipt(id: string) {
 }
 </script>
 
-<style scoped>
-.custom-file-input::-webkit-file-upload-button {
-    visibility: hidden;
-}
-
-.custom-file-input {
-    color: transparent;
-    width: 153px;
-}
-</style>
+<style scoped></style>

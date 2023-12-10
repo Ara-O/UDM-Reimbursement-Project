@@ -3,10 +3,8 @@
     <div class="udmercy-logo-wrapper">
       <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo" />
     </div>
-    <br />
-    <h3 class="login-title">Detroit Mercy Reimbursement System</h3>
-    <br />
-    <Form @submit="loginUser" class="login-form">
+    <h3 class="login-title mt-10">Detroit Mercy Reimbursement System</h3>
+    <Form @submit="loginUser" class="login-form mt-6">
       <div class="login-field">
         <label for="work-email">Work Email: </label>
         <span>
