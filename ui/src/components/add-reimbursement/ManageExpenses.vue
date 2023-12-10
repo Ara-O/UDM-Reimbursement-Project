@@ -140,7 +140,10 @@ function duplicateExpense(id: string) {
 
     if (activityToDuplicate.length === 0) return;
 
-    expense.value = JSON.parse(JSON.stringify(activityToDuplicate[0]));
+    let clone = JSON.parse(JSON.stringify(activityToDuplicate[0]))
+    delete clone?._id
+    clone.id = generateRandomStringId(24)
+    expense.value = clone;
 }
 
 </script>
