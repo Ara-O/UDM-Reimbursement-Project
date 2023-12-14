@@ -4,36 +4,18 @@
       <div class="input-field">
         <label for="password">Password: *</label>
         <span>
-          <Field
-            type="password"
-            name="password"
-            id="password"
-            :rules="passwordMatchesReenteredPassword"
-            v-model="userSignupData.password"
-          />
+          <Field type="password" name="password" id="password" :rules="passwordMatchesReenteredPassword"
+            v-model="userSignupData.password" />
           <ErrorMessage name="password" class="error-field" />
         </span>
       </div>
       <div class="input-field">
-        <label
-          for="reenter-password"
-          class="re-enter-password-label"
-          style="width: auto"
-          >Re-enter password: *</label
-        >
+        <label for="reenter-password" class="re-enter-password-label" style="width: auto">Re-enter password: *</label>
         <span>
-          <Field
-            type="password"
-            :rules="passwordMatches"
-            name="re-enter-password"
-            id="re-enter-password"
-            v-model="reEnteredPassword"
-          />
-          <h5
-            class="error-field"
-            style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
-            v-if="userSignupData.password !== reEnteredPassword"
-          >
+          <Field type="password" :rules="passwordMatches" name="re-enter-password" id="re-enter-password"
+            v-model="reEnteredPassword" />
+          <h5 class="error-field" style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
+            v-if="userSignupData.password !== reEnteredPassword">
             Password does not match
           </h5>
         </span>
@@ -86,6 +68,7 @@ function progress() {
 .input-field-wrapper {
   height: 65px;
 }
+
 @media (max-width: 813px) {
   .input-field-wrapper {
     height: auto;
@@ -100,6 +83,7 @@ function progress() {
     margin-top: 30px !important;
   }
 }
+
 @media (max-width: 780px) {
   .re-enter-password-label {
     width: auto !important;

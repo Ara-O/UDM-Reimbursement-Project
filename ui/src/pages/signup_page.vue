@@ -37,8 +37,7 @@
         </article>
       </section>
       <span v-if="!basicQuestionsSectionIsFinished" class="account-feedback-message">
-        <br />
-        <router-link to="/" class="already-have-account">Already have an Account</router-link>
+        <router-link to="/" class="already-have-account mt-1.5">Already have an Account</router-link>
         <h5 class="required-field-note">
           Note: All required fields must be filled
         </h5>
