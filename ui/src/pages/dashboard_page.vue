@@ -9,7 +9,7 @@
       <br />
       <div class="reimbursement-search-input">
         <input type="text" v-model="searchValue" class="reimbusement-search" onchange="filterReimbursements"
-          placeholder="Search Reimbursement" />
+          placeholder="Search Reimbursement Claims" />
         <div class="search-button">
           <img src="../assets/search-icon.png" alt="Search icon" class="search-icon" />
         </div>
