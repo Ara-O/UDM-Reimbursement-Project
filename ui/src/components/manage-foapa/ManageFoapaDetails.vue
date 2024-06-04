@@ -13,7 +13,7 @@
             title="Unique identifier for FOAPA Number for easy identification. The FOAPA name is arbitrary and not related to the actual FOAPA" />
         </span>
         <span class="input-FOAPA-field-span">
-          <Field type="text" :rules="(value) => isValidFoapaName(value, 10)" style="width: 150px" placeholder="Name"
+          <Field type="text" :rules="(value) => isValidFoapaName(value, 100)" style="width: 150px" placeholder="Name"
             name="foapa-name" id="foapa-name" v-model="currentlyInputtedFOAPA.foapaName" />
           <ErrorMessage name="foapa-name" class="error-field" />
         </span>
