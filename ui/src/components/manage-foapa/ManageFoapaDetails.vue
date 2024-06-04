@@ -35,8 +35,8 @@
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">FUND*</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
-            title="Required: fund, 6 digits" />
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon" title="Required: fund, 6 digits
+The fund is where the funds (financing) will come from within the University." />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" name="fund-input" :rules="isValidFundNumber" id="fund-input" placeholder="xxxxxx"
@@ -49,8 +49,8 @@
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">ORG</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
-            title="Optional: Organization, 4 digits" />
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon" title="Optional: Organization, 4 digits
+The organization is the department that affected by the transaction." />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" :rules="isValidFoapaNumber" name="org-input" id="org-input" placeholder="xxxx"
@@ -62,8 +62,8 @@
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">ACCT*</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
-            title="Required: Account number, 4 digits" />
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon" title="Required: Account number, 4 digits
+The classification of the Revenue or Expense" />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" name="acct-input" id="acct-input" :rules="isValidAccountNumber" list="account-no"
@@ -81,8 +81,8 @@
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">Program</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
-            title="Optional: Program, 4 digits" />
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon" title="Optional: Program, 4 digits
+Identification of use the use or purpose of funds." />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" name="prog-input" id="prog-input" placeholder="xxxx" :rules="isValidFoapaNumber"
@@ -95,7 +95,8 @@
         <span class="foapa-title-span">
           <label for="foapa-name">ACTV</label>
           <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
-            title="Optional: Activity, 4 digits" />
+            title="Optional: Activity, 4 digits
+The activity is used to track special projects." />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" name="actv-input" :rules="isValidActvNumber" id="actv-input" placeholder="xxxx"
