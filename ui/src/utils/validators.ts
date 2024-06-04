@@ -189,13 +189,13 @@ export function isValidActvNumber(value) {
   if (value === undefined || value === null) value = "";
   value = String(value);
 
-  const hasValidLength = /^[a-zA-Z0-9]{1,4}$/.test(value);
+  const hasValidLength = /^[a-zA-Z]{1,4}$/.test(value);
 
   switch (true) {
     case value.trim() === "":
-      return "Required";
+      return "";
     case !hasValidLength:
-      return "4-characters";
+      return "4-Letters";
     default:
       return true;
   }

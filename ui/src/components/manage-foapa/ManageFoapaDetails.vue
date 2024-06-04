@@ -95,7 +95,7 @@ Identification of use the use or purpose of funds." />
         <span class="foapa-title-span">
           <label for="foapa-name">ACTV</label>
           <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
-            title="Optional: Activity, 4 digits
+            title="Optional: Activity, 4 letters
 The activity is used to track special projects." />
         </span>
         <span class="input-FOAPA-field-span">
