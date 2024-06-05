@@ -18,12 +18,13 @@ const facultySchema = new Schema({
     {
       fund: Number,
       organization: Number,
-      account: Number,
+      account: String,
       program: Number,
       activity: String,
       foapaName: String,
       initialAmount: Number,
       currentAmount: Number,
+      description: String,
     },
   ],
   reimbursementTickets: [

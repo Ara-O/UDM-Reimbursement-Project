@@ -195,7 +195,7 @@ export function isValidActvNumber(value) {
     case value.trim() === "":
       return "";
     case !hasValidLength:
-      return "4-Letters";
+      return "4 Letters Only";
     default:
       return true;
   }
