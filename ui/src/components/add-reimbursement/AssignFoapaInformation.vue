@@ -85,6 +85,7 @@ let foapa = ref<FoapaStuff>({
     foapaName: "string",
     initialAmount: "string",
     currentAmount: "string",
+    description: "string,"
 })
 
 let assignedFoapa = ref<FoapaInput>({
