@@ -55,6 +55,8 @@ export default function createPdfDefinition(
   const { activities } = reimbursementData;
   let content = [];
 
+  console.log("REIMBURSEMENT DATA:", reimbursementData)
+
   //Top section
   content.push(
     {
@@ -79,7 +81,7 @@ export default function createPdfDefinition(
   //   Faculty information section
   let ticketTotal = 0;
 
-  console.log("Reimbursement data", reimbursementData)
+  // console.log("Reimbursement data", reimbursementData)
   if (reimbursementData?.activities) {
     reimbursementData.activities.forEach((activity) => {
       ticketTotal += Number(activity.cost);
@@ -360,8 +362,8 @@ export default function createPdfDefinition(
       }
     }
   }
-  console.log("costs", totalActivityCosts);
-  console.log(pdfStructure);
+  // console.log("costs", totalActivityCosts);
+  // console.log(pdfStructure);
 
   //Expenses section
   content.push({
@@ -518,7 +520,7 @@ export default function createPdfDefinition(
 
   // EMployee section
   console.log("=========")
-  console.log(reimbursementData.guestInformation)
+  // console.log(reimbursementData.guestInformation)
 
   let guestSection = []
   if (!reimbursementData?.guestInformation || reimbursementData?.guestInformation.length == 0) {
@@ -535,9 +537,9 @@ export default function createPdfDefinition(
 
       arr.push({ text: guest.employeeFirstName, fontSize: 7.5 })
       arr.push({ text: guest.employeeLastName, fontSize: 7.5 })
-      arr.push({ text: guest.guestAssociation, fontSize: 7.5 })
       arr.push({ text: guest.guestFirstName, fontSize: 7.5 })
       arr.push({ text: guest.guestLastName, fontSize: 7.5 })
+      arr.push({ text: guest.guestAssociation, fontSize: 7.5 })
       arr.push("")
 
       guestSection.push(arr)
@@ -549,6 +551,30 @@ export default function createPdfDefinition(
     guestSection.push(["", "", "", "", "", ""],
     )
   }
+
+  let fullFoapa = []
+  if(reimbursementData?.foapaDetails){
+    let foapaData = reimbursementData.foapaDetails.forEach((foapa)=> {
+      let foapaArray = foapa.foapaNumber.split("-")
+      for(let i = 0; i < foapaArray.length; i++){
+      if(foapaArray[i] === "XXXX" || foapaArray[i] === "XXXXXX"){
+          foapaArray[i] = ""
+        }
+      }
+
+      foapaArray.push(foapa.cost)
+      fullFoapa.push(foapaArray)
+    })
+  }
+
+  for(let i = 0; i < 4; i++){
+    if(fullFoapa.length < 4){
+      fullFoapa.push(["", "", "", "", "", ""])
+    }
+  }
+
+  console.log(fullFoapa)
+
 
   content.push({
     columns: [
@@ -575,10 +601,8 @@ export default function createPdfDefinition(
               { text: "ACTV", alignment: "center", fillColor: "#d9d9d9" },
               { text: "$", alignment: "center", fillColor: "#d9d9d9" },
             ],
-            ["TEST", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
-            ["", "", "", "", "", ""],
+            // FOAPA SECTION
+            ...fullFoapa,
             [
               { text: "", colSpan: 6, border: [0, 0, 0, 0] },
               {},

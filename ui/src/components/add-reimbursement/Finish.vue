@@ -24,7 +24,8 @@
         <br>
         <span class="flex gap-5">
             <button @click="saveAsTemplate"
-                class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save as
+                class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save
+                as
                 Template</button>
             <button
                 class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Discard
@@ -120,6 +121,17 @@ function createPdf() {
         )
         .then((response) => {
             props.claim.totalCost = getAllActivitiesAmount();
+
+            const totalCoveredFoapaCost = props.claim.foapaDetails.reduce((acc, curr,) =>
+                acc += Number(curr.cost)
+                , 0)
+
+
+            if (totalCoveredFoapaCost > props.claim.totalCost) {
+                alert("Warning: The amount of money you are retrieving from your FOAPAs is more than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.")
+            } else if (totalCoveredFoapaCost > props.claim.totalCost) {
+                alert("Warning: The amount of money you are retrieving from your FOAPAs is less than the amount of money you are trying to get reimbursed for")
+            }
             axios
                 .get(`${import.meta.env.VITE_API_URL}/api/generatePdf`, {
                     params: {

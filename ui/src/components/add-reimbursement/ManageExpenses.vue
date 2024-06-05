@@ -10,7 +10,8 @@
         <div class="flex gap-14">
             <span>
                 <h4 class="font-normal text-sm">Expense Name</h4>
-                <input type="text" list="default-list" name="expense-name" placeholder="Expense Name" v-model="expense.name"
+                <input type="text" list="default-list" name="expense-name" placeholder="Expense Name"
+                    v-model="expense.name"
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
                 <datalist id="default-list">
@@ -42,7 +43,8 @@
             </span>
         </div>
         <h4 class="text-[13px] font-light text-gray-700 leading-7 w-auto max-w-[40rem]"> By adding an activity; I hereby
-            certify that this claim is correct and reimbursable under published travel expense Policies & Procedures of UDM
+            certify that this claim is correct and reimbursable under published travel expense Policies & Procedures of
+            UDM
         </h4>
 
         <div class="flex gap-5">
@@ -64,8 +66,9 @@
             <activity-container :expense="exampleExpense"></activity-container>
         </div>
 
-        <activity-container :expense="expense" v-for=" expense in props.claim.activities" @delete-activity="deleteExpense"
-            @edit-activity="editExpense" @duplicate-activity="duplicateExpense"></activity-container>
+        <activity-container :expense="expense" v-for=" expense in props.claim.activities"
+            @delete-activity="deleteExpense" @edit-activity="editExpense"
+            @duplicate-activity="duplicateExpense"></activity-container>
     </div>
 </template>
 
@@ -91,9 +94,9 @@ const exampleExpense = ref({
 })
 
 let expense = ref<Expense>({
-    name: "Lunch",
-    cost: 120,
-    date: "2023-12-12",
+    name: "",
+    cost: 0,
+    date: "",
     id: generateRandomStringId(24)
 })
 
