@@ -1,0 +1,2 @@
+run:
+	nodemon app.js
