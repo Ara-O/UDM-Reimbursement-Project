@@ -16,12 +16,12 @@ input {
 
 .validating-signup-field {
   font-weight: 400;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 
 .error-signup-message {
   font-weight: 400;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   color: red;
 }
 
@@ -207,7 +207,7 @@ input {
   border: solid 1px;
   width: 232px;
   height: 50px;
-  margin-top: 25px;
+  margin-top: 17px;
   cursor: pointer;
   background: #a5093e;
   border-radius: 26px;

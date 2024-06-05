@@ -10,7 +10,7 @@
         <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo-mobile" />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
-      <section class="signup-form">
+      <section class="signup-form mb-5">
         <span v-if="!basicQuestionsSectionIsFinished">
           <BasicQuestionsSection :user-signup-data="userSignupData" @continue="sendConfirmationEmail" />
           <h3 v-if="verifyingInformation">Verifying user information...</h3>
@@ -37,8 +37,8 @@
         </article>
       </section>
       <span v-if="!basicQuestionsSectionIsFinished" class="account-feedback-message">
-        <router-link to="/" class="already-have-account mt-1.5">Already have an Account</router-link>
-        <h5 class="required-field-note">
+        <router-link to="/" class="already-have-account">Already have an Account</router-link>
+        <h5 class="required-field-note mb-0">
           Note: All required fields must be filled
         </h5>
       </span>

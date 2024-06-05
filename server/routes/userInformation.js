@@ -151,7 +151,7 @@ router.post("/sendConfirmationEmail", async (req, res) => {
     let userAuthString = generateRandomStringId(6)
 
     let resp = await transporter.sendMail({
-      from: '"UDM Reimbursement Team" <udm-reimbursement-system@em2297.araoladipo.dev>',
+      from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
       to: userData.workEmail.trim() + "@udmercy.edu",
       subject: "Welcome to the UDM Reimbursement System!",
       html:
