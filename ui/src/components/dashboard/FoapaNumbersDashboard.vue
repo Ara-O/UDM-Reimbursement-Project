@@ -11,7 +11,11 @@
         style="display: flex; flex-direction: column; align-items: start">
         <span class="foapa-number-title">
           <img src="../../assets/trash-icon.png" alt="Trash" @click="deleteFoapa(foapa)" />
-          <h3 style="font-weight: 500">
+          <h3 :title="foapa.foapaName" style="font-weight: 500; max-width: 200px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+">
             {{ foapa.foapaName }}
           </h3>
         </span>

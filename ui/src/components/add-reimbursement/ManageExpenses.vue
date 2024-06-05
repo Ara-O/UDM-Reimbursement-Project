@@ -51,7 +51,7 @@
             <button type="submit"
                 class=" bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Add
                 Expense</button>
-            <button type="button" @click="emits('move-to-next-section')"
+            <button type="button" @click="moveToNextSection"
                 class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">Next
                 Section</button>
         </div>
@@ -113,6 +113,18 @@ const defaultExpenses = [
     "Registration",
     "Taxi/Bus/Car Rental",
 ];
+
+function moveToNextSection() {
+    if (expense.value.name !== "" || expense.value.date !== "") {
+        const moveon = confirm("Warning: You have data in the Add Expense Section thar you have not added. Click 'OK' if you want to discard the data and move to the next section, or 'Cancel' to return")
+
+        if (moveon) {
+            emits('move-to-next-section')
+        }
+        return
+    }
+    emits('move-to-next-section')
+}
 
 function addExpense() {
     // Pushing a duplicate of the inputted expense to the main reimbursement data

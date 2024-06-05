@@ -1,6 +1,6 @@
 <template>
     <span class="flex items-center gap-6 mb-2">
-        <h2 class="font-semibold my-0 text-[27px]">Manage FOAPA Information</h2>
+        <h2 class="font-semibold my-0 text-[27px]">Assign FOAPA Information</h2>
         <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7">
     </span>
 
@@ -30,7 +30,7 @@
                 class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
                 Add FOAPA
             </button>
-            <button type="button" @click="emits('move-to-next-section')"
+            <button type="button" @click="moveToNextSection"
                 class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
                 Next Section
             </button>
@@ -48,7 +48,8 @@
 
             </div>
             <div class="flex gap-3 flex-col max-h-72 overflow-auto">
-                <foapa-container :foapa="foapa" v-for=" foapa in props.claim.foapaDetails" @delete-activity="deleteFOAPA">
+                <foapa-container :foapa="foapa" v-for=" foapa in props.claim.foapaDetails"
+                    @delete-activity="deleteFOAPA">
                 </foapa-container>
             </div>
         </div>
@@ -99,6 +100,19 @@ const exampleFOAPA = ref({
     name: "XXXXXX-XXXX-XXXX-XXXX-XXXX",
     cost: 1000,
 })
+
+function moveToNextSection() {
+    if (assignedFoapa.value.foapaNumber !== "" || assignedFoapa.value.cost !== "") {
+        let moveon = confirm("Warning: You are moving to next section without adding your currently inputted FOAPA. Click 'OK' to discard the inputted FOAPA and move to the next section, or click 'Cancel' to return")
+        if (moveon) {
+            emits('move-to-next-section')
+        }
+
+        return
+    }
+
+    emits('move-to-next-section')
+}
 
 function addFoapa() {
     props.claim.foapaDetails.push(JSON.parse(JSON.stringify(assignedFoapa.value)));
