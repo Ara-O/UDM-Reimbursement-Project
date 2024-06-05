@@ -200,3 +200,18 @@ export function isValidActvNumber(value) {
       return true;
   }
 }
+
+export function isValidFoapaDescription(value) {
+  if (value === undefined || value === null) value = "";
+  value = String(value)
+
+  const hasValidLength = /^[a-zA-Z0-9" "]{1,250}$/.test(value);
+
+  switch (true) {
+    case !hasValidLength:
+      return "Up to 250 Characters Only"
+    default:
+      return true;
+
+  }
+}

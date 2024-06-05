@@ -20,6 +20,18 @@
       </div>
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
+          <label for="foapa-description">Description</label>
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
+            title="Give a description to help identify each FOAPA." />
+        </span>
+        <span class="input-FOAPA-field-span">
+          <Field type="text" :rules="(value) => isValidFoapaDescription(value)" style="width: 150px" placeholder="Description"
+            name="foapa-description" id="foapa-description" v-model="currentlyInputtedFOAPA.description" />
+          <ErrorMessage name="foapa-description" class="error-field" />
+        </span>
+      </div>
+      <div class="input-FOAPA-field">
+        <span class="foapa-title-span">
           <label for="foapa-name">Amount</label>
           <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
             title="Optional: Current balance of FOAPA number. Can be used to keep track of FOAPA spendings" />
@@ -35,8 +47,8 @@
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">FUND*</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon" title="Required: fund, 6 digits
-The fund is where the funds (financing) will come from within the University." />
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
+            title="Required: fund, 6 digits &#013;The fund is where the funds (financing) will come from within the University." />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" name="fund-input" :rules="isValidFundNumber" id="fund-input" placeholder="xxxxxx"
@@ -49,8 +61,8 @@ The fund is where the funds (financing) will come from within the University." /
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">ORG</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon" title="Optional: Organization, 4 digits
-The organization is the department that affected by the transaction." />
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
+            title="Optional: Organization, 4 digits&#013;The organization is the department that affected by the transaction." />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" :rules="isValidFoapaNumber" name="org-input" id="org-input" placeholder="xxxx"
@@ -62,8 +74,8 @@ The organization is the department that affected by the transaction." />
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">ACCT*</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon" title="Required: Account number, 4 digits
-The classification of the Revenue or Expense" />
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
+            title="Required: Account number, 4 digits&#013;The classification of the Revenue or Expense" />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" name="acct-input" id="acct-input" :rules="isValidAccountNumber" list="account-no"
@@ -81,8 +93,8 @@ The classification of the Revenue or Expense" />
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">Program</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon" title="Optional: Program, 4 digits
-Identification of use the use or purpose of funds." />
+          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
+            title="Optional: Program, 4 digits&#013;Identification of use the use or purpose of funds." />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" name="prog-input" id="prog-input" placeholder="xxxx" :rules="isValidFoapaNumber"
@@ -95,8 +107,7 @@ Identification of use the use or purpose of funds." />
         <span class="foapa-title-span">
           <label for="foapa-name">ACTV</label>
           <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
-            title="Optional: Activity, 4 letters
-The activity is used to track special projects." />
+            title="Optional: Activity, 4 letters&#013;The activity is used to track special projects." />
         </span>
         <span class="input-FOAPA-field-span">
           <Field type="text" name="actv-input" :rules="isValidActvNumber" id="actv-input" placeholder="xxxx"
@@ -126,6 +137,8 @@ The activity is used to track special projects." />
       <tr v-for="foapa in props.foapaDetails">
         <td>
           {{ foapa.foapaName }}
+          <img id="help" src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
+            :title="foapa.description" />
         </td>
         <td>
           {{ foapa.initialAmount ? `$${foapa.initialAmount}` : "N/A" }}
@@ -160,7 +173,8 @@ import {
   isValidFoapaNumber,
   isValidFoapaAmount,
   isValidFoapaName,
-  isValidActvNumber
+  isValidActvNumber,
+  isValidFoapaDescription,
 } from "../../utils/validators";
 import axios from "axios";
 
@@ -179,6 +193,7 @@ let currentlyInputtedFOAPA = reactive<FoapaStuff>({
   foapaName: "",
   initialAmount: "",
   currentAmount: "",
+  description: "",
 });
 
 let accountNumbers = ref<{ number: string; description: string }[]>([]);
@@ -221,6 +236,7 @@ function editFoapa(foapa) {
   currentlyInputtedFOAPA.activity = foapa.activity;
   currentlyInputtedFOAPA.foapaName = foapa.foapaName;
   currentlyInputtedFOAPA.initialAmount = foapa.currentAmount;
+  currentlyInputtedFOAPA.description = foapa.description;
   deleteFoapa(foapa.foapaName, foapa.fund);
 
   // const confirm = useConfirm();

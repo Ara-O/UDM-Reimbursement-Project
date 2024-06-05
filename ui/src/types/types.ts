@@ -45,6 +45,7 @@ export type FoapaStuff = {
   foapaName: string;
   initialAmount: string;
   currentAmount: string;
+  description:string;
 };
 
 export type AddressDetails = {
