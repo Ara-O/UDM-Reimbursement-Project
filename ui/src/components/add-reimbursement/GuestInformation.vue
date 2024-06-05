@@ -11,34 +11,31 @@
         <div class="flex gap-x-14 gap-y-3 max-w-[1000px] w-auto flex-wrap">
             <span>
                 <h4 class="font-normal text-sm">Employee's First Name</h4>
-                <input type="text" name="employer-first-name" placeholder="Employee's First Name"
-                    v-model="guestInfo.employeeFirstName"
+                <input type="text" name="employer-first-name" placeholder="First Name"
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
             </span>
             <span>
                 <h4 class="font-normal text-sm">Employee's Last Name</h4>
-                <input type="text" name="employer-last-name" placeholder="Employee's Last Name"
-                    v-model="guestInfo.employeeLastName"
+                <input type="text" name="employer-last-name" placeholder="Last Name"
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
             </span>
             <span>
                 <h4 class="font-normal text-sm">Guest's First Name</h4>
-                <input type="text" name="guest-first-name" placeholder="Guest's First Name"
-                    v-model="guestInfo.guestFirstName"
+                <input type="text" name="guest-first-name" placeholder="First Name"
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
             </span>
             <span>
                 <h4 class="font-normal text-sm">Guest's Last Name</h4>
-                <input type="text" name="guest-last-name" placeholder="Guest's Last Name" v-model="guestInfo.guestLastName"
+                <input type="text" name="guest-last-name" placeholder="Last Name"
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
             </span>
             <span>
                 <h4 class="font-normal text-sm">Association</h4>
-                <input type="text" name="association" placeholder="Association" v-model="guestInfo.guestAssociation"
+                <input type="text" name="association" placeholder="Association"
                     class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                     required>
             </span>
@@ -84,13 +81,13 @@ const props = defineProps<{
     claim: ReimbursementTicket
 }>()
 
-let guestInfo = ref<GuestInfo>({
-    employeeFirstName: "Bob",
-    employeeLastName: "Bobbington",
-    guestFirstName: "Jacque",
-    guestLastName: "Jacqueson",
-    guestAssociation: "Child"
-})
+// let guestInfo = ref<GuestInfo>({
+//     employeeFirstName: "First Name",
+//     employeeLastName: "Last Name",
+//     guestFirstName: "First Name",
+//     guestLastName: "Last Name",
+//     guestAssociation: "Association"
+// })
 
 function addGuestInformation() {
     if (!props.claim.guestInformation) {
@@ -102,7 +99,7 @@ function addGuestInformation() {
         return
     }
 
-    props.claim.guestInformation.push(JSON.parse(JSON.stringify(guestInfo.value)))
+    //props.claim.guestInformation.push(JSON.parse(JSON.stringify(guestInfo.value)))
 }
 
 function deleteGuest(guest: GuestInfo) {
