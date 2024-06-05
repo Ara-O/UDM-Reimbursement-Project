@@ -20,6 +20,7 @@ export default function formatFoapaDetails(foapas) {
       foapaNumber: concatFoapa,
       initialAmount: userFoapa.initialAmount,
       currentAmount: userFoapa.initialAmount,
+      description: userFoapa.description,
     });
   });
 

@@ -205,7 +205,7 @@ export function isValidFoapaDescription(value) {
   if (value === undefined || value === null) value = "";
   value = String(value)
 
-  const hasValidLength = /^[a-zA-Z0-9" "]{1,250}$/.test(value);
+  const hasValidLength = /^[a-zA-Z0-9" "]{0,250}$/.test(value);
 
   switch (true) {
     case !hasValidLength:

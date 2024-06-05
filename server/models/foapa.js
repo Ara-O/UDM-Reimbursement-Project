@@ -9,6 +9,7 @@ const FoapaSchema = new mongoose.Schema({
   foapaName: String,
   initialAmount: Number,
   currentAmount: Number,
+  description: String,
 });
 
 const Foapa = mongoose.model("Foapa", FoapaSchema);
