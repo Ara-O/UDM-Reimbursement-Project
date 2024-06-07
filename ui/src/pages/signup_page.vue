@@ -13,7 +13,6 @@
       <section class="signup-form mb-5">
         <span v-if="!basicQuestionsSectionIsFinished">
           <BasicQuestionsSection :user-signup-data="userSignupData" @continue="sendConfirmationEmail" />
-          <h3 v-if="verifyingInformation">Verifying user information...</h3>
         </span>
         <article v-else>
           <h3 class="thanks-for-signing-up-msg">Thank you for signing up!</h3>
@@ -53,51 +52,69 @@ import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { UserData } from "../types/types";
 import { useUserInfoStore } from "../store/index"
+import { TYPE, useToast } from "vue-toastification";
 
 const router = useRouter();
 const userDataStore = useUserInfoStore();
 
-let verifyingInformation = ref<boolean>(false);
 let verificationCodeError = ref<boolean>(false);
 let basicQuestionsSectionIsFinished = ref<boolean>(false);
 let userCode = ref<string>("")
+// let userSignupData = reactive<UserData>({
+//   firstName: "",
+//   lastName: "",
+//   workEmail: "",
+//   employmentNumber: null,
+//   department: "",
+//   mailingAddress: "",
+//   phoneNumber: "",
+//   password: "",
+//   postalCode: "",
+//   city: "",
+//   state: "",
+//   country: "",
+//   foapaDetails: [],
+// });
+
 let userSignupData = reactive<UserData>({
-  firstName: "",
-  lastName: "",
-  workEmail: "",
-  employmentNumber: null,
-  department: "",
-  mailingAddress: "",
-  phoneNumber: "",
-  password: "",
-  postalCode: "",
+  firstName: "ara",
+  lastName: "ara",
+  workEmail: "oladipea",
+  employmentNumber: 13223332,
+  department: "Computer Science",
+  mailingAddress: "123 main street",
+  phoneNumber: "3233233233",
+  password: "password",
+  postalCode: "sddsds",
   city: "",
   state: "",
   country: "",
   foapaDetails: [],
 });
 
+const toast = useToast()
+
 function sendConfirmationEmail() {
   axios
     .post(
-      `${import.meta.env.VITE_API_URL}/api/sendConfirmationEmail`,
+      `${import.meta.env.VITE_API_URL}/api/send-confirmation-email`,
       {
-        userSignupData,
+        workEmail: userSignupData.workEmail,
+        employmentNumber: String(userSignupData.employmentNumber)
       }
     )
-    .then((res) => {
-      verifyingInformation.value = true;
+    .then(() => {
       basicQuestionsSectionIsFinished.value = true;
     })
     .catch((err) => {
-      verifyingInformation.value = false;
-      alert(err?.data?.message || "There was an error, please try again");
+      toast(err?.data?.response?.message || "There was an error, please try again", {
+        type: TYPE.ERROR
+      });
     });
 }
 
 onMounted(() => {
   if (localStorage.getItem("token")?.length ?? 0 > 0) {
-    // console.log("user is already signed in");
     router.push("/dashboard");
   }
 });

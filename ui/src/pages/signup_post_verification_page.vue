@@ -42,7 +42,7 @@
           Creating Account...
         </h5>
 
-        <router-link to="/" class="already-have-account">Already have an Account</router-link>
+        <router-link to="/" class="already-have-account mt-5">Already have an Account</router-link>
         <h5 class="required-field-note" style="font-weight: 300; margin-top: 25px">
           Note: All required fields must be filled
         </h5>
@@ -107,22 +107,22 @@ function registerUser() {
 }
 
 onMounted(() => {
-  if (Object.keys(store.userData).length === 0) {
-    router.push("/signup")
-    return
-  }
+  //   if (Object.keys(store.userData).length === 0) {
+  //     router.push("/signup")
+  //     return
+  //   }
 
   Object.assign(userSignupData, store.userData as UserData)
 
-  if (localStorage.getItem("token")?.length ?? 0 > 0) {
-    // console.log("user is already signed in");
-    router.push("/dashboard");
-  }
+  //   if (localStorage.getItem("token")?.length ?? 0 > 0) {
+  //     // console.log("user is already signed in");
+  //     router.push("/dashboard");
+  //   }
 
-  console.log(route.params)
-  if (route.params.userToken) {
+  //   console.log(route.params)
+  //   if (route.params.userToken) {
 
-  }
+  //   }
 });
 </script>
 

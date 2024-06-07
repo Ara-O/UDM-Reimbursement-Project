@@ -1,12 +1,13 @@
 import { Router } from "express";
 import Foapa from "../models/foapa.js";
+import logger from "../logger.js";
 import Faculty from "../models/faculty.js";
 import {
   encryptPassword,
   decryptPassword,
 } from "../utils/authenticatePassword.js";
 import jwt from "jsonwebtoken";
-
+import { ZodError, z } from "zod";
 
 const router = Router();
 
@@ -57,34 +58,75 @@ router.post("/register", async (req, res) => {
   }
 });
 
-//Verifying the user's information - POST /api/verifySignupBasicInformation
-router.post("/verifySignupBasicInformation", async (req, res) => {
+//Verifying the user's information - POST /api/verify-signup-basic-information
+router.post("/verify-signup-basic-information", async (req, res) => {
   try {
+    const schema = z
+      .object({
+        employmentNumber: z.string().trim().length(8),
+        workEmail: z
+          .string()
+          .trim()
+          .regex(/^[a-zA-Z0-9-]+$/)
+          .toLowerCase(),
+      })
+      .required();
+
+    const data = schema.parse(req.body);
+
+    const employmentNumber = "T" + data.employmentNumber;
+    const workEmail = data.workEmail + "@udmercy.edu";
+
     let facultyFound = await Faculty.findOne({
-      employmentNumber: "T" + req.body.employmentNumber,
+      employmentNumber,
     });
+
+    logger.info(
+      `Verifying signup information for ${workEmail} - ${employmentNumber}`,
+      {
+        api: "/api/verify-signup-basic-information",
+      }
+    );
 
     if (facultyFound !== null) {
       return res.status(409).send({
         message:
           "An employee with the inputted employment number already exists",
       });
-    } else {
-      let facultyWithSameEmail = await Faculty.findOne({
-        workEmail: req.body.workEmail + "@udmercy.edu",
-      });
+    }
 
-      if (facultyWithSameEmail) {
-        return res.status(409).send({
-          message: "An employee with the inputted email address already exists",
-        });
-      } else {
-        return res.status(200).send();
-      }
+    let facultyWithSameEmail = await Faculty.findOne({
+      workEmail,
+    });
+
+    if (facultyWithSameEmail) {
+      return res.status(409).send({
+        message: "An employee with the inputted email address already exists",
+      });
+    } else {
+      return res.status(200).send({ message: "Signup information valid!" });
     }
   } catch (err) {
-    console.log(err);
-    res.status(400).send({ message: err.message });
+    logger.error(
+      err,
+      {
+        service: "/api/verify-signup-basic-information",
+      },
+      {
+        api: "/api/verify-signup-basic-information",
+      }
+    );
+
+    if (err instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "There was an issue with one or more of your inputs. Please revise them and try again.",
+      });
+    }
+
+    res
+      .status(500)
+      .send({ message: "An unexpected error occured. Please try again later" });
   }
 });
 
@@ -98,7 +140,8 @@ router.post("/login", async (req, res) => {
 
     if (facultyInfo === null) {
       res.status(404).send({
-        message: "Credentials not found. Please check that your email and password are correct.",
+        message:
+          "Credentials not found. Please check that your email and password are correct.",
       });
     } else {
       let passwordMatches = await decryptPassword(

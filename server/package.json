@@ -30,7 +30,9 @@
     "mysql2": "^3.6.2",
     "nodemailer": "^6.9.7",
     "pdfmake": "^0.2.7",
-    "pdfmake-unicode": "^0.0.1"
+    "pdfmake-unicode": "^0.0.1",
+    "winston": "^3.13.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/pdfmake": "^0.2.7",

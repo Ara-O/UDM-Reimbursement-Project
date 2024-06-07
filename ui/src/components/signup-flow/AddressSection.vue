@@ -104,6 +104,7 @@ const cities = ref<AddressDetails[]>([
 ]);
 
 function countryChanged() {
+  console.log(userSignupData.country)
   let realCountryData = countries.value?.filter(
     (country) => userSignupData.country === country.name
   );

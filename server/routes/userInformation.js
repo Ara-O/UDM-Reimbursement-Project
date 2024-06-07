@@ -11,6 +11,8 @@ import dotenv from "dotenv";
 import { verifyToken } from "../middleware/auth.js";
 import { generateRandomStringId } from "../utils/generateRandomString.js";
 import { Auth } from "../models/auth.js";
+import { ZodError, z } from "zod";
+import logger from "../logger.js";
 dotenv.config();
 
 const router = Router();
@@ -24,7 +26,7 @@ router.get("/retrieveUserInformationSummary", verifyToken, async (req, res) => {
         message: "Unable to retrieve account information",
       });
     } else {
-      console.log(facultyInfo)
+      console.log(facultyInfo);
       res.status(200).send(facultyInfo);
     }
   } catch (error) {
@@ -143,19 +145,29 @@ router.post("/verifyUserSignupToken", async (req, res) => {
   });
 });
 
-router.post("/sendConfirmationEmail", async (req, res) => {
+router.post("/send-confirmation-email", async (req, res) => {
   try {
-    let userData = req.body.userSignupData;
-    // jwt.sign({ userData }, process.env.JWT_SECRET, async (err, token) => {
+    const schema = z.object({
+      workEmail: z.string().trim().toLowerCase(),
+      employmentNumber: z.string().trim().length(8),
+    });
 
-    let userAuthString = generateRandomStringId(6)
+    const data = schema.parse(req.body);
 
-    let resp = await transporter.sendMail({
+    data.workEmail += "@udmercy.edu";
+    data.employmentNumber = "T" + data.employmentNumber;
+
+    logger.info(`Sending account verification email to ${data.workEmail}`, {
+      api: "/api/send-confirmation-email",
+    });
+
+    let userAuthString = generateRandomStringId(6);
+
+    await transporter.sendMail({
       from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
-      to: userData.workEmail.trim() + "@udmercy.edu",
+      to: data.workEmail,
       subject: "Welcome to the UDM Reimbursement System!",
-      html:
-        `
+      html: `
           <div style="background: white">
           <h3 style="font-weight: 500">Verify your Account</h3>
           <h4 style="font-weight: 300">Hello,</h4>
@@ -163,28 +175,39 @@ router.post("/sendConfirmationEmail", async (req, res) => {
           <h4 style="font-weight: 300">You can verify your account using this key</h4>
           <h3 style="font-weight: 500">${userAuthString}</h3>
         </div>
-        `
+        `,
     });
 
-    console.log(resp);
+    logger.info(`Verification email successfully sent to ${data.workEmail}`, {
+      api: "/api/send-confirmation-email",
+    });
 
     //Store key in database along with email and emp number
-
     const auth = new Auth({
-      workEmail: userData.workEmail.trim() + "@udmercy.edu",
-      employmentNumber: "T" + userData.employmentNumber.trim(),
-      authString: userAuthString
-    })
+      workEmail: data.workEmail,
+      employmentNumber: data.employmentNumber,
+      authString: userAuthString,
+    });
 
-    await auth.save()
+    await auth.save();
 
     res.status(200).send({
       message: "Email sent successfully!",
     });
-    // });
   } catch (err) {
-    console.log(err);
-    res.status(400).send(err);
+    logger.error(err, { api: "/api/send-confirmation-email" });
+
+    if (err instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "There was an error with one of your inputs. Please revise them and try again.",
+      });
+    }
+
+    res.status(500).send({
+      message:
+        "There was an error sending you a verification email. Please try again later.",
+    });
   }
 });
 router.post("/resetPassword", async (req, res) => {
@@ -243,27 +266,27 @@ router.get("/retrieveAccountNumbers", async (req, res) => {
 });
 
 router.post("/verifyCode", async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
 
   let authInfo = await Auth.findOne({
     workEmail: req.body.workEmail.trim() + "@udmercy.edu",
     employmentNumber: "T" + req.body.employmentNumber,
-  })
+  });
 
   if (authInfo === null) {
-    res.status(500).send("There was an error")
-    return
+    res.status(500).send("There was an error");
+    return;
   }
 
-  console.log(authInfo)
+  console.log(authInfo);
 
   if (authInfo?.authString === req.body.userCode.trim()) {
-    res.status(200).send("Code verified")
-    return
+    res.status(200).send("Code verified");
+    return;
   } else {
-    res.status(404).send("Incorrect code")
-    return
+    res.status(404).send("Incorrect code");
+    return;
   }
-})
+});
 
 export default router;

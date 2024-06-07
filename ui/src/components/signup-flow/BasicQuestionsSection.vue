@@ -1,6 +1,6 @@
 <template>
   <h3 class="signup-title-description">Basic Questions</h3>
-  <Form @submit="progress">
+  <Form @submit="verifyInformation">
     <div class="input-field-wrapper">
       <div class="input-field">
         <label for="first-name">First Name:*</label>
@@ -56,7 +56,8 @@
       <div class="input-field">
         <label for="department">Department: *</label>
         <span>
-          <Field name="department" id="department" as="select" :rules="isValidString" v-model="userSignupData.department">
+          <Field name="department" id="department" as="select" :rules="isValidString"
+            v-model="userSignupData.department">
             <option :value="department" v-for="department in departments">
               {{ department }}
             </option>
@@ -67,9 +68,7 @@
     </div>
     <button class="signup-button" type="submit">Continue</button>
   </Form>
-  <h5 class="validating-signup-field" v-if="validatingSignupFields">
-    Validating Employment Number...
-  </h5>
+
   <h5 class="error-signup-message" v-if="signupError">
     {{ signupErrorMessage }}
   </h5>
@@ -85,12 +84,12 @@ import {
   isValidPhoneNumber,
 } from "../../utils/validators";
 import { UserData } from "../../types/types";
+import { TYPE, useToast } from "vue-toastification";
 
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
 }>();
 
-let validatingSignupFields = ref<boolean>(false);
 let signupError = ref<boolean>(false);
 let signupErrorMessage = ref<string>("");
 const departments = [
@@ -108,28 +107,29 @@ const departments = [
   "Robotics and Mechatronic Systems Engineering",
 ];
 const emits = defineEmits(["continue"]);
+const toast = useToast()
 
-function progress() {
-  validatingSignupFields.value = true;
-  signupError.value = false;
-  signupErrorMessage.value = "";
+function verifyInformation() {
+  toast("Verifying your information...", {
+    type: TYPE.INFO
+  })
+
   axios
     .post(
-      `${import.meta.env.VITE_API_URL}/api/verifySignupBasicInformation`,
+      `${import.meta.env.VITE_API_URL}/api/verify-signup-basic-information`,
       {
-        employmentNumber: userSignupData.employmentNumber,
+        employmentNumber: String(userSignupData.employmentNumber),
         workEmail: userSignupData.workEmail,
       }
     )
-    .then((res) => {
+    .then(() => {
       emits("continue");
-      validatingSignupFields.value = false;
       window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     })
     .catch((err) => {
-      signupError.value = true;
-      signupErrorMessage.value = err.response.data.message;
-      validatingSignupFields.value = false;
+      toast(err?.response?.data?.message || "There was an error verifying your information. Please try again later", {
+        type: TYPE.ERROR
+      })
     });
 }
 </script>

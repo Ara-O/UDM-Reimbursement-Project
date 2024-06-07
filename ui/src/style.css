@@ -16,3 +16,41 @@ body {
   margin: 0px;
   color: rgb(33, 33, 33);
 }
+
+.Vue-Toastification__toast--info{
+  border-radius: 0px;
+  font-size: 4px;
+  background-color: white;
+  color: black;
+  border-left: solid 7px black;
+  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1), 0 2px 15px 0 rgba(161, 161, 161, 0.05);
+} 
+
+.Vue-Toastification__toast--error{
+  border-radius: 0px;
+  font-size: 4px;
+  background-color: white;
+  color: var(--udmercy-red);
+  border-left: solid 7px var(--udmercy-red);
+  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1), 0 2px 15px 0 rgba(161, 161, 161, 0.05);
+} 
+
+
+.Vue-Toastification__toast--info .Vue-Toastification__close-button{
+  color: black;
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__progress-bar{
+  background-color: black;
+}
+
+.Vue-Toastification__toast--error .Vue-Toastification__close-button{
+  color: var(--udmercy-red);
+}
+
+.Vue-Toastification__toast--error .Vue-Toastification__progress-bar{
+  background-color: var(--udmercy-red);
+}
+.Vue-Toastification__toast-body{
+  font-size: 13.5px;
+}
