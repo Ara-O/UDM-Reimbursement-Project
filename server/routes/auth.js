@@ -13,48 +13,97 @@ const router = Router();
 
 // Registering user - POST /api/register
 router.post("/register", async (req, res) => {
-  const userData = req.body;
+  const schema = z.object({
+    firstName: z
+      .string()
+      .trim()
+      .regex(/^[a-zA-Z0-9\s-]+$/),
+    lastName: z
+      .string()
+      .trim()
+      .regex(/^[a-zA-Z0-9\s-]+$/),
+    workEmail: z.string().trim(),
+    employmentNumber: z
+      .string()
+      .trim()
+      .length(8)
+      .regex(/^[0-9]+$/),
+    department: z.string(),
+    mailingAddress: z.string(),
+    phoneNumber: z
+      .string()
+      .length(10)
+      .regex(/^[0-9]+$/),
+    password: z.string().min(8),
+    postalCode: z.string(),
+    city: z.string(),
+    state: z.string(),
+    country: z.string(),
+    foapaDetails: z.array().optional(),
+  });
 
-  if (!userData.workEmail.includes("@udmercy.edu")) {
-    userData.workEmail += "@udmercy.edu";
-  }
-  userData.workEmail = userData.workEmail.toLowerCase();
+  const userData = schema.parse(req.body);
+
+  userData.workEmail += "@udmercy.edu";
   userData.employmentNumber = "T" + userData.employmentNumber;
+
+  logger.info(`An account is being created for ${userData.workEmail}`, {
+    api: "/api/register",
+  });
 
   try {
     let encryptedPassword = await encryptPassword(userData.password);
     userData.password = encryptedPassword;
-    console.log(userData);
 
     let existingUser = await Faculty.findOne({
       employmentNumber: userData.employmentNumber,
     });
 
     if (existingUser) {
-      res.status(409).send({ message: "Error: User already exists" });
-    } else {
-      let faculty = new Faculty(userData);
-      let savedFaculty = await faculty.save();
-      //Creates a token thatll be used to authenticate the user for later api calls
-      jwt.sign(
-        { userId: savedFaculty._id },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "30d",
-        },
-        (err, token) => {
-          if (!err) {
-            return res
-              .status(201)
-              .send({ message: "Registration successful!", token });
-          }
-          console.log(err);
-        }
-      );
+      return res.status(409).send({ message: "Error: User already exists" });
     }
+
+    let faculty = new Faculty(userData);
+    let savedFaculty = await faculty.save();
+    //Creates a token thatll be used to authenticate the user for later api calls
+    jwt.sign(
+      { userId: savedFaculty._id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "30d",
+      },
+      (err, token) => {
+        if (!err) {
+          logger.info(
+            `Account successfully created for ${userData.workEmail}`,
+            {
+              api: "/api/register",
+            }
+          );
+          return res
+            .status(201)
+            .send({ message: "Registration successful!", token });
+        }
+
+        throw new Error(err);
+      }
+    );
   } catch (error) {
-    res.status(400).send({ message: error.message });
-    console.error(error.message);
+    logger.error(error, {
+      api: "/api/register",
+    });
+
+    if (error instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "There was an error with one of your inputs. Please revise them and try again.",
+      });
+    }
+
+    return res.status(500).send({
+      message:
+        "There was an error creating your account. Please try again later",
+    });
   }
 });
 
@@ -107,15 +156,9 @@ router.post("/verify-signup-basic-information", async (req, res) => {
       return res.status(200).send({ message: "Signup information valid!" });
     }
   } catch (err) {
-    logger.error(
-      err,
-      {
-        service: "/api/verify-signup-basic-information",
-      },
-      {
-        api: "/api/verify-signup-basic-information",
-      }
-    );
+    logger.error(err, {
+      api: "/api/verify-signup-basic-information",
+    });
 
     if (err instanceof ZodError) {
       return res.status(400).send({

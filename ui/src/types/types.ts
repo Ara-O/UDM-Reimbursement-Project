@@ -2,7 +2,7 @@ export type UserData = {
   firstName: string;
   lastName: string;
   workEmail: string;
-  employmentNumber: number | null;
+  employmentNumber: string;
   department: string;
   mailingAddress: string;
   phoneNumber: string;
@@ -18,7 +18,7 @@ export type UserDataPreVerification = {
   firstName: string;
   lastName: string;
   workEmail: string;
-  employmentNumber: number | null;
+  employmentNumber: string;
   department: string;
 };
 
@@ -45,7 +45,7 @@ export type FoapaStuff = {
   foapaName: string;
   initialAmount: string;
   currentAmount: string;
-  description:string;
+  description: string;
 };
 
 export type AddressDetails = {
@@ -85,12 +85,12 @@ export type FoapaInput = {
 };
 
 export type GuestInfo = {
-  employeeFirstName: string
-  employeeLastName: string,
-  guestFirstName: string,
-  guestLastName: string,
-  guestAssociation: string,
-}
+  employeeFirstName: string;
+  employeeLastName: string;
+  guestFirstName: string;
+  guestLastName: string;
+  guestAssociation: string;
+};
 
 export type ReimbursementTicket = {
   reimbursementName: string;
@@ -98,7 +98,7 @@ export type ReimbursementTicket = {
   destination: string;
   paymentRetrievalMethod: "Hold for Pickup" | "Direct Deposit" | "";
   UDMPUVoucher: Boolean;
-  guestInformation: GuestInfo[],
+  guestInformation: GuestInfo[];
   totalCost: number;
   reimbursementReceipts: { url: string; id: string }[];
   reimbursementStatus: string;
@@ -106,4 +106,3 @@ export type ReimbursementTicket = {
   activities: Expense[];
   foapaDetails: FoapaInput[];
 };
-

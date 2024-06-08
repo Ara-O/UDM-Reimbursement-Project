@@ -4,10 +4,9 @@
       <div class="input-field">
         <label for="country">Country: *</label>
         <span>
-          <Field name="country" id="country" as="select" :rules="isValidString" v-model="userSignupData.country"
-            @change="countryChanged">
-            <option :value="country.name" v-for="country in countries">
-              {{ country.name }}
+          <Field name="country" id="country" as="select" :rules="isValidString" v-model="selectedCountry">
+            <option :value="country" v-for="country in countries">
+              {{ country }}
             </option>
           </Field>
           <ErrorMessage name="country" class="error-field" />
@@ -17,8 +16,8 @@
       <div class="input-field">
         <label for="state">State: *</label>
         <span>
-          <Field name="state" id="state" as="select" :rules="isValidString" :disabled="userSignupData.country === ''"
-            v-model="userSignupData.state" @change="stateChanged">
+          <Field name="state" id="state" as="select" :rules="isValidString" :disabled="selectedCountry === ''"
+            v-model="selectedState">
             <option :value="state.name" v-for="state in states">
               {{ state.name }}
             </option>
@@ -31,8 +30,8 @@
       <div class="input-field">
         <label for="city">City: *</label>
         <span>
-          <Field name="city" id="city" :rules="isNotEmpty" as="select" v-model="userSignupData.city"
-            :disabled="userSignupData.state === ''">
+          <Field name="city" id="city" :rules="isNotEmpty" as="select" :disabled="selectedState === ''"
+            v-model="selectedCity">
             <option :value="city.name" v-for="city in cities">
               {{ city.name }}
             </option>
@@ -76,26 +75,21 @@
 import { Form, Field, ErrorMessage } from "vee-validate";
 import axios from "axios";
 import { UserData, AddressDetails } from "../../types/types";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { isValidString, isNotEmpty } from "../../utils/validators";
+import { TYPE, useToast } from "vue-toastification";
 const { userSignupData } = defineProps<{
   userSignupData: UserData;
 }>();
 
+
+const selectedCountry = ref<string>("")
+const selectedState = ref<string>("")
+const selectedCity = ref<string>("")
 const emits = defineEmits(["continue", "goBack"]);
 
-const countries = ref<AddressDetails[]>([
-  {
-    name: "Default",
-    code: "Default",
-  },
-]);
-const states = ref<AddressDetails[]>([
-  {
-    name: "Default",
-    code: "Default",
-  },
-]);
+const countries = ref<string[]>(["United States", "Canada"])
+const states = ref<AddressDetails[]>([]);
 const cities = ref<AddressDetails[]>([
   {
     name: "Default",
@@ -103,66 +97,65 @@ const cities = ref<AddressDetails[]>([
   },
 ]);
 
-function countryChanged() {
-  console.log(userSignupData.country)
-  let realCountryData = countries.value?.filter(
-    (country) => userSignupData.country === country.name
-  );
-
-  axios
-    .get(
-      `${import.meta.env.VITE_API_URL}/api/getStateFromCountry`,
-      {
-        params: { realCountryData },
-      }
-    )
-    .then((res) => {
-      states.value = res.data;
-      cities.value = [];
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+const toast = useToast()
+const countryCode = {
+  "Canada": "CA",
+  "United States": "US"
 }
 
-function stateChanged() {
-  let realCountryData = countries.value?.filter(
-    (country) => userSignupData.country === country.name
-  );
+watch(selectedCountry, () => countryChanged())
+watch(selectedState, () => stateChanged())
 
-  let realStateData = states.value?.filter(
-    (state) => userSignupData.state === state.name
-  );
+async function countryChanged() {
+  try {
+    const res = await axios
+      .get(
+        `${import.meta.env.VITE_API_URL}/api/get-state-from-country`,
+        {
+          params: { countryCode: countryCode[selectedCountry.value] },
+        }
+      )
 
-  axios
-    .get(
-      `${import.meta.env.VITE_API_URL}/api/getCityFromState`,
-      {
-        params: { realCountryData, realStateData },
-      }
-    )
-    .then((res) => {
-      cities.value = res.data;
+    states.value = res.data;
+    cities.value = [];
+  } catch (err) {
+    toast("There was an error fetching the states. Please try again later", {
+      type: TYPE.ERROR
     })
-    .catch((err) => {
-      console.log(err);
-    });
+  }
+}
+
+async function stateChanged() {
+  try {
+    const stateCode = states.value.find((state) => state.name === selectedState.value)?.code;
+
+    let res = await axios
+      .get(
+        `${import.meta.env.VITE_API_URL}/api/get-city-from-state`,
+        {
+          params: { stateCode },
+        }
+      )
+
+    cities.value = res.data;
+
+  } catch (err: any) {
+    toast("There was an error fetching the cities. Please try again later", {
+      type: TYPE.ERROR
+    })
+  }
 }
 
 function progress() {
+  userSignupData.country = selectedCountry.value;
+  userSignupData.city = selectedCity.value
+  userSignupData.state = selectedState.value
   emits("continue");
   window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
 }
 
 onMounted(() => {
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/allCountries`)
-    .then((res) => {
-      countries.value = res.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+
 });
 </script>
 

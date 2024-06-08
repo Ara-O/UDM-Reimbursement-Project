@@ -265,27 +265,60 @@ router.get("/retrieveAccountNumbers", async (req, res) => {
   }
 });
 
-router.post("/verifyCode", async (req, res) => {
-  console.log(req.body);
+router.post("/verify-code", async (req, res) => {
+  try {
+    const schema = z.object({
+      userCode: z
+        .string()
+        .trim()
+        .length(6, "Verification code must be 6 digits"),
+      workEmail: z
+        .string({ required_error: "Work email is a required field" })
+        .trim()
+        .toLowerCase(),
+      employmentNumber: z
+        .string({ required_error: "Employment number is a required field" })
+        .trim()
+        .length(8, "Employment number must be 8 digits"),
+    });
 
-  let authInfo = await Auth.findOne({
-    workEmail: req.body.workEmail.trim() + "@udmercy.edu",
-    employmentNumber: "T" + req.body.employmentNumber,
-  });
+    const data = schema.parse(req.body);
+    data.workEmail += "@udmercy.edu";
+    data.employmentNumber = "T" + data.employmentNumber;
 
-  if (authInfo === null) {
-    res.status(500).send("There was an error");
-    return;
-  }
+    let authInfo = await Auth.findOne({
+      workEmail: data.workEmail,
+      employmentNumber: data.employmentNumber,
+    });
 
-  console.log(authInfo);
+    if (authInfo === null) {
+      res.status(404).send({
+        message: "Your token has expired. Please restart the signup process.",
+      });
+      return;
+    }
 
-  if (authInfo?.authString === req.body.userCode.trim()) {
-    res.status(200).send("Code verified");
-    return;
-  } else {
-    res.status(404).send("Incorrect code");
-    return;
+    if (authInfo.authString === data.userCode) {
+      return res.status(200).send({ message: "Code verified" });
+    } else {
+      return res
+        .status(404)
+        .send({ message: "Incorrect code. Please try again." });
+    }
+  } catch (err) {
+    logger.error(err, { api: "/api/verify-code" });
+
+    if (err instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "There was an error with one of your inputs. Please revise them and try again.",
+      });
+    }
+
+    return res.status(500).send({
+      message:
+        "There was an error verifying your code. Please try again later.",
+    });
   }
 });
 

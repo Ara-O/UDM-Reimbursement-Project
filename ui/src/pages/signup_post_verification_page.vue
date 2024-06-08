@@ -38,9 +38,6 @@
           <FoapaSection :user-signup-data="userSignupData" @finish="registerUser" @go-back="surveyProgress--" />
         </section>
         <br />
-        <h5 v-if="creatingAccountFeedback" class="creating-account-feedback">
-          Creating Account...
-        </h5>
 
         <router-link to="/" class="already-have-account mt-5">Already have an Account</router-link>
         <h5 class="required-field-note" style="font-weight: 300; margin-top: 25px">
@@ -62,9 +59,11 @@ import { onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { FoapaStuff, UserData } from "../types/types";
 import { useUserInfoStore } from "../store";
+import { TYPE, useToast } from "vue-toastification";
 let surveyProgress = ref<number>(1);
 
 const router = useRouter();
+const toast = useToast()
 const route = useRoute();
 const store = useUserInfoStore()
 
@@ -73,7 +72,7 @@ let userSignupData = reactive<UserData>({
   firstName: "",
   lastName: "",
   workEmail: "",
-  employmentNumber: null,
+  employmentNumber: "",
   department: "",
   mailingAddress: "",
   phoneNumber: "",
@@ -85,44 +84,47 @@ let userSignupData = reactive<UserData>({
   foapaDetails: [],
 });
 
-function registerUser() {
-  creatingAccountFeedback.value = true;
-  axios
-    .post(
-      `${import.meta.env.VITE_API_URL}/api/register`,
-      userSignupData
-    )
-    .then((res) => {
-      localStorage.setItem("token", res.data.token);
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
-      router.push("/dashboard");
+async function registerUser() {
+  try {
+    toast("Creating account...", {
+      type: TYPE.INFO
     })
-    .catch((err) => {
-      alert(err.response.data.message);
+
+    let res = await axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/api/register`,
+        userSignupData
+      )
+
+    localStorage.setItem("token", res.data.token);
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
+    router.push("/dashboard");
+
+    toast("Account successfully created...", {
+      type: TYPE.SUCCESS
     })
-    .finally(() => {
-      creatingAccountFeedback.value = false;
-    });
+  } catch (err: any) {
+    toast(err?.response?.data?.message || "There was an error creating your account. Please try again later", {
+      type: TYPE.ERROR
+    })
+  }
 }
 
 onMounted(() => {
-  //   if (Object.keys(store.userData).length === 0) {
-  //     router.push("/signup")
-  //     return
-  //   }
+  if (Object.keys(store.userData).length === 0) {
+    toast("There was an error fetching your information. Please restart the signup process", {
+      type: TYPE.ERROR
+    })
+    router.push("/signup")
+    return
+  }
 
   Object.assign(userSignupData, store.userData as UserData)
 
-  //   if (localStorage.getItem("token")?.length ?? 0 > 0) {
-  //     // console.log("user is already signed in");
-  //     router.push("/dashboard");
-  //   }
-
-  //   console.log(route.params)
-  //   if (route.params.userToken) {
-
-  //   }
+  if (localStorage.getItem("token")?.length ?? 0 > 0) {
+    router.push("/dashboard");
+  }
 });
 </script>
 

@@ -323,7 +323,7 @@ input {
   }
 }
 
-@media (max-width: 780px) {
+@media (max-width: 800px) {
   .verify-code-section {
     text-align: center;
   }
@@ -348,6 +348,10 @@ input {
   .signup-title-description {
     text-align: center;
     padding: 0px 20px;
+  }
+
+  .signup_form{
+    text-align: center;
   }
 
   .udmercy-logo-wrapper-mobile {

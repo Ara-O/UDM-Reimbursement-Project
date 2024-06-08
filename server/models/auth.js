@@ -1,14 +1,17 @@
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema } from "mongoose";
 
-const authSchema = new Schema({
+const authSchema = new Schema(
+  {
     employmentNumber: String,
     workEmail: String,
     authString: String,
-}, { timestamps: true })
+  },
+  { timestamps: true }
+);
 
-authSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
+authSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
 
-const Auth = mongoose.model('auth', authSchema, 'auth')
+const Auth = mongoose.model("auth", authSchema, "auth");
 
 // In honor of Andre
-export { Auth }
+export { Auth };

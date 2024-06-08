@@ -25,9 +25,9 @@
         </span>
       </div>
       <span style="display: flex; align-items: center; gap: 10px">
-        <router-link to="/signup" class="btn-link">Create an Account</router-link>
+        <router-link to="/signup" class="btn-link !text-black">Create an Account</router-link>
         <h3 style="font-weight: 300">|</h3>
-        <a class="btn-link" @click="section = 'forgot-password'">
+        <a class="btn-link !text-black" @click="section = 'forgot-password'">
           Forgot Password
         </a>
       </span>
