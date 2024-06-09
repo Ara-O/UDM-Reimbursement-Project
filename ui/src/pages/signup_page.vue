@@ -80,9 +80,6 @@
         <button class="signup-button" type="submit">Continue</button>
       </Form>
 
-      <h5 class="error-signup-message" v-if="signupError">
-        {{ signupErrorMessage }}
-      </h5>
       <div class="account-feedback-message">
         <router-link to="/" class="already-have-account text-black">Already have an Account</router-link>
         <h5 class="required-field-note mb-0">
@@ -107,8 +104,6 @@ import {
   isValidPhoneNumber,
 } from "../utils/validators";
 
-let signupError = ref<boolean>(false);
-let signupErrorMessage = ref<string>("");
 const departments = [
   "Dean's Office",
   "Biochemistry",

@@ -211,7 +211,12 @@ input {
   cursor: pointer;
   background: #a5093e;
   border-radius: 26px;
-}
+  transition: all 250ms ease-in-out;
+  }
+  
+  .signup-button:hover {
+    background: #9c0839;
+  }
 
 .signup-button-arrow {
   display: flex;

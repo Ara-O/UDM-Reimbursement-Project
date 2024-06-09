@@ -94,7 +94,7 @@ const toast = useToast()
 
 async function loginUser() {
   try {
-    toast("Logging in...", {
+    const toastId = toast("Logging in...", {
       type: TYPE.INFO
     })
 
@@ -107,6 +107,7 @@ async function loginUser() {
 
     localStorage.setItem("token", res.data.token);
 
+    toast.dismiss(toastId)
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
 

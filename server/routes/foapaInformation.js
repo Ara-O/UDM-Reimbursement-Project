@@ -16,7 +16,7 @@ router.post("/updateFoapaDetails", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/retrieveFoapaDetails", verifyToken, async (req, res) => {
+router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
   try {
     let foapaDetails = await Faculty.findById(req.user.userId).select(
       "foapaDetails "

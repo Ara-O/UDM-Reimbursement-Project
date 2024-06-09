@@ -135,6 +135,11 @@ input {
   cursor: pointer;
   background: #a5093e;
   border-radius: 26px;
+  transition: all 250ms ease-in-out;
+}
+
+.login-button:hover {
+  background: #9c0839;
 }
 
 @media (max-width: 610px) {

@@ -54,7 +54,7 @@ function formatUserFoapa(foapa: FoapaStuff) {
 function retrieveUserFoapaDetails() {
   axios
     .get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveFoapaDetails`
+      `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
     )
     .then((res) => {
       userFoapaNumbers.value = res.data;

@@ -18,6 +18,18 @@ const toastOptions: PluginOptions = {
   icon: false,
 };
 
+Router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth) {
+    if (localStorage.getItem("token")?.length ?? 0 > 0) {
+      next();
+    } else {
+      next("/");
+    }
+  } else {
+    next();
+  }
+});
+
 const pinia = createPinia();
 
 createApp(App).use(Router).use(pinia).use(Toast, toastOptions).mount("#app");

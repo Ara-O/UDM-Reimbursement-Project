@@ -65,22 +65,37 @@ export default createRouter({
     {
       path: "/account",
       component: AccountPage,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: "/dashboard",
       component: DashboardPage,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: "/add-reimbursement",
       component: AddReimbursementPage,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: "/add-foapa",
       component: AddFoapaPage,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: "/change-password",
       component: PasswordPage,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: "/forgot-password/:userToken",

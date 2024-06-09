@@ -41,7 +41,7 @@ let loadingMessage = ref<string>("");
 function retrieveUserFoapaDetails() {
   axios
     .get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveFoapaDetails`
+      `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
     )
     .then((res) => {
       foapaDetails.value = res.data;

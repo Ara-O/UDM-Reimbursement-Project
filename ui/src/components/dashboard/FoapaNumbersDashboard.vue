@@ -49,14 +49,15 @@ function formatUserFoapa(foapa: FoapaStuff) {
 function retrieveUserFoapaDetails() {
   axios
     .get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveFoapaDetails`
+      `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
     )
     .then((res) => {
       userFoapaNumbers.value = res.data;
       // console.log(res);
     })
     .catch((err) => {
-      console.log(err);
+      console.log("err fetching foapa")
+      console.log(err.message);
     });
 }
 

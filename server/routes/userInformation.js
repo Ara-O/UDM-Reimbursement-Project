@@ -22,7 +22,7 @@ router.get("/retrieveUserInformationSummary", verifyToken, async (req, res) => {
   try {
     let facultyInfo = await Faculty.findById(req.user.userId);
     if (facultyInfo === null) {
-      res.status(404).send({
+      return res.status(404).send({
         message: "Unable to retrieve account information",
       });
     } else {
