@@ -26,7 +26,6 @@ router.get("/retrieveUserInformationSummary", verifyToken, async (req, res) => {
         message: "Unable to retrieve account information",
       });
     } else {
-      console.log(facultyInfo);
       res.status(200).send(facultyInfo);
     }
   } catch (error) {

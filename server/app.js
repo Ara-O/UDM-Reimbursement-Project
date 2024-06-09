@@ -12,6 +12,7 @@ import pdfInformation from "./routes/pdfInformation.js";
 import geographyInformation from "./routes/geographyInformation.js";
 import sgMail from "@sendgrid/mail";
 import nodemailer from "nodemailer";
+import logger from "./logger.js";
 dotenv.config();
 sgMail.setApiKey(process.env.UDM_EMAIL_KEY);
 const port = process.env.PORT || 8080;
@@ -37,7 +38,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.listen(port, () => {
   connectToDB();
 
-  console.log("Server started on port 8080");
+  logger.info("Server started on port 8080", {
+    api: "server",
+  });
 });
 
 app.use("/api", userInformationRouter);

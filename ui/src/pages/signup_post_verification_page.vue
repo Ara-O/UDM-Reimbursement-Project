@@ -15,7 +15,7 @@
         Password Information
       </h3>
       <h3 class="signup-title-description" v-if="surveyProgress === 2">
-        Address Information
+        Residence Address
       </h3>
       <h3 class="signup-title-description" v-if="surveyProgress === 3">
         User Foapa Information (Not Required). Hover Over Question Mark Icon For

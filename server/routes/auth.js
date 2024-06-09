@@ -175,22 +175,32 @@ router.post("/verify-signup-basic-information", async (req, res) => {
 
 //Logging the user in - POST /api/login
 router.post("/login", async (req, res) => {
-  const { workEmail, password } = req.body;
+  const schema = z.object({
+    userInfo: z.object({
+      workEmail: z.string().trim().toLowerCase(),
+      password: z.string(),
+    }),
+  });
+
   try {
+    const data = schema.parse(req.body);
+    data.userInfo.workEmail += "@udmercy.edu";
+
     let facultyInfo = await Faculty.findOne({
-      workEmail: workEmail.toLowerCase() + "@udmercy.edu",
+      workEmail: data.userInfo.workEmail,
     }).select("workEmail password employmentNumber");
 
     if (facultyInfo === null) {
-      res.status(404).send({
+      return res.status(404).send({
         message:
-          "Credentials not found. Please check that your email and password are correct.",
+          "Incorrect credentials. Please check that your email and password are correct.",
       });
     } else {
       let passwordMatches = await decryptPassword(
-        password,
+        data.userInfo.password,
         facultyInfo.password
       );
+
       if (passwordMatches) {
         jwt.sign(
           { userId: facultyInfo._id },
@@ -200,19 +210,42 @@ router.post("/login", async (req, res) => {
           },
           (err, token) => {
             if (!err) {
-              res.status(200).send({ message: "Login successful", token });
+              return res
+                .status(200)
+                .send({ message: "Login successful", token });
             }
+
+            return res.status(500).send({
+              message:
+                "An unexpected error occured when logging you in. Please try again later.",
+            });
           }
         );
       } else {
-        res
+        return res
           .status(403)
           .send({ message: "Incorrect Password. Please try again" });
       }
     }
   } catch (error) {
-    console.error(error);
-    res.status(400).send({ message: error.message });
+    logger.error("There was an error logging a user in", {
+      api: "/api/login",
+    });
+
+    logger.error(error, {
+      api: "/api/login",
+    });
+
+    if (error instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "There was an error with one of your inputs. Please revise them and try again.",
+      });
+    }
+
+    return res
+      .status(500)
+      .send({ message: "An unexpected error occured. Please try again later" });
   }
 });
 

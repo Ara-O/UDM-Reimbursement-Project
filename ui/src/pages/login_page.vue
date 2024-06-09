@@ -33,12 +33,6 @@
       </span>
       <button class="login-button" type="submit">Login</button>
     </Form>
-    <h5 v-if="loggingIn" style="font-weight: 400">
-      Logging you in...Please wait...
-    </h5>
-    <h5 v-if="error && !loggingIn" style="font-weight: 400">
-      {{ errorMessage }}
-    </h5>
   </section>
   <section class="login-page" v-if="section === 'forgot-password'">
     <div class="udmercy-logo-wrapper">
@@ -90,39 +84,42 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { isNotEmpty, isValidString } from "../utils/validators";
+import { TYPE, useToast } from "vue-toastification";
 let section = ref<"login" | "forgot-password">("login");
 let emailSent = ref<boolean>(false);
-let loggingIn = ref<boolean>(false);
-let errorMessage = ref<string>("");
-let error = ref<boolean>(false);
 let userInfo = ref<any>({ workEmail: "", password: "" });
 let forgotPasswordWorkEmail = ref<string>("");
 const router = useRouter();
-function loginUser() {
-  loggingIn.value = true;
-  axios
-    .post(
-      `${import.meta.env.VITE_API_URL}/api/login`,
-      userInfo.value
-    )
-    .then((res) => {
-      // console.log(res);
-      loggingIn.value = false;
-      localStorage.setItem("token", res.data.token);
-      axios.defaults.headers.common["authorization"] =
-        localStorage.getItem("token");
-      router.push("/dashboard");
+const toast = useToast()
+
+async function loginUser() {
+  try {
+    toast("Logging in...", {
+      type: TYPE.INFO
     })
-    .catch((err) => {
-      loggingIn.value = false;
-      error.value = true;
-      errorMessage.value = err.response.data.message;
-    });
+
+    let res = await axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/api/login`, {
+        userInfo: userInfo.value
+      }
+      )
+
+    localStorage.setItem("token", res.data.token);
+
+    axios.defaults.headers.common["authorization"] =
+      localStorage.getItem("token");
+
+    router.push("/dashboard");
+  } catch (err: any) {
+    toast(err?.response?.data?.message || "There was an issue logging you in. Pease try again later.", {
+      type: TYPE.ERROR
+    })
+  }
 }
 
 onMounted(() => {
   if (localStorage.getItem("token")?.length ?? 0 > 0) {
-    console.log("user is already signed in");
     router.push("/dashboard");
   }
 });

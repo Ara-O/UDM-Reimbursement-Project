@@ -303,13 +303,13 @@ function retrieveUserInformationSummary() {
       // console.log(res);
     })
     .catch((err) => {
-      console.log(err.status);
-      if (err.response.status === 401 || err.response.status === 403 || err.response.status === 404) {
-        //If JWT is expired, clear the token and go back to signup page
-        alert(err?.response?.data?.message || "An error has occured, please log in again");
-        localStorage.setItem("token", "");
-        router.push("/");
-      }
+      console.log(err);
+      // if (err.response.status === 401 || err.response.status === 403 || err.response.status === 404) {
+      //   //If JWT is expired, clear the token and go back to signup page
+      //   alert(err?.response?.data?.message || "An error has occured, please log in again");
+      //   localStorage.setItem("token", "");
+      //   router.push("/");
+      // }
     });
 }
 

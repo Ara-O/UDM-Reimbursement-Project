@@ -68,8 +68,7 @@
           <div class="input-field">
             <label for="department">Department: *</label>
             <span>
-              <Field name="department" id="department" as="select" :rules="isValidString"
-                v-model="userSignupData.department">
+              <Field name="department" id="department" as="select" v-model="userSignupData.department">
                 <option :value="department" v-for="department in departments">
                   {{ department }}
                 </option>
@@ -111,18 +110,18 @@ import {
 let signupError = ref<boolean>(false);
 let signupErrorMessage = ref<string>("");
 const departments = [
-  "Architectural Engineering",
+  "Dean's Office",
   "Biochemistry",
-  "Civil Engineering",
-  "Computer Science",
-  "Electrical Engineering",
-  "Environmental Engineering",
-  "Mathematics",
+  "Civil",
   "Mechanical Engineering",
-  "Office of the Dean",
+  "Architectural & Environmental Engineering",
+  "Computer Science",
   "Physics",
+  "Electrical & Computer Engineering",
+  "Mathematics",
+  "E&S Computing Services",
+  "Professional Engineering",
   "Chemistry",
-  "Robotics and Mechatronic Systems Engineering",
 ];
 
 const emits = defineEmits(["continue"]);
