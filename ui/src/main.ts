@@ -1,11 +1,11 @@
-import { createApp } from "vue";
 import Router from "./router/index";
 import App from "./App.vue";
-import { configure } from "vee-validate";
 import Toast, { POSITION, PluginOptions } from "vue-toastification";
+import { createApp } from "vue";
+import { configure } from "vee-validate";
+import { createPinia } from "pinia";
 import "vue-toastification/dist/index.css";
 import "./style.css";
-import { createPinia } from "pinia";
 
 configure({
   validateOnChange: true,

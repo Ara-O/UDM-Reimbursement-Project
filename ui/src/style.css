@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Order */
+@layer reset, primevue;
+
 :root {
   --udmercy-red: #a5093e;
   --udmercy-blue: #002d72;
