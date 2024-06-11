@@ -92,12 +92,12 @@
 
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
-          <label for="foapa-name">Program</label>
+          <label for="foapa-name">Program*</label>
           <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
             title="Optional: Program, 4 digits&#013;Identification of use the use or purpose of funds." />
         </span>
         <span class="input-FOAPA-field-span">
-          <Field type="text" name="prog-input" id="prog-input" placeholder="xxxx" :rules="isValidFoapaNumber"
+          <Field type="text" name="prog-input" id="prog-input" placeholder="xxxx" :rules="isValidProgramNumber"
             v-model="currentlyInputtedFOAPA.program" />
           <ErrorMessage name="prog-input" class="error-field" />
         </span>
@@ -146,7 +146,7 @@
         <td>{{ foapa.fund }}</td>
         <td>{{ foapa.organization || "N/A" }}</td>
         <td>{{ foapa.account }}</td>
-        <td>{{ foapa.program || "N/A" }}</td>
+        <td>{{ foapa.program }}</td>
         <td>{{ foapa.activity || "N/A" }}</td>
         <td>
           <img src="../../assets/trash-icon.png" alt="Trash" class="delete-icon"
@@ -175,6 +175,7 @@ import {
   isValidFoapaName,
   isValidActvNumber,
   isValidFoapaDescription,
+  isValidProgramNumber,
 } from "../../utils/validators";
 import axios from "axios";
 

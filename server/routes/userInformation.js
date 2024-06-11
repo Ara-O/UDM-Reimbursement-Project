@@ -167,13 +167,18 @@ router.post("/send-confirmation-email", async (req, res) => {
       to: data.workEmail,
       subject: "Welcome to the UDM Reimbursement System!",
       html: `
-          <div style="background: white">
-          <h3 style="font-weight: 500">Verify your Account</h3>
-          <h4 style="font-weight: 300">Hello,</h4>
-          <h4 style="font-weight: 300">Thanks for signing up for the University of Detroit Mercy Reimbursement System!</h4>
-          <h4 style="font-weight: 300">You can verify your account using this key</h4>
-          <h3 style="font-weight: 500">${userAuthString}</h3>
-        </div>
+      <div style="background: white; width: 100%; box-sizing: border-box; font-family: Georgia, serif;">
+      <h2 style="font-weight: 500; margin: 0; padding: 10px 0; text-align: center;">Verify Your Account</h2>
+      <div style="background: white; text-align: center; border: 1px solid black; padding: 5% 10%; box-sizing: border-box;">
+        <h4 style="font-weight: 300; margin: 10px 0;">Hello,</h4>
+        <h4 style="font-weight: 300; margin: 10px 0;">Thanks for signing up for the University of Detroit Mercy Reimbursement System!</h4>
+        <h4 style="font-weight: 300; margin: 10px 0;">Please use the verification code below to activate your account:</h4>
+        <h3 style="font-weight: 500; text-align: center; margin: 20px 0;">${userAuthString}</h3>
+      </div>
+      <p style="font-weight: 300; font-size: 10px; color: gray; text-align: center; margin: 10px 0;">
+        If you did not sign up for this service, please ignore this email.
+      </p>
+      </div>
         `,
     });
 

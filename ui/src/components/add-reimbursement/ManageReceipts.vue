@@ -14,7 +14,7 @@
             expenses from receipts, go to the ‘add or view’ expenses</h4>
 
         <input id="receipt" type="file" class="custom-file-input" ref="receiptRef" name="receipt" @change="receiptAdded"
-            accept="image/png, image/jpeg" multiple />
+            accept="application/pdf, image/png, image/jpeg" multiple />
         <h3 class="font-normal text-sm inline" v-if="fileWasSelected">Uploading...</h3>
     </div>
     <h3 class="text-[13px] mt-6 text-gray-700 font-normal">Added Receipts will show here</h3>

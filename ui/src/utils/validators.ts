@@ -193,7 +193,7 @@ export function isValidActvNumber(value) {
 
   switch (true) {
     case value.trim() === "":
-      return "";
+      return true;
     case !hasValidLength:
       return "4 Letters Only";
     default:
@@ -213,5 +213,24 @@ export function isValidFoapaDescription(value) {
     default:
       return true;
 
+  }
+}
+
+export function isValidProgramNumber(value) {
+  if (value === undefined || value === null) value = "";
+  value = String(value);
+
+  const isValidNumber = /^[0-9]+$/.test(value);
+  const hasValidLength = /^[0-9]{4}$/.test(value);
+
+  switch (true) {
+    case value.trim() === "":
+      return "Required";
+    case !isValidNumber:
+      return "Numbers only";
+    case !hasValidLength:
+      return "4-digits";
+    default:
+      return true;
   }
 }
