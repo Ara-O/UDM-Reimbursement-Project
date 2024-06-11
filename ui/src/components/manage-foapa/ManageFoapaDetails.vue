@@ -136,7 +136,7 @@
         <th></th>
       </tr>
       <tr v-for="foapa in props.foapaDetails">
-        <td>
+        <td class="flex items-center gap-3">
           {{ foapa.foapaName }}
           <img id="help" src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
             :title="foapa.description" />

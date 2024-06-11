@@ -10,7 +10,7 @@
       <div class="foapa-number" v-for="foapa in userFoapaNumbers"
         style="display: flex; flex-direction: column; align-items: start">
         <span class="foapa-number-title">
-          <img src="../../assets/trash-icon.png" alt="Trash" @click="deleteFoapa(foapa)" />
+          <img src="../../assets/trash-icon.png" alt="Trash" @click="showFoapaDeletionPopup(foapa)" />
           <h3 :title="foapa.foapaName" style="font-weight: 500; max-width: 200px;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -28,17 +28,28 @@
       </div>
     </div>
   </section>
+  <confirmation-popup v-if="deleteFoapaPopupIsVisible" :cancel-function="() => deleteFoapaPopupIsVisible = false"
+    :continue-function="() => deleteFoapa(foapaToDelete)">
+    <template #message>
+      Are you sure you want to delete this FOAPA number. This process can not be reversed. If yes, click Continue.
+    </template>
+  </confirmation-popup>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, computed } from "vue";
-import { useRouter } from "vue-router";
 import axios from "axios";
+import ConfirmationPopup from "../utilities/ConfirmationPopup.vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { FoapaStuff } from "../../types/types";
+import { TYPE, useToast } from "vue-toastification";
 
 let userFoapaNumbers = ref<FoapaStuff[]>([]);
+let deleteFoapaPopupIsVisible = ref<boolean>(false)
+let foapaToDelete = ref<FoapaStuff>()
 
 const router = useRouter();
+const toast = useToast()
 
 function formatUserFoapa(foapa: FoapaStuff) {
   // console.log(foapa);
@@ -61,7 +72,12 @@ function retrieveUserFoapaDetails() {
     });
 }
 
-function deleteFoapa(foapa: FoapaStuff) {
+function showFoapaDeletionPopup(foapa: FoapaStuff) {
+  foapaToDelete.value = foapa
+  deleteFoapaPopupIsVisible.value = true
+}
+
+function deleteFoapa(foapa: FoapaStuff | undefined) {
   axios
     .post(
       `${import.meta.env.VITE_API_URL}/api/deleteFoapaDetail`,
@@ -70,7 +86,12 @@ function deleteFoapa(foapa: FoapaStuff) {
       }
     )
     .then(() => {
+      toast("FOAPA deleted successfully", {
+        type: TYPE.SUCCESS
+      })
+
       retrieveUserFoapaDetails();
+      deleteFoapaPopupIsVisible.value = false;
     })
     .catch((err) => {
       console.log(err);

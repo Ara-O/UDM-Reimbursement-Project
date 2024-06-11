@@ -60,11 +60,12 @@
     <!-- ALL EXPENSES SECTION -->
     <h4 class="underline font-semibold text-lg text-gray-800">All Expenses</h4>
     <div class="h-56 overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
-        <div v-if="props.claim.activities.length === 0">
-            <h5 class="mt-0 font-medium text-gray-500">Added expenses will be listed
-                here. They will look like the one shown below</h5>
+        <h5 class="mt-0 font-medium text-gray-500" v-if="props.claim.activities.length === 0">Added expenses will be
+            listed
+            here.</h5>
+        <!-- <div v-if="props.claim.activities.length === 0">
             <activity-container :expense="exampleExpense"></activity-container>
-        </div>
+        </div> -->
 
         <activity-container :expense="expense" v-for=" expense in props.claim.activities"
             @delete-activity="deleteExpense" @edit-activity="editExpense"

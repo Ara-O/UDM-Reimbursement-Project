@@ -260,12 +260,29 @@ router.post("/changePassword", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/retrieveAccountNumbers", async (req, res) => {
+router.get("/retrieve-account-numbers", async (req, res) => {
   try {
     let allAccountNumbers = await AccountNumbers.find();
+
     res.status(200).send(allAccountNumbers[0]);
   } catch (err) {
-    res.status(400).send({ message: "There has been an error" });
+    logger.error(
+      "There was an error retrieving the account (ACCT) numbers list",
+      {
+        api: "/api/retrieve-account-numbers",
+      }
+    );
+
+    logger.error(err, {
+      api: "/api/retrieve-account-numbers",
+    });
+
+    return res
+      .status(500)
+      .send({
+        message:
+          "There was an error retrieving the account (ACCT) numbers list",
+      });
   }
 });
 

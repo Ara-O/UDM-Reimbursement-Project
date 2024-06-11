@@ -2,6 +2,8 @@
   <section class="dashboard-page">
     <!-- FOAPA numbers section -->
     <foapa-numbers></foapa-numbers>
+
+    <!-- Middle section -->
     <section class="reimbursement-section">
       <h3>Welcome {{ userInfo.firstName }}</h3>
       <router-link to="/profile-page">
@@ -354,7 +356,6 @@ onMounted(() => {
     localStorage.getItem("token") === null ||
     localStorage.getItem("token") === ""
   ) {
-    console.log("User not signed in");
     router.push("/");
   } else {
     retrieveUserInformationSummary();
