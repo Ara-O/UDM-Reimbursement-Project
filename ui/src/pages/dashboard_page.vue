@@ -36,7 +36,7 @@
         <span class="view-choice">
           <button @click="$router.push('/add-reimbursement')" class="filter add-reimbursement-ticket-button"
             style="width: auto">
-            Click to add reimbursement ticket
+            Click to add new reimbursement
           </button>
           <button @click="viewingTemplates = !viewingTemplates" class="w-auto filter add-reimbursement-ticket-button">
             {{ viewingTemplates === false ? "View Templates" : "View Claims" }}
