@@ -106,10 +106,18 @@ const toast = useToast()
 function openCameraPopup() {
     cameraPopupIsOpen.value = true
     if (navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        navigator.mediaDevices.getUserMedia({
+            video: {
+
+                facingMode: {
+                    exact: "environment"
+                }
+            },
+        }).then(stream => {
             if (videoFeed.value)
                 videoFeed.value.srcObject = stream
         }).catch((err) => {
+            console.log(err)
             toast("There was an error accessing your camera. Please check your camera permissions and try again", {
                 type: TYPE.ERROR
             })
