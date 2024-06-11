@@ -25,8 +25,9 @@
             title="Give a description to help identify each FOAPA." />
         </span>
         <span class="input-FOAPA-field-span">
-          <Field type="text" :rules="(value) => isValidFoapaDescription(value)" style="width: 150px" placeholder="Description"
-            name="foapa-description" id="foapa-description" v-model="currentlyInputtedFOAPA.description" />
+          <Field type="text" :rules="(value) => isValidFoapaDescription(value)" style="width: 150px"
+            placeholder="Description" name="foapa-description" id="foapa-description"
+            v-model="currentlyInputtedFOAPA.description" />
           <ErrorMessage name="foapa-description" class="error-field" />
         </span>
       </div>
@@ -160,10 +161,9 @@
   </section>
 </template>
 
-<!-- <ConfirmDialog id="confirm" />
-<Button @click="openDialog()" label="Confirm" :aria-expanded="visible" :aria-controls="visible ? 'confirm' : null"></Button> -->
-
 <script setup lang="ts">
+import axios from "axios";
+import { TYPE, useToast } from "vue-toastification";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, reactive, onMounted } from "vue";
 import { FoapaStuff } from "../../types/types";
@@ -177,14 +177,12 @@ import {
   isValidFoapaDescription,
   isValidProgramNumber,
 } from "../../utils/validators";
-import axios from "axios";
 
-// import ConfirmDialog from 'primevue/confirmdialog';
-import { createApp } from "vue";
-// import ConfirmationService from 'primevue/confirmationservice';
-// import { useConfirm } from "primevue/useconfirm";
-
+const toast = useToast()
 let props = defineProps<{ foapaDetails: FoapaStuff[] }>();
+let changes_were_made = ref<boolean>();
+const emits = defineEmits(["changes-were-made"])
+
 let currentlyInputtedFOAPA = reactive<FoapaStuff>({
   fund: "",
   organization: "",
@@ -202,13 +200,15 @@ let accountNumbers = ref<{ number: string; description: string }[]>([]);
 function retrieveAccountNumbers() {
   axios
     .get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveAccountNumbers`
+      `${import.meta.env.VITE_API_URL}/api/retrieve-account-numbers`
     )
     .then((res) => {
       accountNumbers.value = res.data.accountNumbers;
     })
     .catch((err) => {
-      console.log(err);
+      toast(err?.response?.data?.message || "There was an error retrieving account numbers", {
+        type: TYPE.ERROR
+      })
     });
 }
 
@@ -217,15 +217,32 @@ function addFoapa(values, { resetForm }) {
   currentlyInputtedFOAPA.currentAmount = currentlyInputtedFOAPA.initialAmount;
   let addedFoapa = Object.assign({}, currentlyInputtedFOAPA);
   props.foapaDetails.push(addedFoapa);
+  emits("changes-were-made")
 }
 
-function deleteFoapa(foapaName, fund) {
-  let index = props.foapaDetails.findIndex(
-    (foapa) => foapa.foapaName === foapaName && foapa.fund === fund
-  );
+function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
+  emits("changes-were-made")
+  if (show_confirm_dialog) {
+    const confirm_deletion = confirm("Are you sure you want to delete this FOAPA. Click 'yes' to confirm")
 
-  if (index > -1) {
-    props.foapaDetails.splice(index, 1);
+    if (confirm_deletion) {
+      let index = props.foapaDetails.findIndex(
+        (foapa) => foapa.foapaName === foapaName && foapa.fund === fund
+      );
+
+      if (index > -1) {
+        props.foapaDetails.splice(index, 1);
+      }
+    }
+  }
+  else {
+    let index = props.foapaDetails.findIndex(
+      (foapa) => foapa.foapaName === foapaName && foapa.fund === fund
+    );
+
+    if (index > -1) {
+      props.foapaDetails.splice(index, 1);
+    }
   }
 }
 
@@ -238,23 +255,7 @@ function editFoapa(foapa) {
   currentlyInputtedFOAPA.foapaName = foapa.foapaName;
   currentlyInputtedFOAPA.initialAmount = foapa.currentAmount;
   currentlyInputtedFOAPA.description = foapa.description;
-  deleteFoapa(foapa.foapaName, foapa.fund);
-
-  // const confirm = useConfirm();
-  // const isVisible = ref(false);
-  // const openDialog =() => {
-  //   confirm.require({
-  //     message: 'WARNING! If the FOAPA you are editing has already been used in a request, you will need to change it before submission.',
-  //     header: 'WARNING',
-  //     onShow: () => {
-  //       isVisible.value = true;
-  //     },
-  //     onHide: () => {
-  //       isVisible.value=false;
-  //     }
-  //   });
-  // };
-  // openDialog();
+  deleteFoapa(foapa.foapaName, foapa.fund, false);
 }
 
 onMounted(() => {

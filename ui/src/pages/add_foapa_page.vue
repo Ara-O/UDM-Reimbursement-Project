@@ -4,75 +4,110 @@
       alt="Detroit mercy logo" />
     <div class="manage-foapa-div">
       <h3 class="manage-foapa-text">Manage FOAPA</h3>
-      <ManageFoapaDetails :foapa-details="foapaDetails" />
+      <ManageFoapaDetails :foapa-details="foapaDetails" @changes-were-made="changesWereMade" />
       <div class="add-foapa-button-wrapper">
         <button class="add-foapa-button" style="width: auto; padding: 0px 30px" @click="$router.push('/dashboard')">
           Go to Dashboard
         </button>
-        <button class="add-foapa-button" @click="updateFoapa">
+        <button class="add-foapa-button" @click="saveFOAPA">
           Save FOAPAs
         </button>
       </div>
-      <h3 class="add-foapa-success-message" v-if="successMessage">
-        {{ successMessage }}
-      </h3>
-      <h3 class="add-foapa-loading-message" v-if="loadingMessage">
-        {{ loadingMessage }}
-      </h3>
-      <h3 class="add-foapa-error-message" v-if="errorMessage">
-        {{ errorMessage }}
-      </h3>
     </div>
+    <ConfirmationPopup :continue-function="returnToDashboard" :cancel-function="stayOnPage"
+      v-show="show_leave_dialogue">
+      <template #message>
+        You have some unsaved changes (You have modified some
+        FOAPA values without saving them). To discard these changes, click 'Continue'. To go back and save these
+        changes, click 'Cancel'.
+      </template>
+    </ConfirmationPopup>
   </section>
 </template>
 
 <script lang="ts" setup>
+import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
+import ManageFoapaDetails from "../components/manage-foapa/ManageFoapaDetails.vue";
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import { FoapaStuff } from "../types/types";
-import { useRouter } from "vue-router";
-import ManageFoapaDetails from "../components/manage-foapa/ManageFoapaDetails.vue";
+import { onBeforeRouteLeave, useRouter } from "vue-router";
+import { TYPE, useToast } from "vue-toastification";
 
 const router = useRouter();
 let foapaDetails = ref<FoapaStuff[]>([]);
 let successMessage = ref<string>("");
 let errorMessage = ref<string>("");
 let loadingMessage = ref<string>("");
-function retrieveUserFoapaDetails() {
-  axios
-    .get(
-      `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
-    )
-    .then((res) => {
-      foapaDetails.value = res.data;
-      // console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+let changes_were_made = ref<boolean>(false)
+let show_leave_dialogue = ref<boolean>(false)
+
+
+const toast = useToast()
+
+function changesWereMade() {
+  changes_were_made.value = true
 }
 
-function updateFoapa() {
-  successMessage.value = "";
-  errorMessage.value = "";
-  loadingMessage.value = "Updating FOAPA details...";
+async function retrieveUserFoapaDetails() {
+  try {
+    const res = await axios
+      .get(
+        `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
+      )
+
+    foapaDetails.value = res.data;
+
+  } catch (err: any) {
+    toast(err?.response?.data?.message || "There was an error fetching your FOAPA details. Please try again later", {
+      type: TYPE.ERROR
+    })
+  }
+}
+
+function saveFOAPA() {
+  toast("Saving FOAPA information...", {
+    type: TYPE.INFO
+  })
+
   axios
     .post(
-      `${import.meta.env.VITE_API_URL}/api/updateFoapaDetails`,
+      `${import.meta.env.VITE_API_URL}/api/update-foapa-details`,
       {
         foapaDetails: foapaDetails.value,
       }
     )
-    .then((res) => {
-      loadingMessage.value = "";
-      successMessage.value = res.data.message;
-      // alert(res.data.message);
-      // router.push("/dashboard");
+    .then(() => {
+      changes_were_made.value = false
+      toast("Successfully saved FOAPA information", {
+        type: TYPE.SUCCESS
+      })
     })
     .catch((err) => {
-      console.log(err);
-      errorMessage.value = err.response.data.message;
+      toast(err?.response?.data?.message || "An unexpected error occured when saving your FOAPA details. Please try again later", {
+        type: TYPE.ERROR
+      })
     });
+}
+
+onBeforeRouteLeave((to, from, next) => {
+  if (changes_were_made.value === true) {
+    show_leave_dialogue.value = true;
+    changes_were_made.value = false;
+    next(false)
+  } else {
+    next()
+  }
+})
+
+function returnToDashboard() {
+  changes_were_made.value = false
+  router.push("/dashboard")
+}
+
+function stayOnPage() {
+  show_leave_dialogue.value = false
+
 }
 
 onMounted(() => {
