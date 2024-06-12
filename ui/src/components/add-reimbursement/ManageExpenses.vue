@@ -1,5 +1,5 @@
 <template>
-    <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full mt-56 sm:mt-0 mb-32 sm:mb-0">
+    <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0">
         <span class="flex items-center gap-6 mb-2">
             <h2 class="font-semibold my-0 text-[27px]">Add or View Expenses</h2>
             <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7 hidden md:block">
