@@ -18,10 +18,29 @@
       </div>
       <div class="login-field">
         <label for="password">Password:</label>
-        <span>
-          <Field v-model="userInfo.password" type="password" class="login-password-input" name="password"
-            :rules="isNotEmpty" required id="password" />
+        <span style="position: relative;">
+          <Field 
+            v-model="userInfo.password" 
+            :type="passwordFieldType" 
+            class="login-password-input" 
+            name="password"
+            :rules="isNotEmpty"
+            required id="password" />
           <ErrorMessage name="password" class="error-field" />
+          <img 
+            v-if="passwordFieldType === 'password'" 
+            class="hover:!opacity-100"
+            src="../assets/eye.png" 
+            @click="togglePasswordVisibility"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%"
+          />
+          <img 
+            v-else 
+            class="hover:!opacity-100"
+            src="../assets/eyeslash.png" 
+            @click="togglePasswordVisibility"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%"
+          />
         </span>
       </div>
       <span style="display: flex; align-items: center; gap: 10px">
@@ -81,7 +100,7 @@
 <script lang="ts" setup>
 import axios from "axios";
 import { Form, Field, ErrorMessage } from "vee-validate";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, VueElement } from "vue";
 import { useRouter } from "vue-router";
 import { isNotEmpty, isValidString } from "../utils/validators";
 import { TYPE, useToast } from "vue-toastification";
@@ -91,6 +110,13 @@ let userInfo = ref<any>({ workEmail: "", password: "" });
 let forgotPasswordWorkEmail = ref<string>("");
 const router = useRouter();
 const toast = useToast()
+
+
+const passwordFieldType = ref<string>('password');
+
+function togglePasswordVisibility() {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+}
 
 async function loginUser() {
   try {
