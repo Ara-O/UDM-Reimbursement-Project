@@ -18,8 +18,8 @@
       v-show="show_leave_dialogue">
       <template #message>
         You have some unsaved changes (You have modified some
-        FOAPA values without saving them). To discard these changes, click 'Continue'. To go back and save these
-        changes, click 'Cancel'.
+        FOAPA values without saving them). To go back and save these
+        changes, click 'Cancel'. To discard these changes, click 'Continue'.
       </template>
     </ConfirmationPopup>
   </section>
@@ -93,7 +93,6 @@ function saveFOAPA() {
 onBeforeRouteLeave((to, from, next) => {
   if (changes_were_made.value === true) {
     show_leave_dialogue.value = true;
-    changes_were_made.value = false;
     next(false)
   } else {
     next()
@@ -107,7 +106,6 @@ function returnToDashboard() {
 
 function stayOnPage() {
   show_leave_dialogue.value = false
-
 }
 
 onMounted(() => {

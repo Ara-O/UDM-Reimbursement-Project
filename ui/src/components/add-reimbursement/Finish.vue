@@ -27,29 +27,49 @@
                 class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save
                 as
                 Template</button>
-            <button
+            <button @click="discardChanges"
                 class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Discard
                 Changes</button>
         </span>
         <h5 class="font-normal" v-if="currentlyCreatingPDF">Generating PDF, please wait...</h5>
     </div>
+    <confirmation-popup v-if="showConfirmationPopup" left-button-text="Discard Changes" right-button-text="Cancel"
+        :cancel-function="returnToDashboard" :continue-function="cancelConfirmationPopup">
+        <template #message>
+            Are you sure you want to discard the changes you made to this reimbursement claim?
+        </template>
+    </confirmation-popup>
 </template>
 
 <script lang="ts" setup>
-import { ReimbursementTicket } from '../../types/types';
-import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import parseDate from '../../utils/parseDate';
+import { ReimbursementTicket } from '../../types/types';
+import { onMounted, ref } from 'vue';
+import ConfirmationPopup from '../utilities/ConfirmationPopup.vue';
+import { useRoute, useRouter } from 'vue-router';
+import { TYPE, useToast } from 'vue-toastification';
+
+const toast = useToast()
 
 const props = defineProps<{
     claim: ReimbursementTicket
 }>()
 const route = useRoute()
 const router = useRouter();
+const emits = defineEmits(["onClaimSaved"])
 
 let currentlyCreatingPDF = ref<boolean>(false);
 let userIsEditingReimbursement = ref<boolean>(false);
+let showConfirmationPopup = ref<boolean>(false)
+
+function returnToDashboard() {
+    router.push("/dashboard")
+}
+
+function cancelConfirmationPopup() {
+    showConfirmationPopup.value = false
+}
 
 function downloadPDF(pdfData: string) {
     const linkSource = pdfData;
@@ -77,10 +97,17 @@ function downloadPDF(pdfData: string) {
 
 async function saveAsTemplate() {
     try {
+        toast("Saving reimbursement claim as template...", {
+            type: TYPE.INFO
+        })
         await axios.post(`${import.meta.env.VITE_API_URL}/api/saveAsTemplate`, props.claim)
+        toast("Reimbursement saved as a template successfully.", {
+            type: TYPE.SUCCESS
+        })
     } catch (error) {
-        alert(error)
-        console.log(error);
+        toast("An unexpected error occured when saving your claim as a template. Please try again later", {
+            type: TYPE.ERROR
+        })
     }
 }
 
@@ -96,10 +123,13 @@ async function submitTicket() {
         );
 
         // router.push("/dashboard");
-        alert("Reimbursement ticket submitted successfully");
+        toast("Reimbursement claim submitted successfully", {
+            type: TYPE.SUCCESS
+        });
     } catch (error) {
-        alert(error)
-        console.log(error);
+        toast("An error occured while submitting your reimbursement claim. Please try again later", {
+            type: TYPE.INFO
+        })
     }
 }
 
@@ -113,8 +143,10 @@ function getAllActivitiesAmount(): number {
 }
 
 function createPdf() {
-    currentlyCreatingPDF.value = true;
-    console.log("aaa")
+    toast("Creating your reimbursement claim PDF. Please wait...", {
+        type: TYPE.INFO
+    })
+
     axios
         .get(
             `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
@@ -128,10 +160,18 @@ function createPdf() {
 
 
             if (totalCoveredFoapaCost > props.claim.totalCost) {
-                alert("Warning: The amount of money you are retrieving from your FOAPAs is more than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.")
-            } else if (totalCoveredFoapaCost > props.claim.totalCost) {
-                alert("Warning: The amount of money you are retrieving from your FOAPAs is less than the amount of money you are trying to get reimbursed for")
+                toast("Warning: The amount of money you are retrieving from your FOAPAs is more than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.", {
+                    type: TYPE.WARNING,
+                    timeout: false
+                })
+
+            } else if (totalCoveredFoapaCost < props.claim.totalCost) {
+                toast("Warning: The amount of money you are retrieving from your FOAPAs is less than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.", {
+                    type: TYPE.WARNING,
+                    timeout: false
+                })
             }
+
             axios
                 .get(`${import.meta.env.VITE_API_URL}/api/generatePdf`, {
                     params: {
@@ -140,28 +180,23 @@ function createPdf() {
                     },
                 })
                 .then((res) => {
-                    console.log(res)
                     downloadPDF(res.data);
                     currentlyCreatingPDF.value = false;
                 })
                 .catch((err) => {
-                    console.log(err);
-                    
+                    toast("There was an error generating your PDF. Please try again later", {
+                        type: TYPE.ERROR
+                    })
                 });
         }).catch((err) => {
-            console.log(err)
-            console.log("Something");
+            toast("There was an error generating your PDF. Please try again later", {
+                type: TYPE.ERROR
+            })
         });
 }
 
 
 async function updateReimbursement() {
-    if (props.claim.reimbursementName.trim() === "") {
-        alert("Reimbursement Title Missing");
-        router.push("/dashboard")
-        return;
-    }
-
     props.claim.totalCost = getAllActivitiesAmount();
     props.claim.reimbursementDate = parseDate(
         new Date().toISOString()
@@ -174,18 +209,14 @@ async function updateReimbursement() {
         }
     );
 
-
-    alert('Claim updated')
+    toast("Reimbursement claim updated successfully.", {
+        type: TYPE.SUCCESS
+    })
     router.push("/dashboard")
 }
 
 async function addReimbursement() {
     try {
-        if (props.claim.reimbursementName.trim() == "") {
-            alert("Reimbursement Name Missing");
-            return;
-        }
-
         props.claim.totalCost = getAllActivitiesAmount();
         props.claim.reimbursementDate = parseDate(
             new Date().toISOString()
@@ -198,22 +229,53 @@ async function addReimbursement() {
             }
         );
 
-        alert('Claim saved')
+        toast("Reimbursement claim saved successfully.", {
+            type: TYPE.SUCCESS
+        })
         router.push("/dashboard")
-
     } catch (error) {
-        console.log(error);
+        toast("There was an error saving this reimbursement claim. Please try again later", {
+            type: TYPE.ERROR
+        })
     }
 }
 
 async function saveReimbursement() {
-    props.claim.reimbursementStatus = "In Progress";
+    try {
+        if (props.claim.reimbursementName.trim() === "") {
+            toast("Please add a title to this reimbursement claim", {
+                type: TYPE.ERROR
+            });
 
-    if (userIsEditingReimbursement.value) {
-        updateReimbursement();
-    } else {
-        addReimbursement();
+            return;
+        }
+
+        toast("Saving reimbursement claim...", {
+            type: TYPE.INFO
+        })
+
+        props.claim.reimbursementStatus = "In Progress";
+
+        emits("onClaimSaved")
+
+        if (userIsEditingReimbursement.value) {
+            await updateReimbursement();
+        } else {
+            await addReimbursement();
+        }
+
+
+    } catch (err) {
+        toast("There was an error saving this reimbursement claim. Please try again", {
+            type: TYPE.ERROR
+        })
     }
+}
+
+function discardChanges() {
+    showConfirmationPopup.value = true
+    emits("onClaimSaved")
+
 }
 
 onMounted(() => {
