@@ -119,31 +119,24 @@
       <router-link to="/change-password" style="font-size: 14px">Change password</router-link>
       <button @click="signOut">Sign Out</button>
     </section>
-    <!-- <h3>hi</h3>
-    <button @click="closeConnection">Close server connection</button> -->
+    <confirmation-popup v-if="delete_claim_confirmation_dialog" :cancel-function="stopDelete"
+      :continue-function="confirmDelete">
+      <template #message>
+        Are you sure you want to delete this reimbursement claim?
+      </template>
+    </confirmation-popup>
   </section>
 </template>
 
-<style>
-.image-container {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.udmercy-logo {
-  width: 60px;
-  /* Adjust the width to your desired size */
-  height: auto;
-  /* Maintain the aspect ratio */
-}
-</style>
 
 <script lang="ts" setup>
 import FoapaNumbers from "../components/dashboard/FoapaNumbersDashboard.vue";
 import axios from "axios";
+import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { TYPE, useToast } from "vue-toastification";
 
 const router = useRouter();
 const searchValue = ref<string>("");
@@ -164,6 +157,8 @@ type UserData = {
   phoneNumber: string;
 };
 
+const toast = useToast()
+
 let costFlag = -1,
   nameFlag = -1,
   dateFlag = -1,
@@ -178,16 +173,10 @@ let userInfo = ref<any>({
 });
 
 let viewingTemplates = ref<boolean>(false)
+let delete_claim_confirmation_dialog = ref<boolean>(false)
+let claim_to_delete_id = ref<string>("")
 
-let reimbursementTickets = ref<any>([
-  // {
-  //   reimbursementId: 169449298,
-  //   eventName: "Reim3",
-  //   totalCost: 300,
-  //   reimbursementStatus: false,
-  //   reimbursementDate: "2023-05-21",
-  // },
-]);
+let reimbursementTickets = ref<any>([]);
 
 let currentView = ref<"grid" | "list">("grid");
 function changeView() {
@@ -278,16 +267,33 @@ function signOut() {
   alert("Successfully signed out!");
 }
 
+function stopDelete() {
+  claim_to_delete_id.value = ""
+  delete_claim_confirmation_dialog.value = false
+}
+
 function deleteReimbursement(id: string) {
+  delete_claim_confirmation_dialog.value = true;
+  claim_to_delete_id.value = id
+}
+
+function confirmDelete() {
+  toast("Deleting reimbursement claim...", {
+    type: TYPE.INFO
+  })
   axios
     .post(
       `${import.meta.env.VITE_API_URL}/api/deleteReimbursement`,
       {
-        id,
+        id: claim_to_delete_id.value,
       }
     )
     .then(() => {
       retrieveReimbursements();
+      delete_claim_confirmation_dialog.value = false
+      toast("Reimbursement claim deleted successfully", {
+        type: TYPE.SUCCESS
+      })
     })
     .catch((err) => {
       alert(err?.response?.data?.message || "An error occured, please try again later");
@@ -362,3 +368,17 @@ onMounted(() => {
   }
 });
 </script>
+
+<style>
+.image-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.udmercy-logo {
+  width: 60px;
+  /* Adjust the width to your desired size */
+  height: auto;
+  /* Maintain the aspect ratio */
+}
+</style>

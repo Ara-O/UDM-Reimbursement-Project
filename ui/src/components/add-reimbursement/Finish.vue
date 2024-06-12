@@ -57,6 +57,7 @@ const props = defineProps<{
 }>()
 const route = useRoute()
 const router = useRouter();
+const emits = defineEmits(["onClaimSaved"])
 
 let currentlyCreatingPDF = ref<boolean>(false);
 let userIsEditingReimbursement = ref<boolean>(false);
@@ -255,6 +256,8 @@ async function saveReimbursement() {
 
         props.claim.reimbursementStatus = "In Progress";
 
+        emits("onClaimSaved")
+
         if (userIsEditingReimbursement.value) {
             await updateReimbursement();
         } else {
@@ -271,6 +274,8 @@ async function saveReimbursement() {
 
 function discardChanges() {
     showConfirmationPopup.value = true
+    emits("onClaimSaved")
+
 }
 
 onMounted(() => {

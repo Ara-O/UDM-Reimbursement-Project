@@ -6,7 +6,7 @@
                     <img :src="CautionIcon" alt="Caution icon" class="w-10">
                     <h3 class="font-semibold text-sm">Confirmation</h3>
                 </div>
-                <img :src="CancelIcon" alt="Cancel icon" class="w-3 opacity-75">
+                <!-- <img :src="CancelIcon" alt="Cancel icon" class="w-3 opacity-75" @click="cancelFunction" -->
             </span>
             <h4 class="text-[13px] font-normal leading-6 mt-1">
                 <slot name="message">
@@ -19,8 +19,9 @@
                         leftButtonText
                         || 'Cancel' }}</button>
                 <button @click="continueFunction"
-                    class="ml-3 bg-white border border-solid border-udmercy-blue text-udmercy-blue px-5 py-1.5 text-xs cursor-pointer hover:text-white hover:bg-udmercy-blue transition-all rounded-full">{{ rightButtonText
-                    || "OK"}}</button>
+                    class="ml-3 bg-white border border-solid border-udmercy-blue text-udmercy-blue px-5 py-1.5 text-xs cursor-pointer hover:text-white hover:bg-udmercy-blue transition-all rounded-full">{{
+                        rightButtonText
+                        || "OK" }}</button>
             </div>
         </div>
     </div>
