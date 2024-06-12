@@ -105,22 +105,36 @@ let capturedImagesBlob = ref<any>()
 const toast = useToast()
 function openCameraPopup() {
     cameraPopupIsOpen.value = true
+
+    let facingMode = { exact: "user" }; // Default to front camera
+    const userAgent = navigator.userAgent.toLowerCase();
+
+    if (/mobile|android|iphone|ipad/.test(userAgent)) {
+        facingMode = { exact: "environment" }; // Use back camera for mobile devices
+    }
+
     if (navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({
             video: {
-
-                facingMode: {
-                    exact: "environment"
-                }
+                facingMode: facingMode
             },
         }).then(stream => {
             if (videoFeed.value)
                 videoFeed.value.srcObject = stream
         }).catch((err) => {
             console.log(err)
-            toast("There was an error accessing your camera. Please check your camera permissions and try again", {
-                type: TYPE.ERROR
-            })
+            if (err.name === 'OverconstrainedError') {
+                navigator.mediaDevices.getUserMedia({
+                    video: true
+                }).then(stream => {
+                    if (videoFeed.value)
+                        videoFeed.value.srcObject = stream;
+                })
+            } else {
+                toast("There was an error accessing your camera. Please check your camera permissions and try again", {
+                    type: TYPE.ERROR
+                })
+            }
         })
     }
 }
