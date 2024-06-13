@@ -27,13 +27,18 @@
                 </span>
             </div>
 
-            <div class="flex gap-5">
+            <h3 class="mt-6 font cursor-pointer font-medium text-sm underline" @click="showFoapaPopup">Forgot to add a
+                FOAPA in the dashboard?
+                Click here to quickly
+                add a FOAPA
+                number </h3>
+            <div class="flex gap-5 mt-8">
                 <button type="submit"
-                    class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
-                    Add FOAPA
+                    class="bg-udmercy-blue  text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
+                    Assign FOAPA
                 </button>
                 <button type="button" @click="moveToNextSection"
-                    class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
+                    class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
                     Next Section
                 </button>
             </div>
@@ -66,44 +71,44 @@
                 </div>
             </div>
         </div>
+
+        <!-- FOAPA POPUP -->
+        <section v-if="foapaPopupIsVisible">
+            <div
+                class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center">
+                <div class="bg-white px-10 rounded-md pt-3 pb-14">
+                    <h3 class="mb-5">Add FOAPA here</h3>
+                    <manage-foapa-details :foapa-details="foapaDetailsToAdd"></manage-foapa-details>
+                </div>
+            </div>
+        </section>
     </section>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
 import axios from "axios";
 import FoapaContainer from "./FoapaContainer.vue";
+import { ref, onMounted } from "vue";
+import ManageFoapaDetails from "../manage-foapa/ManageFoapaDetails.vue";
 import { ReimbursementTicket, FoapaStuff, FoapaInput } from "../../types/types";
 import BalanceContainer from "./BalanceContainer.vue";
 let props = defineProps<{
     claim: ReimbursementTicket
 }>();
 
-let foapa = ref<FoapaStuff>({
-    fund: "ur mom",
-    organization: "string",
-    account: "string",
-    program: "string",
-    activity: "string",
-    foapaName: "string",
-    initialAmount: "string",
-    currentAmount: "string",
-    description: "string",
-})
-
 let assignedFoapa = ref<FoapaInput>({
     foapaNumber: "",
     cost: ""
 })
 
-let userFoapas = ref<FoapaStuff[]>()
-let selectedFoapa = ref<FoapaStuff>()
+let userFoapas = ref<FoapaStuff[]>([])
+let foapaDetailsToAdd = ref<FoapaStuff[]>([])
+let foapaPopupIsVisible = ref<boolean>(true)
 const emits = defineEmits(["move-to-next-section"])
 
-const exampleFOAPA = ref({
-    name: "XXXXXX-XXXX-XXXX-XXXX-XXXX",
-    cost: 1000,
-})
+function showFoapaPopup() {
+    foapaPopupIsVisible.value = true
+}
 
 function moveToNextSection() {
     if (assignedFoapa.value.foapaNumber !== "" || assignedFoapa.value.cost !== "") {
@@ -142,8 +147,7 @@ function retrieveFoapaDetails() {
 onMounted(() => {
     retrieveFoapaDetails();
 });
-let selectedFoapaAmount = ref<number>();
-let userFoapaNumbers = ref<FoapaStuff[]>([]);
+
 function formatUserFoapa(foapa: FoapaStuff) {
     return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${foapa.program || "XXXX"
         }-${foapa.activity || "XXXX"}`;

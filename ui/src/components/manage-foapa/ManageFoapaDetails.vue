@@ -5,7 +5,7 @@
   <br />
 
   <Form @submit="addFoapa">
-    <div class="input-field-foapa-wrapper" style="text-align: center">
+    <div class="input-field-foapa-wrapper" style="text-align: center; height: auto;">
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">Name*</label>
