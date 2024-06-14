@@ -30,8 +30,7 @@
             <h3 class="mt-6 font cursor-pointer font-medium text-sm underline" @click="showFoapaPopup">Forgot to add a
                 FOAPA in the dashboard?
                 Click here to quickly
-                add a FOAPA
-                number </h3>
+                add one </h3>
             <div class="flex gap-5 mt-8">
                 <button type="submit"
                     class="bg-udmercy-blue  text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
@@ -76,9 +75,16 @@
         <section v-if="foapaPopupIsVisible">
             <div
                 class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center">
-                <div class="bg-white px-10 rounded-md pt-3 pb-14">
-                    <h3 class="mb-5">Add FOAPA here</h3>
+                <div class="bg-white px-10 rounded-md pt-3 pb-11">
+                    <div class="flex justify-between items-center">
+                        <h3 class="mb-5 font-semibold">Add FOAPA here</h3>
+                        <img :src="CancelIcon" alt="Cancel icon"
+                            class="w-3.5 opacity-75 hover:opacity-100 cursor-pointer" @click="closeFoapaPopup">
+                    </div>
                     <manage-foapa-details :foapa-details="foapaDetailsToAdd"></manage-foapa-details>
+                    <button @click="saveFoapas"
+                        class="bg-udmercy-blue mt-7 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
+                        Save FOAPAs</button>
                 </div>
             </div>
         </section>
@@ -87,11 +93,13 @@
 
 <script lang="ts" setup>
 import axios from "axios";
+import CancelIcon from "../../assets/cross-icon.svg"
 import FoapaContainer from "./FoapaContainer.vue";
 import { ref, onMounted } from "vue";
 import ManageFoapaDetails from "../manage-foapa/ManageFoapaDetails.vue";
 import { ReimbursementTicket, FoapaStuff, FoapaInput } from "../../types/types";
 import BalanceContainer from "./BalanceContainer.vue";
+import { TYPE, useToast } from "vue-toastification";
 let props = defineProps<{
     claim: ReimbursementTicket
 }>();
@@ -103,11 +111,16 @@ let assignedFoapa = ref<FoapaInput>({
 
 let userFoapas = ref<FoapaStuff[]>([])
 let foapaDetailsToAdd = ref<FoapaStuff[]>([])
-let foapaPopupIsVisible = ref<boolean>(true)
+let foapaPopupIsVisible = ref<boolean>(false)
 const emits = defineEmits(["move-to-next-section"])
+const toast = useToast()
 
 function showFoapaPopup() {
     foapaPopupIsVisible.value = true
+}
+
+function closeFoapaPopup() {
+    foapaPopupIsVisible.value = false
 }
 
 function moveToNextSection() {
@@ -129,6 +142,33 @@ function addFoapa() {
         foapaNumber: "",
         cost: ""
     }
+}
+
+function saveFoapas() {
+    toast("Saving FOAPA information...", {
+        type: TYPE.INFO
+    })
+
+    axios
+        .post(
+            `${import.meta.env.VITE_API_URL}/api/update-foapa-details`,
+            {
+                foapaDetails: foapaDetailsToAdd.value,
+            }
+        )
+        .then(() => {
+            toast("Successfully saved FOAPA information", {
+                type: TYPE.SUCCESS
+            })
+            retrieveFoapaDetails()
+            foapaDetailsToAdd.value = []
+            foapaPopupIsVisible.value = false
+        })
+        .catch((err) => {
+            toast(err?.response?.data?.message || "An unexpected error occured when saving your FOAPA details. Please try again later", {
+                type: TYPE.ERROR
+            })
+        });
 }
 
 function retrieveFoapaDetails() {
