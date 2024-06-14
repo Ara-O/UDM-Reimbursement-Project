@@ -13,7 +13,7 @@
                         class=" border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                         required>
                         <!-- <option disabled selected value="">Select FOAPA</option> -->
-                        <option :value="formatUserFoapa(foapa)" v-for="foapa in userFoapas">
+                        <option :value="formatUserFoapa(foapa)" v-for="foapa in filteredUserFoapas">
                             {{ formatUserFoapa(foapa) }}
                         </option>
                     </select>
@@ -54,7 +54,7 @@
 
                 </div>
                 <div class="flex gap-3 flex-col max-h-36  overflow-auto">
-                    <foapa-container :foapa="foapa" v-for=" foapa in props.claim.foapaDetails"
+                    <foapa-container :foapa="foapa" v-for="foapa in props.claim.foapaDetails"
                         @delete-activity="deleteFOAPA">
                     </foapa-container>
                 </div>
@@ -95,7 +95,7 @@
 import axios from "axios";
 import CancelIcon from "../../assets/cross-icon.svg"
 import FoapaContainer from "./FoapaContainer.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import ManageFoapaDetails from "../manage-foapa/ManageFoapaDetails.vue";
 import { ReimbursementTicket, FoapaStuff, FoapaInput } from "../../types/types";
 import BalanceContainer from "./BalanceContainer.vue";
@@ -112,9 +112,28 @@ let assignedFoapa = ref<FoapaInput>({
 let userFoapas = ref<FoapaStuff[]>([])
 let foapaDetailsToAdd = ref<FoapaStuff[]>([])
 let foapaPopupIsVisible = ref<boolean>(false)
+
 const emits = defineEmits(["move-to-next-section"])
 const toast = useToast()
 
+const filteredUserFoapas = computed(() => {
+    let foapas: any = []
+    userFoapas.value.forEach((foapa) => {
+        let wasFound = false;
+        for (let i = 0; i < props.claim.foapaDetails.length; i++) {
+            if (formatUserFoapa(foapa) === props.claim.foapaDetails[i].foapaNumber) {
+                wasFound = true;
+                break;
+            }
+        }
+
+        if (wasFound === false) {
+            foapas.push(foapa)
+        }
+    })
+
+    return foapas
+})
 function showFoapaPopup() {
     foapaPopupIsVisible.value = true
 }
