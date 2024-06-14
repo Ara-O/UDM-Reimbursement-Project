@@ -15,6 +15,20 @@
           <Field type="password" class="login-password-input" name="new-password" v-model="password" id="new-password"
             :rules="isNotEmpty" style="width: auto; margin-left: 0px" />
           <ErrorMessage as="h3" name="new-password" class="error-field" />
+          <img 
+            v-if="passwordFieldType === 'password'" 
+            class="hover:!opacity-100"
+            src="../assets/eye.png" 
+            @click="togglePasswordVisibility"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%"
+          />
+          <img 
+            v-else 
+            class="hover:!opacity-100"
+            src="../assets/eyeslash.png" 
+            @click="togglePasswordVisibility"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%"
+          />
         </span>
       </div>
       <div class="login-field" style="margin-bottom: 20px">
@@ -23,6 +37,20 @@
           <Field v-model="confirmPassword" type="password" class="login-password-input" name="confirm-password"
             style="width: auto; margin-left: 0px" :rules="isNotEmpty" id="confirm-password " />
           <ErrorMessage as="h3" name="confirm-password" class="error-field" />
+          <img 
+            v-if="passwordFieldType === 'password'" 
+            class="hover:!opacity-100"
+            src="../assets/eye.png" 
+            @click="togglePasswordVisibility"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%"
+          />
+          <img 
+            v-else 
+            class="hover:!opacity-100"
+            src="../assets/eyeslash.png" 
+            @click="togglePasswordVisibility"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%"
+          />
         </span>
       </div>
       <span style="display: flex; align-items: center; margin-top: -20px; gap: 10px">
@@ -48,6 +76,11 @@ const route = useRoute();
 const router = useRouter();
 let userToken = ref<string>("");
 
+const passwordFieldType = ref<string>('password');
+
+function togglePasswordVisibility() {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+}
 function resetPassword() {
   if (password.value === confirmPassword.value) {
     axios
