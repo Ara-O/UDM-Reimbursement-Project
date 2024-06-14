@@ -46,7 +46,7 @@ input {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(6px, -41px);
+  transform: translate(6px, -40px);
   font-weight: 400;
   font-size: 13px;
 }

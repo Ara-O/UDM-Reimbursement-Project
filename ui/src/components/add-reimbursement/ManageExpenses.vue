@@ -83,21 +83,15 @@ import { ref } from 'vue';
 import { ReimbursementTicket, Expense } from '../../types/types';
 import ActivityContainer from './ActivityContainer.vue';
 import { generateRandomStringId } from '../../utils/generateRandomId';
+import { TYPE, useToast } from 'vue-toastification';
 
 const props = defineProps<{
     claim: ReimbursementTicket
 }>()
 
-console.log(props.claim)
+const toast = useToast()
 
 const emits = defineEmits(["move-to-next-section"])
-
-const exampleExpense = ref({
-    name: "Example",
-    cost: 0,
-    date: "2023-12-12",
-    id: generateRandomStringId(24)
-})
 
 let expense = ref<Expense>({
     name: "",
@@ -133,6 +127,13 @@ function moveToNextSection() {
 }
 
 function addExpense() {
+    const num = parseFloat('' + expense.value.cost);
+    if (isNaN(num) && !isFinite(num)) {
+        toast("Error: Expense cost must be a number", {
+            type: TYPE.ERROR
+        })
+        return
+    };
     // Pushing a duplicate of the inputted expense to the main reimbursement data
     props.claim.activities.push(JSON.parse(JSON.stringify(expense.value)))
     expense.value = {

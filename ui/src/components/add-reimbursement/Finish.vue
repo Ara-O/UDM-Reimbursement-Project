@@ -14,6 +14,9 @@
                     class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save
                     for
                     later</button>
+                <button
+                    class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Email
+                    Reimbursement Claim</button>
                 <button @click="createPdf"
                     class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">
                     Preview
@@ -116,6 +119,21 @@ async function saveAsTemplate() {
 
 async function submitTicket() {
     try {
+        if (props.claim.foapaDetails.length === 0) {
+            toast("Warning: You are submitting this claim without adding any FOAPA numbers to cover the cost", {
+                type: TYPE.WARNING,
+                timeout: false
+            })
+        }
+        if (props.claim.reimbursementReceipts.length === 0) {
+            toast("Error: Before submission, you must have at least proof of payment/receipt attached with this reimbursement claim.", {
+                type: TYPE.ERROR,
+                timeout: false
+            })
+            return
+        }
+
+
         props.claim.reimbursementStatus = "Submitted";
 
         await axios.post(

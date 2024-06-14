@@ -141,7 +141,7 @@ input {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-20px, -41px);
+  transform: translate(-20px, -40px);
   font-weight: 400;
   font-size: 13px;
 }

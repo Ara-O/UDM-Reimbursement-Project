@@ -1,5 +1,4 @@
 import { Router } from "express";
-import Foapa from "../models/foapa.js";
 import logger from "../logger.js";
 import Faculty from "../models/faculty.js";
 import {
@@ -7,7 +6,8 @@ import {
   decryptPassword,
 } from "../utils/authenticatePassword.js";
 import jwt from "jsonwebtoken";
-import { ZodError, z } from "zod";
+import { ZodError } from "zod";
+import z from "zod";
 
 const router = Router();
 
@@ -39,19 +39,19 @@ router.post("/register", async (req, res) => {
     city: z.string(),
     state: z.string(),
     country: z.string(),
-    foapaDetails: z.array().optional(),
-  });
-
-  const userData = schema.parse(req.body);
-
-  userData.workEmail += "@udmercy.edu";
-  userData.employmentNumber = "T" + userData.employmentNumber;
-
-  logger.info(`An account is being created for ${userData.workEmail}`, {
-    api: "/api/register",
+    foapaDetails: z.any(),
   });
 
   try {
+    const userData = schema.parse(req.body);
+
+    userData.workEmail += "@udmercy.edu";
+    userData.employmentNumber = "T" + userData.employmentNumber;
+
+    logger.info(`An account is being created for ${userData.workEmail}`, {
+      api: "/api/register",
+    });
+
     let encryptedPassword = await encryptPassword(userData.password);
     userData.password = encryptedPassword;
 

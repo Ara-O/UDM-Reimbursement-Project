@@ -65,8 +65,7 @@
             <div class="input-field">
               <label for="department">Department:</label>
               <span>
-                <Field name="department" id="department" as="select" :rules="isValidString"
-                  v-model="accountInfo.department">
+                <Field name="department" id="department" as="select" v-model="accountInfo.department">
                   <option :value="department" v-for="department in departments">
                     {{ department }}
                   </option>
@@ -81,8 +80,8 @@
               <span>
                 <Field name="country" id="country" as="select" :rules="isValidString" v-model="accountInfo.country"
                   @change="countryChanged">
-                  <option :value="country.name" v-for="country in countries">
-                    {{ country.name }}
+                  <option :value="country" v-for="country in countries">
+                    {{ country }}
                   </option>
                 </Field>
                 <ErrorMessage name="country" class="error-field" />
@@ -172,18 +171,18 @@ let loadingMessage = ref<string>("");
 let errorMessage = ref<string>("");
 const router = useRouter();
 const departments = [
-  "Architectural Engineering",
+  "Dean's Office",
+  "Architectural & Environmental Engineering",
   "Biochemistry",
-  "Civil Engineering",
-  "Computer Science",
-  "Electrical Engineering",
-  "Environmental Engineering",
-  "Mathematics",
-  "Mechanical Engineering",
-  "Office of the Dean",
-  "Physics",
   "Chemistry",
-  "Robotics and Mechatronic Systems Engineering",
+  "Civil",
+  "Computer Science",
+  "E&S Computing Services",
+  "Electrical & Computer Engineering",
+  "Mechanical Engineering",
+  "Mathematics",
+  "Physics",
+  "Professional Engineering",
 ];
 
 let accountInfo = ref<UserDataAcct>({
@@ -200,12 +199,8 @@ let accountInfo = ref<UserDataAcct>({
   country: "",
 });
 
-const countries = ref<AddressDetails[]>([
-  {
-    name: "Default",
-    code: "Default",
-  },
-]);
+const countries = ref<string[]>(["United States", "Canada"])
+
 const states = ref<AddressDetails[]>([
   {
     name: "Default",
@@ -218,6 +213,8 @@ const cities = ref<AddressDetails[]>([
     code: "Default",
   },
 ]);
+
+
 
 function back() {
   router.push("/dashboard");
@@ -251,33 +248,29 @@ async function retrieveAccountInformation() {
     );
 
     res.data.employmentNumber = res.data.employmentNumber.replace("T", "");
-    accountInfo.value = res.data;
-
-    let countriesFromApi = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/allCountries`
-    );
-
-    countries.value = countriesFromApi.data;
+    accountInfo.value = res.data
     countryChanged();
   } catch (err) {
     console.log(err);
   }
 }
 
-function countryChanged() {
-  let realCountryData = countries.value?.filter(
-    (country) => accountInfo.value.country === country.name
-  );
+const countryCode = {
+  "Canada": "CA",
+  "United States": "US"
+}
 
+function countryChanged() {
   axios
     .get(
-      `${import.meta.env.VITE_API_URL}/api/getStateFromCountry`,
+      `${import.meta.env.VITE_API_URL}/api/get-state-from-country`,
       {
-        params: { realCountryData },
+        params: { countryCode: countryCode[accountInfo.value.country] },
       }
     )
     .then((res) => {
       states.value = res.data;
+
       stateChanged();
     })
     .catch((err) => {
@@ -286,18 +279,16 @@ function countryChanged() {
 }
 
 function stateChanged() {
-  let realCountryData = countries.value?.filter(
-    (country) => accountInfo.value.country === country.name
-  );
+
   let realStateData = states.value?.filter(
     (state) => accountInfo.value.state === state.name
   );
 
   axios
     .get(
-      `${import.meta.env.VITE_API_URL}/api/getCityFromState`,
+      `${import.meta.env.VITE_API_URL}/api/get-city-from-state`,
       {
-        params: { realCountryData, realStateData },
+        params: { stateCode: realStateData[0].code },
       }
     )
     .then((res) => {

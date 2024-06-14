@@ -137,6 +137,14 @@ function moveToNextSection() {
 }
 
 function addFoapa() {
+    const num = parseFloat(assignedFoapa.value.cost);
+    if (isNaN(num) && !isFinite(num)) {
+        toast("Error: Assigned quantity must be a number", {
+            type: TYPE.ERROR
+        })
+        return
+    };
+
     props.claim.foapaDetails.push(JSON.parse(JSON.stringify(assignedFoapa.value)));
     assignedFoapa.value = {
         foapaNumber: "",
@@ -151,7 +159,7 @@ function saveFoapas() {
 
     axios
         .post(
-            `${import.meta.env.VITE_API_URL}/api/update-foapa-details`,
+            `${import.meta.env.VITE_API_URL}/api/add-foapa-details`,
             {
                 foapaDetails: foapaDetailsToAdd.value,
             }

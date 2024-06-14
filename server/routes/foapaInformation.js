@@ -20,12 +20,33 @@ router.post("/update-foapa-details", verifyToken, async (req, res) => {
     logger.error(err, {
       api: "/api/update-foapa-details",
     });
-    res
-      .status(500)
-      .send({
-        message:
-          "An unexpected error occured when saving your FOAPA details. Please try again later.",
-      });
+    res.status(500).send({
+      message:
+        "An unexpected error occured when saving your FOAPA details. Please try again later.",
+    });
+  }
+});
+
+router.post("/add-foapa-details", verifyToken, async (req, res) => {
+  try {
+    let faculty = await Faculty.findById(req.user.userId);
+
+    faculty.foapaDetails.push(...req.body.foapaDetails);
+
+    await faculty.save();
+
+    res.status(200).send({ message: "FOAPA details updated successfully" });
+  } catch (err) {
+    logger.error("There was an error updating the user's FOAPA details", {
+      api: "/api/update-foapa-details",
+    });
+    logger.error(err, {
+      api: "/api/update-foapa-details",
+    });
+    res.status(500).send({
+      message:
+        "An unexpected error occured when saving your FOAPA details. Please try again later.",
+    });
   }
 });
 

@@ -79,6 +79,7 @@ function saveFOAPA() {
       toast("Successfully saved FOAPA information", {
         type: TYPE.SUCCESS
       })
+      retrieveUserFoapaDetails()
     })
     .catch((err) => {
       toast(err?.response?.data?.message || "An unexpected error occured when saving your FOAPA details. Please try again later", {

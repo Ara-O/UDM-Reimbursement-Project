@@ -106,17 +106,17 @@ import {
 
 const departments = [
   "Dean's Office",
-  "Biochemistry",
-  "Civil",
-  "Mechanical Engineering",
   "Architectural & Environmental Engineering",
-  "Computer Science",
-  "Physics",
-  "Electrical & Computer Engineering",
-  "Mathematics",
-  "E&S Computing Services",
-  "Professional Engineering",
+  "Biochemistry",
   "Chemistry",
+  "Civil",
+  "Computer Science",
+  "E&S Computing Services",
+  "Electrical & Computer Engineering",
+  "Mechanical Engineering",
+  "Mathematics",
+  "Physics",
+  "Professional Engineering",
 ];
 
 const emits = defineEmits(["continue"]);

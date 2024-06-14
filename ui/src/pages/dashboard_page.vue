@@ -264,7 +264,9 @@ const filterReimbursements = computed(() => {
 function signOut() {
   localStorage.setItem("token", "");
   router.push("/");
-  alert("Successfully signed out!");
+  toast("Successfully signed out!", {
+    type: TYPE.SUCCESS
+  });
 }
 
 function stopDelete() {
