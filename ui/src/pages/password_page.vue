@@ -18,18 +18,42 @@
       <section class="signup-form">
         <section v-show="surveyProgress === 0" class="signup-form">
           <div class="input-field-wrapper">
+            <!-- CURRENT PASSWORD -->
             <div class="input-field">
               <label for="password">Current Password: </label>
-              <input type="password" name="Password" id="password" v-model="currentPassword" />
+              <span style="position: relative">
+                <input :type="passwordFieldType" name="Password" id="password" v-model="currentPassword" />
+                <img v-if="passwordFieldType === 'password'" class="hover:!opacity-100" src="../assets/eye.png"
+                  @click="togglePasswordVisibility"
+                  style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%" />
+                <img v-else class="hover:!opacity-100" src="../assets/eyeslash.png" @click="togglePasswordVisibility"
+                  style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%" />
+              </span>
             </div>
+            <!-- NEW PASSWORD -->
             <div class="input-field-wrapper">
               <div class="input-field">
                 <label for="new-password">New password: </label>
-                <input type="password" name="new-password" id="new-password" v-model="newPassword" />
+                <span style="position: relative">
+                  <input :type="passwordFieldType2" name="new-password" id="new-password" v-model="newPassword" />
+                  <img v-if="passwordFieldType2 === 'password'" class="hover:!opacity-100" src="../assets/eye.png"
+                    @click="togglePasswordVisibility2"
+                    style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%" />
+                  <img v-else class="hover:!opacity-100" src="../assets/eyeslash.png" @click="togglePasswordVisibility2"
+                    style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%" />
+                </span>
               </div>
+              <!-- RE-ENTER NEW PASSWORD -->
               <div class="input-field">
                 <label for="reenter-password">Re-enter new password: </label>
-                <input type="password" name="reenter-password" id="reenter-password" v-model="reEnteredPassword" />
+                <span style="position: relative">
+                  <input :type="passwordFieldType3" name="reenter-password" id="reenter-password" v-model="reEnteredPassword" />
+                  <img v-if="passwordFieldType3 === 'password'" class="hover:!opacity-100" src="../assets/eye.png"
+                    @click="togglePasswordVisibility3"
+                    style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%" />
+                  <img v-else class="hover:!opacity-100" src="../assets/eyeslash.png" @click="togglePasswordVisibility3"
+                    style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%" />
+                </span>
               </div>
             </div>
           </div>
@@ -66,6 +90,20 @@ let surveyProgress = ref<number>(0);
 const router = useRouter();
 
 let newPassword = ref<string>("");
+
+const passwordFieldType = ref<string>('password');
+const passwordFieldType2 = ref<string>('password');
+const passwordFieldType3 = ref<string>('password');
+
+function togglePasswordVisibility() {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+}
+function togglePasswordVisibility2() {
+  passwordFieldType2.value = passwordFieldType2.value === 'password' ? 'text' : 'password';
+}
+function togglePasswordVisibility3() {
+  passwordFieldType3.value = passwordFieldType3.value === 'password' ? 'text' : 'password';
+}
 
 function changePassword() {
   if (reEnteredPassword.value !== newPassword.value) {

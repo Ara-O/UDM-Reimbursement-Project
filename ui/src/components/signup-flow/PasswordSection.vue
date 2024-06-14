@@ -3,17 +3,45 @@
     <div class="input-field-wrapper">
       <div class="input-field">
         <label for="password">Password: *</label>
-        <span>
-          <Field type="password" name="password" id="password" :rules="passwordMatchesReenteredPassword"
+        <span style="position: relative;">
+          <Field :type="passwordFieldType" name="password" id="password" :rules="passwordMatchesReenteredPassword"
             v-model="userSignupData.password" />
           <ErrorMessage name="password" class="error-field" />
+          <img 
+            v-if="passwordFieldType === 'password'" 
+            class="hover:!opacity-100"
+            src="../../assets/eye.png" 
+            @click="togglePasswordVisibility"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%"
+          />
+          <img 
+            v-else 
+            class="hover:!opacity-100"
+            src="../../assets/eyeslash.png" 
+            @click="togglePasswordVisibility"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%"
+          />
         </span>
       </div>
       <div class="input-field">
         <label for="reenter-password" class="re-enter-password-label" style="width: auto">Re-enter password: *</label>
-        <span>
-          <Field type="password" :rules="passwordMatches" name="re-enter-password" id="re-enter-password"
+        <span style="position: relative;">
+          <Field :type="passwordFieldType2" :rules="passwordMatches" name="re-enter-password" id="re-enter-password"
             v-model="reEnteredPassword" />
+            <img 
+            v-if="passwordFieldType2 === 'password'" 
+            class="hover:!opacity-100"
+            src="../../assets/eye.png" 
+            @click="togglePasswordVisibility2"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%"
+          />
+          <img 
+            v-else 
+            class="hover:!opacity-100"
+            src="../../assets/eyeslash.png" 
+            @click="togglePasswordVisibility2"
+            style="position: absolute; right: 20px; top: 28%; transform: translateY(-50%); cursor: pointer; width: 20px; opacity: 25%"
+          />
           <h5 class="error-field" style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
             v-if="userSignupData.password !== reEnteredPassword">
             Password does not match
@@ -39,6 +67,16 @@ let reEnteredPassword = ref<string>("");
 const props = defineProps<{ userSignupData: UserData }>();
 const emits = defineEmits(["continue"]);
 
+const passwordFieldType = ref<string>('password');
+  const passwordFieldType2 = ref<string>('password');
+
+function togglePasswordVisibility() {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+}
+
+function togglePasswordVisibility2() {
+  passwordFieldType2.value = passwordFieldType2.value === 'password' ? 'text' : 'password';
+}
 function passwordMatches(value) {
   if (value.trim() === "") {
     return "Field can not be empty";
