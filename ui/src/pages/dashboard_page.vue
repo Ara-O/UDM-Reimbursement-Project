@@ -120,7 +120,7 @@
       <button @click="signOut">Sign Out</button>
     </section>
     <confirmation-popup v-if="delete_claim_confirmation_dialog" :cancel-function="stopDelete"
-      :continue-function="confirmDelete">
+      :continue-function="confirmDelete" left-button-text="Yes">
       <template #message>
         Are you sure you want to delete this reimbursement claim?
       </template>

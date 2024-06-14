@@ -1,44 +1,47 @@
 <template>
-    <span class="flex items-center gap-6 mb-2">
-        <h2 class="font-semibold my-0 text-[27px]">Next Steps</h2>
-        <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7">
-    </span>
+    <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0">
 
-    <div>
-        <h3 class="text-sm font-medium">Follow these Steps:</h3>
-
-        <span class="flex gap-5">
-            <button @click="saveReimbursement"
-                class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save
-                for
-                later</button>
-            <button @click="createPdf"
-                class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">
-                Preview
-                Reimbursement Request</button>
-            <button @click="submitTicket"
-                class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Submit
-                Reimbursement Request</button>
-
+        <span class="flex items-center gap-6 mb-2">
+            <h2 class="font-semibold my-0 text-[27px]">Next Steps</h2>
+            <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7">
         </span>
-        <br>
-        <span class="flex gap-5">
-            <button @click="saveAsTemplate"
-                class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save
-                as
-                Template</button>
-            <button @click="discardChanges"
-                class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Discard
-                Changes</button>
-        </span>
-        <h5 class="font-normal" v-if="currentlyCreatingPDF">Generating PDF, please wait...</h5>
-    </div>
-    <confirmation-popup v-if="showConfirmationPopup" left-button-text="Discard Changes" right-button-text="Cancel"
-        :cancel-function="returnToDashboard" :continue-function="cancelConfirmationPopup">
-        <template #message>
-            Are you sure you want to discard the changes you made to this reimbursement claim?
-        </template>
-    </confirmation-popup>
+
+        <div>
+            <h3 class="text-sm font-medium">Follow these Steps:</h3>
+
+            <span class="flex gap-5 flex-wrap">
+                <button @click="saveReimbursement"
+                    class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save
+                    for
+                    later</button>
+                <button @click="createPdf"
+                    class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">
+                    Preview
+                    Reimbursement Request</button>
+                <button @click="submitTicket"
+                    class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Submit
+                    Reimbursement Request</button>
+
+            </span>
+            <br>
+            <span class="flex gap-5 flex-wrap">
+                <button @click="saveAsTemplate"
+                    class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Save
+                    as
+                    Template</button>
+                <button @click="discardChanges"
+                    class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Discard
+                    Changes</button>
+            </span>
+            <h5 class="font-normal" v-if="currentlyCreatingPDF">Generating PDF, please wait...</h5>
+        </div>
+        <confirmation-popup v-if="showConfirmationPopup" left-button-text="Discard Changes" right-button-text="Cancel"
+            :cancel-function="returnToDashboard" :continue-function="cancelConfirmationPopup">
+            <template #message>
+                Are you sure you want to discard the changes you made to this reimbursement claim?
+            </template>
+        </confirmation-popup>
+    </section>
 </template>
 
 <script lang="ts" setup>

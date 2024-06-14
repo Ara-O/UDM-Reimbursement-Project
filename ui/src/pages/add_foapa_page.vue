@@ -36,9 +36,6 @@ import { TYPE, useToast } from "vue-toastification";
 
 const router = useRouter();
 let foapaDetails = ref<FoapaStuff[]>([]);
-let successMessage = ref<string>("");
-let errorMessage = ref<string>("");
-let loadingMessage = ref<string>("");
 let changes_were_made = ref<boolean>(false)
 let show_leave_dialogue = ref<boolean>(false)
 

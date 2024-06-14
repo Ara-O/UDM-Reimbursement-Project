@@ -4,7 +4,7 @@
     <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4">
     <h4 class="font-normal text-sm text-gray-600">Return to dashboard</h4>
   </div>
-  <main class="h-screen flex items-center gap-20">
+  <main class="h-screen block xl:flex mt-40 xl:mt-0 items-center gap-20">
     <!-- SECTIONS SECTION -->
     <section class="pl-32 hidden xl:block">
       <h3 class="text-2xl font-semibold">Section</h3>
