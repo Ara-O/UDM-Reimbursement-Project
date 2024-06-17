@@ -173,6 +173,9 @@ input {
   width: 60px;
 }
 
+.password-span{
+  position: relative;
+}
 .input-field input,
 .input-field select {
   padding-left: 20px;

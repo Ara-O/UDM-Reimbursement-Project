@@ -184,18 +184,18 @@ export function isLessThan(value, maxLength: number) {
     return true;
   }
 }
-
 export function isValidActvNumber(value) {
   if (value === undefined || value === null) value = "";
   value = String(value);
 
-  const hasValidLength = /^[a-zA-Z]{1,4}$/.test(value);
-
+  const hasValidFormat = /^[a-zA-Z0-9]*$/.test(value);
   switch (true) {
     case value.trim() === "":
       return true;
-    case !hasValidLength:
-      return "4 Letters Only";
+    case !hasValidFormat:
+      return "Invalid Character";
+    case value.trim().length !== 4:
+      return "4 characters";
     default:
       return true;
   }
@@ -203,16 +203,15 @@ export function isValidActvNumber(value) {
 
 export function isValidFoapaDescription(value) {
   if (value === undefined || value === null) value = "";
-  value = String(value)
+  value = String(value);
 
   const hasValidLength = /^[a-zA-Z0-9" "]{0,250}$/.test(value);
 
   switch (true) {
     case !hasValidLength:
-      return "Up to 250 Characters Only"
+      return "Up to 250 Characters Only";
     default:
       return true;
-
   }
 }
 

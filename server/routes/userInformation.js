@@ -167,18 +167,21 @@ router.post("/send-confirmation-email", async (req, res) => {
       to: data.workEmail,
       subject: "Welcome to the UDM Reimbursement System!",
       html: `
-      <div style="background: white; width: 100%; box-sizing: border-box; font-family: Georgia, serif;">
-      <h2 style="font-weight: 500; margin: 0; padding: 10px 0;">Verify Your Account</h2>
-      <div style="background: white; text-align: center; border: 1px solid black; padding: 5% 10%; box-sizing: border-box;">
+           
+<div style="border: solid 1px #efefef; padding: 20px 0px;">
+      <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
+<img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
+<h3 style="font-weight: 600; margin: 0; padding: 10px 0; ">Verify Your Account</h3>
         <h4 style="font-weight: 300; margin: 10px 0;">Hello,</h4>
         <h4 style="font-weight: 300; margin: 10px 0;">Thanks for signing up for the University of Detroit Mercy Reimbursement System!</h4>
         <h4 style="font-weight: 300; margin: 10px 0;">Please use the verification code below to activate your account:</h4>
-        <h3 style="font-weight: 500; text-align: center; margin: 20px 0;">${userAuthString}</h3>
+        <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${userAuthString}</h3>
       </div>
-      <p style="font-weight: 300; font-size: 10px; color: gray; text-align: center; margin: 10px 0;">
+      <p style="font-weight: 400; font-size: 10px; color: gray; text-align: center; margin: 10px 0;">
         If you did not sign up for this service, please ignore this email.
       </p>
-    </div>
+</div>
+
         `,
     });
 
@@ -277,12 +280,9 @@ router.get("/retrieve-account-numbers", async (req, res) => {
       api: "/api/retrieve-account-numbers",
     });
 
-    return res
-      .status(500)
-      .send({
-        message:
-          "There was an error retrieving the account (ACCT) numbers list",
-      });
+    return res.status(500).send({
+      message: "There was an error retrieving the account (ACCT) numbers list",
+    });
   }
 });
 

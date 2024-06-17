@@ -29,6 +29,8 @@
                             <br>
                             <button class="mt-5 verify-button" type="submit">Enter</button>
                         </form>
+                        <h3 class="text-sm font-normal mt-6 underline cursor-pointer" @click="resendCode">Resend Code
+                        </h3>
                     </div>
                 </article>
             </section>
@@ -37,7 +39,6 @@
 </template>
 
 <script lang="ts" setup>
-import BasicQuestionsSection from "../components/signup-flow/BasicQuestionsSection.vue";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -49,6 +50,7 @@ const toast = useToast()
 const router = useRouter()
 let userCode = ref<string>("")
 let userSignupData = ref<UserData>()
+let tries = ref<number>(0)
 
 async function verifySixCharacterCode() {
     if (userCode.value.length !== 6) {
@@ -90,6 +92,44 @@ onMounted(() => {
         router.push("/signup")
     }
 })
+
+async function resendCode() {
+    try {
+        if (tries.value >= 3) {
+            toast("You have exceeded the limit of code resends. Please restart the signup process", {
+                type: TYPE.WARNING
+            })
+            return
+        }
+
+        toast("Resending code...", {
+            type: TYPE.INFO
+        })
+
+        if (userSignupData.value?.workEmail && userSignupData.value.employmentNumber) {
+            await axios
+                .post(
+                    `${import.meta.env.VITE_API_URL}/api/send-confirmation-email`,
+                    {
+                        workEmail: userSignupData.value.workEmail,
+                        employmentNumber: userSignupData.value.employmentNumber
+                    }
+                )
+
+            tries.value++
+            toast("Code was re-sent successfully", {
+                type: TYPE.SUCCESS
+            })
+        } else {
+            throw new Error("No user data found")
+            return
+        }
+    } catch (err: any) {
+        toast(err?.response?.data?.message || "An unexpected error has occured. Please try again later", {
+            type: TYPE.ERROR
+        })
+    }
+}
 </script>
 
 

@@ -1,9 +1,14 @@
 <template>
   <section class="profile-page-section">
+
     <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="detroit-mercy-logo" />
     <br />
-    <h3 class="profile-page-title">Foapa number section</h3>
-    <br />
+    <h3 class="profile-page-title mt-10 !text-lg">Your Profile</h3>
+    <router-link to="/account" style="text-decoration: none"><button class="filter"
+        style="border: 0px; padding: 0px 30px; text-decoration: none">
+        View Your User Information
+      </button></router-link>
+    <h3 class="profile-page-title mt-10 !text-lg">FOAPA Section</h3>
     <div class="foapa-number-wrapper">
       <div class="foapa-number" v-for="foapa in userFoapaNumbers"
         style="display: flex; flex-direction: column; align-items: start">
@@ -17,21 +22,18 @@
           <h3 style="margin-top: 10px">{{ formatUserFoapa(foapa) }}</h3>
         </div>
       </div>
-      <div class="filter" @click="goToFoapaPage">
-        <h3>Manage Foapa Details</h3>
-      </div>
+      <button class="filter" @click="goToFoapaPage" style="border: 0px; padding: 0px 30px; text-decoration: none">
+        Manage FOAPA Details
+      </button>
     </div>
-    <br />
-    <router-link to="/account">
-      <h3 class="view-account-info">View User information</h3>
-    </router-link>
-    <br />
-    <router-link to="/dashboard" style="text-decoration: none"><button class="filter"
+
+    <router-link to="/dashboard" style="text-decoration: none" class="mt-5"><button class="filter"
         style="border: 0px; padding: 0px 30px; text-decoration: none">
         Back to home
       </button></router-link>
+
     <br />
-    <button class="filter sign-out-button" @click="signOut">Sign Out</button>
+    <button class="filter sign-out-button mt-5" @click="signOut">Sign Out</button>
   </section>
 </template>
 
@@ -40,6 +42,7 @@ import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { FoapaStuff } from "../types/types";
+import { TYPE, useToast } from "vue-toastification";
 
 let userFoapaNumbers = ref<FoapaStuff[]>([]);
 
@@ -86,10 +89,13 @@ function goToFoapaPage() {
   router.push("/add-foapa");
 }
 
+const toast = useToast()
 function signOut() {
   localStorage.setItem("token", "");
   router.push("/");
-  alert("Successfully signed out!");
+  toast("Successfully signed out!", {
+    type: TYPE.SUCCESS
+  });
 }
 
 onMounted(() => {
