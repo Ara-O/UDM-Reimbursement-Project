@@ -110,7 +110,7 @@ let capturedImagesBlob = ref<any>()
 const toast = useToast()
 
 function receiptSize(event) {
-  const maxSize = 5 * 1024 * 1024; // 2 MB in bytes
+  const maxSize = 10 * 1024 * 1024; // 2 MB in bytes
   const files = event.target.files;
 
   for (let i = 0; i < files.length; i++) {
