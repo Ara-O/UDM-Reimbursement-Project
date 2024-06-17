@@ -17,7 +17,7 @@
                 expenses from receipts. Note: There is a file upload size limit of 25mb</h4>
 
             <input id="receipt" type="file" class="custom-file-input" ref="receiptRef" name="receipt"
-                @change="receiptAdded" accept="application/pdf, image/png, image/jpeg" multiple />
+                @change="receiptSize" accept="application/pdf, image/png, image/jpeg" multiple />
             <h3 class="font-normal text-sm inline" v-if="fileWasSelected">Uploading...</h3>
             <h4 class="font-normal text-sm">or</h4>
             <h3 class="cursor-pointer text-sm underline font-normal" @click="openCameraPopup">Click here to take a
@@ -108,6 +108,23 @@ let imagePreviewURL = ref<string>("")
 let capturedImagesBlob = ref<any>()
 
 const toast = useToast()
+
+function receiptSize(event) {
+  const maxSize = 5 * 1024 * 1024; // 2 MB in bytes
+  const files = event.target.files;
+
+  for (let i = 0; i < files.length; i++) {
+    if (files[i].size > maxSize) {
+      alert(`File "${files[i].name}" exceeds the 25 MB size limit.`);
+      event.target.value = ''; // Clear the input
+      return;
+    }
+  }
+
+  // Call the receiptAdded function if file size is within the limit
+  receiptAdded(event);
+}
+
 function openCameraPopup() {
     cameraPopupIsOpen.value = true
 
@@ -221,13 +238,13 @@ function addCapturedImageAsReceipt() {
 }
 
 
-async function receiptAdded() {
-    fileWasSelected.value = true;
+async function receiptAdded(event) {
+    event.fileWasSelected.value = true;
     // @ts-ignore
-    const files = receiptRef.value.files;
+    const files = event.receiptRef.value.files;
 
     await storeReceiptImages();
-    fileWasSelected.value = false;
+    event.fileWasSelected.value = false;
 }
 
 
