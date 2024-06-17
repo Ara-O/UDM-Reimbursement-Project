@@ -14,7 +14,7 @@
                 generated
                 PDF. To
                 automatically extract
-                expenses from receipts. Note: There is a file upload size limit of 25mb</h4>
+                expenses from receipts. Note: There is a file upload size limit of 10mb</h4>
 
             <input id="receipt" type="file" class="custom-file-input" ref="receiptRef" name="receipt"
                 @change="receiptSize" accept="application/pdf, image/png, image/jpeg" multiple />
@@ -115,7 +115,8 @@ function receiptSize(event) {
 
   for (let i = 0; i < files.length; i++) {
     if (files[i].size > maxSize) {
-      alert(`File "${files[i].name}" exceeds the 25 MB size limit.`);
+      //alert(`File "${files[i].name}" exceeds the 25 MB size limit.`);
+      toast("File exceeds the 10 MB size limit.",{type:TYPE.ERROR});
       event.target.value = ''; // Clear the input
       return;
     }
