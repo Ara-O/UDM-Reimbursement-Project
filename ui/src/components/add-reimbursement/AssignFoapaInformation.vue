@@ -53,7 +53,7 @@
                     </div>
 
                 </div>
-                <div class="flex gap-3 flex-col max-h-36  overflow-auto">
+                <div class="flex gap-3 flex-col max-h-80 overflow-auto">
                     <foapa-container :foapa="foapa" v-for="foapa in props.claim.foapaDetails"
                         @delete-activity="deleteFOAPA">
                     </foapa-container>
