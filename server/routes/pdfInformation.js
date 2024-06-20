@@ -59,6 +59,35 @@ function generatePdf(docDefinition, callback) {
   }
 }
 
+router.post(
+  "/upload-pdf",
+  verifyToken,
+  upload.single("receipt"),
+  async (req, res) => {
+    try {
+      if (req?.file === null) return;
+
+      const file = req.file;
+
+      const buffer = fs.readFileSync(file.path);
+
+      const upload = await imagekit.upload({
+        file: buffer,
+        fileName: `receipt-${generateRandomId()}.pdf`,
+        isPrivateFile: false,
+      });
+
+      // console.log("Image url", imageLinks);
+      return res.status(200).send({ url: upload.url, id: upload.fileId });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .send({ message: "An unexpected error has occured" });
+    }
+  }
+);
+
 router.get("/generatePdf", verifyToken, (req, res) => {
   // console.log(req.query);
   let receipts = req.query.reimbursementData.reimbursementReceipts || [];
@@ -117,7 +146,7 @@ router.get("/generatePdf", verifyToken, (req, res) => {
         res.send(base64String);
       },
       function (error) {
-        console.log(error)
+        console.log(error);
         res.send("ERROR:" + error);
       }
     );

@@ -147,19 +147,19 @@ async function convertPDFtoImages(file_data: any) {
         PDFJS.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs"
 
         // Upload pdf
-        // let formData = new FormData();
+        let formDataPDF = new FormData();
 
-        // //@ts-ignore
-        // formData.append("receipt", file_data);
+        //@ts-ignore
+        formDataPDF.append("receipt", file_data);
 
-        // let res = await axios.post(`${import.meta.env.VITE_API_URL}/api/upload-pdf`, formData)
+        let resp = await axios.post(`${import.meta.env.VITE_API_URL}/api/upload-pdf`, formDataPDF)
 
-        // const pdf = res.data
+        const pdfRes = resp.data
 
         const imagesList: any[] = [];
         const canvas = document.createElement("canvas");
         canvas.setAttribute("className", "canv");
-        const pdf = await PDFJS.getDocument("https://ik.imagekit.io/kywjttb4q/receipt-401092013_5xtAAC77Q.pdf").promise
+        const pdf = await PDFJS.getDocument(pdfRes.url).promise
 
         for (let i = 1; i <= pdf.numPages; i++) {
             var page = await pdf.getPage(i);
@@ -176,6 +176,42 @@ async function convertPDFtoImages(file_data: any) {
             console.log(img)
             imagesList.push(img);
         }
+
+        const blobArr: any = []
+
+        for (let i = 0; i < imagesList.length; i++) {
+            const byteCharacters = atob(imagesList[i].split(',')[1]);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            blobArr.push(new Blob([byteArray], { type: 'image/png' }));
+        }
+
+        const formData = new FormData();
+
+        for (let i = 0; i < blobArr.length; i++) {
+            formData.append('receipt', blobArr[i]);
+        }
+
+        console.log(formData)
+        let res = axios.post(
+            `${import.meta.env.VITE_API_URL}/api/storeReceiptImages`,
+            formData
+        ).then((res) => {
+            fileWasSelected.value = false;
+
+            if (props.claim.reimbursementReceipts.length === 0) {
+                props.claim.reimbursementReceipts = res.data;
+            } else {
+                props.claim.reimbursementReceipts.push(...res.data);
+            }
+
+            showCapturedImage.value = false
+        }).catch((err) => {
+            console.log(err)
+        })
 
 
 
