@@ -87,6 +87,7 @@
 <script lang="ts" setup>
 import axios from 'axios';
 import CancelIcon from "../../assets/cross-icon.svg"
+import * as PDFJS from 'pdfjs-dist/build/pdf.min.mjs'
 import { ref } from 'vue';
 import { ReimbursementTicket } from '../../types/types';
 import { TYPE, useToast } from 'vue-toastification';
@@ -110,20 +111,82 @@ let capturedImagesBlob = ref<any>()
 const toast = useToast()
 
 function receiptSize(event) {
-  const maxSize = 10 * 1024 * 1024; // 2 MB in bytes
-  const files = event.target.files;
+    const maxSize = 10 * 1024 * 1024; // 2 MB in bytes
+    const files = event.target.files;
 
-  for (let i = 0; i < files.length; i++) {
-    if (files[i].size > maxSize) {
-      //alert(`File "${files[i].name}" exceeds the 25 MB size limit.`);
-      toast("File exceeds the 10 MB size limit.",{type:TYPE.ERROR});
-      event.target.value = ''; // Clear the input
-      return;
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].size > maxSize) {
+            //alert(`File "${files[i].name}" exceeds the 25 MB size limit.`);
+            toast("File exceeds the 10 MB size limit.", { type: TYPE.ERROR });
+            event.target.value = ''; // Clear the input
+            return;
+        }
+
+        //Check if file is a pdf
+        if (files[i].type === "application/pdf") {
+            convertPDFtoImages(files[i])
+        } else {
+            // Call the receiptAdded function if file size is within the limit
+            receiptAdded(event);
+        }
     }
-  }
+}
 
-  // Call the receiptAdded function if file size is within the limit
-  receiptAdded(event);
+
+const convertFiletoDataUrl = (file) => new Promise((resolve, reject) => {
+    const reader: any = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.normalize());
+    reader.onerror = error => reject(error);
+});
+
+
+async function convertPDFtoImages(file_data: any) {
+    console.log("Convert pdf to image file_data:", file_data)
+    try {
+        PDFJS.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs"
+
+        // Upload pdf
+        // let formData = new FormData();
+
+        // //@ts-ignore
+        // formData.append("receipt", file_data);
+
+        // let res = await axios.post(`${import.meta.env.VITE_API_URL}/api/upload-pdf`, formData)
+
+        // const pdf = res.data
+
+        const imagesList: any[] = [];
+        const canvas = document.createElement("canvas");
+        canvas.setAttribute("className", "canv");
+        const pdf = await PDFJS.getDocument("https://ik.imagekit.io/kywjttb4q/receipt-401092013_5xtAAC77Q.pdf").promise
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            var page = await pdf.getPage(i);
+            var viewport = page.getViewport({ scale: 1.5 });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            var render_context = {
+                canvasContext: canvas.getContext("2d"),
+                viewport: viewport,
+            };
+            await page.render(render_context).promise;
+            let img: any = canvas.toDataURL("image/png");
+            console.log("IMAGE")
+            console.log(img)
+            imagesList.push(img);
+        }
+
+
+
+
+
+    } catch (err) {
+        console.log(err)
+        toast("An unexpected error has occured", {
+            type: TYPE.ERROR
+        })
+    }
 }
 
 function openCameraPopup() {
@@ -238,14 +301,14 @@ function addCapturedImageAsReceipt() {
     })
 }
 
-
 async function receiptAdded(event) {
-    event.fileWasSelected.value = true;
+    console.log(event)
+    fileWasSelected.value = true;
     // @ts-ignore
-    const files = event.receiptRef.value.files;
+    const files = receiptRef.value.files;
 
     await storeReceiptImages();
-    event.fileWasSelected.value = false;
+    fileWasSelected.value = false;
 }
 
 
