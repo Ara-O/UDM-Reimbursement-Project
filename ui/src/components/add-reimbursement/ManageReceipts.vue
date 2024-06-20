@@ -14,7 +14,7 @@
                 generated
                 PDF. To
                 automatically extract
-                expenses from receipts. Note: There is a file upload size limit of 10mb</h4>
+                expenses from receipts. <b>Note: There is a file upload size limit of 10mb</b></h4>
 
             <input id="receipt" type="file" class="custom-file-input" ref="receiptRef" name="receipt"
                 @change="receiptSize" accept="application/pdf, image/png, image/jpeg" multiple />

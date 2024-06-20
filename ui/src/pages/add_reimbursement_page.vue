@@ -90,7 +90,7 @@ let sections = ref([
     section: 4
   },
   {
-    title: "Optional: Guest Information",
+    title: "Guest Information (Optional)",
     section: 5
   },
   {

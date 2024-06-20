@@ -16,6 +16,9 @@
                         <option :value="formatUserFoapa(foapa)" v-for="foapa in filteredUserFoapas">
                             {{ formatUserFoapa(foapa) }}
                         </option>
+                        <option>
+                            Add a New FOAPA
+                        </option>
                     </select>
                 </span>
                 <span>
@@ -53,7 +56,7 @@
                     </div>
 
                 </div>
-                <div class="flex gap-3 flex-col max-h-36  overflow-auto">
+                <div class="flex gap-3 flex-col max-h-80 overflow-auto">
                     <foapa-container :foapa="foapa" v-for="foapa in props.claim.foapaDetails"
                         @delete-activity="deleteFOAPA">
                     </foapa-container>
@@ -95,7 +98,7 @@
 import axios from "axios";
 import CancelIcon from "../../assets/cross-icon.svg"
 import FoapaContainer from "./FoapaContainer.vue";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import ManageFoapaDetails from "../manage-foapa/ManageFoapaDetails.vue";
 import { ReimbursementTicket, FoapaStuff, FoapaInput } from "../../types/types";
 import BalanceContainer from "./BalanceContainer.vue";
@@ -134,12 +137,21 @@ const filteredUserFoapas = computed(() => {
 
     return foapas
 })
+
+watch(
+  () => assignedFoapa.value.foapaNumber,
+  (newVal, oldVal) => {
+    if(newVal == "Add a New FOAPA")
+        showFoapaPopup();
+  }
+);
 function showFoapaPopup() {
     foapaPopupIsVisible.value = true
 }
 
 function closeFoapaPopup() {
     foapaPopupIsVisible.value = false
+    assignedFoapa.value.foapaNumber = "";
 }
 
 function moveToNextSection() {
