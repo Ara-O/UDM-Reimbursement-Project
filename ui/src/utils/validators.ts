@@ -174,6 +174,20 @@ export function isValidFoapaName(value, maxLength) {
   }
 }
 
+export function isValidRecipientEmail(value) {
+  if (value === undefined || value === null) value = "";
+  value = String(value);
+
+  switch (true) {
+    case value.trim() === "":
+      return "Required";
+    case !value.includes("@udmercy.edu"):
+      return "Recipient must have a udmercy email";
+    default:
+      return true;
+  }
+}
+
 export function isLessThan(value, maxLength: number) {
   if (value === undefined || value === null) value = "";
   value = String(value);

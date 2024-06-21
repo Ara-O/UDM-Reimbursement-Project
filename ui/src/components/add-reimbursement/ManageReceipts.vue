@@ -133,16 +133,8 @@ function receiptSize(event) {
 }
 
 
-const convertFiletoDataUrl = (file) => new Promise((resolve, reject) => {
-    const reader: any = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.normalize());
-    reader.onerror = error => reject(error);
-});
-
-
 async function convertPDFtoImages(file_data: any) {
-    console.log("Convert pdf to image file_data:", file_data)
+    fileWasSelected.value = true
     try {
         PDFJS.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs"
 
@@ -208,7 +200,8 @@ async function convertPDFtoImages(file_data: any) {
                 props.claim.reimbursementReceipts.push(...res.data);
             }
 
-            showCapturedImage.value = false
+            fileWasSelected.value = false
+
         }).catch((err) => {
             console.log(err)
         })
