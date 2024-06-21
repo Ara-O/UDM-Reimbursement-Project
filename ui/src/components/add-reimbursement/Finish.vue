@@ -44,10 +44,14 @@
                 Are you sure you want to discard the changes you made to this reimbursement claim?
             </template>
         </confirmation-popup>
-        <div class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center">
+        <div v-if="showEmailPopup"
+            class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center">
             <div
                 class="bg-white shadow-md border border-solid border-gray-100 h-min px-6 box-border w-96 py-3 rounded-md">
-                <h3 class="font-semibold">Send this claim attached to an email</h3>
+                <span class="flex items-center m-0">
+                    <h3 class="font-semibold mb-0">Send this claim attached to an email</h3>
+                    <img :src="CancelIcon" alt="Cancel icon" class="w-3 cursor-pointer" @click="showEmailPopup = false">
+                </span>
                 <span>
                     <Form @submit="sendEmail">
                         <div>
@@ -65,12 +69,13 @@
                             <ErrorMessage name="subject" class=" text-red-400 text-xs mt-2" />
                         </div>
                         <div>
-                            <h4 class="font-semibold text-sm leading-7">Message (Any supplementary info will be included
+                            <h4 class="font-semibold text-sm leading-7">Message (Any supplementary info will be
+                                included
                                 in your
                                 email)
                             </h4>
                             <Field name="message" type="text"
-                                class="h-20 w-full box-border px-3 py-3 text-sm border-gray-300 border-solid border rounded-md"
+                                class="h-20 resize-none w-full box-border px-3 py-3 text-sm border-gray-300 border-solid border rounded-md"
                                 as="textarea">
                             </Field>
                             <ErrorMessage name="message" class="text-red-400" />
@@ -78,7 +83,8 @@
                         <button type="submit"
                             class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs">Send
                             email</button>
-                        <h3 class="text-sm font-medium leading-6">Note: Your reimbursement claim PDF will be attached to
+                        <h3 class="text-sm font-medium leading-6">Note: Your reimbursement claim PDF will be
+                            attached to
                             this
                             email</h3>
                     </Form>
@@ -98,7 +104,7 @@ import ConfirmationPopup from '../utilities/ConfirmationPopup.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { TYPE, useToast } from 'vue-toastification';
 import { isValidRecipientEmail } from '../../utils/validators';
-
+import CancelIcon from "../../assets/cross-icon.svg"
 const toast = useToast()
 
 const props = defineProps<{
@@ -111,6 +117,7 @@ const emits = defineEmits(["onClaimSaved"])
 let currentlyCreatingPDF = ref<boolean>(false);
 let userIsEditingReimbursement = ref<boolean>(false);
 let showConfirmationPopup = ref<boolean>(false)
+let showEmailPopup = ref<boolean>(false)
 
 function returnToDashboard() {
     router.push("/dashboard")
@@ -121,10 +128,10 @@ function cancelConfirmationPopup() {
 }
 
 function emailPDF() {
-
+    showEmailPopup.value = true
 }
 
-async function sendEmail(values: any) {
+async function sendEmail(values: any, { resetForm }) {
     try {
         let response = await axios
             .get(
@@ -132,14 +139,21 @@ async function sendEmail(values: any) {
             )
 
 
-        axios.post(`${import.meta.env.VITE_API_URL}/api/send-reimbursement-email`, {
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/send-reimbursement-email`, {
             message: values.message,
             subject: values.subject,
             recipient: values.recipient,
             reimbursementData: props.claim,
             userInfo: response.data,
-
         })
+
+        toast("Your email was sent successfully", {
+            type: TYPE.SUCCESS
+        })
+
+        resetForm()
+        showEmailPopup.value = false
+        //clear email values etc
     } catch (err) {
         console.log(err)
     }
