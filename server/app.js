@@ -19,14 +19,13 @@ const port = process.env.PORT || 8080;
 
 const app = express();
 
-// create reusable transporter object using the default SMTP transport
 export const transporter = nodemailer.createTransport({
   host: process.env.SEND_GRID_HOST,
   port: 465,
-  secure: true, // true for 465, false for other ports
+  secure: true,
   auth: {
-    user: "apikey", // generated ethereal user
-    pass: process.env.SEND_GRID_KEY, // generated ethereal password
+    user: "apikey",
+    pass: process.env.SEND_GRID_KEY,
   },
 });
 
