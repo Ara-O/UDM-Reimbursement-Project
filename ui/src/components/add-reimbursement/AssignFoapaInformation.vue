@@ -29,11 +29,7 @@
                         required>
                 </span>
             </div>
-
-            <h3 class="mt-6 font cursor-pointer font-medium text-sm underline" @click="showFoapaPopup">Forgot to add a
-                FOAPA in the dashboard?
-                Click here to quickly
-                add one </h3>
+            
             <div class="flex gap-5 mt-8">
                 <button type="submit"
                     class="bg-udmercy-blue  text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
