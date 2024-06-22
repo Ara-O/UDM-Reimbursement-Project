@@ -21,6 +21,9 @@
                     class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">
                     Preview
                     Reimbursement Request</button>
+                <button @click="download"
+                    class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">
+                    Download PDF</button>
                 <button @click="submitTicket"
                     class="bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs ">Submit
                     Reimbursement Request</button>
@@ -103,8 +106,10 @@ import { onMounted, ref } from 'vue';
 import ConfirmationPopup from '../utilities/ConfirmationPopup.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { TYPE, useToast } from 'vue-toastification';
+import pdfMake from "pdfmake/build/pdfmake";
 import { isValidRecipientEmail } from '../../utils/validators';
 import CancelIcon from "../../assets/cross-icon.svg"
+
 const toast = useToast()
 
 const props = defineProps<{
@@ -182,6 +187,65 @@ function downloadPDF(pdfData: string) {
 `;
     }
 }
+
+async function download() {
+    toast("Creating your reimbursement claim PDF. Please wait...", {
+        type: TYPE.INFO
+    })
+
+    axios
+        .get(
+            `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
+        )
+        .then((response) => {
+            props.claim.totalCost = getAllActivitiesAmount();
+
+            const totalCoveredFoapaCost = props.claim.foapaDetails.reduce((acc, curr,) =>
+                acc += Number(curr.cost)
+                , 0)
+
+
+            if (totalCoveredFoapaCost > props.claim.totalCost) {
+                toast("Warning: The amount of money you are retrieving from your FOAPAs is more than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.", {
+                    type: TYPE.WARNING,
+                    timeout: false
+                })
+
+            } else if (totalCoveredFoapaCost < props.claim.totalCost) {
+                toast("Warning: The amount of money you are retrieving from your FOAPAs is less than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.", {
+                    type: TYPE.WARNING,
+                    timeout: false
+                })
+            }
+
+            axios
+                .get(`${import.meta.env.VITE_API_URL}/api/generatePdf`, {
+                    params: {
+                        reimbursementData: props.claim,
+                        userInfo: response.data,
+                    },
+                })
+                .then((res) => {
+                    const link = document.createElement('a');
+                    const fileName = "reimbursement_claim.pdf";
+
+                    link.href = res.data;
+                    link.download = fileName;
+                    link.click();
+                })
+                .catch((err) => {
+                    console.log("error: " + err);
+                    toast("There was an error generating your PDF. Please try again later", {
+                        type: TYPE.ERROR
+                    })
+                });
+        }).catch((err) => {
+            toast("There was an error generating your PDF. Please try again later", {
+                type: TYPE.ERROR
+            })
+        });
+}
+
 
 async function saveAsTemplate() {
     try {
