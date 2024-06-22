@@ -48,3 +48,6 @@ app.use("/api", reimbursementInformation);
 app.use("/api", pdfInformation);
 app.use("/api", geographyInformation);
 app.use("/api", auth);
+app.use("/health", (req, res) => {
+  res.status(200).send("App is running!");
+});

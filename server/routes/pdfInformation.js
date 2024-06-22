@@ -289,7 +289,7 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
       <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
       <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message}</h3>
-      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email comes from: ${req.body.userInfo.workEmail}</h5>
+      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.userInfo.workEmail}</h5>
       </div>
       </div>
       `,
