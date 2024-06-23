@@ -16,7 +16,6 @@ onMounted(() => {
     console.log("User is logged in")
   } else {
     console.log("User is not logged in");
-    router.push("/")
   }
 })
 </script>

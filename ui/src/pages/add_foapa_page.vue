@@ -1,7 +1,7 @@
 <template>
   <section class="add-foapa-page">
-    <img src="../assets/detroit-mercy-logo.png" class="udmercy-logo" @click="$router.push('/dashboard')"
-      alt="Detroit mercy logo" />
+    <!-- <img src="../assets/detroit-mercy-logo.png" class="udmercy-logo" @click="$router.push('/dashboard')" -->
+    <!-- alt="Detroit mercy logo" /> -->
     <div class="manage-foapa-div">
       <h3 class="manage-foapa-text">Manage FOAPA</h3>
       <ManageFoapaDetails :foapa-details="foapaDetails" @changes-were-made="changesWereMade" />

@@ -39,6 +39,9 @@ export default createRouter({
     {
       path: "/profile-page",
       component: MobileProfilePage,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: "/complete-verification",
