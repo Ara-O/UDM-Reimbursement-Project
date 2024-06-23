@@ -31,17 +31,21 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
   try {
     let faculty = await Faculty.findById(req.user.userId);
 
-    faculty.foapaDetails.push(...req.body.foapaDetails);
+    if (faculty === null) {
+      throw new Error("Faculty not found");
+    }
+
+    faculty.foapaDetails.push(req.body.foapaDetails);
 
     await faculty.save();
 
-    res.status(200).send({ message: "FOAPA details updated successfully" });
+    res.status(200).send({ message: "FOAPA details added successfully" });
   } catch (err) {
     logger.error("There was an error updating the user's FOAPA details", {
-      api: "/api/update-foapa-details",
+      api: "/api/add-foapa-details",
     });
     logger.error(err, {
-      api: "/api/update-foapa-details",
+      api: "/api/add-foapa-details",
     });
     res.status(500).send({
       message:

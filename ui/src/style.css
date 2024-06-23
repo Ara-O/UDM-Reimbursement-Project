@@ -10,6 +10,12 @@
   --udmercy-red: #a5093e;
   --udmercy-blue: #002d72;
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
 
 * {
   font-family: "Poppins";
