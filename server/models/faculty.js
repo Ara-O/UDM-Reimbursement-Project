@@ -23,6 +23,7 @@ const facultySchema = new Schema({
       activity: String,
       foapaName: String,
       initialAmount: Number,
+      pendingAmount: Number,
       currentAmount: Number,
       description: String,
     },
@@ -30,39 +31,42 @@ const facultySchema = new Schema({
   reimbursementTickets: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Reimbursement" },
   ],
-  reimbursementTemplates: [{
-    reimbursementName: String,
-    reimbursementReason: String,
-    destination: String,
-    paymentRetrievalMethod: String,
-    UDMPUVoucher: Boolean,
-    totalCost: Number,
-    guestInformation: [{
-      employeeFirstName: String,
-      employeeLastName: String,
-      guestAssociation: String,
-      guestFirstName: String,
-      guestLastName: String
-    }
-    ],
-    reimbursementStatus: String,
-    reimbursementReceipts: [
-      {
-        url: String,
-        id: String,
-      },
-    ],
-    reimbursementDate: Date,
-    activities: [
-      {
-        id: String,
-        name: String,
-        date: Date,
-        additionalInformation: String,
-        cost: Number,
-      },
-    ]
-  }]
+  reimbursementTemplates: [
+    {
+      reimbursementName: String,
+      reimbursementReason: String,
+      destination: String,
+      paymentRetrievalMethod: String,
+      UDMPUVoucher: Boolean,
+      totalCost: Number,
+      guestInformation: [
+        {
+          employeeFirstName: String,
+          employeeLastName: String,
+          guestAssociation: String,
+          guestFirstName: String,
+          guestLastName: String,
+        },
+      ],
+      reimbursementStatus: String,
+      reimbursementReceipts: [
+        {
+          url: String,
+          id: String,
+        },
+      ],
+      reimbursementDate: Date,
+      activities: [
+        {
+          id: String,
+          name: String,
+          date: Date,
+          additionalInformation: String,
+          cost: Number,
+        },
+      ],
+    },
+  ],
 });
 
 const Faculty = mongoose.model("Faculty", facultySchema);

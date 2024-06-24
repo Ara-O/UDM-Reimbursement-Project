@@ -54,6 +54,46 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
   }
 });
 
+router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
+  try {
+    let faculty = await Faculty.findById(req.user.userId);
+
+    if (faculty === null) {
+      throw new Error("Faculty not found");
+    }
+
+    if (req.body.id === "") {
+      throw new Error("Invalid FOAPA ID");
+    }
+
+    let foapa_to_edit_index = faculty.foapaDetails.findIndex(
+      (foapa) => foapa._id.toHexString() === req.body.id
+    );
+
+    if (foapa_to_edit_index === -1) {
+      throw new Error("FOAPA doesn't found");
+    }
+
+    faculty.foapaDetails[foapa_to_edit_index] = req.body.foapaDetail;
+
+    // faculty.foapaDetails.find;
+    await faculty.save();
+
+    res.status(200).send({ message: "FOAPA details updated successfully" });
+  } catch (err) {
+    logger.error("There was an error updating the user's FOAPA details", {
+      api: "/api/add-foapa-details",
+    });
+    logger.error(err, {
+      api: "/api/add-foapa-details",
+    });
+    res.status(500).send({
+      message:
+        "An unexpected error occured when saving your FOAPA details. Please try again later.",
+    });
+  }
+});
+
 router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
   try {
     let foapaDetails = await Faculty.findById(req.user.userId).select(
