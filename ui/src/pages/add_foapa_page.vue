@@ -117,17 +117,17 @@
           <div v-if="loaded && foapaDetails.length === 0">
             <h4 class="font-medium text-sm mt-0">You have not added any FOAPAs yet </h4>
           </div>
-          <h4 class="font-medium text-sm" v-if="!loaded">Loading...</h4>
+          <h4 class="font-medium text-sm mt-0" v-if="!loaded">Loading...</h4>
         </div>
       </section>
     </section>
 
-    <ConfirmationPopup :continue-function="returnToDashboard" :cancel-function="stayOnPage"
-      v-show="show_leave_dialogue">
+    <ConfirmationPopup :continue-function="stayOnPage" :cancel-function="discardChanges" v-show="show_leave_dialogue"
+      left-button-text="Discard Changes" right-button-text="Go Back">
       <template #message>
-        You have some unsaved changes (You have modified some
-        FOAPA values without saving them). To go back and save these
-        changes, click 'Cancel'. To discard these changes, click 'Continue'.
+        You have some unsaved changes (You have inputted some
+        FOAPA values without adding them). To discard these changes, click 'Discard Changes.' To go back and save these
+        changes, click 'Go Back'.
       </template>
     </ConfirmationPopup>
   </section>
@@ -139,7 +139,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import axios from "axios";
 import EditIcon from "../assets/blue-pencil.png"
 import DeleteIcon from "../assets/red-delete-icon.png"
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { FoapaStuff } from "../types/types";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
@@ -154,6 +154,7 @@ let loaded = ref<boolean>(false)
 type FoapaStates = 'Add' | 'Edit'
 let state = ref<FoapaStates>('Add')
 const edited_foapas_id = ref<string>("")
+const return_to_dashboard = ref<boolean>(false)
 
 const toast = useToast()
 
@@ -186,6 +187,8 @@ function discardEdits(reset: any) {
   state.value = 'Add'
   edited_foapas_id.value = ""
 }
+
+
 
 async function editFoapaValues(foapaValues) {
   try {
@@ -259,9 +262,6 @@ function formatUserFoapa(foapa: FoapaStuff) {
     }-${foapa.activity || "XXXX"}`;
 }
 
-function changesWereMade() {
-  changes_were_made.value = true
-}
 
 function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
   if (show_confirm_dialog) {
@@ -302,8 +302,6 @@ function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
       type: TYPE.SUCCESS
     })
   }
-
-  // changes_were_made.value = true
 }
 
 async function retrieveUserFoapaDetails() {
@@ -322,43 +320,32 @@ async function retrieveUserFoapaDetails() {
   }
 }
 
-function saveFOAPA() {
-  toast("Saving FOAPA information...", {
-    type: TYPE.INFO
-  })
-
-  axios
-    .post(
-      `${import.meta.env.VITE_API_URL}/api/update-foapa-details`,
-      {
-        foapaDetails: foapaDetails.value,
-      }
-    )
-    .then(() => {
-      changes_were_made.value = false
-      toast("Successfully saved FOAPA information", {
-        type: TYPE.SUCCESS
-      })
-      retrieveUserFoapaDetails()
-    })
-    .catch((err) => {
-      toast(err?.response?.data?.message || "An unexpected error occured when saving your FOAPA details. Please try again later", {
-        type: TYPE.ERROR
-      })
-    });
-}
-
 onBeforeRouteLeave((to, from, next) => {
-  // if (changes_were_made.value === true) {
-  //   show_leave_dialogue.value = true;
-  //   next(false)
-  // } else {
+  if (return_to_dashboard.value === true) {
+    next()
+    return
+  }
+
+  if (added_foapa.value.foapaName.length > 0 ||
+    added_foapa.value.account.length > 0 ||
+    added_foapa.value.description.length > 0 ||
+    added_foapa.value.initialAmount.length > 0 ||
+    added_foapa.value.fund.length > 0 ||
+    added_foapa.value.account.length > 0
+  ) {
+    show_leave_dialogue.value = true;
+    next(false)
+  }
+
   next()
-  // }
 })
 
 function returnToDashboard() {
-  // changes_were_made.value = false
+  router.push("/dashboard")
+}
+
+function discardChanges() {
+  return_to_dashboard.value = true;
   router.push("/dashboard")
 }
 
