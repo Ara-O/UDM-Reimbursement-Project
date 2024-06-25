@@ -31,12 +31,14 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
   try {
     let faculty = await Faculty.findById(req.user.userId);
 
+    console.log(req.body);
     if (faculty === null) {
       throw new Error("Faculty not found");
     }
 
-    faculty.foapaDetails.push(req.body.foapaDetails);
+    faculty.foapaDetails.push(...req.body.foapaDetails);
 
+    console.log(faculty.foapaDetails);
     await faculty.save();
 
     res.status(200).send({ message: "FOAPA details added successfully" });
@@ -82,10 +84,10 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
     res.status(200).send({ message: "FOAPA details updated successfully" });
   } catch (err) {
     logger.error("There was an error updating the user's FOAPA details", {
-      api: "/api/add-foapa-details",
+      api: "/api/edit-foapa-detail",
     });
     logger.error(err, {
-      api: "/api/add-foapa-details",
+      api: "/api/edit-foapa-detail",
     });
     res.status(500).send({
       message:
@@ -128,7 +130,7 @@ router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
   const foapaId = req.body.foapa._id;
 
   try {
-    await Foapa.findByIdAndRemove(foapaId);
+    await Foapa.findByIdAndDelete(foapaId);
     const faculty = await Faculty.findById(req.user.userId);
     faculty.foapaDetails.pull(foapaId);
     faculty.save();

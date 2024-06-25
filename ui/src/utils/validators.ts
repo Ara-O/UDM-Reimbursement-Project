@@ -113,10 +113,10 @@ export function isValidFoapaAmount(value) {
   if (value === undefined || value === null) value = "";
   value = String(value);
 
-  let isValidNumber = /^[0-9]+(\.[0-9]+)?$/;
+  let isValidNumber = /^\d+(\.\d{1,2})?$/.test(value);
 
   if (!isValidNumber && value.trim() !== "") {
-    return "Numbers only";
+    return "Invalid currency format";
   }
   return true;
 }

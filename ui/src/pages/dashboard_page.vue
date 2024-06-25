@@ -7,26 +7,52 @@
     <section class="reimbursement-section">
       <h3>Welcome {{ userInfo.firstName }}</h3>
       <router-link to="/profile-page">
-        <img src="../assets/user-icon.png" alt="User help" class="user-icon" /></router-link>
+        <img src="../assets/user-icon.png" alt="User help" class="user-icon"
+      /></router-link>
       <br />
       <div class="reimbursement-search-input">
-        <input type="text" v-model="searchValue" class="reimbusement-search" onchange="filterReimbursements"
-          placeholder="Search Reimbursement Claims" />
+        <input
+          type="text"
+          v-model="searchValue"
+          class="reimbusement-search"
+          onchange="filterReimbursements"
+          placeholder="Search Reimbursement Claims"
+        />
         <div class="search-button">
-          <img src="../assets/search-icon.png" alt="Search icon" class="search-icon" />
+          <img
+            src="../assets/search-icon.png"
+            alt="Search icon"
+            class="search-icon"
+          />
         </div>
       </div>
       <div class="search-filters">
-        <div class="filter" :class="{ selected: sortParameter === 'Date' }" @click="orderByDate()">
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Date' }"
+          @click="orderByDate()"
+        >
           <h3>Sort by Date</h3>
         </div>
-        <div class="filter" :class="{ selected: sortParameter === 'Status' }" @click="orderByStatus()">
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Status' }"
+          @click="orderByStatus()"
+        >
           <h3>Sort by Status</h3>
         </div>
-        <div class="filter" :class="{ selected: sortParameter === 'Name' }" @click="orderByName()">
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Name' }"
+          @click="orderByName()"
+        >
           <h3>Sort by Name</h3>
         </div>
-        <div class="filter" :class="{ selected: sortParameter === 'Cost' }" @click="orderByCost()">
+        <div
+          class="filter"
+          :class="{ selected: sortParameter === 'Cost' }"
+          @click="orderByCost()"
+        >
           <h3>Sort by Cost</h3>
         </div>
       </div>
@@ -36,15 +62,27 @@
           All Reimbursements -
         </h3>
         <span class="view-choice">
-          <button @click="$router.push('/add-reimbursement')" class="filter add-reimbursement-ticket-button"
-            style="width: auto">
+          <button
+            @click="$router.push('/add-reimbursement')"
+            class="filter add-reimbursement-ticket-button"
+            style="width: auto"
+          >
             Click to add new reimbursement
           </button>
-          <button @click="viewingTemplates = !viewingTemplates" class="w-auto filter add-reimbursement-ticket-button">
-            {{ viewingTemplates === false ? "View Templates" : "View Claims" }}
+          <button
+            @click="viewingTemplates = !viewingTemplates"
+            class="w-auto filter add-reimbursement-ticket-button"
+          >
+            {{
+              viewingTemplates === false ? "View Your Templates" : "View Claims"
+            }}
           </button>
-          <button v-if="filterReimbursements.length > 0" style="width: auto" @click="changeView"
-            class="filter add-reimbursement-ticket-button">
+          <button
+            v-if="filterReimbursements.length > 0"
+            style="width: auto"
+            @click="changeView"
+            class="filter add-reimbursement-ticket-button"
+          >
             View as {{ currentView == "grid" ? "list" : "grid" }}
           </button>
         </span>
@@ -52,10 +90,14 @@
       <br />
 
       <!-- MAIN LIST -->
-      <div :class="currentView === 'list'
-        ? 'reimbursement-wrapper-list'
-        : 'reimbursement-wrapper-grid'
-        " v-if="!viewingTemplates">
+      <div
+        :class="
+          currentView === 'list'
+            ? 'reimbursement-wrapper-list'
+            : 'reimbursement-wrapper-grid'
+        "
+        v-if="!viewingTemplates"
+      >
         <div class="reimbursement" v-for="ticket in filterReimbursements">
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
@@ -64,7 +106,10 @@
           </h5>
           <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <div class="reimbursement-buttons">
-            <button @click="viewTicket(ticket._id)" v-if="ticket.reimbursementStatus !== 'Submitted'">
+            <button
+              @click="viewTicket(ticket._id)"
+              v-if="ticket.reimbursementStatus !== 'Submitted'"
+            >
               Modify
             </button>
             <button @click="deleteReimbursement(ticket._id)">Delete</button>
@@ -74,11 +119,18 @@
 
       <!-- TEMPLATES -->
       <h3 class="mt-0" v-if="viewingTemplates">Templates</h3>
-      <div v-if="viewingTemplates" :class="currentView === 'list'
-        ? 'reimbursement-wrapper-list'
-        : 'reimbursement-wrapper-grid'
-        ">
-        <div class="reimbursement" v-for="ticket in userInfo.reimbursementTemplates">
+      <div
+        v-if="viewingTemplates"
+        :class="
+          currentView === 'list'
+            ? 'reimbursement-wrapper-list'
+            : 'reimbursement-wrapper-grid'
+        "
+      >
+        <div
+          class="reimbursement"
+          v-for="ticket in userInfo.reimbursementTemplates"
+        >
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
           <h5>
@@ -86,7 +138,10 @@
           </h5>
           <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <div class="reimbursement-buttons">
-            <button v-if="ticket.reimbursementStatus !== 'Submitted'" @click="useClaimAsTemplate(ticket)">
+            <button
+              v-if="ticket.reimbursementStatus !== 'Submitted'"
+              @click="useClaimAsTemplate(ticket)"
+            >
               Use as Template
             </button>
             <button>Delete</button>
@@ -114,20 +169,27 @@
           <h3>Phone Number: {{ formatPhoneNumber(userInfo.phoneNumber) }}</h3>
         </div>
       </div>
-      <router-link to="/account" style="font-size: 14px">Manage account information</router-link>
+      <router-link to="/account" style="font-size: 14px"
+        >Manage account information</router-link
+      >
 
-      <router-link to="/change-password" style="font-size: 14px">Change password</router-link>
+      <router-link to="/change-password" style="font-size: 14px"
+        >Change password</router-link
+      >
       <button @click="signOut">Sign Out</button>
     </section>
-    <confirmation-popup v-if="delete_claim_confirmation_dialog" :cancel-function="stopDelete"
-      :continue-function="confirmDelete" left-button-text="Yes">
+    <confirmation-popup
+      v-if="delete_claim_confirmation_dialog"
+      :cancel-function="stopDelete"
+      :continue-function="confirmDelete"
+      left-button-text="Yes"
+    >
       <template #message>
         Are you sure you want to delete this reimbursement claim?
       </template>
     </confirmation-popup>
   </section>
 </template>
-
 
 <script lang="ts" setup>
 import FoapaNumbers from "../components/dashboard/FoapaNumbersDashboard.vue";
@@ -157,7 +219,7 @@ type UserData = {
   phoneNumber: string;
 };
 
-const toast = useToast()
+const toast = useToast();
 
 let costFlag = -1,
   nameFlag = -1,
@@ -172,9 +234,9 @@ let userInfo = ref<any>({
   workEmail: "",
 });
 
-let viewingTemplates = ref<boolean>(false)
-let delete_claim_confirmation_dialog = ref<boolean>(false)
-let claim_to_delete_id = ref<string>("")
+let viewingTemplates = ref<boolean>(false);
+let delete_claim_confirmation_dialog = ref<boolean>(false);
+let claim_to_delete_id = ref<string>("");
 
 let reimbursementTickets = ref<any>([]);
 
@@ -254,10 +316,10 @@ function orderByDate() {
 const filterReimbursements = computed(() => {
   return searchValue.value
     ? reimbursementTickets.value.filter((ticket) =>
-      ticket.reimbursementName
-        .toLowerCase()
-        .includes(searchValue.value.toLowerCase())
-    )
+        ticket.reimbursementName
+          .toLowerCase()
+          .includes(searchValue.value.toLowerCase())
+      )
     : reimbursementTickets.value;
 });
 
@@ -265,48 +327,46 @@ function signOut() {
   localStorage.setItem("token", "");
   router.push("/");
   toast("Successfully signed out!", {
-    type: TYPE.SUCCESS
+    type: TYPE.SUCCESS,
   });
 }
 
 function stopDelete() {
-  claim_to_delete_id.value = ""
-  delete_claim_confirmation_dialog.value = false
+  claim_to_delete_id.value = "";
+  delete_claim_confirmation_dialog.value = false;
 }
 
 function deleteReimbursement(id: string) {
   delete_claim_confirmation_dialog.value = true;
-  claim_to_delete_id.value = id
+  claim_to_delete_id.value = id;
 }
 
 function confirmDelete() {
   toast("Deleting reimbursement claim...", {
-    type: TYPE.INFO
-  })
+    type: TYPE.INFO,
+  });
   axios
-    .post(
-      `${import.meta.env.VITE_API_URL}/api/deleteReimbursement`,
-      {
-        id: claim_to_delete_id.value,
-      }
-    )
+    .post(`${import.meta.env.VITE_API_URL}/api/deleteReimbursement`, {
+      id: claim_to_delete_id.value,
+    })
     .then(() => {
       retrieveReimbursements();
-      delete_claim_confirmation_dialog.value = false
+      delete_claim_confirmation_dialog.value = false;
       toast("Reimbursement claim deleted successfully", {
-        type: TYPE.SUCCESS
-      })
+        type: TYPE.SUCCESS,
+      });
     })
     .catch((err) => {
-      alert(err?.response?.data?.message || "An error occured, please try again later");
+      alert(
+        err?.response?.data?.message ||
+          "An error occured, please try again later"
+      );
     });
 }
 
 function retrieveUserInformationSummary() {
   axios
-    .get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveUserInformationSummary`
-    )
+    .get(`${import.meta.env.VITE_API_URL}/api/retrieveUserInformationSummary`)
     .then((res) => {
       userInfo.value = res.data;
       retrieveReimbursements();
@@ -314,7 +374,11 @@ function retrieveUserInformationSummary() {
     })
     .catch((err) => {
       console.log("ERROR", err);
-      if (err?.response?.status === 401 || err?.response?.status === 403 || err?.response.status === 404) {
+      if (
+        err?.response?.status === 401 ||
+        err?.response?.status === 403 ||
+        err?.response.status === 404
+      ) {
         //If JWT is expired, clear the token and go back to signup page
         // alert(err?.response?.data?.message || "An error has occured, please log in again");
         // localStorage.setItem("token", "");
@@ -342,21 +406,21 @@ let sortParameter = ref<SortParameters>("Name");
 
 function retrieveReimbursements() {
   axios
-    .get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveReimbursements`
-    )
+    .get(`${import.meta.env.VITE_API_URL}/api/retrieveReimbursements`)
     .then((res) => {
       // console.log(res);
       reimbursementTickets.value = res.data;
     })
     .catch((err) => {
       alert(err);
-
     });
 }
 
 function useClaimAsTemplate(template) {
-  router.push({ path: "/add-reimbursement", query: { templateData: JSON.stringify(template) } });
+  router.push({
+    path: "/add-reimbursement",
+    query: { templateData: JSON.stringify(template) },
+  });
 }
 
 onMounted(() => {

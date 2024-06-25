@@ -2,9 +2,9 @@
   <section class="xl:px-32 px-16 pt-10">
     <div class="flex items-center gap-4 cursor-pointer" @click="returnToDashboard">
       <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4">
-      <h4 class="font-normal text-sm text-gray-600">Return to dashboard</h4>
+      <h4 class="font-normal text-sm text-gray-600 hover:underline">Return to dashboard</h4>
     </div>
-    <section class="flex flex-wrap justify-between w-full gap-x-28 mb-20 gap-y-10 mt-20 xl:mt-28">
+    <section class="flex flex-wrap justify-start gap-y-32 w-full gap-x-28 mb-20  mt-20 xl:mt-28">
       <section>
         <h3 class="font-semibold text-3xl leading-10 mt-0 xl:mt-7">Manage FOAPA Details</h3>
         <h4 class="font-semibold text-lg mb-5">Add FOAPA Details</h4>
@@ -204,7 +204,6 @@ async function editFoapaValues(foapaValues) {
       foapaDetail: foapaValues
     })
 
-    console.log(res)
 
     edited_foapas_id.value = ""
     await retrieveUserFoapaDetails()
@@ -212,6 +211,8 @@ async function editFoapaValues(foapaValues) {
     toast("FOAPA successfully edited", {
       type: TYPE.SUCCESS
     })
+
+    state.value = 'Add'
     // Clear the foapa values
   } catch (err: any) {
     toast(err?.response?.data?.message || "An unexpected error has occured. Please try again later", {
@@ -240,7 +241,7 @@ async function addFoapa(values, { resetForm }) {
       .post(
         `${import.meta.env.VITE_API_URL}/api/add-foapa-details`,
         {
-          foapaDetails: values,
+          foapaDetails: [values],
         }
       )
 
@@ -341,6 +342,7 @@ onBeforeRouteLeave((to, from, next) => {
 })
 
 function returnToDashboard() {
+  return_to_dashboard.value = true;
   router.push("/dashboard")
 }
 
