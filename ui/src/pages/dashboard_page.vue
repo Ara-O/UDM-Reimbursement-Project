@@ -372,17 +372,35 @@ function retrieveUserInformationSummary() {
       retrieveReimbursements();
       // console.log(res);
     })
-    .catch((err) => {
+    .catch((err: any) => {
       console.log("ERROR", err);
+      if (err.code === "ERR_NETWORK") {
+        toast(
+          err?.response?.data?.message ||
+            "An error has occured, please log in again",
+          {
+            type: TYPE.ERROR,
+          }
+        );
+        localStorage.setItem("token", "");
+        router.push("/");
+        return;
+      }
       if (
         err?.response?.status === 401 ||
         err?.response?.status === 403 ||
         err?.response.status === 404
       ) {
         //If JWT is expired, clear the token and go back to signup page
-        // alert(err?.response?.data?.message || "An error has occured, please log in again");
-        // localStorage.setItem("token", "");
-        // router.push("/");
+        toast(
+          err?.response?.data?.message ||
+            "An error has occured, please log in again",
+          {
+            type: TYPE.ERROR,
+          }
+        );
+        localStorage.setItem("token", "");
+        router.push("/");
       }
     });
 }
