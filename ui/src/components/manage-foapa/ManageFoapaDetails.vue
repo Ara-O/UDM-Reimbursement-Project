@@ -94,7 +94,7 @@
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">Program*</label>
-          <img src="../../assets/user-help-icon.png" alt="Help" class="foapa-help-icon"
+          <img src="../../assets/user-help-icon.png" alt="Help" class="w-4"
             title="Optional: Program, 4 digits&#013;Identification of use the use or purpose of funds." />
         </span>
         <span class="input-FOAPA-field-span">

@@ -115,6 +115,7 @@
                 :rules="isValidRecipientEmail"
                 name="recipient"
                 type="text"
+                value="adairja@udmercy.edu"
               >
               </Field>
               <ErrorMessage
@@ -128,6 +129,7 @@
                 class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md"
                 name="subject"
                 type="text"
+                value="Reimbursement Request"
               >
               </Field>
               <ErrorMessage name="subject" class="text-red-400 text-xs mt-2" />
@@ -154,6 +156,16 @@
             <h3 class="text-sm font-medium leading-6">
               Note: Your reimbursement claim PDF will be attached to this email
             </h3>
+            <input 
+              type="checkbox" 
+              id="submissionEmail" 
+              name="submissionEmail" 
+              value="Submission">
+              <label for="submissionEmail" class="font-semibold text-sm leading-7"> Mark Claim As Submitted?
+                <img src="../../assets/user-help-icon.png" alt="Help" class="w-4"
+                title="By checking this box the claim will be marked as submitted. This will deduct the respective amounts from each of your saved FOAPA." />
+              </label>
+              
           </Form>
         </span>
       </div>
