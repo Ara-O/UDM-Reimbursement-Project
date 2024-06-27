@@ -10,6 +10,7 @@ import PasswordPage from "../pages/password_page.vue";
 import ForgotPassword from "../pages/forgot_password_page.vue";
 import MobileProfilePage from "../pages/profile_page.vue";
 import PreVerificationPage from "../pages/signup_pre_verification_page.vue";
+import FoapaInformationPage from "../pages/specific_foapa_detail_page.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -39,6 +40,13 @@ export default createRouter({
     {
       path: "/profile-page",
       component: MobileProfilePage,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/foapa-information/:id",
+      component: FoapaInformationPage,
       meta: {
         requiresAuth: true,
       },
