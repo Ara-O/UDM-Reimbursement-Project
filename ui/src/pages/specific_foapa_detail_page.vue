@@ -5,44 +5,90 @@
       <h4 class="font-normal text-sm text-gray-600 hover:underline">Go back</h4>
     </div>
 
-    <section class="mt-20">
+    <section class="mt-20" v-if="foapa_information.foapa_information">
       <h2 class="text-2xl font-semibold">
-        UDMP: 302443-XXXX-2329-XXXX-2122-XXXX
+        UDMP: {{ formatUserFoapa(foapa_information.foapa_information) }}
       </h2>
-      <h3 class="font-normal text-base mt-6">
-        Initial Amount: $3000 | Current Amount: $2000
+      <h3 class="font-semibold text-md mt-6">
+        {{ foapa_information.foapa_information.description }}
       </h3>
-      <h3 class="font-normal text-base mt-3">
-        Pending Amount: $4000 - This is the amount of money
+      <h3 class="font-normal text-[15px] leading-7">
+        <p class="inline font-medium">Initial Amount:</p>
+        ${{ foapa_information.foapa_information.initialAmount }} |
+        <p class="inline font-medium">Current Amount:</p>
+        : ${{ foapa_information.foapa_information.currentAmount }}
+      </h3>
+      <h3 class="font-normal mt-3 leading-7 text-[15px]">
+        Pending Amount: ${{ foapa_information.foapa_information.pendingAmount }}
+        - This is the amount of money waiting on reimbursements
       </h3>
 
       <h2 class="text-xl font-semibold mt-20 underline">History</h2>
-      <p class="text-sm">Keep track of the expenses covered by this FOAPA</p>
+      <p class="text-sm leading-7">
+        Keep track of the reimbursement claims that you have used by this FOAPA
+      </p>
       <div
-        class="border box-border px-5 py-2 border-solid border-gray-200 max-w-sm mt-6"
+        class="border box-border px-5 py-3 border-solid border-gray-200 max-w-sm mt-6"
+        v-if="Object.keys(foapa_information.claims_used).length !== 0"
       >
-        <h3 class="text-sm mt-2 font-semibold text-gray-900">
-          Conference - Lunch
+        <h3 class="text-[15px] mt-2 font-semibold text-gray-900">
+          {{ foapa_information.claims_used.reimbursement_name }}
         </h3>
-        <p class="text-sm">Amount used: $300</p>
-        <p class="text-xs">Date: 12/30/2023</p>
+        <p class="text-sm">
+          Amount used: ${{ foapa_information.claims_used.amount_used }}
+        </p>
+        <p class="text-xs">
+          Date: {{ parseDate(foapa_information.claims_used.date) }}
+        </p>
       </div>
+      <h3 v-else class="text-sm font-normal italic">
+        This FOAPA hasn't been used yet
+      </h3>
+    </section>
+    <section class="mt-20" v-else>
+      <h3 class="text-sm font-medium">Loading...</h3>
     </section>
   </main>
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from "vue";
+import axios from "axios";
+import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
 
-console.log(route.params.id);
+let foapa_information = ref<any>({});
+
+function formatUserFoapa(foapa) {
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
+    foapa.program || "XXXX"
+  }-${foapa.activity || "XXXX"}`;
+}
+
+function parseDate(dateString: string) {
+  const dateParsed = new Date(dateString);
+  const formattedDate = dateParsed.toISOString().slice(0, 10);
+  return formattedDate;
+}
 
 onMounted(() => {
   if (route.params.id === null) {
     router.push("/dashboard");
   }
+
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/api/retrieve-foapa-detail`, {
+      params: {
+        foapa_id: route.params.id,
+      },
+    })
+    .then((res) => {
+      foapa_information.value = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 </script>

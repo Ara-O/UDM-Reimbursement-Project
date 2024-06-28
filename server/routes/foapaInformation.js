@@ -6,6 +6,12 @@ import { verifyToken } from "../middleware/auth.js";
 import { z } from "zod";
 import logger from "../logger.js";
 
+function formatUserFoapa(foapa) {
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
+    foapa.program || "XXXX"
+  }-${foapa.activity || "XXXX"}`;
+}
+
 router.post("/update-foapa-details", verifyToken, async (req, res) => {
   try {
     await Faculty.findByIdAndUpdate(req.user.userId, {
@@ -96,6 +102,61 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
+  try {
+    let facultyId = req.user.userId;
+
+    let faculty = await Faculty.findById(facultyId).populate(
+      "reimbursementTickets"
+    );
+
+    let index = faculty.foapaDetails.findIndex(
+      (foapa) => foapa._id.toHexString() === req.query.foapa_id
+    );
+
+    if (index === -1)
+      throw new Error("There was an error finding this FOAPA's information");
+
+    let dataToSend = {
+      foapa_information: faculty.foapaDetails[index],
+      claims_used: {},
+    };
+
+    let facultyReimbursementTickets = faculty.reimbursementTickets;
+
+    let formattedFoapaToSearchFor = formatUserFoapa(
+      faculty.foapaDetails[index]
+    );
+
+    //Find FOAPA history
+    for (let i = 0; i < facultyReimbursementTickets.length; i++) {
+      let claim = facultyReimbursementTickets[i];
+
+      let foapaIndex = claim.foapaDetails.findIndex(
+        (foapa) => foapa.foapaNumber === formattedFoapaToSearchFor
+      );
+
+      if (foapaIndex >= 0) {
+        dataToSend.claims_used["reimbursement_name"] = claim.reimbursementName;
+        dataToSend.claims_used["amount_used"] =
+          claim.foapaDetails[foapaIndex].cost;
+        dataToSend.claims_used["date"] = claim.reimbursementDate;
+      }
+    }
+
+    return res.status(200).send(dataToSend);
+  } catch (err) {
+    logger.error(err, {
+      api: "/retrieve-foapa-detail",
+    });
+    return res.status(500).send({
+      message:
+        err?.message ||
+        "An unexpected error occured when retrieving this FOAPA detail",
+    });
+  }
+});
+
 router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
   try {
     let foapaDetails = await Faculty.findById(req.user.userId).select(
@@ -132,12 +193,51 @@ router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
   try {
     await Foapa.findByIdAndDelete(foapaId);
     const faculty = await Faculty.findById(req.user.userId);
+
+    if (faculty === null) throw new Error("Faculty not found");
+
     faculty.foapaDetails.pull(foapaId);
     faculty.save();
     res.status(200).send({ message: "Foapa deleted successfully" });
   } catch (err) {
-    console.error(err);
-    res.status(400).send({ message: err.message });
+    logger.error(err, {
+      api: "/api/deleteFoapaDetail",
+    });
+
+    return res.status(400).send({
+      message:
+        err?.message ||
+        "An unexpected error occured when deleting your FOAPA detail",
+    });
+  }
+});
+
+router.get("/check-foapa", verifyToken, async (req, res) => {
+  try {
+    const foapaId = req.query.foapa_id;
+
+    const faculty = await Faculty.findById(req.user.userId).populate(
+      "reimbursementTickets"
+    );
+
+    //Looping through all the faculty's reimbursement tickets
+    for (let i = 0; i < faculty.reimbursementTickets.length; i++) {
+      //Get the foapa details from the ticket
+      const foapasUsed = faculty.reimbursementTickets[i].foapaDetails;
+      console.log(foapasUsed);
+    }
+
+    // console.log(foapaId, faculty);
+
+    return res.status(200).send();
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/check-foapa",
+    });
+
+    return res
+      .status(400)
+      .send({ message: err.message || "An unexpected error occured" });
   }
 });
 

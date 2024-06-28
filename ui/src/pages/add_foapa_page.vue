@@ -10,7 +10,7 @@
       </h4>
     </div>
     <section
-      class="flex flex-wrap lg:flex-nowrap items-center justify-start gap-y-32 w-full gap-x-28 mb-20 mt-20 xl:mt-28"
+      class="flex flex-wrap lg:flex-nowrap items-center justify-start gap-y-32 w-full gap-x-28 mb-20 mt-20 xl:mt-10"
     >
       <section>
         <h3 class="font-semibold text-3xl leading-10 mt-0 xl:mt-7">
@@ -176,8 +176,17 @@
         </h4>
 
         <!-- FOAPA DETAILS -->
+        <div class="flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Search your FOAPA"
+            class="border rounded-md box-border px-4 border-gray-200 border-solid w-full h-10"
+          />
+          <img :src="SortIcon" alt="Sort icon" class="w-5 cursor-pointer" />
+        </div>
+
         <div
-          class="flex flex-col gap-7 max-h-[28rem] overflow-auto overflow-y-scroll"
+          class="flex flex-col mt-6 gap-7 max-h-[28rem] overflow-auto overflow-y-scroll"
         >
           <div
             class="border shadow-sm rounded w-[30rem] box-border px-7 py-6 border-gray-200 border-solid h-auto"
@@ -250,10 +259,11 @@
 
 <script lang="ts" setup>
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
-import { Form, Field, ErrorMessage } from "vee-validate";
 import axios from "axios";
 import EditIcon from "../assets/blue-pencil.png";
 import DeleteIcon from "../assets/red-delete-icon.png";
+import SortIcon from "../assets/filter-icon.png";
+import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, onMounted, watch } from "vue";
 import { FoapaStuff } from "../types/types";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
@@ -295,11 +305,24 @@ let added_foapa = ref({
   description: "",
 });
 
-function triggerFoapaEditMode(foapa: FoapaStuff) {
-  //@ts-ignore
-  edited_foapas_id.value = foapa._id;
-  Object.assign(added_foapa.value, foapa);
-  state.value = "Edit";
+async function triggerFoapaEditMode(foapa: FoapaStuff) {
+  try {
+    //Check if FOAPA is being used in other reimbursements
+    await axios.get(`${import.meta.env.VITE_API_URL}/api/check-foapa`, {
+      params: {
+        //@ts-ignore
+        foapa_id: foapa._id,
+      },
+    });
+    //@ts-ignore
+    edited_foapas_id.value = foapa._id;
+    Object.assign(added_foapa.value, foapa);
+    state.value = "Edit";
+  } catch (err) {
+    toast("There was an error editing this FOAPA", {
+      type: TYPE.ERROR,
+    });
+  }
 }
 
 function discardEdits(reset: any) {
