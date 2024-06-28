@@ -216,20 +216,62 @@ router.get("/check-foapa", verifyToken, async (req, res) => {
   try {
     const foapaId = req.query.foapa_id;
 
+    logger.info("Checking Fopaa ID - " + foapaId, {
+      api: "/api/check-foapa",
+    });
+
     const faculty = await Faculty.findById(req.user.userId).populate(
       "reimbursementTickets"
     );
 
+    let index = faculty.foapaDetails.findIndex(
+      (foapa) => foapa._id.toHexString() === foapaId
+    );
+
+    if (index === -1)
+      throw new Error("There was an error finding this FOAPA's information");
+
+    let foapaToCheck = faculty.foapaDetails[index];
+
+    let reimbursementClashes = [];
+
     //Looping through all the faculty's reimbursement tickets
     for (let i = 0; i < faculty.reimbursementTickets.length; i++) {
+      //Check to make sure the ticket is still in progress
+      if (
+        faculty.reimbursementTickets[i].reimbursementStatus !== "In Progress"
+      ) {
+        continue;
+      }
+
       //Get the foapa details from the ticket
-      const foapasUsed = faculty.reimbursementTickets[i].foapaDetails;
-      console.log(foapasUsed);
+      const foapasUsedInThisClaim =
+        faculty.reimbursementTickets[i].foapaDetails;
+
+      //Loop through all the foapas used in the ticket
+      for (let i = 0; i < foapasUsedInThisClaim.length; i++) {
+        if (
+          formatUserFoapa(foapaToCheck) === foapasUsedInThisClaim[i].foapaNumber
+        ) {
+          // If the foapa we are checking matches with the foapa number used in this reimbursement
+          //and isnt already added
+          if (
+            reimbursementClashes.findIndex(
+              (claim) =>
+                claim._id.toHexString() === faculty.reimbursementTickets[i]
+            ) < 0
+          ) {
+            reimbursementClashes.push(faculty.reimbursementTickets[i]);
+          }
+        }
+      }
     }
 
-    // console.log(foapaId, faculty);
+    const clashes = reimbursementClashes.map(
+      (claim) => claim.reimbursementName
+    );
 
-    return res.status(200).send();
+    return res.status(200).send(clashes);
   } catch (err) {
     logger.error(err, {
       api: "/api/check-foapa",

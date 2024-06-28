@@ -1,7 +1,8 @@
 <template>
-  <main class="xl:px-32 px-16 pt-10">
+  <main class="xl:px-32 px-16 pt-10 add_foapa_main">
+    <div class="absolute top-0 hidden top_indicator"></div>
     <div
-      class="flex items-center gap-4 cursor-pointer"
+      class="flex items-center gap-4 return_to_dashboard cursor-pointer"
       @click="returnToDashboard"
     >
       <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
@@ -23,7 +24,7 @@
           Need help? Click here to learn more about FOAPA and how to use them.
         </h4>
         <Form @submit="addFoapa" v-slot="{ handleReset }" class="max-w-auto">
-          <div class="mt-7 flex flex-wrap gap-8 min-w-[450px]">
+          <div class="mt-7 flex flex-wrap gap-8 min-w-0 sm:min-w-[450px]">
             <div class="flex flex-col gap-y-3 relative">
               <label for="foapaName" class="text-sm">FOAPA Name*</label>
               <Field
@@ -186,10 +187,10 @@
         </div>
 
         <div
-          class="flex flex-col mt-6 gap-7 max-h-[28rem] overflow-auto overflow-y-scroll"
+          class="flex flex-col mt-6 gap-7 max-h-none sm:max-h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]"
         >
           <div
-            class="border shadow-sm rounded w-[30rem] box-border px-7 py-6 border-gray-200 border-solid h-auto"
+            class="border shadow-sm rounded sm:w-[30rem] w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto"
             v-for="foapa in foapaDetails"
           >
             <h3
@@ -254,6 +255,25 @@
         To go back and save these changes, click 'Go Back'.
       </template>
     </ConfirmationPopup>
+
+    <ConfirmationPopup
+      v-if="show_edit_clashes_dialogue"
+      class="clashes_dialogue"
+      :cancel-function="removeEditClashPopup"
+      :continue-function="continueEditAfterClash"
+      left-button-text="Stop Editing"
+      right-button-text="Continue"
+      title="Warning"
+    >
+      <template #message>
+        Warning: You are about to edit a FOAPA that is being used by the
+        following reimbursement claims:
+        <p v-for="claim in edit_clashes" class="font-medium">{{ claim }}</p>
+        To stop editing, click 'Stop Editing.' To continue editing this FOAPA,
+        click 'Continue.' Note: Continuing editing this FOAPA will cause the
+        FOAPA values in the above-mentioned reimbursement to change as well.
+      </template>
+    </ConfirmationPopup>
   </main>
 </template>
 
@@ -283,7 +303,9 @@ type Foapa = FoapaStuff & { _id?: string };
 let foapaDetails = ref<Foapa[]>([]);
 let changes_were_made = ref<boolean>(false);
 let show_leave_dialogue = ref<boolean>(false);
+let show_edit_clashes_dialogue = ref<boolean>(false);
 let loaded = ref<boolean>(false);
+const edit_clashes = ref([]);
 
 type FoapaStates = "Add" | "Edit";
 let state = ref<FoapaStates>("Add");
@@ -305,15 +327,49 @@ let added_foapa = ref({
   description: "",
 });
 
+function removeEditClashPopup() {
+  show_edit_clashes_dialogue.value = false;
+  //@ts-ignore
+  document.querySelector("body").style.overflow = "auto";
+}
+
+let foapa_to_edit = ref<any>({});
+
+function continueEditAfterClash() {
+  edited_foapas_id.value = foapa_to_edit.value._id;
+  Object.assign(added_foapa.value, foapa_to_edit.value);
+  state.value = "Edit";
+  //@ts-ignore
+  document.querySelector("body").style.overflow = "auto";
+  show_edit_clashes_dialogue.value = false;
+  foapa_to_edit.value = {};
+}
+
 async function triggerFoapaEditMode(foapa: FoapaStuff) {
   try {
+    foapa_to_edit.value = foapa;
     //Check if FOAPA is being used in other reimbursements
-    await axios.get(`${import.meta.env.VITE_API_URL}/api/check-foapa`, {
-      params: {
-        //@ts-ignore
-        foapa_id: foapa._id,
-      },
-    });
+    let res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/check-foapa`,
+      {
+        params: {
+          //@ts-ignore
+          foapa_id: foapa._id,
+        },
+      }
+    );
+
+    if (res.data.length > 0) {
+      edit_clashes.value = res.data;
+      show_edit_clashes_dialogue.value = true;
+      //@ts-ignore
+      document.querySelector(".add_foapa_main")?.scrollIntoView();
+
+      //@ts-ignore
+      document.querySelector("body").style.overflow = "hidden";
+      return;
+    }
+
     //@ts-ignore
     edited_foapas_id.value = foapa._id;
     Object.assign(added_foapa.value, foapa);

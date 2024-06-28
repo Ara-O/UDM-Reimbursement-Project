@@ -8,7 +8,7 @@
       <span class="flex justify-between">
         <div class="flex items-center gap-2">
           <img :src="CautionIcon" alt="Caution icon" class="w-10" />
-          <h3 class="font-semibold text-sm">Confirmation</h3>
+          <h3 class="font-semibold text-sm">{{ title || "Confirmation" }}</h3>
         </div>
         <!-- <img :src="CancelIcon" alt="Cancel icon" class="w-3 opacity-75" @click="cancelFunction" -->
       </span>
@@ -42,5 +42,6 @@ defineProps([
   "continueFunction",
   "leftButtonText",
   "rightButtonText",
+  "title",
 ]);
 </script>
