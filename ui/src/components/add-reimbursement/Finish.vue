@@ -228,35 +228,21 @@ async function sendEmail(values: any, { resetForm }) {
       `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
     ).then((res) => {
       savedFoapaDetails = res.data;
-      console.log(res.data);
-
-      // props.claim.foapaDetails.forEach((claimFoapa, i=0)=>{
-      //   console.log(claimFoapa.foapaNumber);
-      //   if(claimFoapa.foapaNumber == savedFoapaDetails.at(i)?){
-      //   }
-      // })
 
       savedFoapaDetails.forEach((foapa) =>{
-        let comboFoapa = `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${foapa.program || "XXXX"
-        }-${foapa.activity || "XXXX"}`;
-
         props.claim.foapaDetails.forEach((claimFoapa) => {
-          if(comboFoapa == claimFoapa.foapaNumber)
-            console.log("HELLO");
+          if(foapa._id == claimFoapa.id){
+            foapa.pendingAmount -= parseInt(claimFoapa.cost);
+          }
         })
       })
 
-      // savedFoapaDetails.foreach((foapa) =>{
-        
-      // });
-      console.log(props.claim.foapaDetails.at(0)?.foapaNumber);
-      axios.post(
-      `${import.meta.env.VITE_API_URL}/api/mark-claim-as-submitted`,
-      {
-        submitCB: checked,
-        reimbursementData: props.claim,
-        foapaData: props.foapa,
-      }
+      if(checked)
+        axios.post(
+        `${import.meta.env.VITE_API_URL}/api/mark-claim-as-submitted`,
+        {
+          foapaData: savedFoapaDetails,
+        }
     )
     });
 

@@ -289,11 +289,19 @@ router.get("/retrieveFoapaInformation", verifyToken, async(req, res) => {
 
 router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
   try {
-    if(req.body.submitCB){
+    let faculty = await Faculty.findById(req.user.userId);
 
+    console.log("hello");
+    console.log(faculty);
+    console.log(req.body);
 
-    }
-    //console.log(req.body.submitCB);
+    console.log(faculty.foapaDetails[0].currentAmount);
+    console.log(req.body.foapaData[0].pendingAmount);
+
+    faculty.foapaDetails[0].currentAmount = req.body.foapaData[0].pendingAmount;
+    faculty.foapaDetails[0].pendingAmount = req.body.foapaData[0].pendingAmount;
+    faculty.save();
+    console.log(faculty);
   } catch (err) {
     console.error(err);
     res.status(400).send({ message: err.message });

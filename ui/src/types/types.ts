@@ -80,6 +80,7 @@ export type FoapaNumbers = {
 };
 
 export type FoapaInput = {
+[x: string]: any;
   foapaNumber: string;
   cost: string;
 };
