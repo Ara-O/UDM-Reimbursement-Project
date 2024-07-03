@@ -1,8 +1,8 @@
 <template>
-  <main class="xl:px-32 px-16 pt-10 add_foapa_main">
+  <main class="xl:px-32 h-screen px-16 flex flex-col justify-center">
     <div class="absolute top-0 hidden top_indicator"></div>
     <div
-      class="flex items-center gap-4 return_to_dashboard cursor-pointer"
+      class="flex items-center absolute top-0 gap-4 pt-10 return_to_dashboard cursor-pointer"
       @click="returnToDashboard"
     >
       <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
@@ -11,7 +11,7 @@
       </h4>
     </div>
     <section
-      class="flex flex-wrap lg:flex-nowrap items-center justify-start gap-y-32 w-full gap-x-28 mb-20 mt-20 xl:mt-10"
+      class="flex flex-wrap lg:flex-nowrap items-center justify-start gap-y-32 w-full gap-x-28 mb-20 mt-20 xl:mt-20"
     >
       <section>
         <h3 class="font-semibold text-3xl leading-10 mt-0 xl:mt-7">
@@ -169,7 +169,11 @@
           </button>
         </Form>
       </section>
-      <section>
+
+      <!-- 
+      -- RIGHT SECTION --
+      -->
+      <section class="min-w-[450px]">
         <h3 class="font-semibold text-3xl">Your FOAPA Details</h3>
         <h4 class="font-medium text-sm max-w-md leading-8">
           Note: This section is scrollable for better visibility. Click a
@@ -180,18 +184,19 @@
         <div class="flex items-center gap-4">
           <input
             type="text"
-            placeholder="Search your FOAPA"
+            v-model="search_value"
+            placeholder="Search by FOAPA name"
             class="border rounded-md box-border px-4 border-gray-200 border-solid w-full h-10"
           />
           <img :src="SortIcon" alt="Sort icon" class="w-5 cursor-pointer" />
         </div>
 
         <div
-          class="flex flex-col mt-6 gap-7 max-h-none sm:max-h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]"
+          class="flex flex-col mt-6 gap-7 sm:max-h-[28rem] h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]"
         >
           <div
-            class="border shadow-sm rounded sm:w-[30rem] w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto"
-            v-for="foapa in foapaDetails"
+            class="border shadow-sm rounded w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto"
+            v-for="foapa in filteredFoapaDetails"
           >
             <h3
               class="font-semibold text-base my-0 cursor-pointer"
@@ -224,7 +229,7 @@
                 :src="DeleteIcon"
                 alt="Trash icon"
                 class="w-4 cursor-pointer"
-                @click="deleteFoapa(foapa.foapaName, foapa.fund)"
+                @click="showDeleteFoapaDialogue(foapa._id)"
               />
               <span class="flex items-center gap-3">
                 <!-- <img :src="ViewIcon" alt="View icon" class="w-5 cursor-pointer"> -->
@@ -235,6 +240,17 @@
           <div v-if="loaded && foapaDetails.length === 0">
             <h4 class="font-medium text-sm mt-0">
               You have not added any FOAPAs yet
+            </h4>
+          </div>
+          <div
+            v-if="
+              loaded &&
+              foapaDetails.length !== 0 &&
+              filteredFoapaDetails.length === 0
+            "
+          >
+            <h4 class="font-medium text-sm mt-0">
+              No results found for {{ search_value }}
             </h4>
           </div>
           <h4 class="font-medium text-sm mt-0" v-if="!loaded">Loading...</h4>
@@ -274,6 +290,38 @@
         FOAPA values in the above-mentioned reimbursement to change as well.
       </template>
     </ConfirmationPopup>
+
+    <ConfirmationPopup
+      v-if="show_delete_foapa_dialogue"
+      :cancel-function="removeDeletePopup"
+      :continue-function="() => deleteFoapa(foapa_to_delete)"
+      left-button-text="Don't Delete"
+      right-button-text="Delete"
+      title="Caution"
+    >
+      <template #message>
+        Warning: You are about to delete a FOAPA. Are you sure you want to
+        delete this?
+      </template>
+    </ConfirmationPopup>
+
+    <ConfirmationPopup
+      v-if="show_delete_foapa_clash_dialogue"
+      :cancel-function="removeEditClashPopup"
+      :continue-function="continueEditAfterClash"
+      left-button-text="Don't Delete"
+      right-button-text="Delete"
+      title="Warning"
+    >
+      <template #message>
+        Warning: You are about to delete a FOAPA that is being used by the
+        following reimbursement claims:
+        <p v-for="claim in delete_clashes" class="font-medium">{{ claim }}</p>
+        To stop editing, click 'Stop Editing.' To continue editing this FOAPA,
+        click 'Continue.' Note: Continuing editing this FOAPA will cause the
+        FOAPA values in the above-mentioned reimbursement to change as well.
+      </template>
+    </ConfirmationPopup>
   </main>
 </template>
 
@@ -284,7 +332,7 @@ import EditIcon from "../assets/blue-pencil.png";
 import DeleteIcon from "../assets/red-delete-icon.png";
 import SortIcon from "../assets/filter-icon.png";
 import { Form, Field, ErrorMessage } from "vee-validate";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { FoapaStuff } from "../types/types";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
@@ -304,15 +352,31 @@ let foapaDetails = ref<Foapa[]>([]);
 let changes_were_made = ref<boolean>(false);
 let show_leave_dialogue = ref<boolean>(false);
 let show_edit_clashes_dialogue = ref<boolean>(false);
+let show_delete_foapa_dialogue = ref<boolean>(false);
+let show_delete_foapa_clash_dialogue = ref<boolean>(false);
 let loaded = ref<boolean>(false);
 const edit_clashes = ref([]);
+const delete_clashes = ref([]);
 
 type FoapaStates = "Add" | "Edit";
+let search_value = ref<string>("");
 let state = ref<FoapaStates>("Add");
 const edited_foapas_id = ref<string>("");
 const return_to_dashboard = ref<boolean>(false);
+const foapa_to_delete = ref<string>("");
 
 const toast = useToast();
+const filteredFoapaDetails: any = computed(() => {
+  if (search_value.value.trim() === "") {
+    return foapaDetails.value;
+  }
+
+  return foapaDetails.value.filter((foapa) =>
+    foapa.foapaName
+      .toLowerCase()
+      .includes(search_value.value.toLowerCase().trim())
+  );
+});
 
 let added_foapa = ref({
   fund: "",
@@ -329,6 +393,14 @@ let added_foapa = ref({
 
 function removeEditClashPopup() {
   show_edit_clashes_dialogue.value = false;
+  //@ts-ignore
+  document.querySelector("body").style.overflow = "auto";
+}
+
+function removeDeletePopup() {
+  show_delete_foapa_clash_dialogue.value = false;
+  show_delete_foapa_dialogue.value = false;
+  foapa_to_delete.value = "";
   //@ts-ignore
   document.querySelector("body").style.overflow = "auto";
 }
@@ -467,42 +539,71 @@ function formatUserFoapa(foapa: FoapaStuff) {
   }-${foapa.activity || "XXXX"}`;
 }
 
-function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
-  if (show_confirm_dialog) {
-    const confirm_deletion = confirm(
-      "Are you sure you want to delete this FOAPA. Click 'yes' to confirm"
-    );
-
-    if (confirm_deletion) {
-      let index = foapaDetails.value.findIndex(
-        (foapa) => foapa.foapaName === foapaName && foapa.fund === fund
-      );
-
-      if (index > -1) {
-        foapaDetails.value.splice(index, 1);
+async function showDeleteFoapaDialogue(foapa_id) {
+  try {
+    // Check to see which pending reimbursements are using this FOAPA
+    let res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/check-foapa`,
+      {
+        params: {
+          //@ts-ignore
+          foapa_id: foapa_id,
+        },
       }
-
-      axios.post(`${import.meta.env.VITE_API_URL}/api/update-foapa-details`, {
-        foapaDetails: foapaDetails.value,
-      });
-
-      toast("FOAPA deleted successfully", {
-        type: TYPE.SUCCESS,
-      });
-    }
-  } else {
-    let index = foapaDetails.value.findIndex(
-      (foapa) => foapa.foapaName === foapaName && foapa.fund === fund
     );
 
-    if (index > -1) {
-      foapaDetails.value.splice(index, 1);
+    if (res.data.length > 0) {
+      // A pending reimbursement is using this FOAPA
+      delete_clashes.value = res.data;
+      show_delete_foapa_clash_dialogue.value = true;
+      foapa_to_delete.value = foapa_id;
+      return;
     }
 
-    toast("FOAPA deleted successfully", {
-      type: TYPE.SUCCESS,
+    show_delete_foapa_dialogue.value = true;
+    foapa_to_delete.value = foapa_id;
+  } catch (err: any) {
+    toast(err?.response?.data?.data || "An unexpected error has occured", {
+      type: TYPE.ERROR,
     });
+    console.log(err);
   }
+}
+
+function deleteFoapa(foapa_id) {
+  show_delete_foapa_clash_dialogue.value = false;
+  show_delete_foapa_dialogue.value = false;
+  //@ts-ignore
+  document.querySelector("body").style.overflow = "auto";
+
+  // if (confirm_deletion) {
+  let index = foapaDetails.value.findIndex((foapa) => foapa._id === foapa_id);
+
+  if (index > -1) {
+    foapaDetails.value.splice(index, 1);
+  }
+
+  axios.post(`${import.meta.env.VITE_API_URL}/api/update-foapa-details`, {
+    foapaDetails: foapaDetails.value,
+  });
+
+  toast("FOAPA deleted successfully", {
+    type: TYPE.SUCCESS,
+  });
+  // }
+  // } else {
+  //   let index = foapaDetails.value.findIndex(
+  //     (foapa) => foapa.foapaName === foapaName && foapa.fund === fund
+  //   );
+
+  //   if (index > -1) {
+  //     foapaDetails.value.splice(index, 1);
+  //   }
+
+  //   toast("FOAPA deleted successfully", {
+  //     type: TYPE.SUCCESS,
+  //   });
+  // }
 }
 
 async function retrieveUserFoapaDetails() {

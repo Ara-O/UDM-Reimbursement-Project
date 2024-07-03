@@ -220,6 +220,7 @@ function addFoapa() {
   props.claim.foapaDetails.push(
     JSON.parse(JSON.stringify(assignedFoapa.value))
   );
+
   assignedFoapa.value = {
     foapaNumber: "",
     cost: "",

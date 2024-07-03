@@ -74,6 +74,7 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
       throw new Error("Invalid FOAPA ID");
     }
 
+    //Finds the faculty FOAPA that matches the foapa the user wants to edit
     let foapa_to_edit_index = faculty.foapaDetails.findIndex(
       (foapa) => foapa._id.toHexString() === req.body.id
     );
@@ -81,6 +82,9 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
     if (foapa_to_edit_index === -1) {
       throw new Error("FOAPA doesn't found");
     }
+
+    //Makes sure the newly edited foapa has the same _id as its previous value
+    req.body.foapaDetail._id = faculty.foapaDetails[foapa_to_edit_index]._id;
 
     faculty.foapaDetails[foapa_to_edit_index] = req.body.foapaDetail;
 
@@ -216,7 +220,7 @@ router.get("/check-foapa", verifyToken, async (req, res) => {
   try {
     const foapaId = req.query.foapa_id;
 
-    logger.info("Checking Fopaa ID - " + foapaId, {
+    logger.info("Checking Foapa ID - " + foapaId, {
       api: "/api/check-foapa",
     });
 
