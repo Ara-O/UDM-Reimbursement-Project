@@ -18,15 +18,13 @@
           <select
             name="foapa"
             id="foapa"
-            v-model="assignedFoapa.foapaNumber"
+            v-model="assignedFoapa.id"
+            @change="assignFoapaName"
             class="border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
           >
             <!-- <option disabled selected value="">Select FOAPA</option> -->
-            <option
-              :value="formatUserFoapa(foapa)"
-              v-for="foapa in filteredUserFoapas"
-            >
+            <option :value="foapa.id" v-for="foapa in filteredUserFoapas">
               {{ formatUserFoapa(foapa) }}
             </option>
             <option>Add a New FOAPA</option>
@@ -137,16 +135,22 @@ import CancelIcon from "../../assets/cross-icon.svg";
 import FoapaContainer from "./FoapaContainer.vue";
 import { ref, onMounted, computed, watch } from "vue";
 import ManageFoapaDetails from "../manage-foapa/ManageFoapaDetails.vue";
-import { ReimbursementTicket, FoapaStuff, FoapaInput } from "../../types/types";
+import {
+  ReimbursementTicket,
+  FoapaStuff,
+  FoapaInput,
+  FoapaInputWithID,
+} from "../../types/types";
 import BalanceContainer from "./BalanceContainer.vue";
 import { TYPE, useToast } from "vue-toastification";
 let props = defineProps<{
   claim: ReimbursementTicket;
 }>();
 
-let assignedFoapa = ref<FoapaInput>({
+let assignedFoapa = ref<FoapaInputWithID>({
   foapaNumber: "",
   cost: "",
+  id: "",
 });
 
 let userFoapas = ref<FoapaStuff[]>([]);
@@ -174,6 +178,18 @@ const filteredUserFoapas = computed(() => {
 
   return foapas;
 });
+
+const assignFoapaName = (event) => {
+  const selectedFoapaId = event.target.value;
+
+  const selectedFoapa = filteredUserFoapas.value.find(
+    (foapa) => foapa._id === selectedFoapaId
+  );
+  assignedFoapa.value.id = selectedFoapaId;
+  assignedFoapa.value.foapaNumber = selectedFoapa
+    ? formatUserFoapa(selectedFoapa)
+    : "";
+};
 
 watch(
   () => assignedFoapa.value.foapaNumber,
@@ -220,10 +236,10 @@ function addFoapa() {
   props.claim.foapaDetails.push(
     JSON.parse(JSON.stringify(assignedFoapa.value))
   );
-
   assignedFoapa.value = {
     foapaNumber: "",
     cost: "",
+    id: "",
   };
 }
 
