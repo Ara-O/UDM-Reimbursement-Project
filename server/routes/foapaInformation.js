@@ -141,4 +141,21 @@ router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/retrieveFoapaInformation", verifyToken, async(req, res) => {
+  
+});
+
+router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
+  try {
+    if(req.body.submitCB){
+
+
+    }
+    //console.log(req.body.submitCB);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ message: err.message });
+  }
+})
+
 export default router;
