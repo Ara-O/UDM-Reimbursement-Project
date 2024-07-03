@@ -13,7 +13,7 @@
                         class=" border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
                         required>
                         <!-- <option disabled selected value="">Select FOAPA</option> -->
-                        <option :value="foapa.id" v-for="foapa in filteredUserFoapas">
+                        <option :value="foapa._id" v-for="foapa in filteredUserFoapas">
                             {{ formatUserFoapa(foapa) }}
                         </option>
                         <option>
