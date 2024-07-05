@@ -80,7 +80,12 @@ export type FoapaNumbers = {
 };
 
 export type FoapaInput = {
+<<<<<<< HEAD
   foapa_id: string;
+=======
+[x: string]: any;
+  foapaNumber: string;
+>>>>>>> 1dc277fc186a1cd9655e19c4eb081b15ebf41ae7
   cost: string;
 };
 
