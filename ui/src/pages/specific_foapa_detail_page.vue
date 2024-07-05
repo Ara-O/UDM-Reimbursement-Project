@@ -28,18 +28,21 @@
         Keep track of the reimbursement claims that you have used by this FOAPA
       </p>
       <div
-        class="border box-border px-5 py-3 border-solid border-gray-200 max-w-sm mt-6"
         v-if="Object.keys(foapa_information.claims_used).length !== 0"
+        class="flex gap-4"
       >
-        <h3 class="text-[15px] mt-2 font-semibold text-gray-900">
-          {{ foapa_information.claims_used.reimbursement_name }}
-        </h3>
-        <p class="text-sm">
-          Amount used: ${{ foapa_information.claims_used.amount_used }}
-        </p>
-        <p class="text-xs">
-          Date: {{ parseDate(foapa_information.claims_used.date) }}
-        </p>
+        <div
+          v-for="claim in foapa_information.claims_used"
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-6"
+        >
+          <h3 class="text-[15px] mt-2 font-semibold text-gray-900">
+            {{ claim.reimbursementName }}
+          </h3>
+          <p class="text-sm">
+            ${{ parseAmount(claim) }} was used in this claim
+          </p>
+          <p class="text-xs">Date: {{ parseDate(claim.reimbursementDate) }}</p>
+        </div>
       </div>
       <h3 v-else class="text-sm font-normal italic">
         This FOAPA hasn't been used yet
@@ -71,6 +74,14 @@ function parseDate(dateString: string) {
   const dateParsed = new Date(dateString);
   const formattedDate = dateParsed.toISOString().slice(0, 10);
   return formattedDate;
+}
+
+function parseAmount(claim) {
+  const found_claim = claim.foapaDetails.find(
+    (foapa) => foapa.foapa_id === route.params.id
+  );
+
+  return found_claim.cost;
 }
 
 onMounted(() => {

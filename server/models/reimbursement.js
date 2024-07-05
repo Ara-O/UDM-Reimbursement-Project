@@ -7,18 +7,21 @@ export const reimbursementSchema = new Schema({
   paymentRetrievalMethod: String,
   UDMPUVoucher: Boolean,
   totalCost: Number,
-  guestInformation: [{
-    employeeFirstName: String,
-    employeeLastName: String,
-    guestAssociation: String,
-    guestFirstName: String,
-    guestLastName: String
-  }
+  guestInformation: [
+    {
+      employeeFirstName: String,
+      employeeLastName: String,
+      guestAssociation: String,
+      guestFirstName: String,
+      guestLastName: String,
+    },
   ],
-  foapaDetails: [{
-    foapaNumber: String,
-    cost: Number
-  }],
+  foapaDetails: [
+    {
+      cost: Number,
+      foapa_id: mongoose.Schema.Types.ObjectId,
+    },
+  ],
   reimbursementStatus: String,
   reimbursementReceipts: [
     {
@@ -35,7 +38,7 @@ export const reimbursementSchema = new Schema({
       additionalInformation: String,
       cost: Number,
     },
-  ]
+  ],
 });
 
 //reimbursements

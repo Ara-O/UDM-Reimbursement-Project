@@ -182,7 +182,8 @@
       v-if="delete_claim_confirmation_dialog"
       :cancel-function="stopDelete"
       :continue-function="confirmDelete"
-      left-button-text="Yes"
+      left-button-text="No, Don't Delete"
+      right-button-text="Yes, Delete this claim"
     >
       <template #message>
         Are you sure you want to delete this reimbursement claim?

@@ -37,14 +37,16 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
   try {
     let faculty = await Faculty.findById(req.user.userId);
 
-    console.log(req.body);
+    logger.info(`${req.user.userId} is adding a FOAPA`, {
+      api: "/add-foapa-details",
+    });
+
     if (faculty === null) {
       throw new Error("Faculty not found");
     }
 
     faculty.foapaDetails.push(...req.body.foapaDetails);
 
-    console.log(faculty.foapaDetails);
     await faculty.save();
 
     res.status(200).send({ message: "FOAPA details added successfully" });
@@ -123,28 +125,29 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
 
     let dataToSend = {
       foapa_information: faculty.foapaDetails[index],
-      claims_used: {},
+      claims_used: [],
     };
 
-    let facultyReimbursementTickets = faculty.reimbursementTickets;
-
-    let formattedFoapaToSearchFor = formatUserFoapa(
-      faculty.foapaDetails[index]
-    );
-
     //Find FOAPA history
-    for (let i = 0; i < facultyReimbursementTickets.length; i++) {
-      let claim = facultyReimbursementTickets[i];
+    //Looping through all the faculty's reimbursement tickets
+    for (let i = 0; i < faculty.reimbursementTickets.length; i++) {
+      //Get the foapa details from the ticket
+      const foapasUsedInThisClaim =
+        faculty.reimbursementTickets[i].foapaDetails;
 
-      let foapaIndex = claim.foapaDetails.findIndex(
-        (foapa) => foapa.foapaNumber === formattedFoapaToSearchFor
-      );
-
-      if (foapaIndex >= 0) {
-        dataToSend.claims_used["reimbursement_name"] = claim.reimbursementName;
-        dataToSend.claims_used["amount_used"] =
-          claim.foapaDetails[foapaIndex].cost;
-        dataToSend.claims_used["date"] = claim.reimbursementDate;
+      //Loop through all the foapas used in the claim
+      for (let j = 0; j < foapasUsedInThisClaim.length; j++) {
+        //The foapa matches the foapa we want to check
+        console.log(
+          foapasUsedInThisClaim[j].foapa_id.toHexString(),
+          "-",
+          req.query.foapa_id
+        );
+        if (
+          foapasUsedInThisClaim[j].foapa_id.toHexString() === req.query.foapa_id
+        ) {
+          dataToSend.claims_used.push(faculty.reimbursementTickets[i]);
+        }
       }
     }
 
@@ -216,12 +219,12 @@ router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/check-foapa", verifyToken, async (req, res) => {
+router.get("/check-foapa-usage", verifyToken, async (req, res) => {
   try {
     const foapaId = req.query.foapa_id;
 
     logger.info("Checking Foapa ID - " + foapaId, {
-      api: "/api/check-foapa",
+      api: "/api/check-foapa-usage",
     });
 
     const faculty = await Faculty.findById(req.user.userId).populate(
@@ -252,33 +255,37 @@ router.get("/check-foapa", verifyToken, async (req, res) => {
       const foapasUsedInThisClaim =
         faculty.reimbursementTickets[i].foapaDetails;
 
-      //Loop through all the foapas used in the ticket
-      for (let i = 0; i < foapasUsedInThisClaim.length; i++) {
+      //Loop through all the foapas used in the claim
+      for (let j = 0; j < foapasUsedInThisClaim.length; j++) {
+        //The foapa matches the foapa we want to check
+
+        console.log(
+          foapasUsedInThisClaim[j].foapa_id,
+          "--",
+          foapaToCheck._id.toHexString()
+        );
         if (
-          formatUserFoapa(foapaToCheck) === foapasUsedInThisClaim[i].foapaNumber
+          foapasUsedInThisClaim[j].foapa_id.toHexString() ===
+          foapaToCheck._id.toHexString()
         ) {
           // If the foapa we are checking matches with the foapa number used in this reimbursement
           //and isnt already added
-          if (
-            reimbursementClashes.findIndex(
-              (claim) =>
-                claim._id.toHexString() === faculty.reimbursementTickets[i]
-            ) < 0
-          ) {
-            reimbursementClashes.push(faculty.reimbursementTickets[i]);
-          }
+          reimbursementClashes.push(faculty.reimbursementTickets[i]);
         }
       }
     }
 
-    const clashes = reimbursementClashes.map(
-      (claim) => claim.reimbursementName
-    );
+    let clashes = reimbursementClashes.map((claim) => claim.reimbursementName);
+
+    console.log("clashes", clashes);
+
+    //Removing duplicates
+    clashes = [...new Set(clashes)];
 
     return res.status(200).send(clashes);
   } catch (err) {
     logger.error(err, {
-      api: "/api/check-foapa",
+      api: "/api/check-foapa-usage",
     });
 
     return res
@@ -287,21 +294,17 @@ router.get("/check-foapa", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/retrieveFoapaInformation", verifyToken, async(req, res) => {
-  
-});
+router.get("/retrieveFoapaInformation", verifyToken, async (req, res) => {});
 
 router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
   try {
-    if(req.body.submitCB){
-
-
+    if (req.body.submitCB) {
     }
     //console.log(req.body.submitCB);
   } catch (err) {
     console.error(err);
     res.status(400).send({ message: err.message });
   }
-})
+});
 
 export default router;

@@ -156,17 +156,24 @@
             <h3 class="text-sm font-medium leading-6">
               Note: Your reimbursement claim PDF will be attached to this email
             </h3>
-            <input 
-              type="checkbox" 
-              id="submitCB" 
+            <input
+              type="checkbox"
+              id="submitCB"
               name="submitCB"
               v-model="checked"
-              >
-              <label for="submissionEmail" class="font-semibold text-sm leading-7"> Mark Claim As Submitted?
-                <img src="../../assets/user-help-icon.png" alt="Help" class="w-4"
-                title="By checking this box the claim will be marked as submitted. This will deduct the respective amounts from each of your saved FOAPA." />
-              </label>
-              
+            />
+            <label
+              for="submissionEmail"
+              class="font-semibold text-sm leading-7"
+            >
+              Mark Claim As Submitted?
+              <img
+                src="../../assets/user-help-icon.png"
+                alt="Help"
+                class="w-4"
+                title="By checking this box the claim will be marked as submitted. This will deduct the respective amounts from each of your saved FOAPA."
+              />
+            </label>
           </Form>
         </span>
       </div>
@@ -224,41 +231,35 @@ async function sendEmail(values: any, { resetForm }) {
       `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
     );
 
-    savedFoapaDetails = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
-    ).then((res) => {
-      savedFoapaDetails = res.data;
-      console.log(res.data);
+    savedFoapaDetails = await axios
+      .get(`${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`)
+      .then((res) => {
+        savedFoapaDetails = res.data;
+        console.log(res.data);
 
-      // props.claim.foapaDetails.forEach((claimFoapa, i=0)=>{
-      //   console.log(claimFoapa.foapaNumber);
-      //   if(claimFoapa.foapaNumber == savedFoapaDetails.at(i)?){
-      //   }
-      // })
+        savedFoapaDetails.forEach((foapa) => {
+          let comboFoapa = `${foapa.fund}-${foapa.organization || "XXXX"}-${
+            foapa.account
+          }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 
-      savedFoapaDetails.forEach((foapa) =>{
-        let comboFoapa = `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${foapa.program || "XXXX"
-        }-${foapa.activity || "XXXX"}`;
+          props.claim.foapaDetails.forEach((claimFoapa) => {
+            if (comboFoapa == claimFoapa.foapaNumber) console.log("HELLO");
+          });
+        });
 
-        props.claim.foapaDetails.forEach((claimFoapa) => {
-          if(comboFoapa == claimFoapa.foapaNumber)
-            console.log("HELLO");
-        })
-      })
+        // savedFoapaDetails.foreach((foapa) =>{
 
-      // savedFoapaDetails.foreach((foapa) =>{
-        
-      // });
-      console.log(props.claim.foapaDetails.at(0)?.foapaNumber);
-      axios.post(
-      `${import.meta.env.VITE_API_URL}/api/mark-claim-as-submitted`,
-      {
-        submitCB: checked,
-        reimbursementData: props.claim,
-        foapaData: props.foapa,
-      }
-    )
-    });
+        // });
+        console.log(props.claim.foapaDetails.at(0)?.foapaNumber);
+        axios.post(
+          `${import.meta.env.VITE_API_URL}/api/mark-claim-as-submitted`,
+          {
+            submitCB: checked,
+            reimbursementData: props.claim,
+            foapaData: props.foapa,
+          }
+        );
+      });
 
     // await axios.post(
     //   `${import.meta.env.VITE_API_URL}/api/send-reimbursement-email`,
@@ -270,8 +271,8 @@ async function sendEmail(values: any, { resetForm }) {
     //     userInfo: response.data,
     //   }
     // );
-      console.log(props.claim); 
-      
+    console.log(props.claim);
+
     toast("Your email was sent successfully", {
       type: TYPE.SUCCESS,
     });

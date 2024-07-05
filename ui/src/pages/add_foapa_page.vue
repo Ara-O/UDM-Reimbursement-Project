@@ -1,5 +1,5 @@
 <template>
-  <main class="xl:px-32 h-screen px-16 flex flex-col justify-center">
+  <main class="xl:px-32 2xl:h-screen h-auto px-16 flex flex-col justify-center">
     <div class="absolute top-0 hidden top_indicator"></div>
     <div
       class="flex items-center absolute top-0 gap-4 pt-10 return_to_dashboard cursor-pointer"
@@ -14,7 +14,7 @@
       class="flex flex-wrap lg:flex-nowrap items-center justify-start gap-y-32 w-full gap-x-28 mb-20 mt-20 xl:mt-20"
     >
       <section>
-        <h3 class="font-semibold text-3xl leading-10 mt-0 xl:mt-7">
+        <h3 class="font-semibold text-3xl mt-20 leading-10 xl:mt-7">
           Manage FOAPA Details
         </h3>
         <h4 class="font-semibold text-lg mb-5">Add FOAPA Details</h4>
@@ -287,7 +287,7 @@
         <p v-for="claim in edit_clashes" class="font-medium">{{ claim }}</p>
         To stop editing, click 'Stop Editing.' To continue editing this FOAPA,
         click 'Continue.' Note: Continuing editing this FOAPA will cause the
-        FOAPA values in the above-mentioned reimbursement to change as well.
+        FOAPA values in the above-mentioned reimbursements to change as well.
       </template>
     </ConfirmationPopup>
 
@@ -305,21 +305,20 @@
       </template>
     </ConfirmationPopup>
 
+    <!-- Make not two OK buttons -->
     <ConfirmationPopup
       v-if="show_delete_foapa_clash_dialogue"
-      :cancel-function="removeEditClashPopup"
-      :continue-function="continueEditAfterClash"
-      left-button-text="Don't Delete"
-      right-button-text="Delete"
-      title="Warning"
+      :cancel-function="removeDeletePopup"
+      :continue-function="removeDeletePopup"
+      left-button-text="OK"
+      right-button-text="OK"
+      title="Error"
     >
       <template #message>
-        Warning: You are about to delete a FOAPA that is being used by the
+        Error: You are about to delete a FOAPA that is being used by the
         following reimbursement claims:
         <p v-for="claim in delete_clashes" class="font-medium">{{ claim }}</p>
-        To stop editing, click 'Stop Editing.' To continue editing this FOAPA,
-        click 'Continue.' Note: Continuing editing this FOAPA will cause the
-        FOAPA values in the above-mentioned reimbursement to change as well.
+        Please submit these claims before attempting to delete this FOAPA
       </template>
     </ConfirmationPopup>
   </main>
@@ -422,7 +421,7 @@ async function triggerFoapaEditMode(foapa: FoapaStuff) {
     foapa_to_edit.value = foapa;
     //Check if FOAPA is being used in other reimbursements
     let res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/check-foapa`,
+      `${import.meta.env.VITE_API_URL}/api/check-foapa-usage`,
       {
         params: {
           //@ts-ignore
@@ -543,7 +542,7 @@ async function showDeleteFoapaDialogue(foapa_id) {
   try {
     // Check to see which pending reimbursements are using this FOAPA
     let res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/check-foapa`,
+      `${import.meta.env.VITE_API_URL}/api/check-foapa-usage`,
       {
         params: {
           //@ts-ignore

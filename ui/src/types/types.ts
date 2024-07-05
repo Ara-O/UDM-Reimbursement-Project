@@ -80,15 +80,14 @@ export type FoapaNumbers = {
 };
 
 export type FoapaInput = {
-  foapaNumber: string;
+  foapa_id: string;
   cost: string;
 };
 
 export type FoapaInputWithID = {
-  foapaNumber: string;
   cost: string;
-  id: string;
-}
+  foapa_id: string;
+};
 
 export type GuestInfo = {
   employeeFirstName: string;

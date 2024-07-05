@@ -18,16 +18,15 @@
           <select
             name="foapa"
             id="foapa"
-            v-model="assignedFoapa.id"
-            @change="assignFoapaName"
+            v-model="assignedFoapa.foapa_id"
             class="border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
           >
             <!-- <option disabled selected value="">Select FOAPA</option> -->
-            <option :value="foapa.id" v-for="foapa in filteredUserFoapas">
-              {{ formatUserFoapa(foapa) }}
+            <option :value="foapa._id" v-for="foapa in userFoapas">
+              {{ foapa.foapaName }} - {{ formatUserFoapa(foapa) }}
             </option>
-            <option>Add a New FOAPA</option>
+            <option value="Add a New FOAPA">Add a New FOAPA</option>
           </select>
         </span>
         <span>
@@ -75,11 +74,17 @@
             </h5>
           </div>
         </div>
-        <div class="flex gap-3 flex-col max-h-80 overflow-auto">
+        <div
+          class="flex gap-3 flex-col max-h-80 overflow-auto"
+          v-if="userFoapas.length !== 0"
+        >
+          <!-- Wait till the user's foapa have been loaded in, so that this component
+         can use that to match foapa names, etc -->
           <foapa-container
-            :foapa="foapa"
             v-for="foapa in props.claim.foapaDetails"
-            @delete-activity="deleteFOAPA"
+            :filtered-user-foapas="userFoapas"
+            :foapa="foapa"
+            @delete-foapa="deleteFOAPA"
           >
           </foapa-container>
         </div>
@@ -148,51 +153,19 @@ let props = defineProps<{
 }>();
 
 let assignedFoapa = ref<FoapaInputWithID>({
-  foapaNumber: "",
   cost: "",
-  id: "",
+  foapa_id: "",
 });
-
-let userFoapas = ref<FoapaStuff[]>([]);
+type FoapaDetails = FoapaStuff & { _id: string };
+let userFoapas = ref<FoapaDetails[]>([]);
 let foapaDetailsToAdd = ref<FoapaStuff[]>([]);
 let foapaPopupIsVisible = ref<boolean>(false);
 
 const emits = defineEmits(["move-to-next-section"]);
 const toast = useToast();
 
-const filteredUserFoapas = computed(() => {
-  let foapas: any = [];
-  userFoapas.value.forEach((foapa) => {
-    let wasFound = false;
-    for (let i = 0; i < props.claim.foapaDetails.length; i++) {
-      if (formatUserFoapa(foapa) === props.claim.foapaDetails[i].foapaNumber) {
-        wasFound = true;
-        break;
-      }
-    }
-
-    if (wasFound === false) {
-      foapas.push(foapa);
-    }
-  });
-
-  return foapas;
-});
-
-const assignFoapaName = (event) => {
-  const selectedFoapaId = event.target.value;
-
-  const selectedFoapa = filteredUserFoapas.value.find(
-    (foapa) => foapa._id === selectedFoapaId
-  );
-  assignedFoapa.value.id = selectedFoapaId;
-  assignedFoapa.value.foapaNumber = selectedFoapa
-    ? formatUserFoapa(selectedFoapa)
-    : "";
-};
-
 watch(
-  () => assignedFoapa.value.foapaNumber,
+  () => assignedFoapa.value.foapa_id,
   (newVal, oldVal) => {
     if (newVal == "Add a New FOAPA") showFoapaPopup();
   }
@@ -203,14 +176,10 @@ function showFoapaPopup() {
 
 function closeFoapaPopup() {
   foapaPopupIsVisible.value = false;
-  assignedFoapa.value.foapaNumber = "";
 }
 
 function moveToNextSection() {
-  if (
-    assignedFoapa.value.foapaNumber !== "" ||
-    assignedFoapa.value.cost !== ""
-  ) {
+  if (assignedFoapa.value.foapa_id !== "" || assignedFoapa.value.cost !== "") {
     let moveon = confirm(
       "Warning: You are moving to next section without adding your currently inputted FOAPA. Click 'OK' to discard the inputted FOAPA and move to the next section, or click 'Cancel' to return"
     );
@@ -226,6 +195,7 @@ function moveToNextSection() {
 
 function addFoapa() {
   const num = parseFloat(assignedFoapa.value.cost);
+
   if (isNaN(num) && !isFinite(num)) {
     toast("Error: Assigned quantity must be a number", {
       type: TYPE.ERROR,
@@ -236,10 +206,10 @@ function addFoapa() {
   props.claim.foapaDetails.push(
     JSON.parse(JSON.stringify(assignedFoapa.value))
   );
+
   assignedFoapa.value = {
-    foapaNumber: "",
     cost: "",
-    id: "",
+    foapa_id: "",
   };
 }
 
@@ -294,7 +264,7 @@ function formatUserFoapa(foapa: FoapaStuff) {
 
 function deleteFOAPA(id: string) {
   props.claim.foapaDetails = props.claim.foapaDetails.filter(
-    (foapaTrash) => foapaTrash.foapaNumber !== id
+    (foapa) => foapa.foapa_id !== id
   );
 }
 </script>
