@@ -1,6 +1,5 @@
 import { Router } from "express";
 const router = Router();
-import Foapa from "../models/foapa.js";
 import Faculty from "../models/faculty.js";
 import { verifyToken } from "../middleware/auth.js";
 import { z } from "zod";
@@ -198,7 +197,6 @@ router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
   const foapaId = req.body.foapa._id;
 
   try {
-    await Foapa.findByIdAndDelete(foapaId);
     const faculty = await Faculty.findById(req.user.userId);
 
     if (faculty === null) throw new Error("Faculty not found");

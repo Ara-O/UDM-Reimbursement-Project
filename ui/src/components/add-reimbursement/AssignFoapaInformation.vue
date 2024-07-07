@@ -2,7 +2,7 @@
   <section
     class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0"
   >
-    <span class="flex items-center gap-6 mb-2 mt-48 md:mt-0">
+    <span class="flex items-center gap-6 mb-2 mt-42 md:mt-0">
       <h2 class="font-semibold my-0 text-[27px]">Assign FOAPA Information</h2>
       <img
         src="../../assets/edit-icon.png"
@@ -23,7 +23,7 @@
             required
           >
             <!-- <option disabled selected value="">Select FOAPA</option> -->
-            <option :value="foapa._id" v-for="foapa in userFoapas">
+            <option :value="foapa._id" v-for="foapa in filteredUserFoapas">
               {{ foapa.foapaName }} - {{ formatUserFoapa(foapa) }}
             </option>
             <option value="Add a New FOAPA">Add a New FOAPA</option>
@@ -47,7 +47,7 @@
           type="submit"
           class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
         >
-          Assign FOAPA
+          {{ triggerAssignedFoapaEditMode ? "Edit FOAPA" : "Assign FOAPA" }}
         </button>
         <button
           type="button"
@@ -57,6 +57,13 @@
           Next Section
         </button>
       </div>
+      <button
+        type="button"
+        @click="moveToPreviousSection"
+        class="bg-udmercy-blue mt-6 md:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+      >
+        Previous Section
+      </button>
     </form>
 
     <!-- ALL FOAPA SECTION -->
@@ -85,6 +92,7 @@
             :filtered-user-foapas="userFoapas"
             :foapa="foapa"
             @delete-foapa="deleteFOAPA"
+            @edit-foapa="editFOAPA"
           >
           </foapa-container>
         </div>
@@ -107,9 +115,11 @@
     <!-- FOAPA POPUP -->
     <section v-if="foapaPopupIsVisible">
       <div
-        class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center"
+        class="absolute bg-black bg-opacity-50 h-full xl:h-screen top-0 left-0 w-screen items-center flex justify-center"
       >
-        <div class="bg-white px-10 rounded-md pt-3 pb-11">
+        <div
+          class="bg-white px-10 h-96 md:h-auto overflow-auto rounded-md pt-3 pb-11"
+        >
           <div class="flex justify-between items-center">
             <h3 class="mb-5 font-semibold">Add FOAPA here</h3>
             <img
@@ -138,16 +148,16 @@
 import axios from "axios";
 import CancelIcon from "../../assets/cross-icon.svg";
 import FoapaContainer from "./FoapaContainer.vue";
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import ManageFoapaDetails from "../manage-foapa/ManageFoapaDetails.vue";
 import {
   ReimbursementTicket,
   FoapaStuff,
-  FoapaInput,
   FoapaInputWithID,
 } from "../../types/types";
 import BalanceContainer from "./BalanceContainer.vue";
 import { TYPE, useToast } from "vue-toastification";
+import { computed } from "@vue/reactivity";
 let props = defineProps<{
   claim: ReimbursementTicket;
 }>();
@@ -156,12 +166,14 @@ let assignedFoapa = ref<FoapaInputWithID>({
   cost: "",
   foapa_id: "",
 });
+
 type FoapaDetails = FoapaStuff & { _id: string };
 let userFoapas = ref<FoapaDetails[]>([]);
 let foapaDetailsToAdd = ref<FoapaStuff[]>([]);
 let foapaPopupIsVisible = ref<boolean>(false);
+let triggerAssignedFoapaEditMode = ref<boolean>(false);
 
-const emits = defineEmits(["move-to-next-section"]);
+const emits = defineEmits(["move-to-next-section", "move-to-previous-section"]);
 const toast = useToast();
 
 watch(
@@ -170,12 +182,49 @@ watch(
     if (newVal == "Add a New FOAPA") showFoapaPopup();
   }
 );
+
+function moveToPreviousSection() {
+  emits("move-to-previous-section");
+}
+
+//Removes a foapa from the list to select foapa from if they already added one
+const filteredUserFoapas = computed(() => {
+  let foapas: any = [];
+  userFoapas.value.forEach((foapa) => {
+    let wasFound = false;
+    for (let i = 0; i < props.claim.foapaDetails.length; i++) {
+      if (foapa._id === props.claim.foapaDetails[i].foapa_id) {
+        wasFound = true;
+        break;
+      }
+    }
+
+    if (wasFound === false) {
+      foapas.push(foapa);
+    }
+  });
+
+  return foapas;
+});
+
 function showFoapaPopup() {
   foapaPopupIsVisible.value = true;
 }
 
 function closeFoapaPopup() {
   foapaPopupIsVisible.value = false;
+}
+
+function editFOAPA(foapa_id) {
+  triggerAssignedFoapaEditMode.value = true;
+  props.claim.foapaDetails.forEach((foapa) => {
+    if (foapa.foapa_id === foapa_id) {
+      assignedFoapa.value.foapa_id = foapa_id;
+      assignedFoapa.value.cost = foapa.cost;
+    }
+  });
+
+  deleteFOAPA(foapa_id);
 }
 
 function moveToNextSection() {
@@ -211,6 +260,10 @@ function addFoapa() {
     cost: "",
     foapa_id: "",
   };
+
+  if (triggerAssignedFoapaEditMode.value) {
+    triggerAssignedFoapaEditMode.value = false;
+  }
 }
 
 function saveFoapas() {

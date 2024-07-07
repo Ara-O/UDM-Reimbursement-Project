@@ -1,6 +1,7 @@
 <template>
   <div class="balance mt-0">
-    <span class="flex items-center">
+    <span class="flex items-center gap-2">
+      <h5 class="font-medium text-gray-500">FOAPA usage breakdown</h5>
       <img
         :src="HelpIcon"
         alt="Help"
@@ -10,9 +11,6 @@
         less than 0, this means you have assigned more money than needed to cover
         your expenses. Remaining coverage of $0 is ideal"
       />
-      <h5 class="mt-3 mb-4 ml-2 font-medium text-gray-500">
-        FOAPA usage breakdown
-      </h5>
     </span>
 
     <div

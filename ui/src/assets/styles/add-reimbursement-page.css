@@ -362,8 +362,8 @@
 
 .activity-option {
   background-color: var(--udmercy-red);
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   padding: 14px 15px;
   display: flex;
   cursor: pointer;

@@ -61,17 +61,16 @@
         <h3 style="font-weight: 500; font-size: 14.5px">
           All Reimbursements -
         </h3>
-        <span class="view-choice">
+        <span class="view-choice flex-wrap">
           <button
             @click="$router.push('/add-reimbursement')"
             class="filter add-reimbursement-ticket-button"
-            style="width: auto"
           >
             Click to add new reimbursement
           </button>
           <button
             @click="viewingTemplates = !viewingTemplates"
-            class="w-auto filter add-reimbursement-ticket-button"
+            class="filter add-reimbursement-ticket-button"
           >
             {{
               viewingTemplates === false ? "View Your Templates" : "View Claims"
@@ -79,7 +78,6 @@
           </button>
           <button
             v-if="filterReimbursements.length > 0"
-            style="width: auto"
             @click="changeView"
             class="filter add-reimbursement-ticket-button"
           >

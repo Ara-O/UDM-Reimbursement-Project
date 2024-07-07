@@ -199,6 +199,7 @@
   border-radius: 30px;
   color: white;
   cursor: pointer;
+  width: auto;
   height: 44px;
   display: flex;
   align-items: center;

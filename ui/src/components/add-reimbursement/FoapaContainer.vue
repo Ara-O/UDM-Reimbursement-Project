@@ -21,7 +21,18 @@
       <img
         src="../../assets/trash-icon-white.png"
         alt="Trash icon"
-        class="trash-icon w-3.5"
+        class="trash-icon w-3"
+      />
+    </div>
+    <div
+      title="Edit activity"
+      class="activity-option absolute right-24 bottom-5"
+      @click="() => $emit('editFoapa', foapa.foapa_id)"
+    >
+      <img
+        src="../../assets/edit-icon.png"
+        alt="Trash icon"
+        class="trash-icon w-4 invert"
       />
     </div>
   </div>
@@ -29,7 +40,6 @@
 
 <script lang="ts" setup>
 import { FoapaInput, FoapaStuff } from "../../types/types";
-import { onMounted } from "vue";
 
 type FoapaDetails = FoapaStuff & { _id: string };
 
@@ -80,7 +90,7 @@ const assignFoapaNumber = (event) => {
   return formatUserFoapa(selectedFoapa);
 };
 
-defineEmits(["deleteFoapa"]);
+defineEmits(["deleteFoapa", "editFoapa"]);
 </script>
 
 <style scoped>
