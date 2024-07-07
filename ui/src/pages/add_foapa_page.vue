@@ -20,6 +20,7 @@
         <h4 class="font-semibold text-lg mb-5">Add FOAPA Details</h4>
         <h4
           class="font-normal cursor-pointer underline text-sm mt-0 text-gray-700"
+          @click="showHelpScreen"
         >
           Need help? Click here to learn more about FOAPA and how to use them.
         </h4>
@@ -173,7 +174,7 @@
       <!-- 
       -- RIGHT SECTION --
       -->
-      <section class="min-w-[450px]">
+      <section class="sm:min-w-[450px]">
         <h3 class="font-semibold text-3xl">Your FOAPA Details</h3>
         <h4 class="font-medium text-sm max-w-md leading-8">
           Note: This section is scrollable for better visibility. Click a
@@ -186,7 +187,7 @@
             type="text"
             v-model="search_value"
             placeholder="Search by FOAPA name"
-            class="border rounded-md box-border px-4 border-gray-200 border-solid w-full h-10"
+            class="border rounded-md box-border px-4 border-gray-200 border-solid w-auto md:w-full h-10"
           />
           <img :src="SortIcon" alt="Sort icon" class="w-5 cursor-pointer" />
         </div>
@@ -321,6 +322,71 @@
         Please submit these claims before attempting to delete this FOAPA
       </template>
     </ConfirmationPopup>
+
+    <section v-if="show_foapa_help_dialogue">
+      <div
+        class="absolute z-50 bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center"
+      >
+        <div
+          class="bg-white max-w-4xl shadow-md border border-solid border-gray-100 h-96 overflow-auto md:h-min px-6 py-9 rounded-md"
+        >
+          <div class="flex justify-between">
+            <h3 class="text-md font-semibold mb-6 mt-0">FOAPA Help</h3>
+            <img
+              :src="CancelIcon"
+              alt="Cancel icon"
+              class="w-4 h-4 my-0 cursor-pointer"
+              @click="removeFoapaHelp"
+            />
+          </div>
+          <div class="flex flex-wrap gap-y-16 gap-x-4">
+            <span class="flex flex-col gap-3 w-72 justify-between">
+              <h4 class="font-medium text-md my-0">F: Fund</h4>
+              <h4 class="text-sm font-normal my-0 leading-8">
+                Uniquely identifies all sources of funding
+              </h4>
+              <h4 class="my-0 font-normal text-sm">Example: 139233</h4>
+              <h5 class="text-xs font-normal my-0 leading-8">
+                Requirements: 6 characters
+              </h5>
+            </span>
+            <span class="flex flex-col gap-3 w-72 justify-between">
+              <h4 class="font-medium text-md my-0">O: Organization</h4>
+              <h4 class="text-sm font-normal my-0 leading-8">
+                Unit of budgetary responsibility, e.g College Office
+              </h4>
+              <h5 class="text-xs font-normal my-0 leading-8">
+                Requirements: 4 numbers
+              </h5>
+            </span>
+            <span class="flex flex-col gap-3 w-72 justify-between">
+              <h4 class="font-medium text-md my-0">A: Account</h4>
+              <h4 class="text-sm font-normal my-0 leading-8">
+                Expenditures, revenues, transfers, assets, liabilities, fund
+                balances
+              </h4>
+              <h5 class="text-xs font-normal my-0 leading-8">
+                Requirements: 4 numbers
+              </h5>
+            </span>
+            <span class="flex flex-col gap-3 w-72 justify-between">
+              <h4 class="font-medium text-md my-0">P: Program</h4>
+              <h4 class="text-sm font-normal my-0 leading-8">
+                Function categories, e.g Instruction, Research
+              </h4>
+              <h5 class="text-xs font-normal my-0 leading-8">
+                Requirements: 4 numbers
+              </h5>
+            </span>
+            <span class="flex flex-col gap-3 w-72 justify-between">
+              <h4 class="font-medium text-md my-0">A: Activity</h4>
+              <h4 class="text-sm font-normal my-0 leading-8">User defined</h4>
+              <h5 class="text-xs font-normal my-0 leading-8">Optional</h5>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 </template>
 
@@ -329,6 +395,7 @@ import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import axios from "axios";
 import EditIcon from "../assets/blue-pencil.png";
 import DeleteIcon from "../assets/red-delete-icon.png";
+import CancelIcon from "../assets/cross-icon.svg";
 import SortIcon from "../assets/filter-icon.png";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, onMounted, watch, computed } from "vue";
@@ -350,6 +417,7 @@ type Foapa = FoapaStuff & { _id?: string };
 let foapaDetails = ref<Foapa[]>([]);
 let changes_were_made = ref<boolean>(false);
 let show_leave_dialogue = ref<boolean>(false);
+let show_foapa_help_dialogue = ref<boolean>(false);
 let show_edit_clashes_dialogue = ref<boolean>(false);
 let show_delete_foapa_dialogue = ref<boolean>(false);
 let show_delete_foapa_clash_dialogue = ref<boolean>(false);
@@ -414,6 +482,19 @@ function continueEditAfterClash() {
   document.querySelector("body").style.overflow = "auto";
   show_edit_clashes_dialogue.value = false;
   foapa_to_edit.value = {};
+}
+
+function showHelpScreen() {
+  show_foapa_help_dialogue.value = true;
+  window.scrollTo(0, 0);
+  //@ts-ignore
+  document.querySelector("body").style.overflow = "hidden";
+}
+
+function removeFoapaHelp() {
+  show_foapa_help_dialogue.value = false;
+  //@ts-ignore
+  document.querySelector("body").style.overflow = "auto";
 }
 
 async function triggerFoapaEditMode(foapa: FoapaStuff) {

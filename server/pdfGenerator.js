@@ -1,7 +1,13 @@
 function parseDate(dateString) {
-  if (!dateString) return
+  if (!dateString) return;
   const formattedDate = dateString.slice(0, 10);
   return formattedDate;
+}
+
+function formatFoapa(foapa) {
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
+    foapa.program || "XXXX"
+  }-${foapa.activity || "XXXX"}`;
 }
 
 function fillArray(arrayToBeFilled, length) {
@@ -55,7 +61,7 @@ export default function createPdfDefinition(
   const { activities } = reimbursementData;
   let content = [];
 
-  console.log("REIMBURSEMENT DATA:", reimbursementData)
+  console.log("REIMBURSEMENT DATA:", reimbursementData);
 
   //Top section
   content.push(
@@ -272,7 +278,6 @@ export default function createPdfDefinition(
   //Calculating all the costs based on activity based ond date
 
   if (activities) {
-
     activities.forEach((activity) => {
       if (activity.activityName === "Mileage") {
         mileageExplanation.push(activity?.additionalInformation || "");
@@ -283,13 +288,9 @@ export default function createPdfDefinition(
       }
 
       if (!parsedActivity[activityDate][activity.name]) {
-        parsedActivity[activityDate][activity.name] = Number(
-          activity.cost
-        );
+        parsedActivity[activityDate][activity.name] = Number(activity.cost);
       } else {
-        parsedActivity[activityDate][activity.name] += Number(
-          activity.cost
-        );
+        parsedActivity[activityDate][activity.name] += Number(activity.cost);
       }
     });
   }
@@ -498,7 +499,6 @@ export default function createPdfDefinition(
   let foapaArray = [];
 
   if (reimbursementData?.activities) {
-
     reimbursementData.activities.forEach((activity) => {
       if (foapaDetails[activity.foapaNumber]) {
         foapaDetails[activity.foapaNumber] += Number(activity.cost);
@@ -519,62 +519,69 @@ export default function createPdfDefinition(
   }
 
   // EMployee section
-  console.log("=========")
+  console.log("=========");
   // console.log(reimbursementData.guestInformation)
 
-  let guestSection = []
-  if (!reimbursementData?.guestInformation || reimbursementData?.guestInformation.length == 0) {
+  let guestSection = [];
+  if (
+    !reimbursementData?.guestInformation ||
+    reimbursementData?.guestInformation.length == 0
+  ) {
     guestSection = [
       ["", "", "", "", "", ""],
       ["", "", "", "", "", ""],
       ["", "", "", "", "", ""],
       ["", "", "", "", "", ""],
-      ["", "", "", "", "", ""]
-    ]
+      ["", "", "", "", "", ""],
+    ];
   } else {
     reimbursementData.guestInformation.forEach((guest) => {
       let arr = [];
 
-      arr.push({ text: guest.employeeFirstName, fontSize: 7.5 })
-      arr.push({ text: guest.employeeLastName, fontSize: 7.5 })
-      arr.push({ text: guest.guestFirstName, fontSize: 7.5 })
-      arr.push({ text: guest.guestLastName, fontSize: 7.5 })
-      arr.push({ text: guest.guestAssociation, fontSize: 7.5 })
-      arr.push("")
+      arr.push({ text: guest.employeeFirstName, fontSize: 7.5 });
+      arr.push({ text: guest.employeeLastName, fontSize: 7.5 });
+      arr.push({ text: guest.guestFirstName, fontSize: 7.5 });
+      arr.push({ text: guest.guestLastName, fontSize: 7.5 });
+      arr.push({ text: guest.guestAssociation, fontSize: 7.5 });
+      arr.push("");
 
-      guestSection.push(arr)
-    })
+      guestSection.push(arr);
+    });
   }
 
-
-  for (let i = 0; i <= (5 - guestSection.length); i++) {
-    guestSection.push(["", "", "", "", "", ""],
-    )
+  for (let i = 0; i <= 5 - guestSection.length; i++) {
+    guestSection.push(["", "", "", "", "", ""]);
   }
 
-  let fullFoapa = []
-  if(reimbursementData?.foapaDetails){
-    let foapaData = reimbursementData.foapaDetails.forEach((foapa)=> {
-      let foapaArray = foapa.foapaNumber.split("-")
-      for(let i = 0; i < foapaArray.length; i++){
-      if(foapaArray[i] === "XXXX" || foapaArray[i] === "XXXXXX"){
-          foapaArray[i] = ""
+  let fullFoapa = [];
+  if (reimbursementData?.foapaDetails) {
+    console.log(userInfo);
+    for (let i = 0; i < reimbursementData.foapaDetails.length; i++) {
+      let foapa = reimbursementData.foapaDetails[i];
+      let val = userInfo.foapaDetails.find(
+        (foap) => foap._id === foapa.foapa_id
+      );
+
+      let details = formatFoapa(val);
+
+      let foapaArray = details.split("-");
+      for (let i = 0; i < foapaArray.length; i++) {
+        if (foapaArray[i] === "XXXX" || foapaArray[i] === "XXXXXX") {
+          foapaArray[i] = "";
         }
       }
-
-      foapaArray.push(foapa.cost)
-      fullFoapa.push(foapaArray)
-    })
-  }
-
-  for(let i = 0; i < 4; i++){
-    if(fullFoapa.length < 4){
-      fullFoapa.push(["", "", "", "", "", ""])
+      foapaArray.push(foapa.cost);
+      fullFoapa.push(foapaArray);
     }
   }
 
-  console.log(fullFoapa)
+  for (let i = 0; i < 4; i++) {
+    if (fullFoapa.length < 4) {
+      fullFoapa.push(["", "", "", "", "", ""]);
+    }
+  }
 
+  console.log(fullFoapa);
 
   content.push({
     columns: [
