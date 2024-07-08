@@ -16,10 +16,10 @@ const facultySchema = new Schema({
   country: String,
   foapaDetails: [
     {
-      fund: Number,
-      organization: Number,
+      fund: String,
+      organization: String,
       account: String,
-      program: Number,
+      program: String,
       activity: String,
       foapaName: String,
       initialAmount: Number,
