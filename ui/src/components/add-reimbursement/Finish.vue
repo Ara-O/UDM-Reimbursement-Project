@@ -255,7 +255,6 @@ async function sendEmail(values: any, { resetForm }) {
           {
             submitCB: checked,
             reimbursementData: props.claim,
-            foapaData: props.foapa,
           }
         );
       });

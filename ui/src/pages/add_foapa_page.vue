@@ -215,8 +215,8 @@
               }}
             </h4>
             <h4 class="text-[13px] font-normal mt-3" v-if="foapa.initialAmount">
-              Current amount: ${{ foapa.initialAmount }} | Remaining amount: ${{
-                foapa.currentAmount
+              Current amount: ${{ foapa.currentAmount }} | Available amount: ${{
+                foapa.availableAmount
               }}
             </h4>
             <div class="flex gap-5 items-center mt-4">
@@ -453,7 +453,7 @@ let added_foapa = ref({
   activity: "",
   foapaName: "",
   initialAmount: "",
-  pendingAmount: "",
+  availableAmount: "",
   currentAmount: "",
   description: "",
 });
@@ -550,7 +550,7 @@ async function editFoapaValues(foapaValues) {
     });
 
     foapaValues.currentAmount = foapaValues.initialAmount;
-    foapaValues.pendingAmount = foapaValues.initialAmount;
+    foapaValues.availableAmount = foapaValues.initialAmount;
 
     let res = await axios.post(
       `${import.meta.env.VITE_API_URL}/api/edit-foapa-detail`,
@@ -594,7 +594,7 @@ async function addFoapa(values, { resetForm }) {
 
     // changes_were_made.value = true
     values.currentAmount = values.initialAmount;
-    values.pendingAmount = values.initialAmount;
+    values.availableAmount = values.initialAmount;
 
     await axios.post(`${import.meta.env.VITE_API_URL}/api/add-foapa-details`, {
       foapaDetails: [values],

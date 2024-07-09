@@ -23,7 +23,7 @@ const facultySchema = new Schema({
       activity: String,
       foapaName: String,
       initialAmount: Number,
-      pendingAmount: Number,
+      availableAmount: Number,
       currentAmount: Number,
       description: String,
     },

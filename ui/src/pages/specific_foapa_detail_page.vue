@@ -19,7 +19,7 @@
         : ${{ foapa_information.foapa_information.currentAmount }}
       </h3>
       <h3 class="font-normal mt-3 leading-7 text-[15px]">
-        Pending Amount: ${{ foapa_information.foapa_information.pendingAmount }}
+        Pending Amount: ${{ foapa_information.foapa_information.availableAmount }}
         - This is the amount of money waiting on reimbursements
       </h3>
 
