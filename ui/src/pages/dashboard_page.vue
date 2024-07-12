@@ -7,52 +7,26 @@
     <section class="reimbursement-section">
       <h3>Welcome {{ userInfo.firstName }}</h3>
       <router-link to="/profile-page">
-        <img src="../assets/user-icon.png" alt="User help" class="user-icon"
-      /></router-link>
+        <img src="../assets/user-icon.png" alt="User help" class="user-icon" /></router-link>
       <br />
       <div class="reimbursement-search-input">
-        <input
-          type="text"
-          v-model="searchValue"
-          class="reimbusement-search"
-          onchange="filterReimbursements"
-          placeholder="Search Reimbursement Claims"
-        />
+        <input type="text" v-model="searchValue" class="reimbusement-search" onchange="filterReimbursements"
+          placeholder="Search Reimbursement Claims" />
         <div class="search-button">
-          <img
-            src="../assets/search-icon.png"
-            alt="Search icon"
-            class="search-icon"
-          />
+          <img src="../assets/search-icon.png" alt="Search icon" class="search-icon" />
         </div>
       </div>
       <div class="search-filters">
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Date' }"
-          @click="orderByDate()"
-        >
+        <div class="filter" :class="{ selected: sortParameter === 'Date' }" @click="orderByDate()">
           <h3>Sort by Date</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Status' }"
-          @click="orderByStatus()"
-        >
+        <div class="filter" :class="{ selected: sortParameter === 'Status' }" @click="orderByStatus()">
           <h3>Sort by Status</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Name' }"
-          @click="orderByName()"
-        >
+        <div class="filter" :class="{ selected: sortParameter === 'Name' }" @click="orderByName()">
           <h3>Sort by Name</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Cost' }"
-          @click="orderByCost()"
-        >
+        <div class="filter" :class="{ selected: sortParameter === 'Cost' }" @click="orderByCost()">
           <h3>Sort by Cost</h3>
         </div>
       </div>
@@ -62,25 +36,16 @@
           All Reimbursements -
         </h3>
         <span class="view-choice flex-wrap">
-          <button
-            @click="$router.push('/add-reimbursement')"
-            class="filter add-reimbursement-ticket-button"
-          >
+          <button @click="$router.push('/add-reimbursement')" class="filter add-reimbursement-ticket-button">
             Click to add new reimbursement
           </button>
-          <button
-            @click="viewingTemplates = !viewingTemplates"
-            class="filter add-reimbursement-ticket-button"
-          >
+          <button @click="viewingTemplates = !viewingTemplates" class="filter add-reimbursement-ticket-button">
             {{
-              viewingTemplates === false ? "View Your Templates" : "View Claims"
-            }}
+        viewingTemplates === false ? "View Your Templates" : "View Claims"
+      }}
           </button>
-          <button
-            v-if="filterReimbursements.length > 0"
-            @click="changeView"
-            class="filter add-reimbursement-ticket-button"
-          >
+          <button v-if="filterReimbursements.length > 0" @click="changeView"
+            class="filter add-reimbursement-ticket-button">
             View as {{ currentView == "grid" ? "list" : "grid" }}
           </button>
         </span>
@@ -88,14 +53,10 @@
       <br />
 
       <!-- MAIN LIST -->
-      <div
-        :class="
-          currentView === 'list'
-            ? 'reimbursement-wrapper-list'
-            : 'reimbursement-wrapper-grid'
-        "
-        v-if="!viewingTemplates"
-      >
+      <div :class="currentView === 'list'
+          ? 'reimbursement-wrapper-list'
+          : 'reimbursement-wrapper-grid'
+        " v-if="!viewingTemplates">
         <div class="reimbursement" v-for="ticket in filterReimbursements">
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
@@ -104,10 +65,7 @@
           </h5>
           <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <div class="reimbursement-buttons">
-            <button
-              @click="viewTicket(ticket._id)"
-              v-if="ticket.reimbursementStatus !== 'Submitted'"
-            >
+            <button @click="viewTicket(ticket._id)" v-if="ticket.reimbursementStatus !== 'Submitted'">
               Modify
             </button>
             <button @click="deleteReimbursement(ticket._id)">Delete</button>
@@ -117,18 +75,11 @@
 
       <!-- TEMPLATES -->
       <h3 class="mt-0" v-if="viewingTemplates">Templates</h3>
-      <div
-        v-if="viewingTemplates"
-        :class="
-          currentView === 'list'
-            ? 'reimbursement-wrapper-list'
-            : 'reimbursement-wrapper-grid'
-        "
-      >
-        <div
-          class="reimbursement"
-          v-for="ticket in userInfo.reimbursementTemplates"
-        >
+      <div v-if="viewingTemplates" :class="currentView === 'list'
+          ? 'reimbursement-wrapper-list'
+          : 'reimbursement-wrapper-grid'
+        ">
+        <div class="reimbursement" v-for="ticket in userInfo.reimbursementTemplates">
           <h3>{{ ticket.reimbursementName }}</h3>
           <h4>Status: {{ ticket.reimbursementStatus }}</h4>
           <h5>
@@ -136,10 +87,7 @@
           </h5>
           <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
           <div class="reimbursement-buttons">
-            <button
-              v-if="ticket.reimbursementStatus !== 'Submitted'"
-              @click="useClaimAsTemplate(ticket)"
-            >
+            <button v-if="ticket.reimbursementStatus !== 'Submitted'" @click="useClaimAsTemplate(ticket)">
               Use as Template
             </button>
             <button>Delete</button>
@@ -167,22 +115,13 @@
           <h3>Phone Number: {{ formatPhoneNumber(userInfo.phoneNumber) }}</h3>
         </div>
       </div>
-      <router-link to="/account" style="font-size: 14px"
-        >Manage account information</router-link
-      >
+      <router-link to="/account" style="font-size: 14px">Manage account information</router-link>
 
-      <router-link to="/change-password" style="font-size: 14px"
-        >Change password</router-link
-      >
+      <router-link to="/change-password" style="font-size: 14px">Change password</router-link>
       <button @click="signOut">Sign Out</button>
     </section>
-    <confirmation-popup
-      v-if="delete_claim_confirmation_dialog"
-      :cancel-function="stopDelete"
-      :continue-function="confirmDelete"
-      left-button-text="No, Don't Delete"
-      right-button-text="Yes, Delete this claim"
-    >
+    <confirmation-popup v-if="delete_claim_confirmation_dialog" :cancel-function="stopDelete"
+      :continue-function="confirmDelete" left-button-text="No, Don't Delete" right-button-text="Yes, Delete this claim">
       <template #message>
         Are you sure you want to delete this reimbursement claim?
       </template>
@@ -315,10 +254,10 @@ function orderByDate() {
 const filterReimbursements = computed(() => {
   return searchValue.value
     ? reimbursementTickets.value.filter((ticket) =>
-        ticket.reimbursementName
-          .toLowerCase()
-          .includes(searchValue.value.toLowerCase())
-      )
+      ticket.reimbursementName
+        .toLowerCase()
+        .includes(searchValue.value.toLowerCase())
+    )
     : reimbursementTickets.value;
 });
 
@@ -358,7 +297,7 @@ function confirmDelete() {
     .catch((err) => {
       alert(
         err?.response?.data?.message ||
-          "An error occured, please try again later"
+        "An error occured, please try again later"
       );
     });
 }
@@ -376,7 +315,7 @@ function retrieveUserInformationSummary() {
       if (err.code === "ERR_NETWORK") {
         toast(
           err?.response?.data?.message ||
-            "An error has occured, please log in again",
+          "An error has occured, please log in again",
           {
             type: TYPE.ERROR,
           }
@@ -393,7 +332,7 @@ function retrieveUserInformationSummary() {
         //If JWT is expired, clear the token and go back to signup page
         toast(
           err?.response?.data?.message ||
-            "An error has occured, please log in again",
+          "An error has occured, please log in again",
           {
             type: TYPE.ERROR,
           }
@@ -412,7 +351,7 @@ function parseDate(dateString: string) {
 }
 
 function addReimbursement() {
-  router.push("/add-reimbursement");
+  router.push("bursement");
 }
 
 function viewTicket(reimbursementId: string) {

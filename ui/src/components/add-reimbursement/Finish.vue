@@ -1,7 +1,5 @@
 <template>
-  <section
-    class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0"
-  >
+  <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0">
     <span class="flex items-center gap-6 mb-2">
       <h2 class="font-semibold my-0 text-[27px]">Next Steps</h2>
       <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7" />
@@ -17,57 +15,43 @@
         Save your reimbursement claim:
       </h3>
       <div class="flex gap-5 mt-6 flex-wrap">
-        <button
-          @click="saveReimbursement"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-        >
+        <button @click="saveReimbursement"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
           Save for later
         </button>
-        <button
-          @click="saveAsTemplate"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-        >
+        <button @click="saveAsTemplate"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
           Save as Template
         </button>
       </div>
 
       <h3 class="text-base font-semibold">Manage generated PDF:</h3>
       <div class="flex gap-5 mt-6 flex-wrap">
-        <button
-          @click="createPdf"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-        >
+        <button @click="createPdf"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
           Preview generated PDF
         </button>
-        <button
-          @click="download"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-        >
+        <button @click="download"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
           Download generated PDF
         </button>
       </div>
 
       <h3 class="text-base font-semibold">Submit generated PDF:</h3>
       <div class="flex gap-5 mt-6 flex-wrap">
-        <button
-          @click="emailPDF"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-        >
+        <button @click="emailPDF"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
           Email Reimbursement Claim
         </button>
 
-        <button
-          @click="submitTicket"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-        >
+        <button @click="submitTicket"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
           Submit Reimbursement Claim
         </button>
       </div>
 
-      <button
-        @click="discardChanges"
-        class="bg-udmercy-red mt-8 text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-      >
+      <button @click="discardChanges"
+        class="bg-udmercy-red mt-8 text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
         Discard Changes
       </button>
       <br />
@@ -76,61 +60,35 @@
         Generating PDF, please wait...
       </h5>
     </div>
-    <confirmation-popup
-      v-if="showConfirmationPopup"
-      left-button-text="Discard Changes"
-      right-button-text="Cancel"
-      :cancel-function="returnToDashboard"
-      :continue-function="cancelConfirmationPopup"
-    >
+    <confirmation-popup v-if="showConfirmationPopup" left-button-text="Discard Changes" right-button-text="Cancel"
+      :cancel-function="returnToDashboard" :continue-function="cancelConfirmationPopup">
       <template #message>
         Are you sure you want to discard the changes you made to this
         reimbursement claim?
       </template>
     </confirmation-popup>
-    <div
-      v-if="showEmailPopup"
-      class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center"
-    >
-      <div
-        class="bg-white shadow-md border border-solid border-gray-100 h-min px-6 box-border w-96 py-3 rounded-md"
-      >
+    <div v-if="showEmailPopup"
+      class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center">
+      <div class="bg-white shadow-md border border-solid border-gray-100 h-min px-6 box-border w-96 py-3 rounded-md">
         <span class="flex items-center m-0">
           <h3 class="font-semibold mb-0">
             Send this claim attached to an email
           </h3>
-          <img
-            :src="CancelIcon"
-            alt="Cancel icon"
-            class="w-3 cursor-pointer"
-            @click="showEmailPopup = false"
-          />
+          <img :src="CancelIcon" alt="Cancel icon" class="w-3 cursor-pointer" @click="showEmailPopup = false" />
         </span>
         <span>
           <Form @submit="sendEmail">
             <div>
               <h4 class="font-semibold text-sm">Recipient</h4>
-              <Field
-                class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md"
-                :rules="isValidRecipientEmail"
-                name="recipient"
-                type="text"
-                value="adairja@udmercy.edu"
-              >
+              <Field class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md"
+                :rules="isValidRecipientEmail" name="recipient" type="text" value="adairja@udmercy.edu">
               </Field>
-              <ErrorMessage
-                name="recipient"
-                class="text-red-400 text-xs mt-2"
-              />
+              <ErrorMessage name="recipient" class="text-red-400 text-xs mt-2" />
             </div>
             <div>
               <h4 class="font-semibold text-sm">Subject</h4>
-              <Field
-                class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md"
-                name="subject"
-                type="text"
-                value="Reimbursement Request"
-              >
+              <Field class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md" name="subject"
+                type="text" value="Reimbursement Request">
               </Field>
               <ErrorMessage name="subject" class="text-red-400 text-xs mt-2" />
             </div>
@@ -138,41 +96,24 @@
               <h4 class="font-semibold text-sm leading-7">
                 Message (Any supplementary info will be included in your email)
               </h4>
-              <Field
-                name="message"
-                type="text"
+              <Field name="message" type="text"
                 class="h-20 resize-none w-full box-border px-3 py-3 text-sm border-gray-300 border-solid border rounded-md"
-                as="textarea"
-              >
+                as="textarea">
               </Field>
               <ErrorMessage name="message" class="text-red-400" />
             </div>
-            <button
-              type="submit"
-              class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
-            >
+            <button type="submit"
+              class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs">
               Send email
             </button>
             <h3 class="text-sm font-medium leading-6">
               Note: Your reimbursement claim PDF will be attached to this email
             </h3>
-            <input
-              type="checkbox"
-              id="submitCB"
-              name="submitCB"
-              v-model="checked"
-            />
-            <label
-              for="submissionEmail"
-              class="font-semibold text-sm leading-7"
-            >
+            <input type="checkbox" id="submitCB" name="submitCB" v-model="checked" />
+            <label for="submissionEmail" class="font-semibold text-sm leading-7">
               Mark Claim As Submitted?
-              <img
-                src="../../assets/user-help-icon.png"
-                alt="Help"
-                class="w-4"
-                title="By checking this box the claim will be marked as submitted. This will deduct the respective amounts from each of your saved FOAPA."
-              />
+              <img src="../../assets/user-help-icon.png" alt="Help" class="w-4"
+                title="By checking this box the claim will be marked as submitted. This will deduct the respective amounts from each of your saved FOAPA." />
             </label>
           </Form>
         </span>
@@ -227,49 +168,23 @@ function emailPDF() {
 async function sendEmail(values: any, { resetForm }) {
   let savedFoapaDetails;
   try {
-    let response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
-    );
+    // let response = await axios.get(
+    //   `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
+    // );
 
     savedFoapaDetails = await axios
-      .get(`${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`)
-      .then((res) => {
-        savedFoapaDetails = res.data;
-        console.log(res.data);
+      .get(`${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`);
 
-        savedFoapaDetails.forEach((foapa) => {
-          let comboFoapa = `${foapa.fund}-${foapa.organization || "XXXX"}-${
-            foapa.account
-          }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
-
-          // props.claim.foapaDetails.forEach((claimFoapa) => {
-          //   if (comboFoapa == claimFoapa.foapaNumber) console.log("HELLO");
-          // });
-        });
-
-        // savedFoapaDetails.foreach((foapa) =>{
-
-        // });
-        axios.post(
+    if (checked) {
+        await saveReimbursement();
+        await submitTicket();
+        await axios.post(
           `${import.meta.env.VITE_API_URL}/api/mark-claim-as-submitted`,
           {
-            submitCB: checked,
             reimbursementData: props.claim,
           }
         );
-      });
-
-    // await axios.post(
-    //   `${import.meta.env.VITE_API_URL}/api/send-reimbursement-email`,
-    //   {
-    //     message: values.message,
-    //     subject: values.subject,
-    //     recipient: values.recipient,
-    //     reimbursementData: props.claim,
-    //     userInfo: response.data,
-    //   }
-    // );
-    console.log(props.claim);
+      }
 
     toast("Your email was sent successfully", {
       type: TYPE.SUCCESS,
@@ -395,6 +310,7 @@ async function saveAsTemplate() {
 }
 
 async function submitTicket() {
+  console.log("TICKET IS BEING SUBMITTED");
   try {
     if (props.claim.foapaDetails.length === 0) {
       toast(
@@ -418,6 +334,7 @@ async function submitTicket() {
 
     props.claim.reimbursementStatus = "Submitted";
 
+    console.log(props.claim);
     await axios.post(
       `${import.meta.env.VITE_API_URL}/api/updateReimbursement`,
       {
@@ -512,6 +429,7 @@ async function updateReimbursement() {
   props.claim.totalCost = getAllActivitiesAmount();
   props.claim.reimbursementDate = parseDate(new Date().toISOString());
 
+  console.log(props.claim);
   await axios.post(`${import.meta.env.VITE_API_URL}/api/updateReimbursement`, {
     reimbursementTicket: props.claim,
   });
@@ -546,6 +464,7 @@ async function addReimbursement() {
 }
 
 async function saveReimbursement() {
+  console.log("Ticket is being saved");
   try {
     if (props.claim.reimbursementName.trim() === "") {
       toast("Please add a title to this reimbursement claim", {

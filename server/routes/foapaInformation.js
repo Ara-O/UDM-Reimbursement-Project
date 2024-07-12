@@ -296,34 +296,20 @@ router.get("/retrieveFoapaInformation", verifyToken, async (req, res) => {});
 
 router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
   try {
-    if (req.body.submitCB) {
-    }
-    //console.log(req.body.submitCB);
-    let faculty = await Faculty.findById(req.user.userId);
-    let reimbursementFoapa = req.body.reimbursementData.foapaDetails;
-    let facultyFoapa = faculty.foapaDetails;
-
-    // console.log("hello");
-    // console.log(faculty);
-    // console.log(req.body);
-
-    //console.log(faculty.foapaDetails[0]._id.toHexString());
-    // console.log(req.body.reimbursementData.foapaDetails[0].foapa_id);
-    reimbursementFoapa.forEach((rfoapa) => {
-      facultyFoapa.forEach((ffoapa) =>{
-        if(rfoapa.foapa_id == ffoapa._id.toHexString())
-          ffoapa.availableAmount -= rfoapa.cost;
-      });
-    });
-
-    //if(faculty.foapaDetails[0]._id.toHexString() == req.body.reimbursementData.foapaDetails[0].foapa_id)
+    console.log("THIS IS MARKED AS SUBMITTED");
+      let faculty = await Faculty.findById(req.user.userId);
+      let reimbursementFoapa = req.body.reimbursementData.foapaDetails;
+      let facultyFoapa = faculty.foapaDetails;
       
-
-    //faculty.foapaDetails[0].currentAmount -= req.body.reimbursementData.foapaDetails[0].cost;
-    //faculty.foapaDetails[0].availableAmount -= req.body.reimbursementData.foapaDetails[0].cost;
-    faculty.save();
-    console.log(faculty);
-  } catch (err) {
+      reimbursementFoapa.forEach((rfoapa) => {
+        facultyFoapa.forEach((ffoapa) =>{
+          if(rfoapa.foapa_id == ffoapa._id.toHexString())
+            ffoapa.availableAmount -= rfoapa.cost;
+        });
+      });
+      
+      faculty.save();
+    } catch (err) {
     console.error(err);
     res.status(400).send({ message: err.message });
   }
