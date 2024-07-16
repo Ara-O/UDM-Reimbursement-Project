@@ -7,6 +7,7 @@ export const reimbursementSchema = new Schema({
   paymentRetrievalMethod: String,
   UDMPUVoucher: Boolean,
   totalCost: Number,
+  knowFoapa: Boolean,
   guestInformation: [
     {
       employeeFirstName: String,

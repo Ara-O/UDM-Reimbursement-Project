@@ -98,7 +98,7 @@
               </h4>
               <Field name="message" type="text"
                 class="h-20 resize-none w-full box-border px-3 py-3 text-sm border-gray-300 border-solid border rounded-md"
-                as="textarea">
+                as="textarea" :value=knowFoapaText>
               </Field>
               <ErrorMessage name="message" class="text-red-400" />
             </div>
@@ -151,6 +151,7 @@ let currentlyCreatingPDF = ref<boolean>(false);
 let userIsEditingReimbursement = ref<boolean>(false);
 let showConfirmationPopup = ref<boolean>(false);
 let showEmailPopup = ref<boolean>(false);
+let knowFoapaText = "";
 //let foapaDetails;
 
 function returnToDashboard() {
@@ -162,6 +163,9 @@ function cancelConfirmationPopup() {
 }
 
 function emailPDF() {
+  knowFoapaText = "";
+  if(!props.claim.knowFoapa && props.claim.knowFoapa !== undefined)
+    knowFoapaText = "I don't know one or more of my foapas";
   showEmailPopup.value = true;
 }
 

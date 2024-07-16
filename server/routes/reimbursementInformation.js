@@ -151,4 +151,25 @@ router.post("/saveAsTemplate", verifyToken, async (req, res) => {
 
 })
 
+router.post("/dont-know-foapa", verifyToken, async (req, res) => {
+  console.log(req.body.knowFoapaBool);
+
+  if(!req.body.knowFoapaBool){
+    try {
+      let reimbursementId = req.query.reimbursementId;
+      let ticketInfo = await ReimbursementTicket.findById(reimbursementId);
+
+      console.log(ticketInfo);
+
+      //ticketInfo.knowFoapa = req.body.knowFoapaBool;
+
+      //ticketInfo.save();
+
+    } catch (err){
+      console.log(err);
+      res.status(400).send({message: err.message});
+    }
+  }
+});
+
 export default router;

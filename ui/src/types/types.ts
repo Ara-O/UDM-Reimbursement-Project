@@ -110,4 +110,5 @@ export type ReimbursementTicket = {
   reimbursementDate: string;
   activities: Expense[];
   foapaDetails: FoapaInput[];
+  knowFoapa: boolean;
 };

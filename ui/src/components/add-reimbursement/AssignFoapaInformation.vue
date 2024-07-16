@@ -27,6 +27,7 @@
               {{ foapa.foapaName }} - {{ formatUserFoapa(foapa) }}
             </option>
             <option value="Add a New FOAPA">Add a New FOAPA</option>
+            <option value="Don't Know FOAPA"> Don't Know FOAPA</option>
           </select>
         </span>
         <span>
@@ -172,6 +173,7 @@ let userFoapas = ref<FoapaDetails[]>([]);
 let foapaDetailsToAdd = ref<FoapaStuff[]>([]);
 let foapaPopupIsVisible = ref<boolean>(false);
 let triggerAssignedFoapaEditMode = ref<boolean>(false);
+let knowFoapa = false;
 
 const emits = defineEmits(["move-to-next-section", "move-to-previous-section"]);
 const toast = useToast();
@@ -180,6 +182,8 @@ watch(
   () => assignedFoapa.value.foapa_id,
   (newVal, oldVal) => {
     if (newVal == "Add a New FOAPA") showFoapaPopup();
+
+    if (newVal == "Don't Know FOAPA") dontKnowFoapa();
   }
 );
 
@@ -211,8 +215,13 @@ function showFoapaPopup() {
   foapaPopupIsVisible.value = true;
 }
 
+
 function closeFoapaPopup() {
   foapaPopupIsVisible.value = false;
+}
+
+function dontKnowFoapa() {
+  props.claim.knowFoapa = false;
 }
 
 function editFOAPA(foapa_id) {
