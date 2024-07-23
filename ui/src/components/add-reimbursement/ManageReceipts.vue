@@ -57,9 +57,9 @@
           class="rounded-md h-20 object-cover w-20"
         />
         <span>
-          <h3 class="mt-0 text-sm font-medium">Receipt #{{ index + 1 }}</h3>
+          <h3 class="mt-0 text-sm font-medium">Receipt # {{ index + 1 }} {{ parseInt(receipt.name[0]) + 1 }}</h3>
           <span class="flex gap-3">
-            <a :href="(receipt.url as string)" target="_blank"
+            <a :href="(receipt.url as string)" target="_blank" 
               ><button
                 class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-5 py-2"
               >
@@ -435,6 +435,9 @@ async function storeReceiptImages() {
         `${import.meta.env.VITE_API_URL}/api/storeReceiptImages`,
         formData
       );
+
+      console.log("RES");
+      console.log(res);
 
       fileWasSelected.value = false;
 

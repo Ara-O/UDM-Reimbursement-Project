@@ -53,6 +53,7 @@ const facultySchema = new Schema({
         {
           url: String,
           id: String,
+          name: String,
         },
       ],
       reimbursementDate: Date,

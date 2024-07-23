@@ -28,6 +28,7 @@ export const reimbursementSchema = new Schema({
     {
       url: String,
       id: String,
+      name: String,
     },
   ],
   reimbursementDate: Date,

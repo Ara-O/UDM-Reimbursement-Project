@@ -18,6 +18,7 @@ let imagekit = new ImageKit({
   privateKey: process.env.IMAGE_KIT_PRIVATE,
   urlEndpoint: process.env.IMAGE_KIT_URL_ENDPOINT,
 });
+let pageCount = 0;
 
 function generateRandomId() {
   const chars = "1234567890";
@@ -80,7 +81,7 @@ router.post(
       });
 
       // console.log("Image url", imageLinks);
-      return res.status(200).send({ url: upload.url, id: upload.fileId });
+      return res.status(200).send({ url: upload.url, id: upload.fileId, name: "test" });
     } catch (err) {
       console.log(err);
       return res
@@ -156,28 +157,37 @@ router.get("/generatePdf", verifyToken, (req, res) => {
 });
 
 router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
-  console.log(req.files);
-
   const buffers = req.files.map((file) => {
     return fs.readFileSync(file.path);
   });
 
   const promises = [];
-  buffers.forEach((buffer) => {
+  buffers.forEach((buffer,i) => {
     promises.push(
       imagekit.upload({
         file: buffer, // It accepts remote URL, base_64 string or file buffer
-        fileName: "receipt", // required
+        fileName: `${i}receipt`, // required
         isPrivateFile: false,
-      })
+      }),
+      pageCount = i,
     );
+
+    // console.log("PAGE COUNT");
+    // console.log(pageCount);
+
+    //promises.image.filename = `receipt_page_${i}`;
   });
 
   Promise.all(promises)
     .then((imagesData) => {
-      // console.log(imagesData);
+      console.log("IMAGES DATA");
+      console.log(imagesData);
       let imageLinks = imagesData.map((image) => {
-        return { url: image.url, id: image.fileId };
+        console.log("IMAGE");
+        console.log(image);
+        
+        if(image.url !== null)
+          return { url: image.url, id: image.fileId, name: "hi" };
       });
       // console.log("Image url", imageLinks);
       res.status(200).send(imageLinks);

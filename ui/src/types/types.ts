@@ -105,7 +105,7 @@ export type ReimbursementTicket = {
   UDMPUVoucher: Boolean;
   guestInformation: GuestInfo[];
   totalCost: number;
-  reimbursementReceipts: { url: string; id: string }[];
+  reimbursementReceipts: { url: string; id: string; name: string; }[];
   reimbursementStatus: string;
   reimbursementDate: string;
   activities: Expense[];
