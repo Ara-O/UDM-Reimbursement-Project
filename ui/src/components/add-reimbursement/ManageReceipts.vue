@@ -20,16 +20,7 @@
         <b>Note: There is a file upload size limit of 10mb</b>
       </h4>
 
-      <input
-        id="receipt"
-        type="file"
-        class="custom-file-input"
-        ref="receiptRef"
-        name="receipt"
-        @change="receiptSize"
-        accept="application/pdf, image/png, image/jpeg"
-        multiple
-      />
+      <button type="button" @click="() => open()">Upload file</button>
       <h3 class="font-normal text-sm inline" v-if="fileWasSelected">
         Uploading...
       </h3>
@@ -57,9 +48,12 @@
           class="rounded-md h-20 object-cover w-20"
         />
         <span>
-          <h3 class="mt-0 text-sm font-medium">Receipt # {{ index + 1 }} {{ parseInt(receipt.name[0]) + 1 }}</h3>
+          <h3 class="mt-0 text-sm font-medium">
+            Receipt # {{ index + 1 }} - Page
+            {{ parseUrl(receipt) }}
+          </h3>
           <span class="flex gap-3">
-            <a :href="(receipt.url as string)" target="_blank" 
+            <a :href="(receipt.url as string)" target="_blank"
               ><button
                 class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-5 py-2"
               >
@@ -159,12 +153,18 @@ import axios from "axios";
 import CancelIcon from "../../assets/cross-icon.svg";
 import * as PDFJS from "pdfjs-dist/build/pdf.min.mjs";
 import { ref } from "vue";
+import { useFileDialog } from "@vueuse/core";
 import { ReimbursementTicket } from "../../types/types";
 import { TYPE, useToast } from "vue-toastification";
 
 const props = defineProps<{
   claim: ReimbursementTicket;
 }>();
+
+function parseUrl(rec) {
+  console.log(rec);
+  return rec.url.split("/").at(-1)[0];
+}
 
 const emits = defineEmits(["move-to-next-section", "move-to-previous-section"]);
 
@@ -180,15 +180,28 @@ let capturedImagesBlob = ref<any>();
 
 const toast = useToast();
 
-function receiptSize(event) {
-  const maxSize = 10 * 1024 * 1024; // 2 MB in bytes
-  const files = event.target.files;
+const {
+  files,
+  open,
+  reset,
+  onChange: onUploadReceipt,
+} = useFileDialog({
+  accept: "image/*, application/pdf",
+  directory: false,
+  multiple: true,
+});
+
+onUploadReceipt((files) => {
+  console.log("ON UPLOAD RECEIPT", files);
+  checkReceiptSize(files);
+});
+
+function checkReceiptSize(files) {
+  const maxSize = 10 * 1024 * 1024;
 
   for (let i = 0; i < files.length; i++) {
     if (files[i].size > maxSize) {
-      //alert(`File "${files[i].name}" exceeds the 25 MB size limit.`);
       toast("File exceeds the 10 MB size limit.", { type: TYPE.ERROR });
-      event.target.value = ""; // Clear the input
       return;
     }
 
@@ -196,8 +209,8 @@ function receiptSize(event) {
     if (files[i].type === "application/pdf") {
       convertPDFtoImages(files[i]);
     } else {
-      // Call the receiptAdded function if file size is within the limit
-      receiptAdded(event);
+      console.log("CALLING RECEIPT ADDED");
+      receiptAdded([files[i]]);
     }
   }
 }
@@ -207,6 +220,7 @@ function moveToPreviousSection() {
 }
 
 async function convertPDFtoImages(file_data: any) {
+  console.log("CONERTING PDF TO IMAGES");
   fileWasSelected.value = true;
   try {
     PDFJS.GlobalWorkerOptions.workerSrc =
@@ -264,7 +278,6 @@ async function convertPDFtoImages(file_data: any) {
       formData.append("receipt", blobArr[i]);
     }
 
-    console.log(formData);
     let res = axios
       .post(`${import.meta.env.VITE_API_URL}/api/storeReceiptImages`, formData)
       .then((res) => {
@@ -406,27 +419,28 @@ function addCapturedImageAsReceipt() {
     });
 }
 
-async function receiptAdded(event) {
-  console.log(event);
-  fileWasSelected.value = true;
-  // @ts-ignore
-  const files = receiptRef.value.files;
+async function receiptAdded(files) {
+  try {
+    fileWasSelected.value = true;
+    // @ts-ignore
+    // const files = receiptRef.value.files;
 
-  await storeReceiptImages();
-  fileWasSelected.value = false;
+    await storeReceiptImage(files);
+    fileWasSelected.value = false;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-async function storeReceiptImages() {
+async function storeReceiptImage(files) {
   let formData = new FormData();
 
   //@ts-ignore
-  const files = receiptRef.value.files;
+  // const files = receiptRef.value.files;
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     formData.append("receipt", file);
   }
-
-  console.log(files);
 
   if (files.length > 0) {
     try {
