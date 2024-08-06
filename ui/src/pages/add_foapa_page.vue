@@ -19,7 +19,7 @@
         </h3>
         <h4 class="font-semibold text-lg mb-5">Add FOAPA Details</h4>
         <h4
-          class="font-normal cursor-pointer underline text-sm mt-0 text-gray-700"
+          class="font-normal cursor-pointer underline leading-7 text-sm mt-0 text-gray-700"
           @click="showHelpScreen"
         >
           Need help? Click here to learn more about FOAPA and how to use them.
@@ -543,7 +543,7 @@ function discardEdits(reset: any) {
   edited_foapas_id.value = "";
 }
 
-async function editFoapaValues(foapaValues) {
+async function editFoapaValues(foapaValues, resetForm) {
   try {
     toast("Editing FOAPA details...", {
       type: TYPE.INFO,
@@ -552,13 +552,10 @@ async function editFoapaValues(foapaValues) {
     foapaValues.currentAmount = foapaValues.initialAmount;
     foapaValues.availableAmount = foapaValues.initialAmount;
 
-    let res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/edit-foapa-detail`,
-      {
-        id: edited_foapas_id.value,
-        foapaDetail: foapaValues,
-      }
-    );
+    await axios.post(`${import.meta.env.VITE_API_URL}/api/edit-foapa-detail`, {
+      id: edited_foapas_id.value,
+      foapaDetail: foapaValues,
+    });
 
     edited_foapas_id.value = "";
     await retrieveUserFoapaDetails();
@@ -568,6 +565,9 @@ async function editFoapaValues(foapaValues) {
     });
 
     state.value = "Add";
+
+    resetForm();
+
     // Clear the foapa values
   } catch (err: any) {
     toast(
@@ -583,7 +583,7 @@ async function editFoapaValues(foapaValues) {
 
 async function addFoapa(values, { resetForm }) {
   if (state.value === "Edit") {
-    await editFoapaValues(values);
+    await editFoapaValues(values, resetForm);
     resetForm();
     return;
   }
