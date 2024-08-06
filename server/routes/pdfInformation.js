@@ -162,7 +162,7 @@ router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
   });
 
   const promises = [];
-  buffers.forEach((buffer,i) => {
+  buffers.forEach((buffer, i) => {
     promises.push(
       imagekit.upload({
         file: buffer, // It accepts remote URL, base_64 string or file buffer
@@ -185,8 +185,8 @@ router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
       let imageLinks = imagesData.map((image) => {
         console.log("IMAGE");
         console.log(image);
-        
-        if(image.url !== null)
+
+        if (image.url !== null)
           return { url: image.url, id: image.fileId, name: "hi" };
       });
       // console.log("Image url", imageLinks);
@@ -298,12 +298,10 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       <div style="border: solid 1px #efefef; padding: 20px 0px;">
       <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
       <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
-        req.body.message || ""
-      }</h3>
-      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
-        req.body.userInfo.workEmail
-      }</h5>
+      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
+                }</h3>
+      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.userInfo.workEmail
+                }</h5>
       </div>
       </div>
       `,
@@ -339,21 +337,30 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
 
 router.post("/send-contact-email", verifyToken, async (req, res) => {
   console.log("Hello");
+  console.log(req.body);
   transporter.sendMail({
-    from: req.body.recipient,
-    to: [req.body.ourEmail, req.body.email],
-    subject: `${values.name} ${values.message}`,
+    from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
+    to: ['"Ethan Scheys" <ethanscheys@gmail.com>', req.body.sender],
+    subject: `Contact Us from: ${req.body.name}`,
     html: `
   <div style="border: solid 1px #efefef; padding: 20px 0px;">
   <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
   <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${values.message || ""
-        }</h3>
-  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${values.email}
-        }</h5>
+  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
+      }</h3>
+  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.sender}
+        </h5>
   </div>
   </div>
   `,
-})
-})
+  })
+    .catch((err) => {
+      console.log(err);
+    });
+},
+  function (error) {
+    console.log(error);
+    res.send("ERROR:" + error);
+  }
+)
 export default router;

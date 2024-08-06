@@ -66,7 +66,7 @@
     </section>
 </template>
 
-<script lang='ts'>
+<script lang='ts' setup>
 //import { transporter } from "../../../server/app.js";
 import axios from "axios";
 import { defineComponent, ref } from 'vue';
@@ -76,21 +76,18 @@ const name = ref<string>('');
 const email = ref<string>('');
 const message = ref<string>('');
 
-function sendEmail(values, { resetForm }) {
+async function sendEmail() {
     //let ourEmail = '"UDM Reimbursement Support Team" <udm-reimbursement-team@em2297.araoladipo.dev>"';
 
     console.log("HELLLLO");
-    axios.post(
+    await axios.post(
         `${import.meta.env.VITE_API_URL}/api/send-contact-email`,
         {
-            message: values.message,
-            sender: values.email,
-            name: values.name,
+            message: message.value,
+            sender: email.value,
+            name: name.value,
         }
     );
-
-    resetForm();
-
 }
 
 // export default {
