@@ -118,6 +118,8 @@
       <router-link to="/account" style="font-size: 14px">Manage account information</router-link>
 
       <router-link to="/change-password" style="font-size: 14px">Change password</router-link>
+
+      <router-link to="/contact" style="font-size: 14px">Contact Us</router-link>
       <button @click="signOut">Sign Out</button>
     </section>
     <confirmation-popup v-if="delete_claim_confirmation_dialog" :cancel-function="stopDelete"
@@ -130,7 +132,6 @@
   <template>
   <div id="app">
     <router-view></router-view>
-    <NavBar />
   </div>
 </template>
 </template>
@@ -143,9 +144,6 @@ import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
-
-
-//import NavBar from '../components/ContactNavBar.vue';
 
 const router = useRouter();
 const searchValue = ref<string>("");
