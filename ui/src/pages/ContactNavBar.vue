@@ -1,4 +1,4 @@
-<!-- NavBar.vue -->
+NavBar.vue
 <template>
     <nav class="navbar">
       <ul>

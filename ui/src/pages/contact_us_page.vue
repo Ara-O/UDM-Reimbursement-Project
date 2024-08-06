@@ -9,7 +9,7 @@
         <section class="right-section">
             <h3 class="contact-title">Contact Us</h3>
             <span>
-                <Form @submit.prevent="sendEmail">
+                <form @submit="sendEmail">
                     <div class="container">
                         <div class="nameSection">
                             <span>
@@ -37,7 +37,7 @@
                         class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs">
                         Send Email
                     </button>
-                </Form>
+                </form>
             </span>
         </section>
         <!-- <section class="contact-form">
@@ -76,11 +76,11 @@ const name = ref<string>('');
 const email = ref<string>('');
 const message = ref<string>('');
 
-async function sendEmail(values: any, { resetForm }) {
+function sendEmail(values, { resetForm }) {
     //let ourEmail = '"UDM Reimbursement Support Team" <udm-reimbursement-team@em2297.araoladipo.dev>"';
 
     console.log("HELLLLO");
-    await axios.post(
+    axios.post(
         `${import.meta.env.VITE_API_URL}/api/send-contact-email`,
         {
             message: values.message,
