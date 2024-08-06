@@ -190,6 +190,17 @@ async function sendEmail(values: any, { resetForm }) {
         );
       }
 
+    // await axios.post(
+    //   `${import.meta.env.VITE_API_URL}/api/send-reimbursement-email`,
+    //   {
+    //     message: values.message,
+    //     subject: values.subject,
+    //     recipient: values.recipient,
+    //     reimbursementData: props.claim,
+    //     userInfo: response.data,
+    //   }
+    // );
+
     toast("Your email was sent successfully", {
       type: TYPE.SUCCESS,
     });

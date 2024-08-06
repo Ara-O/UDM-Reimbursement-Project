@@ -127,6 +127,12 @@
       </template>
     </confirmation-popup>
   </section>
+  <template>
+  <div id="app">
+    <router-view></router-view>
+    <NavBar />
+  </div>
+</template>
 </template>
 
 <script lang="ts" setup>
@@ -137,6 +143,9 @@ import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
+
+
+//import NavBar from '../components/ContactNavBar.vue';
 
 const router = useRouter();
 const searchValue = ref<string>("");

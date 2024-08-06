@@ -336,4 +336,24 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
     });
   }
 });
+
+router.post("/send-contact-email", verifyToken, async (req, res) => {
+  console.log("Hello");
+  transporter.sendMail({
+    from: req.body.recipient,
+    to: [req.body.ourEmail, req.body.email],
+    subject: `${values.name} ${values.message}`,
+    html: `
+  <div style="border: solid 1px #efefef; padding: 20px 0px;">
+  <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
+  <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
+  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${values.message || ""
+        }</h3>
+  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${values.email}
+        }</h5>
+  </div>
+  </div>
+  `,
+})
+})
 export default router;

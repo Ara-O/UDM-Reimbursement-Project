@@ -1,0 +1,150 @@
+.contact-us-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 130px;
+}
+
+.udmercy-logo-wrapper-mobile {
+    display: none;
+}
+
+.udmercy-logo-wrapper {
+    border: 1px solid #ffffff;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.udmercy-logo {
+    width: 70%;
+    max-width: 14rem;
+    padding: 40px 20px;
+}
+
+.right-section {
+    height: auto;
+    width: 960px;
+}
+
+.contact-title {
+    font-weight: 600;
+    font-size: 32px;
+    width: 400px;
+    margin-top: 0px;
+    margin-bottom: 37px;
+    text-align: left;
+}
+.container{
+    display: flex;
+    align-items: first baseline;
+}
+
+.nameTB, .emailTB {
+    border-width: 0.5px;
+    /* Equivalent to h-11 (2.75rem) */
+    height: 44px;
+    /* Equivalent to rounded-md */
+    border-radius: 0.375rem;
+    /* Equivalent to border-gray-200 */
+    border-color: #e5e7eb;
+    /* Equivalent to w-72 (18rem) */
+    width: 288px;
+    /* Equivalent to box-border */
+    box-sizing: border-box;
+    /* Equivalent to pl-5 (1.25rem) */
+    padding-left: 20px;
+    /* Equivalent to text-xs (0.75rem) */
+    font-size: 12px;
+    /* Equivalent to border-solid */
+    border-style: solid;
+    /* Equivalent to shadow-md */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-bottom: 15px;
+}
+
+.messageTB {
+    border-width: 0.5px;
+    border-radius: 0.375rem;
+    /* Equivalent to rounded-md */
+    border-color: #e5e7eb;
+    /* Equivalent to border-gray-200 */
+    box-sizing: border-box;
+    /* Equivalent to box-border */
+    padding-left: 20px;
+    /* Equivalent to pl-5 (1.25rem) */
+    font-size: 12px;
+    /* Equivalent to text-xs (0.75rem) */
+    border-style: solid;
+    /* Equivalent to border-solid */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    /* Equivalent to shadow-md */
+    width: 625px;
+    height: 250px;
+}
+
+
+
+
+@media (max-width: 1350px) {
+    .udmercy-logo {
+        display: none;
+    }
+
+    .left-section {
+        display: none;
+    }
+}
+
+@media (max-width: 1135px) {
+    .right-section {
+        padding-left: 75px;
+    }
+}
+
+@media (max-width: 900px) {
+    .input-field-wrapper {
+        width: auto;
+    }
+
+    .left-section {
+        display: none;
+    }
+
+    .right-section {
+        width: 100%;
+    }
+}
+
+@media (max-width: 630px) {
+    .udmercy-logo-wrapper-mobile {
+        display: flex;
+        height: auto;
+        justify-content: center;
+        margin-top: 80px;
+    }
+
+    .udmercy-logo-mobile {
+        width: 100px;
+    }
+
+    .right-section {
+        height: 100%;
+        width: 100vw;
+        padding-left: 0px;
+    }
+
+    .contact-title {
+        font-size: 20px;
+        text-align: center;
+        width: 350px;
+        margin: auto;
+        line-height: 45px;
+        margin-bottom: 30px;
+        margin-top: 50px;
+    }
+}
