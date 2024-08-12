@@ -81,7 +81,7 @@ router.post(
       });
 
       // console.log("Image url", imageLinks);
-      return res.status(200).send({ url: upload.url, id: upload.fileId, name: "test" });
+      return res.status(200).send({ url: upload.url, id: upload.fileId });
     } catch (err) {
       console.log(err);
       return res
@@ -166,30 +166,25 @@ router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
     promises.push(
       imagekit.upload({
         file: buffer, // It accepts remote URL, base_64 string or file buffer
-        fileName: `${i}receipt`, // required
+        fileName: `${i + 1}receipt`, // required
         isPrivateFile: false,
-      }),
-      pageCount = i,
+      })
     );
-
-    // console.log("PAGE COUNT");
-    // console.log(pageCount);
-
-    //promises.image.filename = `receipt_page_${i}`;
   });
 
+  console.log(req.body.receiptType);
   Promise.all(promises)
     .then((imagesData) => {
-      console.log("IMAGES DATA");
-      console.log(imagesData);
       let imageLinks = imagesData.map((image) => {
+<<<<<<< HEAD
         console.log("IMAGE");
         console.log(image);
 
+=======
+>>>>>>> receiptpages
         if (image.url !== null)
           return { url: image.url, id: image.fileId, name: "hi" };
       });
-      // console.log("Image url", imageLinks);
       res.status(200).send(imageLinks);
     })
     .catch((err) => {

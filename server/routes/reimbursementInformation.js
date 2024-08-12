@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
 import Faculty from "../models/faculty.js";
+import logger from "../logger.js";
 import ReimbursementTicket from "../models/reimbursement.js";
 const router = Router();
 
@@ -38,20 +39,22 @@ router.post("/addReimbursement", verifyToken, async (req, res) => {
   }
 });
 
-//GET /api/retrieveTicketInformation
-router.get("/retrieveTicketInformation", verifyToken, async (req, res) => {
+//GET /api/retrieve-ticket-information
+router.get("/retrieve-ticket-information", verifyToken, async (req, res) => {
   try {
     const reimbursementId = req.query.reimbursementId;
     let ticketInfo = await ReimbursementTicket.findById(reimbursementId);
     res.status(200).send(ticketInfo);
   } catch (err) {
-    console.error(err);
+    logger.error(err, {
+      api: "/api/retrieve-ticket-information",
+    });
     res.status(400).send({ message: err.message });
   }
 });
 
-//POST /api/updateReimbursement
-router.post("/updateReimbursement", verifyToken, async (req, res) => {
+//POST /api/update-reimbursement
+router.post("/update-reimbursement", verifyToken, async (req, res) => {
   const reimbursementTicket = req.body.reimbursementTicket;
   try {
     await ReimbursementTicket.findByIdAndUpdate(
@@ -61,13 +64,19 @@ router.post("/updateReimbursement", verifyToken, async (req, res) => {
 
     res.status(200).send({ message: "Reimbursement updated successfully!" });
   } catch (err) {
-    console.error(err);
-    res.status(400).send({ message: err.message });
+    logger.error(err, {
+      api: "/api/update-reimbursement",
+    });
+
+    res.status(500).send({
+      message:
+        "An unexpected error occured when updating this reimbursement's claim. Please try again later.",
+    });
   }
 });
 
-//POST /api/deleteReimbursement
-router.post("/deleteReimbursement", verifyToken, async (req, res) => {
+//POST /api/delete-reimbursement
+router.post("/delete-reimbursement", verifyToken, async (req, res) => {
   const reimbursementId = req.body.id;
   console.log("rem id", reimbursementId);
   try {
@@ -81,30 +90,6 @@ router.post("/deleteReimbursement", verifyToken, async (req, res) => {
       .send({ message: "Reimbursement ticket deleted successfully" });
   } catch (err) {
     console.log(err);
-    res.status(400).send({ message: err.message });
-  }
-});
-
-//CHANGE
-router.post("/editActivity", verifyToken, async (req, res) => {
-  const activityId = req.body.id;
-  // console.log(activityId)
-
-  try {
-    let userInfo = await Faculty.findOne({
-      activityId: req.user.activityId,
-    });
-
-    await userInfo.activities.pull({
-      activityId,
-    });
-
-    await userInfo.save();
-    console.log(userInfo);
-
-    res.status(200).send({ message: "Activity updated successfully" });
-  } catch (err) {
-    // console.log(err)
     res.status(400).send({ message: err.message });
   }
 });
@@ -124,37 +109,54 @@ router.get("/retrieveActivity", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/saveAsTemplate", verifyToken, async (req, res) => {
-
-  if (req.body._id) {
-    delete req.body._id
-  }
-
-  if (req?.body?.activities) {
-    req.body.activities.forEach((actv) => {
-      delete actv._id
-    })
-  }
-
-  if (req?.body?.guestInformation) {
-    req.body.guestInformation.forEach((guest) => {
-      delete guest._id
-    })
-  }
-
-  let user = await Faculty.findByIdAndUpdate(req.user.userId, {
-    $push: {
-      reimbursementTemplates: req.body
+router.post("/save-as-template", verifyToken, async (req, res) => {
+  try {
+    if (req.body._id) {
+      delete req.body._id;
     }
-  })
-  console.log(user)
 
-})
+    if (req?.body?.activities) {
+      req.body.activities.forEach((actv) => {
+        delete actv._id;
+      });
+    }
+
+    if (req?.body?.guestInformation) {
+      req.body.guestInformation.forEach((guest) => {
+        delete guest._id;
+      });
+    }
+
+    let user = await Faculty.findByIdAndUpdate(req.user.userId, {
+      $push: {
+        reimbursementTemplates: req.body,
+      },
+    });
+
+    return res
+      .status(200)
+      .send({ message: "Reimbursement claim saved as template successfully" });
+  } catch (err) {
+    logger.error(
+      "An unexpected error has occured when saving a ticket as a template",
+      {
+        api: "/api/save-as-template",
+      }
+    );
+
+    logger.error(err, {
+      api: "/api/save-as-template",
+    });
+    return res.status(500).send({
+      message: "An unexpected error has occured. Please try again later",
+    });
+  }
+});
 
 router.post("/dont-know-foapa", verifyToken, async (req, res) => {
   console.log(req.body.knowFoapaBool);
 
-  if(!req.body.knowFoapaBool){
+  if (!req.body.knowFoapaBool) {
     try {
       let reimbursementId = req.query.reimbursementId;
       let ticketInfo = await ReimbursementTicket.findById(reimbursementId);
@@ -164,10 +166,9 @@ router.post("/dont-know-foapa", verifyToken, async (req, res) => {
       //ticketInfo.knowFoapa = req.body.knowFoapaBool;
 
       //ticketInfo.save();
-
-    } catch (err){
+    } catch (err) {
       console.log(err);
-      res.status(400).send({message: err.message});
+      res.status(400).send({ message: err.message });
     }
   }
 });
