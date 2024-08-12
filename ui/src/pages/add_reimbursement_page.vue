@@ -184,7 +184,7 @@ function onClaimSaved() {
 
 async function userIsUpdatingReimbursement() {
   let reimbursement = await axios.get(
-    "https://udm-reimbursement-project.onrender.com/api/retrieve-ticket-information",
+    `${import.meta.env.VITE_API_URL}/api/retrieve-ticket-information`,
     {
       params: {
         reimbursementId: route.query.reimbursementId,

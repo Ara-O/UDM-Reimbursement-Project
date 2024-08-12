@@ -174,6 +174,10 @@
       <router-link to="/change-password" style="font-size: 14px"
         >Change password</router-link
       >
+
+      <router-link to="/contact" style="font-size: 14px"
+        >Contact Us</router-link
+      >
       <button @click="signOut">Sign Out</button>
     </section>
     <confirmation-popup

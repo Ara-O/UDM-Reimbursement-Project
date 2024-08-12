@@ -48,9 +48,11 @@
           class="rounded-md h-20 object-cover w-20"
         />
         <span>
-          <h3 class="mt-0 text-sm font-medium">
-            Receipt # {{ index + 1 }} - Page
-            {{ parseUrl(receipt) }}
+          <h3 class="mt-0 text-sm font-medium" v-if="receipt.type === 'pdf'">
+            Receipt {{ receipt.name }} - Page {{ receipt.index }}
+          </h3>
+          <h3 class="mt-0 text-sm font-medium" v-else>
+            Receipt {{ receipt.name }}
           </h3>
           <span class="flex gap-3">
             <a :href="(receipt.url as string)" target="_blank"
@@ -192,7 +194,6 @@ const {
 });
 
 onUploadReceipt((files) => {
-  console.log("ON UPLOAD RECEIPT", files);
   checkReceiptSize(files);
 });
 
@@ -209,7 +210,6 @@ function checkReceiptSize(files) {
     if (files[i].type === "application/pdf") {
       convertPDFtoImages(files[i]);
     } else {
-      console.log("CALLING RECEIPT ADDED");
       receiptAdded([files[i]]);
     }
   }
@@ -220,8 +220,8 @@ function moveToPreviousSection() {
 }
 
 async function convertPDFtoImages(file_data: any) {
-  console.log("CONERTING PDF TO IMAGES");
   fileWasSelected.value = true;
+
   try {
     PDFJS.GlobalWorkerOptions.workerSrc =
       "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
@@ -232,6 +232,7 @@ async function convertPDFtoImages(file_data: any) {
     //@ts-ignore
     formDataPDF.append("receipt", file_data);
 
+    //Updates pdf to imagekit
     let resp = await axios.post(
       `${import.meta.env.VITE_API_URL}/api/upload-pdf`,
       formDataPDF
@@ -255,13 +256,12 @@ async function convertPDFtoImages(file_data: any) {
       };
       await page.render(render_context).promise;
       let img: any = canvas.toDataURL("image/png");
-      console.log("IMAGE");
-      console.log(img);
       imagesList.push(img);
     }
 
     const blobArr: any = [];
 
+    //Loops through all the pages
     for (let i = 0; i < imagesList.length; i++) {
       const byteCharacters = atob(imagesList[i].split(",")[1]);
       const byteNumbers = new Array(byteCharacters.length);
@@ -269,7 +269,8 @@ async function convertPDFtoImages(file_data: any) {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      blobArr.push(new Blob([byteArray], { type: "image/png" }));
+      // So the backend can recognize that this is a PDF
+      blobArr.push(new Blob([byteArray], { type: "image/pdf" }));
     }
 
     const formData = new FormData();
@@ -279,7 +280,10 @@ async function convertPDFtoImages(file_data: any) {
     }
 
     let res = axios
-      .post(`${import.meta.env.VITE_API_URL}/api/storeReceiptImages`, formData)
+      .post(
+        `${import.meta.env.VITE_API_URL}/api/store-receipt-images`,
+        formData
+      )
       .then((res) => {
         fileWasSelected.value = false;
 
@@ -396,7 +400,7 @@ function addCapturedImageAsReceipt() {
 
   // Send the FormData object to the server using axios
   let res = axios
-    .post(`${import.meta.env.VITE_API_URL}/api/storeReceiptImages`, formData)
+    .post(`${import.meta.env.VITE_API_URL}/api/store-receipt-images`, formData)
     .then((res) => {
       fileWasSelected.value = false;
 
@@ -446,7 +450,7 @@ async function storeReceiptImage(files) {
     try {
       // Send the FormData object to the server using axios
       let res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/storeReceiptImages`,
+        `${import.meta.env.VITE_API_URL}/api/store-receipt-images`,
         formData
       );
 
