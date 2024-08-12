@@ -189,7 +189,7 @@
             placeholder="Search by FOAPA name"
             class="border rounded-md box-border px-4 border-gray-200 border-solid w-auto md:w-full h-10"
           />
-          <img :src="SortIcon" alt="Sort icon" class="w-5 cursor-pointer" />
+          <!-- <img :src="SortIcon" alt="Sort icon" class="w-5 cursor-pointer" /> -->
         </div>
 
         <div
@@ -396,7 +396,7 @@ import axios from "axios";
 import EditIcon from "../assets/blue-pencil.png";
 import DeleteIcon from "../assets/red-delete-icon.png";
 import CancelIcon from "../assets/cross-icon.svg";
-import SortIcon from "../assets/filter-icon.png";
+// import SortIcon from "../assets/.png";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, onMounted, watch, computed } from "vue";
 import { FoapaStuff } from "../types/types";
