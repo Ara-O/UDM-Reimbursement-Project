@@ -44,6 +44,8 @@ export type FoapaStuff = {
   activity: string;
   foapaName: string;
   initialAmount: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   availableAmount: string;
   currentAmount: string;
   description: string;

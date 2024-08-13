@@ -189,15 +189,82 @@
             placeholder="Search by FOAPA name"
             class="border rounded-md box-border px-4 border-gray-200 border-solid w-auto md:w-full h-10"
           />
+          <!-- <div class="border border-solid">
+            <h3>View as list</h3>
+          </div> -->
           <!-- <img :src="SortIcon" alt="Sort icon" class="w-5 cursor-pointer" /> -->
         </div>
-
+        <div class="flex gap-3">
+          <span
+            class="hover:border-gray-400 w-auto py-0 h-10 text-gray-500 hover:text-gray-600 transition-all duration-150 border mt-5 rounded-full cursor-pointer border-solid flex items-center px-2 border-gray-200"
+            @click="filterValues = 'Date(ASC)'"
+            :class="
+              filterValues === 'Date(ASC)'
+                ? 'border-gray-400 text-gray-600'
+                : ''
+            "
+          >
+            <h4
+              class="my-1 px-3 leading-7 h-auto font-normal text-xs m-auto text-inherit"
+            >
+              Sort by date (ASC)
+            </h4>
+          </span>
+          <span
+            class="hover:border-gray-400 w-auto py-0 h-10 text-gray-500 hover:text-gray-600 transition-all duration-150 border mt-5 rounded-full cursor-pointer border-solid flex items-center px-2 border-gray-200"
+            @click="filterValues = 'Date(DESC)'"
+            :class="
+              filterValues === 'Date(DESC)'
+                ? 'border-gray-400 text-gray-600'
+                : ''
+            "
+          >
+            <h4
+              class="my-1 px-3 leading-7 h-auto font-normal text-xs m-auto text-inherit"
+            >
+              Sort by date added (DESC)
+            </h4>
+          </span>
+        </div>
+        <h3
+          @click="view === 'Grid' ? (view = 'List') : (view = 'Grid')"
+          class="text-sm mb-[-10px] font-normal cursor-pointer hover:underline"
+        >
+          View as {{ view === "Grid" ? "list" : "grid" }}
+        </h3>
         <div
           class="flex flex-col mt-6 gap-7 sm:max-h-[28rem] h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]"
         >
           <div
+            class="border shadow-sm rounded w-auto box-border px-7 py-6 flex border-gray-200 border-solid h-auto"
+            v-for="foapa in filteredFoapaDetails"
+            v-if="view === 'List'"
+          >
+            <h3
+              class="font-semibold text-base my-0 cursor-pointer"
+              @click="router.push(`foapa-information/${foapa._id}`)"
+            >
+              {{ foapa.foapaName }}: {{ formatUserFoapa(foapa) }}
+            </h3>
+            <div class="flex items-center ml-5 gap-2">
+              <img
+                :src="EditIcon"
+                alt="Edit icon"
+                class="w-5 cursor-pointer"
+                @click="triggerFoapaEditMode(foapa)"
+              />
+              <img
+                :src="DeleteIcon"
+                alt="Trash icon"
+                class="w-4 cursor-pointer"
+                @click="showDeleteFoapaDialogue(foapa._id)"
+              />
+            </div>
+          </div>
+          <div
             class="border shadow-sm rounded w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto"
             v-for="foapa in filteredFoapaDetails"
+            v-if="view === 'Grid'"
           >
             <h3
               class="font-semibold text-base my-0 cursor-pointer"
@@ -233,6 +300,10 @@
                 @click="showDeleteFoapaDialogue(foapa._id)"
               />
               <span class="flex items-center gap-3">
+                <h4 class="text-xs my-0 font-normal">
+                  Created
+                  {{ formatDate(foapa.createdAt) }}
+                </h4>
                 <!-- <img :src="ViewIcon" alt="View icon" class="w-5 cursor-pointer"> -->
                 <!-- <h4 class="text-xs m-0 font-normal cursor underline cursor-pointer">Click to view more information</h4> -->
               </span>
@@ -331,7 +402,9 @@
           class="bg-white max-w-4xl shadow-md border border-solid border-gray-100 h-96 overflow-auto md:h-min px-6 py-9 rounded-md"
         >
           <div class="flex justify-between">
-            <h3 class="text-md font-semibold mb-6 mt-0">FOAPA Help</h3>
+            <h3 class="text-md font-semibold mb-6 mt-0 underline">
+              FOAPA Help
+            </h3>
             <img
               :src="CancelIcon"
               alt="Cancel icon"
@@ -384,6 +457,25 @@
               <h5 class="text-xs font-normal my-0 leading-8">Optional</h5>
             </span>
           </div>
+          <div class="mt-10">
+            <h4 class="font-semibold underline">Cost Information</h4>
+            <h4 class="font-normal text-sm leading-7">
+              <span class="font-medium leading-7">Initial amount</span> : This
+              is the amount available in the FOAPA at the time of entry. For
+              example, if you have $550 in a FOAPA when adding it to this
+              system, the initial amount recorded should be $550.
+            </h4>
+            <h4 class="font-normal text-sm leading-7">
+              <span class="font-medium leading-7">Available amount</span> : This
+              is the amount available in the FOAPA after the cost of accepted
+              reimbursement claim expenses have been subtracted.
+            </h4>
+            <h4 class="font-normal text-sm leading-7">
+              <span class="font-medium">Current amount</span> : This is the
+              amount available in the FOAPA after the cost of submitted and
+              accepted reimbursement claim expenses have been subtracted.
+            </h4>
+          </div>
         </div>
       </div>
     </section>
@@ -421,6 +513,7 @@ let show_foapa_help_dialogue = ref<boolean>(false);
 let show_edit_clashes_dialogue = ref<boolean>(false);
 let show_delete_foapa_dialogue = ref<boolean>(false);
 let show_delete_foapa_clash_dialogue = ref<boolean>(false);
+let view = ref<"List" | "Grid">("List");
 let loaded = ref<boolean>(false);
 const edit_clashes = ref([]);
 const delete_clashes = ref([]);
@@ -432,17 +525,57 @@ const edited_foapas_id = ref<string>("");
 const return_to_dashboard = ref<boolean>(false);
 const foapa_to_delete = ref<string>("");
 
+type FilterValues = "Date(ASC)" | "Date(DESC)" | "Amount(ASC)" | "";
+let filterValues = ref<FilterValues>("");
+
+function formatDate(date) {
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so we add 1
+  const day = String(d.getDate()).padStart(2, "0");
+  const year = d.getFullYear();
+
+  return `${month}/${day}/${year}`;
+}
+
 const toast = useToast();
 const filteredFoapaDetails: any = computed(() => {
+  if (search_value.value.trim() !== "") {
+    return foapaDetails.value.filter((foapa) =>
+      foapa.foapaName
+        .toLowerCase()
+        .includes(search_value.value.toLowerCase().trim())
+    );
+  }
+
+  if (filterValues.value === "Date(ASC)") {
+    return foapaDetails.value.sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      }
+      if (!a.createdAt) return 1;
+      if (!b.createdAt) return -1;
+      return 0;
+    });
+  }
+
+  if (filterValues.value === "Date(DESC)") {
+    return foapaDetails.value.sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+      if (!a.createdAt) return -1;
+      if (!b.createdAt) return 1;
+      return 0;
+    });
+  }
+
   if (search_value.value.trim() === "") {
     return foapaDetails.value;
   }
-
-  return foapaDetails.value.filter((foapa) =>
-    foapa.foapaName
-      .toLowerCase()
-      .includes(search_value.value.toLowerCase().trim())
-  );
 });
 
 let added_foapa = ref({
@@ -545,9 +678,9 @@ function discardEdits(reset: any) {
 
 async function editFoapaValues(foapaValues, resetForm) {
   try {
-    toast("Editing FOAPA details...", {
-      type: TYPE.INFO,
-    });
+    // toast("Editing FOAPA details...", {
+    //   type: TYPE.INFO,
+    // });
 
     foapaValues.currentAmount = foapaValues.initialAmount;
     foapaValues.availableAmount = foapaValues.initialAmount;
@@ -588,9 +721,9 @@ async function addFoapa(values, { resetForm }) {
     return;
   }
   try {
-    toast("Adding FOAPA", {
-      type: TYPE.INFO,
-    });
+    // toast("Adding FOAPA", {
+    //   type: TYPE.INFO,
+    // });
 
     // changes_were_made.value = true
     values.currentAmount = values.initialAmount;
@@ -603,11 +736,11 @@ async function addFoapa(values, { resetForm }) {
     resetForm();
     await retrieveUserFoapaDetails();
 
-    toast("FOAPA details were added successfully", {
+    toast("FOAPA was added successfully", {
       type: TYPE.SUCCESS,
     });
   } catch (err) {
-    toast("An unexpected error has occured", {
+    toast("An unexpected error has occured. Please try again later", {
       type: TYPE.ERROR,
     });
   }
@@ -712,12 +845,12 @@ onBeforeRouteLeave((to, from, next) => {
   }
 
   if (
-    added_foapa.value.foapaName.length > 0 ||
-    added_foapa.value.account.length > 0 ||
-    added_foapa.value.description.length > 0 ||
-    added_foapa.value.initialAmount.length > 0 ||
-    added_foapa.value.fund.length > 0 ||
-    added_foapa.value.account.length > 0
+    (added_foapa.value.foapaName !== undefined &&
+      added_foapa.value.foapaName.length > 0) ||
+    (added_foapa.value.account !== undefined &&
+      added_foapa.value.account.length > 0) ||
+    (added_foapa.value.description !== undefined &&
+      added_foapa.value.description.length > 0)
   ) {
     show_leave_dialogue.value = true;
     next(false);

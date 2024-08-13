@@ -142,7 +142,7 @@
       <button
         type="button"
         @click="moveToPreviousSection"
-        class="bg-udmercy-blue md:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+        class="bg-udmercy-blue xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
       >
         Previous Section
       </button>

@@ -1,10 +1,10 @@
 <template>
-  <div class="foapa-numbers-label">
-    <label for="foapa-numbers"
+  <!-- <div class="foapa-numbers-label"> -->
+  <!-- <label for="foapa-numbers"
       >FOAPA [ FUND - ORG - ACCT - PROG - ACTV ]:</label
-    >
-  </div>
-  <br />
+    > -->
+  <!-- </div>
+  <br /> -->
 
   <Form @submit="addFoapa">
     <div
@@ -13,7 +13,7 @@
     >
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
-          <label for="foapa-name">Name*</label>
+          <label for="foapa-name">Name</label>
           <img
             src="../../assets/user-help-icon.png"
             alt="Help"
@@ -36,7 +36,7 @@
       </div>
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
-          <label for="foapa-description">Description</label>
+          <label for="foapa-description">Description (Optional)</label>
           <img
             src="../../assets/user-help-icon.png"
             alt="Help"

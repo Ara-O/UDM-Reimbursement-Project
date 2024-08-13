@@ -27,7 +27,7 @@
               {{ foapa.foapaName }} - {{ formatUserFoapa(foapa) }}
             </option>
             <option value="Add a New FOAPA">Add a New FOAPA</option>
-            <option value="Don't Know FOAPA"> Don't Know FOAPA</option>
+            <option value="Don't Know FOAPA">Don't Know FOAPA</option>
           </select>
         </span>
         <span>
@@ -61,7 +61,7 @@
       <button
         type="button"
         @click="moveToPreviousSection"
-        class="bg-udmercy-blue mt-6 md:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+        class="bg-udmercy-blue mt-6 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
       >
         Previous Section
       </button>
@@ -118,9 +118,7 @@
       <div
         class="absolute bg-black bg-opacity-50 h-full xl:h-screen top-0 left-0 w-screen items-center flex justify-center"
       >
-        <div
-          class="bg-white px-10 h-96 md:h-auto overflow-auto rounded-md pt-3 pb-11"
-        >
+        <div class="bg-white px-10 h-96 overflow-auto rounded-md pt-3 pb-11">
           <div class="flex justify-between items-center">
             <h3 class="mb-5 font-semibold">Add FOAPA here</h3>
             <img
@@ -213,11 +211,20 @@ const filteredUserFoapas = computed(() => {
 
 function showFoapaPopup() {
   foapaPopupIsVisible.value = true;
-}
+  window.scrollTo(0, 0);
 
+  //@ts-ignore
+  document.querySelector("body").style.overflow = "hidden";
+}
 
 function closeFoapaPopup() {
   foapaPopupIsVisible.value = false;
+  assignedFoapa.value = {
+    cost: "",
+    foapa_id: "",
+  };
+  //@ts-ignore
+  document.querySelector("body").style.overflow = "auto";
 }
 
 function dontKnowFoapa() {

@@ -86,6 +86,9 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
 
     //Makes sure the newly edited foapa has the same _id as its previous value
     req.body.foapaDetail._id = faculty.foapaDetails[foapa_to_edit_index]._id;
+    req.body.foapaDetail.createdAt =
+      faculty.foapaDetails[foapa_to_edit_index].createdAt;
+    req.body.foapaDetail.updatedAt = new Date();
 
     faculty.foapaDetails[foapa_to_edit_index] = req.body.foapaDetail;
 
@@ -297,19 +300,19 @@ router.get("/retrieveFoapaInformation", verifyToken, async (req, res) => {});
 router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
   try {
     console.log("THIS IS MARKED AS SUBMITTED");
-      let faculty = await Faculty.findById(req.user.userId);
-      let reimbursementFoapa = req.body.reimbursementData.foapaDetails;
-      let facultyFoapa = faculty.foapaDetails;
-      
-      reimbursementFoapa.forEach((rfoapa) => {
-        facultyFoapa.forEach((ffoapa) =>{
-          if(rfoapa.foapa_id == ffoapa._id.toHexString())
-            ffoapa.availableAmount -= rfoapa.cost;
-        });
+    let faculty = await Faculty.findById(req.user.userId);
+    let reimbursementFoapa = req.body.reimbursementData.foapaDetails;
+    let facultyFoapa = faculty.foapaDetails;
+
+    reimbursementFoapa.forEach((rfoapa) => {
+      facultyFoapa.forEach((ffoapa) => {
+        if (rfoapa.foapa_id == ffoapa._id.toHexString())
+          ffoapa.availableAmount -= rfoapa.cost;
       });
-      
-      faculty.save();
-    } catch (err) {
+    });
+
+    faculty.save();
+  } catch (err) {
     console.error(err);
     res.status(400).send({ message: err.message });
   }

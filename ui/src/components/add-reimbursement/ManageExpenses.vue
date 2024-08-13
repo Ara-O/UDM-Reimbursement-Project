@@ -93,7 +93,7 @@
       <button
         type="button"
         @click="moveToPreviousSection"
-        class="bg-udmercy-blue mt-6 md:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+        class="bg-udmercy-blue mt-6 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
       >
         Previous Section
       </button>

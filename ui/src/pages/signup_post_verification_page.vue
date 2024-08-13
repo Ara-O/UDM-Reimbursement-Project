@@ -2,12 +2,20 @@
   <section class="signup-page">
     <section class="left-section">
       <div class="udmercy-logo-wrapper">
-        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo" />
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo"
+        />
       </div>
     </section>
     <section class="right-section">
       <div class="udmercy-logo-wrapper-mobile">
-        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo-mobile" />
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo-mobile"
+        />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
 
@@ -25,23 +33,40 @@
       <section class="signup-form">
         <!-- SECTION 2 -->
         <section v-show="surveyProgress === 1" class="signup-form">
-          <PasswordSection :user-signup-data="userSignupData" @continue="surveyProgress++" />
+          <PasswordSection
+            :user-signup-data="userSignupData"
+            @continue="surveyProgress++"
+          />
         </section>
 
         <!-- SECTION 3 -->
         <section v-show="surveyProgress === 2" class="signup-form">
-          <AddressSection :user-signup-data="userSignupData" @continue="surveyProgress++" @go-back="surveyProgress--" />
+          <AddressSection
+            :user-signup-data="userSignupData"
+            @continue="registerUser"
+            @go-back="surveyProgress--"
+          />
         </section>
 
         <!-- SECTION 4 -->
-        <section v-show="surveyProgress === 3" class="signup-form">
-          <FoapaSection :user-signup-data="userSignupData" @finish="registerUser" @go-back="surveyProgress--" />
+        <!-- <section v-show="surveyProgress === 3" class="signup-form">
+          <FoapaSection
+            :user-signup-data="userSignupData"
+            @finish="registerUser"
+            @go-back="surveyProgress--"
+          />
         </section>
-        <br />
+        <br /> -->
 
-        <router-link to="/" class="already-have-account mt-5">Already have an Account</router-link>
-        <h5 class="required-field-note" style="font-weight: 300; margin-top: 25px">
-          Note: All required fields must be filled
+        <router-link to="/" class="already-have-account mt-5"
+          >Already have an Account</router-link
+        >
+        <h5
+          class="required-field-note"
+          style="font-weight: 300; margin-top: 25px"
+        >
+          Note: All required fields are marked with an asterisk and must be
+          completed.
         </h5>
       </section>
       <!-- <ManageFoapaDetails></ManageFoapaDetails> -->
@@ -63,9 +88,9 @@ import { TYPE, useToast } from "vue-toastification";
 let surveyProgress = ref<number>(1);
 
 const router = useRouter();
-const toast = useToast()
+const toast = useToast();
 const route = useRoute();
-const store = useUserInfoStore()
+const store = useUserInfoStore();
 
 let creatingAccountFeedback = ref<boolean>(false);
 let userSignupData = reactive<UserData>({
@@ -87,14 +112,13 @@ let userSignupData = reactive<UserData>({
 async function registerUser() {
   try {
     toast("Creating account...", {
-      type: TYPE.INFO
-    })
+      type: TYPE.INFO,
+    });
 
-    let res = await axios
-      .post(
-        `${import.meta.env.VITE_API_URL}/api/register`,
-        userSignupData
-      )
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/register`,
+      userSignupData
+    );
 
     localStorage.setItem("token", res.data.token);
     axios.defaults.headers.common["authorization"] =
@@ -102,25 +126,32 @@ async function registerUser() {
     router.push("/dashboard");
 
     toast("Account successfully created...", {
-      type: TYPE.SUCCESS
-    })
+      type: TYPE.SUCCESS,
+    });
   } catch (err: any) {
-    toast(err?.response?.data?.message || "There was an error creating your account. Please try again later", {
-      type: TYPE.ERROR
-    })
+    toast(
+      err?.response?.data?.message ||
+        "There was an error creating your account. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
   }
 }
 
 onMounted(() => {
   if (Object.keys(store.userData).length === 0) {
-    toast("There was an error fetching your information. Please restart the signup process", {
-      type: TYPE.ERROR
-    })
-    router.push("/signup")
-    return
+    toast(
+      "There was an error fetching your information. Please restart the signup process",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+    router.push("/signup");
+    return;
   }
 
-  Object.assign(userSignupData, store.userData as UserData)
+  Object.assign(userSignupData, store.userData as UserData);
 
   if (localStorage.getItem("token")?.length ?? 0 > 0) {
     router.push("/dashboard");

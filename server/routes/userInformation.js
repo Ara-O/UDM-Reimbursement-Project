@@ -189,7 +189,19 @@ router.post("/send-confirmation-email", async (req, res) => {
       api: "/api/send-confirmation-email",
     });
 
-    //Store key in database along with email and emp number
+    //Check for existing codes and remove it
+    let existingAuth = await Auth.find({
+      workEmail: data.workEmail,
+      employmentNumber: data.employmentNumber,
+    });
+
+    if (existingAuth.length !== 0) {
+      for (let i = 0; i < existingAuth.length; i++) {
+        await Auth.findByIdAndDelete(existingAuth[i]._id);
+      }
+    }
+
+    //Store key in database along with email and employment number
     const auth = new Auth({
       workEmail: data.workEmail,
       employmentNumber: data.employmentNumber,
@@ -217,6 +229,7 @@ router.post("/send-confirmation-email", async (req, res) => {
     });
   }
 });
+
 router.post("/resetPassword", async (req, res) => {
   console.log(req.body);
   //parsing the token
@@ -304,6 +317,7 @@ router.post("/verify-code", async (req, res) => {
     });
 
     const data = schema.parse(req.body);
+
     data.workEmail += "@udmercy.edu";
     data.employmentNumber = "T" + data.employmentNumber;
 

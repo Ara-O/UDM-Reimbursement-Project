@@ -167,15 +167,24 @@
           <h3>Phone Number: {{ formatPhoneNumber(userInfo.phoneNumber) }}</h3>
         </div>
       </div>
-      <router-link to="/account" style="font-size: 14px"
+      <router-link
+        to="/account"
+        class="text-black hover:text-udmercy-blue"
+        style="font-size: 14px"
         >Manage account information</router-link
       >
 
-      <router-link to="/change-password" style="font-size: 14px"
+      <router-link
+        to="/change-password"
+        class="text-black hover:text-udmercy-blue"
+        style="font-size: 14px"
         >Change password</router-link
       >
 
-      <router-link to="/contact" style="font-size: 14px"
+      <router-link
+        to="/contact"
+        class="text-black hover:text-udmercy-blue"
+        style="font-size: 14px"
         >Contact Us</router-link
       >
       <button @click="signOut">Sign Out</button>
