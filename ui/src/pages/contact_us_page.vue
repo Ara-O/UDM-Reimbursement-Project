@@ -10,23 +10,7 @@
             <h3 class="contact-title">Contact Us</h3>
             <span>
                 <form @submit="sendEmail">
-                    <div class="container">
-                        <div class="nameSection">
-                            <span>
-                                <label style="font-size: 18px;">Name</label><br />
-                                <input v-model="name" class="nameTB" type="text" name="user_name"
-                                    placeholder="Enter Full Name">
-                            </span>
-                        </div>
-                        <div class="emailSection" style="padding-top: 10px; margin-left: 50px;">
-                            <span>
-                                <label style="font-size: 18px;">Email</label><br />
-                                <input v-model="email" class="emailTB" type="email" name="user_email"
-                                    placeholder="Enter Email">
-                            </span>
-                        </div>
-                    </div>
-                    <div class="messageSection" style="padding-top: 10px">
+                    <div class="messageSection">
                         <span>
                             <label style="font-size: 18px">Message</label><br />
                             <textarea v-model="message" class="messageTB" name="message"
