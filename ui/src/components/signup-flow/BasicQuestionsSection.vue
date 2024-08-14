@@ -3,17 +3,28 @@
   <Form @submit="verifyInformation">
     <div class="input-field-wrapper">
       <div class="input-field">
-        <label for="first-name">First Name:*</label>
+        <label for="first-name">First Name: *</label>
         <span>
-          <Field type="text" name="first-name" :rules="isValidString" id="first-name"
-            v-model="userSignupData.firstName" />
+          <Field
+            type="text"
+            name="first-name"
+            :rules="isValidString"
+            id="first-name"
+            v-model="userSignupData.firstName"
+          />
           <ErrorMessage name="first-name" class="error-field" />
         </span>
       </div>
       <div class="input-field">
         <label for="first-name">Last Name:*</label>
         <span>
-          <Field type="text" name="last-name" :rules="isValidString" id="last-name" v-model="userSignupData.lastName" />
+          <Field
+            type="text"
+            name="last-name"
+            :rules="isValidString"
+            id="last-name"
+            v-model="userSignupData.lastName"
+          />
           <ErrorMessage name="last-name" class="error-field" />
         </span>
       </div>
@@ -22,8 +33,13 @@
       <div class="input-field">
         <label for="phone-number" class="mt-0">Phone Number:*</label>
         <span>
-          <Field type="text" name="phone-number" id="phone-number" :rules="isValidPhoneNumber"
-            v-model="userSignupData.phoneNumber" />
+          <Field
+            type="text"
+            name="phone-number"
+            id="phone-number"
+            :rules="isValidPhoneNumber"
+            v-model="userSignupData.phoneNumber"
+          />
           <ErrorMessage name="phone-number" class="error-field" />
         </span>
       </div>
@@ -31,8 +47,13 @@
         <label for="work-email">Work Email: *</label>
         <span>
           <span class="work-email-input-field">
-            <Field type="text" :rules="isValidString" name="work-email" id="work-email"
-              v-model="userSignupData.workEmail" />
+            <Field
+              type="text"
+              :rules="isValidString"
+              name="work-email"
+              id="work-email"
+              v-model="userSignupData.workEmail"
+            />
             <h6 class="work-email-descriptor">@udmercy.edu</h6>
           </span>
           <ErrorMessage name="work-email" class="error-field" />
@@ -47,8 +68,13 @@
             <span class="employment-number-section">
               <h3>T</h3>
             </span>
-            <Field type="text" :rules="isValidEmploymentNumber" name="employment-number" id="employment-number"
-              v-model="userSignupData.employmentNumber" />
+            <Field
+              type="text"
+              :rules="isValidEmploymentNumber"
+              name="employment-number"
+              id="employment-number"
+              v-model="userSignupData.employmentNumber"
+            />
           </span>
           <ErrorMessage name="employment-number" class="error-field" />
         </span>
@@ -56,8 +82,13 @@
       <div class="input-field">
         <label for="department">Department: *</label>
         <span>
-          <Field name="department" id="department" as="select" :rules="isValidString"
-            v-model="userSignupData.department">
+          <Field
+            name="department"
+            id="department"
+            as="select"
+            :rules="isValidString"
+            v-model="userSignupData.department"
+          >
             <option :value="department" v-for="department in departments">
               {{ department }}
             </option>
@@ -107,12 +138,12 @@ const departments = [
   "Robotics and Mechatronic Systems Engineering",
 ];
 const emits = defineEmits(["continue"]);
-const toast = useToast()
+const toast = useToast();
 
 function verifyInformation() {
   toast("Verifying your information...", {
-    type: TYPE.INFO
-  })
+    type: TYPE.INFO,
+  });
 
   axios
     .post(
@@ -124,16 +155,20 @@ function verifyInformation() {
     )
     .then(() => {
       toast("Successfully verified your information!", {
-        type: TYPE.SUCCESS
-      })
+        type: TYPE.SUCCESS,
+      });
 
       emits("continue");
       window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     })
     .catch((err) => {
-      toast(err?.response?.data?.message || "There was an error verifying your information. Please try again later", {
-        type: TYPE.ERROR
-      })
+      toast(
+        err?.response?.data?.message ||
+          "There was an error verifying your information. Please try again later",
+        {
+          type: TYPE.ERROR,
+        }
+      );
     });
 }
 </script>

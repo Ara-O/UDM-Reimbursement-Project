@@ -11,6 +11,7 @@ import { verifyToken } from "../middleware/auth.js";
 import { request } from "http";
 import { transporter } from "../app.js";
 import logger from "../logger.js";
+import { generateRandomStringId } from "../utils/generateRandomString.js";
 const upload = multer({ dest: "uploads/" });
 
 let imagekit = new ImageKit({
@@ -81,7 +82,7 @@ router.post(
       });
 
       // console.log("Image url", imageLinks);
-      return res.status(200).send({ url: upload.url, id: upload.fileId, name: "test" });
+      return res.status(200).send({ url: upload.url, id: upload.fileId });
     } catch (err) {
       console.log(err);
       return res
@@ -156,40 +157,66 @@ router.get("/generatePdf", verifyToken, (req, res) => {
   });
 });
 
-router.post("/storeReceiptImages", upload.array("receipt"), (req, res) => {
+// Stores receipt images in imagekit and returns the URL of the image
+router.post("/store-receipt-images", upload.array("receipt"), (req, res) => {
+  console.log(req.files);
+
+  let type = "image";
+  if (req.files[0].mimetype === "image/pdf") {
+    type = "pdf";
+  }
+
   const buffers = req.files.map((file) => {
     return fs.readFileSync(file.path);
   });
 
   const promises = [];
-  buffers.forEach((buffer, i) => {
-    promises.push(
-      imagekit.upload({
-        file: buffer, // It accepts remote URL, base_64 string or file buffer
-        fileName: `${i}receipt`, // required
-        isPrivateFile: false,
-      }),
-      pageCount = i,
-    );
 
-    // console.log("PAGE COUNT");
-    // console.log(pageCount);
+  if (type === "image") {
+    buffers.forEach((buffer, i) => {
+      promises.push(
+        imagekit.upload({
+          file: buffer, // It accepts remote URL, base_64 string or file buffer
+          fileName: `${i + 1}receipt`, // required
+          isPrivateFile: false,
+        })
+      );
+    });
+  } else if (type === "pdf") {
+    buffers.forEach((buffer, i) => {
+      promises.push(
+        imagekit.upload({
+          file: buffer, // It accepts remote URL, base_64 string or file buffer
+          fileName: `pdf_receipt_${i + 1}`, // required
+          isPrivateFile: false,
+        })
+      );
+    });
+  }
 
-    //promises.image.filename = `receipt_page_${i}`;
-  });
+  let pdf_receipt_id = generateRandomStringId(5);
 
   Promise.all(promises)
     .then((imagesData) => {
-      console.log("IMAGES DATA");
-      console.log(imagesData);
-      let imageLinks = imagesData.map((image) => {
-        console.log("IMAGE");
-        console.log(image);
-
+      let imageLinks = imagesData.map((image, i) => {
         if (image.url !== null)
-          return { url: image.url, id: image.fileId, name: "hi" };
+          if (type === "image") {
+            return {
+              url: image.url,
+              name: generateRandomStringId(5),
+              id: image.fileId,
+              type: "image",
+            };
+          } else {
+            return {
+              url: image.url,
+              id: image.fileId,
+              type: "pdf",
+              name: pdf_receipt_id,
+              index: i + 1,
+            };
+          }
       });
-      // console.log("Image url", imageLinks);
       res.status(200).send(imageLinks);
     })
     .catch((err) => {
@@ -298,10 +325,12 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       <div style="border: solid 1px #efefef; padding: 20px 0px;">
       <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
       <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
-                }</h3>
-      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.userInfo.workEmail
-                }</h5>
+      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
+        req.body.message || ""
+      }</h3>
+      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
+        req.body.userInfo.workEmail
+      }</h5>
       </div>
       </div>
       `,
@@ -335,32 +364,39 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/send-contact-email", verifyToken, async (req, res) => {
-  console.log("Hello");
-  console.log(req.body);
-  transporter.sendMail({
-    from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
-    to: ['"Ethan Scheys" <ethanscheys@gmail.com>', req.body.sender],
-    subject: `Contact Us from: ${req.body.name}`,
-    html: `
+router.post(
+  "/send-contact-email",
+  verifyToken,
+  async (req, res) => {
+    console.log("Hello");
+    console.log(req.body);
+    transporter
+      .sendMail({
+        from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
+        to: ['"Ethan Scheys" <ethanscheys@gmail.com>', req.body.sender],
+        subject: `Contact Us from: ${req.body.name}`,
+        html: `
   <div style="border: solid 1px #efefef; padding: 20px 0px;">
   <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
   <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
-      }</h3>
-  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.sender}
+  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
+    req.body.message || ""
+  }</h3>
+  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
+    req.body.sender
+  }
         </h5>
   </div>
   </div>
   `,
-  })
-    .catch((err) => {
-      console.log(err);
-    });
-},
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
   function (error) {
     console.log(error);
     res.send("ERROR:" + error);
   }
-)
+);
 export default router;

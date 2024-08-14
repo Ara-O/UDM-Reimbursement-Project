@@ -26,6 +26,14 @@ const facultySchema = new Schema({
       availableAmount: Number,
       currentAmount: Number,
       description: String,
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+      updatedAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
   ],
   reimbursementTickets: [

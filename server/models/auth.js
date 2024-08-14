@@ -5,8 +5,14 @@ const authSchema = new Schema(
     employmentNumber: String,
     workEmail: String,
     authString: String,
+    createdAt: {
+      type: Date,
+      default: new Date(),
+    },
   },
-  { timestamps: true }
+  {
+    autoIndex: true,
+  }
 );
 
 authSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });

@@ -85,7 +85,7 @@
       <button
         type="button"
         @click="emits('move-to-previous-section')"
-        class="bg-udmercy-blue mt-8 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+        class="bg-udmercy-blue mt-8 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
       >
         Previous Section
       </button>
