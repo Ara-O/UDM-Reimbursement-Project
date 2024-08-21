@@ -13,6 +13,7 @@ import { transporter } from "../app.js";
 import logger from "../logger.js";
 import { generateRandomStringId } from "../utils/generateRandomString.js";
 const upload = multer({ dest: "uploads/" });
+import Faculty from "../models/faculty.js";
 
 let imagekit = new ImageKit({
   publicKey: process.env.IMAGE_KIT_PUBLIC,
@@ -325,12 +326,10 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       <div style="border: solid 1px #efefef; padding: 20px 0px;">
       <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
       <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
-        req.body.message || ""
-      }</h3>
-      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
-        req.body.userInfo.workEmail
-      }</h5>
+      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
+                }</h3>
+      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.userInfo.workEmail
+                }</h5>
       </div>
       </div>
       `,
@@ -368,23 +367,21 @@ router.post(
   "/send-contact-email",
   verifyToken,
   async (req, res) => {
-    console.log("Hello");
+    let facultyInfo = await Faculty.findById(req.user.userId);
+    console.log(facultyInfo);
     console.log(req.body);
     transporter
       .sendMail({
         from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
-        to: ['"Ethan Scheys" <ethanscheys@gmail.com>', req.body.sender],
-        subject: `Contact Us from: ${req.body.name}`,
+        to: ['"The Support Team" <theduckateers@gmail.com>', facultyInfo.workEmail],
+        subject: `Contact Us from: ${facultyInfo.firstName} ${facultyInfo.lastName}`,
         html: `
   <div style="border: solid 1px #efefef; padding: 20px 0px;">
   <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
   <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
-    req.body.message || ""
-  }</h3>
-  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
-    req.body.sender
-  }
+  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
+          }</h3>
+  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${facultyInfo.firstName} ${facultyInfo.lastName}
         </h5>
   </div>
   </div>
