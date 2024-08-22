@@ -14,61 +14,23 @@
       <h3 class="contact-title">Contact Us</h3>
       <span>
         <form @submit="sendEmail">
-          <div class="container">
-            <div class="nameSection">
-              <span>
-                <label style="font-size: 15px">Name</label><br />
-                <input
-                  v-model="name"
-                  class="nameTB mt-2"
-                  type="text"
-                  name="user_name"
-                  placeholder="Enter Full Name"
-                />
-              </span>
-            </div>
-            <div
-              class="emailSection"
-              style="padding-top: 10px; margin-left: 50px"
-            >
-              <span>
-                <label style="font-size: 15px">Email</label><br />
-                <input
-                  v-model="email"
-                  class="emailTB mt-2"
-                  type="email"
-                  name="user_email"
-                  placeholder="Enter Email"
-                />
-              </span>
-            </div>
-          </div>
-          <div class="messageSection" style="padding-top: 10px">
+          <div class="messageSection">
             <span>
-              <label style="font-size: 15px">Message</label><br />
+              <label style="font-size: 18px">Message</label><br />
               <textarea
                 v-model="message"
-                class="messageTB pt-3 mt-2 leading-7"
+                class="messageTB"
                 name="message"
-                placeholder="Enter any of the following: &#10;- Feature Suggestions &#10;- Bug Reports &#10;- Compliments"
+                placeholder="Enter any of the following: &#10;&#10;- Feature Suggestions &#10;- Bug Reports &#10;- Compliments"
               ></textarea>
             </span>
           </div>
-          <span class="flex gap-4">
-            <button
-              type="button"
-              @click="$router.push('/dashboard')"
-              class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
-            >
-              Return to Home
-            </button>
-            <button
-              type="submit"
-              class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
-            >
-              Send Email
-            </button>
-          </span>
+          <button
+            type="submit"
+            class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
+          >
+            Send Email
+          </button>
         </form>
       </span>
     </section>

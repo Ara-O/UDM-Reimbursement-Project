@@ -1,27 +1,17 @@
 <template>
-  <section
-    class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0"
-  >
+  <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0">
     <span class="flex items-center gap-6 mb-2 mt-42 md:mt-0">
       <h2 class="font-semibold my-0 text-[27px]">Assign FOAPA Information</h2>
-      <img
-        src="../../assets/edit-icon.png"
-        alt="Edit icon"
-        class="w-7 hidden md:block"
-      />
+      <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7 hidden md:block" />
     </span>
 
     <form @submit.prevent="addFoapa">
       <div class="flex gap-x-14 flex-wrap">
         <span>
           <h4 class="font-normal text-sm">Select FOAPA</h4>
-          <select
-            name="foapa"
-            id="foapa"
-            v-model="assignedFoapa.foapa_id"
+          <select name="foapa" id="foapa" v-model="assignedFoapa.foapa_id"
             class="border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required
-          >
+            required>
             <!-- <option disabled selected value="">Select FOAPA</option> -->
             <option :value="foapa._id" v-for="foapa in filteredUserFoapas">
               {{ foapa.foapaName }} - {{ formatUserFoapa(foapa) }}
@@ -32,37 +22,24 @@
         </span>
         <span>
           <h4 class="font-normal text-sm">Quantity to use from FOAPA</h4>
-          <input
-            type="text"
-            name="quantity-assigned"
-            placeholder="Desired Amount"
-            v-model="assignedFoapa.cost"
+          <input type="text" name="quantity-assigned" placeholder="Desired Amount" v-model="assignedFoapa.cost"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required
-          />
+            required />
         </span>
       </div>
 
       <div class="flex gap-5 mt-8">
-        <button
-          type="submit"
-          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-        >
+        <button type="submit"
+          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
           {{ triggerAssignedFoapaEditMode ? "Edit FOAPA" : "Assign FOAPA" }}
         </button>
-        <button
-          type="button"
-          @click="moveToNextSection"
-          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-        >
+        <button type="button" @click="moveToNextSection"
+          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
           Next Section
         </button>
       </div>
-      <button
-        type="button"
-        @click="moveToPreviousSection"
-        class="bg-udmercy-blue mt-6 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-      >
+      <button type="button" @click="moveToPreviousSection"
+        class="bg-udmercy-blue mt-6 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
         Previous Section
       </button>
     </form>
@@ -73,28 +50,18 @@
         <h4 class="underline mb-5 font-semibold text-lg text-gray-800">
           All FOAPA
         </h4>
-        <div
-          class="overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto"
-        >
+        <div class="overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
           <div v-if="props.claim.activities.length === 0">
             <h5 class="mt-0 font-medium text-gray-500">
               Added FOAPA numbers will be listed
             </h5>
           </div>
         </div>
-        <div
-          class="flex gap-3 flex-col max-h-80 overflow-auto"
-          v-if="userFoapas.length !== 0"
-        >
+        <div class="flex gap-3 flex-col max-h-80 overflow-auto" v-if="userFoapas.length !== 0">
           <!-- Wait till the user's foapa have been loaded in, so that this component
          can use that to match foapa names, etc -->
-          <foapa-container
-            v-for="foapa in props.claim.foapaDetails"
-            :filtered-user-foapas="userFoapas"
-            :foapa="foapa"
-            @delete-foapa="deleteFOAPA"
-            @edit-foapa="editFOAPA"
-          >
+          <foapa-container v-for="foapa in props.claim.foapaDetails" :filtered-user-foapas="userFoapas" :foapa="foapa"
+            @delete-foapa="deleteFOAPA" @edit-foapa="editFOAPA">
           </foapa-container>
         </div>
       </div>
@@ -103,9 +70,7 @@
         <h4 class="underline font-semibold mb-0 text-lg text-gray-800">
           Balance
         </h4>
-        <div
-          class="overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto"
-        >
+        <div class="overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
           <div class="flex gap-3 flex-col max-h-80 overflow-auto">
             <balance-container :claim="props.claim"> </balance-container>
           </div>
@@ -116,25 +81,16 @@
     <!-- FOAPA POPUP -->
     <section v-if="foapaPopupIsVisible">
       <div
-        class="absolute bg-black bg-opacity-50 h-full xl:h-screen top-0 left-0 w-screen items-center flex justify-center"
-      >
+        class="absolute bg-black bg-opacity-50 h-full xl:h-screen top-0 left-0 w-screen items-center flex justify-center">
         <div class="bg-white px-10 h-96 overflow-auto rounded-md pt-3 pb-11">
           <div class="flex justify-between items-center">
             <h3 class="mb-5 font-semibold">Add FOAPA here</h3>
-            <img
-              :src="CancelIcon"
-              alt="Cancel icon"
-              class="w-3.5 opacity-75 hover:opacity-100 cursor-pointer"
-              @click="closeFoapaPopup"
-            />
+            <img :src="CancelIcon" alt="Cancel icon" class="w-3.5 opacity-75 hover:opacity-100 cursor-pointer"
+              @click="closeFoapaPopup" />
           </div>
-          <manage-foapa-details
-            :foapa-details="foapaDetailsToAdd"
-          ></manage-foapa-details>
-          <button
-            @click="saveFoapas"
-            class="bg-udmercy-blue mt-7 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-          >
+          <manage-foapa-details :foapa-details="foapaDetailsToAdd"></manage-foapa-details>
+          <button @click="saveFoapas"
+            class="bg-udmercy-blue mt-7 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
             Save FOAPAs
           </button>
         </div>
@@ -228,6 +184,9 @@ function closeFoapaPopup() {
 }
 
 function dontKnowFoapa() {
+  toast("You are moving on without a FOAPA assigned. Upon submission of the Reimbursement Request, a message to the admin will be added stating that you don't know your FOAPA.", {
+    type: TYPE.INFO,
+  })
   props.claim.knowFoapa = false;
 }
 
@@ -302,7 +261,7 @@ function saveFoapas() {
     .catch((err) => {
       toast(
         err?.response?.data?.message ||
-          "An unexpected error occured when saving your FOAPA details. Please try again later",
+        "An unexpected error occured when saving your FOAPA details. Please try again later",
         {
           type: TYPE.ERROR,
         }
@@ -326,9 +285,8 @@ onMounted(() => {
 });
 
 function formatUserFoapa(foapa: FoapaStuff) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
-    foapa.program || "XXXX"
-  }-${foapa.activity || "XXXX"}`;
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${foapa.program || "XXXX"
+    }-${foapa.activity || "XXXX"}`;
 }
 
 function deleteFOAPA(id: string) {
