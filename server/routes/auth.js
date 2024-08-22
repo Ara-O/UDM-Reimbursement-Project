@@ -22,7 +22,7 @@ router.post("/register", async (req, res) => {
       .string()
       .trim()
       .regex(/^[a-zA-Z0-9\s-]+$/),
-    workEmail: z.string().trim(),
+    workEmail: z.string().trim().toLowerCase(),
     employmentNumber: z
       .string()
       .trim()
