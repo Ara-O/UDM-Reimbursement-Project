@@ -87,7 +87,7 @@
                 Change View
               </button>
               <div
-                class="absolute right-0 shadow rounded-md z-20 px-4 bg-white top-12"
+                class="absolute right-0 shadow rounded-md z-20 px-5 bg-white top-12"
                 v-if="viewPopupIsShown"
               >
                 <h4
@@ -103,7 +103,7 @@
                   List View
                 </h4>
                 <h4
-                  class="font-normal hover:underline cursor-pointer text-sm"
+                  class="font-normal hidden md:block hover:underline cursor-pointer text-sm"
                   @click="changeView('table')"
                 >
                   Table View
@@ -135,7 +135,7 @@
             <td class="td">{{ ticket.reimbursementName }}</td>
             <td class="td">{{ ticket.reimbursementStatus }}</td>
             <td class="td">{{ parseDate(ticket.reimbursementDate) }}</td>
-            <td class="td">{{ ticket.totalCost.toFixed(2) }}</td>
+            <td class="td">${{ ticket.totalCost.toFixed(2) }}</td>
             <td class="flex td gap-4 border-none">
               <span
                 class="underline cursor-pointer"

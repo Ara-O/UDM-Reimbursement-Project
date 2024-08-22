@@ -14,7 +14,7 @@
       Cost: ${{ foapa.cost }}
     </h4>
     <div
-      title="Delete activity"
+      title="Delete FOAPA"
       class="activity-option absolute right-10 bottom-5"
       @click="() => $emit('deleteFoapa', foapa.foapa_id)"
     >
@@ -25,7 +25,7 @@
       />
     </div>
     <div
-      title="Edit activity"
+      title="Edit FOAPA"
       class="activity-option absolute right-24 bottom-5"
       @click="() => $emit('editFoapa', foapa.foapa_id)"
     >

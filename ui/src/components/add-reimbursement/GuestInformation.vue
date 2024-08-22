@@ -20,6 +20,7 @@
           <input
             type="text"
             name="employer-first-name"
+            v-model="employeeFirstName"
             placeholder="First Name"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
@@ -30,6 +31,7 @@
           <input
             type="text"
             name="employer-last-name"
+            v-model="employeeLastName"
             placeholder="Last Name"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
@@ -39,6 +41,7 @@
           <h4 class="font-normal text-sm">Guest's First Name</h4>
           <input
             type="text"
+            v-model="guestFirstName"
             name="guest-first-name"
             placeholder="First Name"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
@@ -49,6 +52,7 @@
           <h4 class="font-normal text-sm">Guest's Last Name</h4>
           <input
             type="text"
+            v-model="guestLastName"
             name="guest-last-name"
             placeholder="Last Name"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
@@ -59,6 +63,7 @@
           <h4 class="font-normal text-sm">Association</h4>
           <input
             type="text"
+            v-model="association"
             name="association"
             placeholder="Association"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
@@ -96,22 +101,23 @@
         <th>Employee Name</th>
         <th>Guest Name</th>
         <th>Association</th>
+        <th></th>
       </tr>
       <tr v-for="guest in props.claim.guestInformation">
         <td>{{ guest.employeeFirstName + " " + guest.employeeLastName }}</td>
         <td>{{ guest.guestFirstName + " " + guest.guestLastName }}</td>
         <td>{{ guest.guestAssociation }}</td>
         <td>
-          <img
+          <!-- <img
             src="../../assets/edit-icon-red.png"
             alt="Edit icon"
             class="w-3 cursor-pointer"
-          />
+          /> -->
           <img
             src="../../assets/trash-icon.png"
             alt="Delete icon"
             @click="deleteGuest(guest)"
-            class="w-3 ml-4 cursor-pointer"
+            class="w-3 cursor-pointer"
           />
         </td>
       </tr>
@@ -122,13 +128,20 @@
 <script lang="ts" setup>
 import { ReimbursementTicket, GuestInfo } from "../../types/types";
 import { objectsAreEqual } from "../../utils/objectsAreEqual";
-
+import { ref } from "vue";
 const emits = defineEmits(["move-to-next-section", "move-to-previous-section"]);
 const props = defineProps<{
   claim: ReimbursementTicket;
 }>();
 
+const employeeFirstName = ref<string>("");
+const employeeLastName = ref<string>("");
+const association = ref<string>("");
+const guestFirstName = ref<string>("");
+const guestLastName = ref<string>("");
+
 function addGuestInformation() {
+  console.log("Adding guests");
   if (!props.claim.guestInformation) {
     props.claim.guestInformation = [];
   }
@@ -138,7 +151,20 @@ function addGuestInformation() {
     return;
   }
 
-  //props.claim.guestInformation.push(JSON.parse(JSON.stringify(guestInfo.value)))
+  props.claim.guestInformation.push({
+    employeeFirstName: employeeFirstName.value,
+    employeeLastName: employeeLastName.value,
+    guestFirstName: guestFirstName.value,
+    guestLastName: guestLastName.value,
+    guestAssociation: association.value,
+  });
+
+  employeeFirstName.value =
+    employeeLastName.value =
+    guestLastName.value =
+    guestFirstName.value =
+    association.value =
+      "";
 }
 
 function moveToPreviousSection() {

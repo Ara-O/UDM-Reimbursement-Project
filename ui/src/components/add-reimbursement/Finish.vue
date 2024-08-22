@@ -231,9 +231,9 @@ function emailPDF() {
 async function sendEmail(values: any, { resetForm }) {
   let savedFoapaDetails;
   try {
-    // let response = await axios.get(
-    //   `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
-    // );
+    let response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
+    );
 
     savedFoapaDetails = await axios.get(
       `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
@@ -250,16 +250,16 @@ async function sendEmail(values: any, { resetForm }) {
       );
     }
 
-    // await axios.post(
-    //   `${import.meta.env.VITE_API_URL}/api/send-reimbursement-email`,
-    //   {
-    //     message: values.message,
-    //     subject: values.subject,
-    //     recipient: values.recipient,
-    //     reimbursementData: props.claim,
-    //     userInfo: response.data,
-    //   }
-    // );
+    await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/send-reimbursement-email`,
+      {
+        message: values.message,
+        subject: values.subject,
+        recipient: values.recipient,
+        reimbursementData: props.claim,
+        userInfo: response.data,
+      }
+    );
 
     toast("Your email was sent successfully", {
       type: TYPE.SUCCESS,
@@ -364,9 +364,9 @@ async function download() {
 
 async function saveAsTemplate() {
   try {
-    toast("Saving reimbursement claim as template...", {
-      type: TYPE.INFO,
-    });
+    // toast("Saving reimbursement claim as template...", {
+    //   type: TYPE.INFO,
+    // });
     await axios.post(
       `${import.meta.env.VITE_API_URL}/api/save-as-template`,
       props.claim
@@ -552,9 +552,9 @@ async function saveReimbursement() {
       return;
     }
 
-    toast("Saving reimbursement claim...", {
-      type: TYPE.INFO,
-    });
+    // toast("Saving reimbursement claim...", {
+    //   type: TYPE.INFO,
+    // });
 
     props.claim.reimbursementStatus = "In Progress";
 

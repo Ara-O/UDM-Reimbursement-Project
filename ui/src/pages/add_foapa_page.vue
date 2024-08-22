@@ -357,7 +357,7 @@
         Warning: You are about to edit a FOAPA that is being used by the
         following reimbursement claims:
         <p v-for="claim in edit_clashes" class="font-medium">{{ claim }}</p>
-        To stop editing, click 'Stop Editing.' To continue editing this FOAPA,
+        To stop editing, click 'Don't Edit.' To continue editing this FOAPA,
         click 'Continue.' Note: Continuing editing this FOAPA will cause the
         FOAPA values in the above-mentioned reimbursements to change as well.
       </template>
@@ -736,7 +736,7 @@ async function addFoapa(values, { resetForm }) {
     resetForm();
     await retrieveUserFoapaDetails();
 
-    toast("FOAPA was added successfully", {
+    toast("FOAPA successfully added", {
       type: TYPE.SUCCESS,
     });
   } catch (err) {

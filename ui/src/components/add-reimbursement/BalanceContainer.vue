@@ -19,7 +19,11 @@
       <div class="flex justify-between text-gray-600 h-10">
         <h4 class="text-sm font-normal mt-0">Total cost of all expenses</h4>
         <h4 class="text-sm font-normal mt-0">
-          ${{ calculateTotalExpenseCost === 0 ? 0 : calculateTotalExpenseCost }}
+          ${{
+            calculateTotalExpenseCost === 0
+              ? 0
+              : calculateTotalExpenseCost.toFixed(2)
+          }}
         </h4>
       </div>
       <div class="flex justify-between text-gray-600 h-10">
@@ -31,7 +35,7 @@
       <div class="border border-solid w-full text-gray-300 bg-gray-200"></div>
       <div class="flex justify-between text-gray-600 h-10">
         <h4 class="text-sm font-normal">Remaining Coverage</h4>
-        <h4 class="text-sm font-normal">${{ calculateBalance }}</h4>
+        <h4 class="text-sm font-normal">${{ calculateBalance.toFixed(2) }}</h4>
       </div>
     </div>
   </div>

@@ -175,6 +175,12 @@ function moveToNextSection() {
   emits("move-to-next-section");
 }
 
+function parseDate(dateUnparsed) {
+  const date = new Date(dateUnparsed);
+  const formattedDate = date.toISOString().split("T")[0];
+  return formattedDate;
+}
+
 function moveToPreviousSection() {
   emits("move-to-previous-section");
 }
@@ -210,6 +216,7 @@ function editExpense(id: string) {
 
   if (activityToEdit.length === 0) return;
 
+  activityToEdit[0].date = parseDate(activityToEdit[0].date);
   expense.value = activityToEdit[0];
   deleteExpense(activityToEdit[0].id);
 }
