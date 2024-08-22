@@ -61,56 +61,123 @@
         <h3 style="font-weight: 500; font-size: 14.5px">
           All Reimbursements -
         </h3>
-        <span class="view-choice flex-wrap">
-          <button
-            @click="$router.push('/add-reimbursement')"
-            class="filter add-reimbursement-ticket-button"
-          >
-            Click to add new reimbursement
-          </button>
-          <button
-            @click="viewingTemplates = !viewingTemplates"
-            class="filter add-reimbursement-ticket-button"
-          >
-            {{
-              viewingTemplates === false ? "View Your Templates" : "View Claims"
-            }}
-          </button>
-          <button
-            v-if="filterReimbursements.length > 0"
-            @click="changeView"
-            class="filter add-reimbursement-ticket-button"
-          >
-            View as {{ currentView == "grid" ? "list" : "grid" }}
-          </button>
+        <span class="w-full flex relative">
+          <span class="w-full flex flex-wrap gap-2">
+            <button
+              @click="$router.push('/add-reimbursement')"
+              class="filter add-reimbursement-ticket-button"
+            >
+              Click to add new reimbursement
+            </button>
+            <button
+              @click="viewingTemplates = !viewingTemplates"
+              class="filter add-reimbursement-ticket-button"
+            >
+              {{
+                viewingTemplates === false
+                  ? "View Your Templates"
+                  : "View Claims"
+              }}
+            </button>
+            <div class="relative">
+              <button
+                class="filter add-reimbursement-ticket-button"
+                @click="viewPopupIsShown = !viewPopupIsShown"
+              >
+                Change View
+              </button>
+              <div
+                class="absolute right-0 shadow rounded-md z-20 px-4 bg-white top-12"
+                v-if="viewPopupIsShown"
+              >
+                <h4
+                  class="font-normal hover:underline cursor-pointer text-sm"
+                  @click="changeView('grid')"
+                >
+                  Grid View
+                </h4>
+                <h4
+                  class="font-normal hover:underline cursor-pointer text-sm"
+                  @click="changeView('list')"
+                >
+                  List View
+                </h4>
+                <h4
+                  class="font-normal hover:underline cursor-pointer text-sm"
+                  @click="changeView('table')"
+                >
+                  Table View
+                </h4>
+              </div>
+            </div>
+          </span>
         </span>
       </div>
       <br />
-
-      <!-- MAIN LIST -->
-      <div
-        :class="
-          currentView === 'list'
-            ? 'reimbursement-wrapper-list'
-            : 'reimbursement-wrapper-grid'
-        "
-        v-if="!viewingTemplates"
+      <!-- <button
+        v-if="filterReimbursements.length > 0"
+        @click="changeView"
+        class=""
       >
-        <div class="reimbursement" v-for="ticket in filterReimbursements">
-          <h3>{{ ticket.reimbursementName }}</h3>
-          <h4>Status: {{ ticket.reimbursementStatus }}</h4>
-          <h5>
-            {{ parseDate(ticket.reimbursementDate) }}
-          </h5>
-          <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
-          <div class="reimbursement-buttons">
-            <button
-              @click="viewTicket(ticket._id)"
-              v-if="ticket.reimbursementStatus !== 'Submitted'"
-            >
-              Modify
-            </button>
-            <button @click="deleteReimbursement(ticket._id)">Delete</button>
+        Viewing as {{ currentView }}
+      </button> -->
+      <!-- TABLE -->
+      <div v-if="currentView === 'table'">
+        <table class="border table border-collapse border-solid border-black">
+          <tr class="tr">
+            <td class="font-medium td">Reimbursment Identifier</td>
+            <td class="font-medium td">Status</td>
+            <td class="font-medium td">Date</td>
+            <td class="font-medium td">Cost</td>
+            <td class="font-medium td">Actions</td>
+          </tr>
+          <tr v-for="ticket in filterReimbursements" class="tr">
+            <td class="td">{{ ticket.reimbursementName }}</td>
+            <td class="td">{{ ticket.reimbursementStatus }}</td>
+            <td class="td">{{ parseDate(ticket.reimbursementDate) }}</td>
+            <td class="td">{{ ticket.totalCost.toFixed(2) }}</td>
+            <td class="flex td gap-4 border-none">
+              <span
+                class="underline cursor-pointer"
+                @click="viewTicket(ticket._id)"
+                v-if="ticket.reimbursementStatus !== 'Submitted'"
+                >Modify</span
+              >
+              <span
+                class="underline cursor-pointer"
+                @click="deleteReimbursement(ticket._id)"
+                >Delete</span
+              >
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- LIST/GRID -->
+      <div v-else>
+        <div
+          :class="
+            currentView === 'list'
+              ? 'reimbursement-wrapper-list'
+              : 'reimbursement-wrapper-grid'
+          "
+          v-if="!viewingTemplates"
+        >
+          <div class="reimbursement" v-for="ticket in filterReimbursements">
+            <h3>{{ ticket.reimbursementName }}</h3>
+            <h4>Status: {{ ticket.reimbursementStatus }}</h4>
+            <h5>
+              {{ parseDate(ticket.reimbursementDate) }}
+            </h5>
+            <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
+            <div class="reimbursement-buttons">
+              <button
+                @click="viewTicket(ticket._id)"
+                v-if="ticket.reimbursementStatus !== 'Submitted'"
+              >
+                Modify
+              </button>
+              <button @click="deleteReimbursement(ticket._id)">Delete</button>
+            </div>
           </div>
         </div>
       </div>
@@ -252,18 +319,16 @@ let userInfo = ref<any>({
 });
 
 let viewingTemplates = ref<boolean>(false);
+let viewPopupIsShown = ref<boolean>(false);
 let delete_claim_confirmation_dialog = ref<boolean>(false);
 let claim_to_delete_id = ref<string>("");
 
 let reimbursementTickets = ref<any>([]);
 
-let currentView = ref<"grid" | "list">("grid");
-function changeView() {
-  if (currentView.value === "list") {
-    currentView.value = "grid";
-  } else {
-    currentView.value = "list";
-  }
+let currentView = ref<"grid" | "list" | "table">("grid");
+function changeView(view: "grid" | "list" | "table") {
+  currentView.value = view;
+  viewPopupIsShown.value = false;
 }
 
 function formatPhoneNumber(phoneNumber: string) {
@@ -481,5 +546,16 @@ onMounted(() => {
   /* Adjust the width to your desired size */
   height: auto;
   /* Maintain the aspect ratio */
+}
+.table {
+  width: 100%;
+}
+.table,
+.td,
+.th,
+.tr {
+  border: solid 1px black;
+  padding: 8px 14px;
+  font-size: 13.5px;
 }
 </style>

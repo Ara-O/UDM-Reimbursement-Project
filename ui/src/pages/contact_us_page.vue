@@ -1,46 +1,78 @@
 <template>
-    <section class="contact-us-page">
-        <section class="left-section">
-            <div class="udmercy-logo-wrapper">
-                <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo"
-                    @click="$router.push('/dashboard')" />
+  <section class="contact-us-page">
+    <section class="left-section">
+      <div class="udmercy-logo-wrapper">
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo"
+          @click="$router.push('/dashboard')"
+        />
+      </div>
+    </section>
+    <section class="right-section">
+      <h3 class="contact-title">Contact Us</h3>
+      <span>
+        <form @submit="sendEmail">
+          <div class="container">
+            <div class="nameSection">
+              <span>
+                <label style="font-size: 15px">Name</label><br />
+                <input
+                  v-model="name"
+                  class="nameTB mt-2"
+                  type="text"
+                  name="user_name"
+                  placeholder="Enter Full Name"
+                />
+              </span>
             </div>
-        </section>
-        <section class="right-section">
-            <h3 class="contact-title">Contact Us</h3>
+            <div
+              class="emailSection"
+              style="padding-top: 10px; margin-left: 50px"
+            >
+              <span>
+                <label style="font-size: 15px">Email</label><br />
+                <input
+                  v-model="email"
+                  class="emailTB mt-2"
+                  type="email"
+                  name="user_email"
+                  placeholder="Enter Email"
+                />
+              </span>
+            </div>
+          </div>
+          <div class="messageSection" style="padding-top: 10px">
             <span>
-                <form @submit="sendEmail">
-                    <div class="container">
-                        <div class="nameSection">
-                            <span>
-                                <label style="font-size: 18px;">Name</label><br />
-                                <input v-model="name" class="nameTB" type="text" name="user_name"
-                                    placeholder="Enter Full Name">
-                            </span>
-                        </div>
-                        <div class="emailSection" style="padding-top: 10px; margin-left: 50px;">
-                            <span>
-                                <label style="font-size: 18px;">Email</label><br />
-                                <input v-model="email" class="emailTB" type="email" name="user_email"
-                                    placeholder="Enter Email">
-                            </span>
-                        </div>
-                    </div>
-                    <div class="messageSection" style="padding-top: 10px">
-                        <span>
-                            <label style="font-size: 18px">Message</label><br />
-                            <textarea v-model="message" class="messageTB" name="message"
-                                placeholder="Enter any of the following: &#10;&#10;- Feature Suggestions &#10;- Bug Reports &#10;- Compliments"></textarea>
-                        </span>
-                    </div>
-                    <button type="submit"
-                        class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs">
-                        Send Email
-                    </button>
-                </form>
+              <label style="font-size: 15px">Message</label><br />
+              <textarea
+                v-model="message"
+                class="messageTB pt-3 mt-2 leading-7"
+                name="message"
+                placeholder="Enter any of the following: &#10;- Feature Suggestions &#10;- Bug Reports &#10;- Compliments"
+              ></textarea>
             </span>
-        </section>
-        <!-- <section class="contact-form">
+          </div>
+          <span class="flex gap-4">
+            <button
+              type="button"
+              @click="$router.push('/dashboard')"
+              class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
+            >
+              Return to Home
+            </button>
+            <button
+              type="submit"
+              class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
+            >
+              Send Email
+            </button>
+          </span>
+        </form>
+      </span>
+    </section>
+    <!-- <section class="contact-form">
             <h3 style="font-size:45px; font-family:Monoton;">Contact Me</h3>
             <form ref="form" @submit.prevent="sendEmail">
                 <div class="nameEmail">
@@ -63,31 +95,28 @@
                 <input class="sendBT" type="submit" value="Send">
             </form>
         </section> -->
-    </section>
+  </section>
 </template>
 
-<script lang='ts' setup>
+<script lang="ts" setup>
 //import { transporter } from "../../../server/app.js";
 import axios from "axios";
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 
-const name = ref<string>('');
-const email = ref<string>('');
-const message = ref<string>('');
+const name = ref<string>("");
+const email = ref<string>("");
+const message = ref<string>("");
 
 async function sendEmail() {
-    //let ourEmail = '"UDM Reimbursement Support Team" <udm-reimbursement-team@em2297.araoladipo.dev>"';
+  //let ourEmail = '"UDM Reimbursement Support Team" <udm-reimbursement-team@em2297.araoladipo.dev>"';
 
-    console.log("HELLLLO");
-    await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/send-contact-email`,
-        {
-            message: message.value,
-            sender: email.value,
-            name: name.value,
-        }
-    );
+  console.log("HELLLLO");
+  await axios.post(`${import.meta.env.VITE_API_URL}/api/send-contact-email`, {
+    message: message.value,
+    sender: email.value,
+    name: name.value,
+  });
 }
 
 // export default {
@@ -113,7 +142,7 @@ async function sendEmail() {
 //             this.message = '';
 //         }
 //     }
-// } 
+// }
 </script>
 
 <style scoped>

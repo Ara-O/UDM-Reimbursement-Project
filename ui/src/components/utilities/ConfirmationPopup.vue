@@ -19,7 +19,9 @@
         <button
           @click="cancelFunction"
           class="bg-white border border-solid border-udmercy-red text-udmercy-red px-5 py-1.5 text-xs cursor-pointer hover:text-white hover:bg-udmercy-red transition-all rounded-full"
+          v-if="leftButtonText !== 'HIDE'"
         >
+          <!-- temporary v-if solution -->
           {{ leftButtonText || "Cancel" }}
         </button>
         <button

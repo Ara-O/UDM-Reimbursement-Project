@@ -349,7 +349,7 @@
       class="clashes_dialogue"
       :cancel-function="removeEditClashPopup"
       :continue-function="continueEditAfterClash"
-      left-button-text="Stop Editing"
+      left-button-text="Don't Edit"
       right-button-text="Continue"
       title="Warning"
     >
@@ -382,7 +382,7 @@
       v-if="show_delete_foapa_clash_dialogue"
       :cancel-function="removeDeletePopup"
       :continue-function="removeDeletePopup"
-      left-button-text="OK"
+      left-button-text="HIDE"
       right-button-text="OK"
       title="Error"
     >
@@ -513,7 +513,7 @@ let show_foapa_help_dialogue = ref<boolean>(false);
 let show_edit_clashes_dialogue = ref<boolean>(false);
 let show_delete_foapa_dialogue = ref<boolean>(false);
 let show_delete_foapa_clash_dialogue = ref<boolean>(false);
-let view = ref<"List" | "Grid">("List");
+let view = ref<"List" | "Grid">("Grid");
 let loaded = ref<boolean>(false);
 const edit_clashes = ref([]);
 const delete_clashes = ref([]);
@@ -860,7 +860,6 @@ onBeforeRouteLeave((to, from, next) => {
 });
 
 function returnToDashboard() {
-  return_to_dashboard.value = true;
   router.push("/dashboard");
 }
 

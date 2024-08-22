@@ -19,7 +19,9 @@
         : ${{ foapa_information.foapa_information.currentAmount }}
       </h3>
       <h3 class="font-normal mt-3 leading-7 text-[15px]">
-        Pending Amount: ${{ foapa_information.foapa_information.availableAmount }}
+        Pending Amount: ${{
+          foapa_information.foapa_information.availableAmount
+        }}
         - This is the amount of money waiting on reimbursements
       </h3>
 
@@ -27,6 +29,20 @@
       <p class="text-sm leading-7">
         Keep track of the reimbursement claims that you have used by this FOAPA
       </p>
+
+      <!-- Search field -->
+      <span class="flex items-center gap-3">
+        <input
+          type="text"
+          placeholder="Search by name"
+          class="border border-gray-200 px-4 border-solid w-72 h-8 rounded-md"
+        />
+        <img
+          :src="SearchIcon"
+          class="invert w-6 opacity-50 cursor-pointer"
+          alt="Search icon"
+        />
+      </span>
       <div
         v-if="Object.keys(foapa_information.claims_used).length !== 0"
         class="flex gap-4"
@@ -55,6 +71,7 @@
 </template>
 
 <script lang="ts" setup>
+import SearchIcon from "../assets/search-icon.png";
 import axios from "axios";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";

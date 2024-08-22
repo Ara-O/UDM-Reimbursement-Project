@@ -3,30 +3,54 @@
     <!-- Img is a way you can embed images to your site,
       the ../ before the folder means that we are traversing file systems -->
     <div class="udmercy-logo-wrapper">
-      <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo" />
+      <img
+        src="../assets/detroit-mercy-logo.png"
+        alt="Detroit mercy logo"
+        class="udmercy-logo"
+      />
     </div>
     <br />
     <h3 class="login-title">Detroit Mercy Reimbursement System</h3>
     <br />
     <Form @submit="resetPassword" class="login-form">
-      <div class="login-field">
+      <div class="login-field mt-4 items-center !justify-center gap-5">
         <label for="new-password">New Password: </label>
         <span style="width: auto">
-          <Field type="password" class="login-password-input" name="new-password" v-model="password" id="new-password"
-            :rules="isNotEmpty" style="width: auto; margin-left: 0px" />
+          <Field
+            type="password"
+            class="login-password-input text-center"
+            name="new-password"
+            v-model="password"
+            id="new-password"
+            :rules="isNotEmpty"
+            style="width: auto; margin-left: 0px"
+          />
           <ErrorMessage as="h3" name="new-password" class="error-field" />
         </span>
       </div>
-      <div class="login-field" style="margin-bottom: 20px">
-        <label for="confirm-password" style="max-width: 150px; width: auto">Confirm New Password:</label>
+      <div class="login-field mt-0 items-center !justify-center gap-5">
+        <label for="confirm-password" style="width: auto"
+          >Confirm New Password:</label
+        >
         <span style="width: auto">
-          <Field v-model="confirmPassword" type="password" class="login-password-input" name="confirm-password"
-            style="width: auto; margin-left: 0px" :rules="isNotEmpty" id="confirm-password " />
+          <Field
+            v-model="confirmPassword"
+            type="password"
+            class="login-password-input text-center"
+            name="confirm-password"
+            style="width: auto; margin-left: 0px"
+            :rules="isNotEmpty"
+            id="confirm-password "
+          />
           <ErrorMessage as="h3" name="confirm-password" class="error-field" />
-          </span>
+        </span>
       </div>
-      <span style="display: flex; align-items: center; margin-top: -20px; gap: 10px">
-        <router-link to="/signup" style="font-size: 14px">Create an Account</router-link>
+      <span
+        style="display: flex; align-items: center; margin-top: -20px; gap: 10px"
+      >
+        <router-link to="/signup" style="font-size: 14px"
+          >Create an Account</router-link
+        >
         <h3 style="font-weight: 300">|</h3>
         <router-link to="/" style="font-size: 14px">Log In</router-link>
       </span>
@@ -51,13 +75,10 @@ let userToken = ref<string>("");
 function resetPassword() {
   if (password.value === confirmPassword.value) {
     axios
-      .post(
-        `${import.meta.env.VITE_API_URL}/api/resetPassword`,
-        {
-          token: userToken.value,
-          newPassword: password.value,
-        }
-      )
+      .post(`${import.meta.env.VITE_API_URL}/api/resetPassword`, {
+        token: userToken.value,
+        newPassword: password.value,
+      })
       .then((res) => {
         // console.log(res);
         alert(res.data.message);
