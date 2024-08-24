@@ -19,7 +19,7 @@
         </h3>
         <h4 class="font-semibold text-lg mb-5">Add FOAPA Details</h4>
         <h4
-          class="font-normal cursor-pointer underline leading-7 text-sm mt-0 text-gray-700"
+          class="font-normal cursor-pointer inline underline leading-7 text-sm mt-0 text-gray-700"
           @click="showHelpScreen"
         >
           Need help? Click here to learn more about FOAPA and how to use them.
@@ -168,6 +168,10 @@
           >
             Discard Edits
           </button>
+          <h3 class="text-sm font-normal mt-6 leading-7">
+            Note: If you don't know your PROG or ACCT number, Enter XXXX as a
+            placeholder.
+          </h3>
         </Form>
       </section>
 
@@ -399,7 +403,7 @@
         class="absolute z-50 bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center"
       >
         <div
-          class="bg-white max-w-4xl shadow-md border border-solid border-gray-100 h-96 overflow-auto md:h-min px-6 py-9 rounded-md"
+          class="bg-white max-w-4xl max-h-[700px] shadow-md border border-solid border-gray-100 h-96 overflow-auto md:h-min px-6 py-9 rounded-md"
         >
           <div class="flex justify-between">
             <h3 class="text-md font-semibold mb-6 mt-0 underline">
@@ -412,7 +416,7 @@
               @click="removeFoapaHelp"
             />
           </div>
-          <div class="flex flex-wrap gap-y-16 gap-x-4">
+          <div class="flex flex-wrap gap-y-10 gap-x-4">
             <span class="flex flex-col gap-3 w-72 justify-between">
               <h4 class="font-medium text-md my-0">F: Fund</h4>
               <h4 class="text-sm font-normal my-0 leading-8">
@@ -456,6 +460,31 @@
               <h4 class="text-sm font-normal my-0 leading-8">User defined</h4>
               <h5 class="text-xs font-normal my-0 leading-8">Optional</h5>
             </span>
+          </div>
+          <div>
+            <h4 class="font-semibold underline">Default FOAPA Information</h4>
+            <h4 class="font-normal text-sm leading-7">
+              These FOAPAs are added during account creation. They are the most
+              commonly used FOAPAs and have been pre-filled based on your
+              department and existing standards. If they don't match with the
+              FOAPAs you have used in the past, or are familiar with, you are
+              free to edit or delete them.
+            </h4>
+            <h4 class="font-normal text-sm leading-7">
+              <span class="font-medium leading-7"
+                >General Department Spending</span
+              >
+              : Allocated for routine operational expenses within the
+              department, covering costs such as supplies, minor equipment, and
+              other essential activities that support departmental functions.
+            </h4>
+            <h4 class="font-normal text-sm leading-7">
+              <span class="font-medium leading-7">Faculty Development</span>
+              : Funds designated for enhancing faculty skills and professional
+              growth, including activities like conferences, workshops, training
+              programs, and other opportunities aimed at improving teaching,
+              research, and leadership capabilities.
+            </h4>
           </div>
           <div class="mt-10">
             <h4 class="font-semibold underline">Cost Information</h4>
@@ -685,6 +714,13 @@ async function editFoapaValues(foapaValues, resetForm) {
     foapaValues.currentAmount = foapaValues.initialAmount;
     foapaValues.availableAmount = foapaValues.initialAmount;
 
+    if (foapaValues.account === "XXXX") {
+      foapaValues.account = "";
+    }
+    if (foapaValues.program === "XXXX") {
+      foapaValues.program = "";
+    }
+
     await axios.post(`${import.meta.env.VITE_API_URL}/api/edit-foapa-detail`, {
       id: edited_foapas_id.value,
       foapaDetail: foapaValues,
@@ -729,6 +765,17 @@ async function addFoapa(values, { resetForm }) {
     values.currentAmount = values.initialAmount;
     values.availableAmount = values.initialAmount;
 
+    if (values.account === "XXXX") {
+      values.account = "";
+    }
+    if (values.program === "XXXX") {
+      values.program = "";
+    }
+
+    console.log(values);
+
+    // if(values.account === "XXXX")
+
     await axios.post(`${import.meta.env.VITE_API_URL}/api/add-foapa-details`, {
       foapaDetails: [values],
     });
@@ -747,9 +794,9 @@ async function addFoapa(values, { resetForm }) {
 }
 
 function formatUserFoapa(foapa: FoapaStuff) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
-    foapa.program || "XXXX"
-  }-${foapa.activity || "XXXX"}`;
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
+    foapa.account || "XXXX"
+  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 }
 
 async function showDeleteFoapaDialogue(foapa_id) {

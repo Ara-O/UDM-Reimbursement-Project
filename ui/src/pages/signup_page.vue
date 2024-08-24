@@ -105,8 +105,10 @@
             <span>
               <Field
                 name="department"
+                :title="userSignupData.department"
                 id="department"
                 as="select"
+                class="!pr-10 text-ellipsis"
                 v-model="userSignupData.department"
               >
                 <option :value="department" v-for="department in departments">
@@ -126,7 +128,9 @@
           class="already-have-account no-underline hover:underline text-black"
           >Already have an Account?</router-link
         >
-        <h5 class="required-field-note mb-0">
+        <h5
+          class="required-field-note text-center md:text-left px-18 md: px-0 leading-7 mb-0"
+        >
           Note: All required fields are marked with an asterisk and must be
           completed.
         </h5>
@@ -151,17 +155,17 @@ import {
 
 const departments = [
   "Dean's Office",
-  "Architectural & Environmental Engineering",
-  "Biochemistry",
-  "Chemistry",
-  "Civil",
-  "Computer Science",
-  "E&S Computing Services",
-  "Electrical & Computer Engineering",
-  "Mechanical Engineering",
-  "Mathematics",
+  "Biology",
+  "Math",
   "Physics",
+  "Chemistry and Biochemistry",
+  "Pre-Health",
+  "Civil Engineering",
+  "Electrical Engineering",
+  "Mechanical Engineering",
+  "Computing",
   "Professional Engineering",
+  "Computer Science",
 ];
 
 const emits = defineEmits(["continue"]);

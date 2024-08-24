@@ -357,4 +357,27 @@ router.post("/verify-code", async (req, res) => {
   }
 });
 
+router.get("/get-department-numbers", (req, res) => {
+  const departments = {
+    "Dean's Office": "0301",
+    Biology: "0302",
+    Math: "0303",
+    Physics: "0304",
+    "Chemistry and Biochemistry": "0305",
+    "Pre-Health": "0306",
+    "Civil Engineering": "0307",
+    "Electrical Engineering": "0308",
+    "Mechanical Engineering": "0309",
+    Computing: "0313",
+    "Professional Engineering": "0318",
+    "Computer Science": "0320",
+  };
+
+  if (!req.body.department) {
+    return res.status(200).send(departments);
+  }
+
+  return res.status(200).send(departments[req.body.department]);
+});
+
 export default router;

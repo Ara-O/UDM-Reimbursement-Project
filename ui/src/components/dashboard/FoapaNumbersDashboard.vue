@@ -82,9 +82,9 @@ const toast = useToast();
 
 function formatUserFoapa(foapa: FoapaStuff) {
   // console.log(foapa);
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
-    foapa.program || "XXXX"
-  }-${foapa.activity || "XXXX"}`;
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
+    foapa.account || "XXXX"
+  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 }
 
 function retrieveUserFoapaDetails() {

@@ -7,7 +7,8 @@ const authSchema = new Schema(
     authString: String,
     createdAt: {
       type: Date,
-      default: new Date(),
+      expires: 600,
+      default: Date.now,
     },
   },
   {
@@ -15,7 +16,7 @@ const authSchema = new Schema(
   }
 );
 
-authSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
+// authSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
 
 const Auth = mongoose.model("auth", authSchema, "auth");
 

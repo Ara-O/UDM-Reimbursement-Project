@@ -1,6 +1,7 @@
 import { Router } from "express";
 import logger from "../logger.js";
 import Faculty from "../models/faculty.js";
+import { getOrgNumber } from "../utils/getDepartmentORGNumber.js";
 import {
   encryptPassword,
   decryptPassword,
@@ -63,8 +64,34 @@ router.post("/register", async (req, res) => {
       return res.status(409).send({ message: "Error: User already exists" });
     }
 
+    // Automatically generate 2 user foapas
+    const generalFoapa = {
+      foapaName: "General Department Spending",
+      description:
+        "Default FOAPA: This FOAPA was added by default when your account was created.",
+      fund: "111000",
+      organization: getOrgNumber(userData.department),
+      account: "",
+      program: "",
+      activity: "",
+    };
+
+    const UDMPU = {
+      foapaName: "UDMPU 11.6 Faculty Development",
+      description:
+        "Default FOAPA: This FOAPA was added by default when your account was created.",
+      fund: "260036",
+      organization: getOrgNumber(userData.department),
+      account: "",
+      program: "",
+      activity: "",
+    };
+
+    userData.foapaDetails.push(generalFoapa, UDMPU);
+
     let faculty = new Faculty(userData);
     let savedFaculty = await faculty.save();
+
     //Creates a token thatll be used to authenticate the user for later api calls
     jwt.sign(
       { userId: savedFaculty._id },

@@ -132,7 +132,11 @@ export function isValidAccountNumber(value) {
     case value.trim() === "":
       return "Required";
     case !isValidNumber:
-      return "Numbers only";
+      if (value === "XXXX") {
+        return true;
+      } else {
+        return "Numbers only";
+      }
     case !hasValidLength:
       return "4-digits";
     default:
@@ -240,7 +244,8 @@ export function isValidProgramNumber(value) {
     case value.trim() === "":
       return "Required";
     case !isValidNumber:
-      return "Numbers only";
+      if (value === "XXXX") return true;
+      else return "Numbers only";
     case !hasValidLength:
       return "4-digits";
     default:
