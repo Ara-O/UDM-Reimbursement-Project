@@ -215,53 +215,55 @@
   <br />
   <section style="width: auto">
     <table class="foapa-table">
-      <tr style="text-align: left">
-        <th>Name</th>
-        <th>Amount</th>
-        <th>FUND</th>
-        <th>ORG</th>
-        <th>ACCT</th>
-        <th>PROG</th>
-        <th>ACTV</th>
-        <th></th>
-        <th></th>
-      </tr>
-      <tr v-for="foapa in props.foapaDetails">
-        <td class="flex items-center gap-3">
-          {{ foapa.foapaName }}
-          <img
-            id="help"
-            src="../../assets/user-help-icon.png"
-            alt="Help"
-            class="foapa-help-icon"
-            :title="foapa.description"
-          />
-        </td>
-        <td>
-          {{ foapa.initialAmount ? `$${foapa.initialAmount}` : "N/A" }}
-        </td>
-        <td>{{ foapa.fund }}</td>
-        <td>{{ foapa.organization || "N/A" }}</td>
-        <td>{{ foapa.account }}</td>
-        <td>{{ foapa.program }}</td>
-        <td>{{ foapa.activity || "N/A" }}</td>
-        <td>
-          <img
-            src="../../assets/trash-icon.png"
-            alt="Trash"
-            class="delete-icon"
-            @click="deleteFoapa(foapa.foapaName, foapa.fund)"
-          />
-        </td>
-        <td>
-          <img
-            src="../../assets/edit-icon-red.png"
-            alt="Edit"
-            class="delete-icon"
-            @click="editFoapa(foapa)"
-          />
-        </td>
-      </tr>
+      <tbody>
+        <tr style="text-align: left">
+          <th>Name</th>
+          <th>Amount</th>
+          <th>FUND</th>
+          <th>ORG</th>
+          <th>ACCT</th>
+          <th>PROG</th>
+          <th>ACTV</th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr v-for="foapa in props.foapaDetails">
+          <td class="flex items-center gap-3">
+            {{ foapa.foapaName }}
+            <img
+              id="help"
+              src="../../assets/user-help-icon.png"
+              alt="Help"
+              class="foapa-help-icon"
+              :title="foapa.description"
+            />
+          </td>
+          <td>
+            {{ foapa.initialAmount ? `$${foapa.initialAmount}` : "N/A" }}
+          </td>
+          <td>{{ foapa.fund }}</td>
+          <td>{{ foapa.organization || "N/A" }}</td>
+          <td>{{ foapa.account }}</td>
+          <td>{{ foapa.program }}</td>
+          <td>{{ foapa.activity || "N/A" }}</td>
+          <td>
+            <img
+              src="../../assets/trash-icon.png"
+              alt="Trash"
+              class="delete-icon"
+              @click="deleteFoapa(foapa.foapaName, foapa.fund)"
+            />
+          </td>
+          <td>
+            <img
+              src="../../assets/edit-icon-red.png"
+              alt="Edit"
+              class="delete-icon"
+              @click="editFoapa(foapa)"
+            />
+          </td>
+        </tr>
+      </tbody>
     </table>
   </section>
 </template>

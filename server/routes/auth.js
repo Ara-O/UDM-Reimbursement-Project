@@ -218,6 +218,14 @@ router.post("/login", async (req, res) => {
     }).select("workEmail password employmentNumber");
 
     if (facultyInfo === null) {
+      logger.log(
+        "info",
+        `${data.userInfo.workEmail} tried accessing their account with invalid credentials `,
+        {
+          api: "/api/login",
+        }
+      );
+
       return res.status(404).send({
         message:
           "Incorrect credentials. Please check that your email and password are correct.",

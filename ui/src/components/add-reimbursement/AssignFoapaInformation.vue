@@ -327,7 +327,25 @@ function retrieveFoapaDetails() {
     });
 }
 
+const calculateTotalExpenseCost = computed(() => {
+  return props.claim.activities.reduce((prev, curr) => {
+    return prev + Number(curr.cost);
+  }, 0);
+});
+
+const calculateTotalFoapaCost = computed(() => {
+  return props.claim.foapaDetails.reduce((prev, curr) => {
+    return prev + Number(curr.cost);
+  }, 0);
+});
+
+const calculateBalance = computed(
+  () => calculateTotalExpenseCost.value - calculateTotalFoapaCost.value
+);
+
 onMounted(() => {
+  assignedFoapa.value.cost =
+    calculateBalance.value > 0 ? "" + calculateBalance.value : "0";
   retrieveFoapaDetails();
 });
 

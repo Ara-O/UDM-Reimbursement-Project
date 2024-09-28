@@ -42,6 +42,7 @@ export type FoapaStuff = {
   account: string;
   program: string;
   activity: string;
+  isUDMPU?: boolean;
   foapaName: string;
   initialAmount: string;
   createdAt?: Date;

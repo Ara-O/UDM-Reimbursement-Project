@@ -384,9 +384,59 @@ async function saveAsTemplate() {
   }
 }
 
+async function checkForUDMPU(): Promise<boolean> {
+  let users_foapa_details = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
+  );
+
+  let user_has_added_UDMPU = false;
+  // Loop through the users foapa details
+  for (let i = 0; i < props.claim.foapaDetails.length; i++) {
+    // For each foapa, get its ID
+    let id = props.claim.foapaDetails[i].foapa_id;
+
+    // Finds its corresponding doapa detail
+    let foapaDetail = users_foapa_details.data.find(
+      (foapa) => id === foapa._id
+    );
+
+    if (foapaDetail.isUDMPU) {
+      user_has_added_UDMPU = true;
+      break;
+    }
+  }
+
+  if (props.claim.UDMPUVoucher === true && user_has_added_UDMPU === false) {
+    toast(
+      "Error: You have selected that you will be using a UDMPU Voucher but you have not used your UDMPU FOAPA. Please, either unselect this option, or add a UDMPU FOAPA",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+
+    return false;
+  }
+
+  if (props.claim.UDMPUVoucher === false && user_has_added_UDMPU === true) {
+    toast(
+      "INFO: You have used your UDMPU FOAPA, but did not specify that you will be using it in the Claim Information section. This option has been automatically selected for you",
+      {
+        type: TYPE.INFO,
+      }
+    );
+
+    props.claim.UDMPUVoucher = true;
+  }
+
+  return true;
+}
+
 async function submitTicket() {
   console.log("TICKET IS BEING SUBMITTED");
   try {
+    await checkForUDMPU();
+    //CHeck for UDMPU
+
     if (props.claim.foapaDetails.length === 0) {
       toast(
         "Warning: You are submitting this claim without adding any FOAPA numbers to cover the cost",

@@ -124,32 +124,34 @@
       <!-- TABLE -->
       <div v-if="currentView === 'table'">
         <table class="border table border-collapse border-solid border-black">
-          <tr class="tr">
-            <td class="font-medium td">Reimbursment Identifier</td>
-            <td class="font-medium td">Status</td>
-            <td class="font-medium td">Date</td>
-            <td class="font-medium td">Cost</td>
-            <td class="font-medium td">Actions</td>
-          </tr>
-          <tr v-for="ticket in filterReimbursements" class="tr">
-            <td class="td">{{ ticket.reimbursementName }}</td>
-            <td class="td">{{ ticket.reimbursementStatus }}</td>
-            <td class="td">{{ parseDate(ticket.reimbursementDate) }}</td>
-            <td class="td">${{ ticket.totalCost.toFixed(2) }}</td>
-            <td class="flex td gap-4 border-none">
-              <span
-                class="underline cursor-pointer"
-                @click="viewTicket(ticket._id)"
-                v-if="ticket.reimbursementStatus !== 'Submitted'"
-                >Modify</span
-              >
-              <span
-                class="underline cursor-pointer"
-                @click="deleteReimbursement(ticket._id)"
-                >Delete</span
-              >
-            </td>
-          </tr>
+          <tbody>
+            <tr class="tr">
+              <td class="font-medium td">Reimbursment Identifier</td>
+              <td class="font-medium td">Status</td>
+              <td class="font-medium td">Date</td>
+              <td class="font-medium td">Cost</td>
+              <td class="font-medium td">Actions</td>
+            </tr>
+            <tr v-for="ticket in filterReimbursements" class="tr">
+              <td class="td">{{ ticket.reimbursementName }}</td>
+              <td class="td">{{ ticket.reimbursementStatus }}</td>
+              <td class="td">{{ parseDate(ticket.reimbursementDate) }}</td>
+              <td class="td">${{ ticket.totalCost.toFixed(2) }}</td>
+              <td class="flex td gap-4 border-none">
+                <span
+                  class="underline cursor-pointer"
+                  @click="viewTicket(ticket._id)"
+                  v-if="ticket.reimbursementStatus !== 'Submitted'"
+                  >Modify</span
+                >
+                <span
+                  class="underline cursor-pointer"
+                  @click="deleteReimbursement(ticket._id)"
+                  >Delete</span
+                >
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <!-- LIST/GRID -->

@@ -25,6 +25,10 @@ const facultySchema = new Schema({
       initialAmount: Number,
       availableAmount: Number,
       currentAmount: Number,
+      isUDMPU: {
+        type: Boolean,
+        default: false,
+      },
       description: String,
       createdAt: {
         type: Date,

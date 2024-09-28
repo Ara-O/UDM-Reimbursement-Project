@@ -97,30 +97,32 @@
     </form>
 
     <table class="border border-solid border-collapse mt-10">
-      <tr>
-        <th>Employee Name</th>
-        <th>Guest Name</th>
-        <th>Association</th>
-        <th></th>
-      </tr>
-      <tr v-for="guest in props.claim.guestInformation">
-        <td>{{ guest.employeeFirstName + " " + guest.employeeLastName }}</td>
-        <td>{{ guest.guestFirstName + " " + guest.guestLastName }}</td>
-        <td>{{ guest.guestAssociation }}</td>
-        <td>
-          <!-- <img
+      <tbody>
+        <tr>
+          <th>Employee Name</th>
+          <th>Guest Name</th>
+          <th>Association</th>
+          <th></th>
+        </tr>
+        <tr v-for="guest in props.claim.guestInformation">
+          <td>{{ guest.employeeFirstName + " " + guest.employeeLastName }}</td>
+          <td>{{ guest.guestFirstName + " " + guest.guestLastName }}</td>
+          <td>{{ guest.guestAssociation }}</td>
+          <td>
+            <!-- <img
             src="../../assets/edit-icon-red.png"
             alt="Edit icon"
             class="w-3 cursor-pointer"
           /> -->
-          <img
-            src="../../assets/trash-icon.png"
-            alt="Delete icon"
-            @click="deleteGuest(guest)"
-            class="w-3 cursor-pointer"
-          />
-        </td>
-      </tr>
+            <img
+              src="../../assets/trash-icon.png"
+              alt="Delete icon"
+              @click="deleteGuest(guest)"
+              class="w-3 cursor-pointer"
+            />
+          </td>
+        </tr>
+      </tbody>
     </table>
   </section>
 </template>
