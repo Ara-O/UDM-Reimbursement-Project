@@ -1,6 +1,10 @@
 function parseDate(dateString) {
   if (!dateString) return;
-  const formattedDate = dateString.slice(0, 10);
+  const year = dateString.getFullYear();
+  const month = (dateString.getMonth() + 1).toString().padStart(2, '0'); // months are 0-indexed
+  const day = dateString.getDate().toString().padStart(2, '0');
+
+  const formattedDate = `${month}/${day}/${year}`;
   return formattedDate;
 }
 
