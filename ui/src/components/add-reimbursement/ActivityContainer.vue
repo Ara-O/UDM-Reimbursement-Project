@@ -31,7 +31,11 @@ const props = defineProps<{
 
 function parseDate(dateString: string) {
   const dateParsed = new Date(dateString);
-  const formattedDate = dateParsed.toISOString().slice(0, 10);
+  const year = dateParsed.getFullYear();
+  const month = (dateParsed.getMonth() + 1).toString().padStart(2, '0'); // months are 0-indexed
+  const day = dateParsed.getDate().toString().padStart(2, '0');
+
+  const formattedDate = `${month}/${day}/${year}`;
   return formattedDate;
 }
 

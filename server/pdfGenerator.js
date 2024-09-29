@@ -54,7 +54,7 @@ export default function createPdfDefinition(
   if (dd < 10) dd = "0" + dd;
   if (mm < 10) mm = "0" + mm;
 
-  const formattedToday = dd + "/" + mm + "/" + yyyy;
+  const formattedToday = mm + "/" + dd + "/" + yyyy;
   // console.log("generate pdf", userInfo);
   // console.log(reimbursementData, userInfo);
 
@@ -283,6 +283,7 @@ export default function createPdfDefinition(
         mileageExplanation.push(activity?.additionalInformation || "");
       }
       let activityDate = parseDate(activity.date);
+      console.log(activityDate, "THIS IS ACTIVITY DATE")
       if (!parsedActivity[activityDate]) {
         parsedActivity[activityDate] = {};
       }

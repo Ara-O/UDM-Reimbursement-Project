@@ -309,7 +309,7 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based
       const day = String(currentDate.getDate()).padStart(2, "0");
 
-      const formattedDate = `${year}-${month}-${day}`;
+      const formattedDate = `${month}-${day}-${year}`;
 
       generatePdf(
         docDefinition,
