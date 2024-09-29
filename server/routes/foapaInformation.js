@@ -304,12 +304,12 @@ router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
     let reimbursementFoapa = req.body.reimbursementData.foapaDetails;
     let facultyFoapa = faculty.foapaDetails;
 
-    reimbursementFoapa.forEach((rfoapa) => {
-      facultyFoapa.forEach((ffoapa) => {
-        if (rfoapa.foapa_id == ffoapa._id.toHexString())
-          ffoapa.availableAmount -= rfoapa.cost;
-      });
-    });
+    // reimbursementFoapa.forEach((rfoapa) => {
+    //   facultyFoapa.forEach((ffoapa) => {
+    //     if (rfoapa.foapa_id == ffoapa._id.toHexString())
+    //       ffoapa.availableAmount -= rfoapa.cost;
+    //   });
+    // });
 
     faculty.save();
   } catch (err) {

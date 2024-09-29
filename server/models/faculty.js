@@ -22,9 +22,9 @@ const facultySchema = new Schema({
       program: String,
       activity: String,
       foapaName: String,
-      initialAmount: Number,
-      availableAmount: Number,
-      currentAmount: Number,
+      // initialAmount: Number,
+      // availableAmount: Number,
+      // currentAmount: Number,
       isUDMPU: {
         type: Boolean,
         default: false,

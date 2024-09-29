@@ -109,17 +109,17 @@ export function isValidFloat(value) {
   }
   return true;
 }
-export function isValidFoapaAmount(value) {
-  if (value === undefined || value === null) value = "";
-  value = String(value);
+// export function isValidFoapaAmount(value) {
+//   if (value === undefined || value === null) value = "";
+//   value = String(value);
 
-  let isValidNumber = /^\d+(\.\d{1,2})?$/.test(value);
+//   let isValidNumber = /^\d+(\.\d{1,2})?$/.test(value);
 
-  if (!isValidNumber && value.trim() !== "") {
-    return "Invalid currency format";
-  }
-  return true;
-}
+//   if (!isValidNumber && value.trim() !== "") {
+//     return "Invalid currency format";
+//   }
+//   return true;
+// }
 
 export function isValidAccountNumber(value) {
   if (value === undefined || value === null) value = "";
