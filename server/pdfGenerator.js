@@ -1,10 +1,9 @@
 function parseDate(dateString) {
   if (!dateString) return;
-  const year = dateString.getFullYear();
-  const month = (dateString.getMonth() + 1).toString().padStart(2, '0'); // months are 0-indexed
-  const day = dateString.getDate().toString().padStart(2, '0');
-
-  const formattedDate = `${month}/${day}/${year}`;
+  const year = dateString.split("-")[0]
+  const month = dateString.split("-")[1]
+  const day = dateString.split("-")[2]
+  const formattedDate = month + "/" + day + "/" + year
   return formattedDate;
 }
 
@@ -287,7 +286,6 @@ export default function createPdfDefinition(
         mileageExplanation.push(activity?.additionalInformation || "");
       }
       let activityDate = parseDate(activity.date);
-      console.log(activityDate, "THIS IS ACTIVITY DATE")
       if (!parsedActivity[activityDate]) {
         parsedActivity[activityDate] = {};
       }
