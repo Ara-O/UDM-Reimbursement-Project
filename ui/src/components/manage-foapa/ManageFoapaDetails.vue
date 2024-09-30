@@ -57,7 +57,7 @@
           <ErrorMessage name="foapa-description" class="error-field" />
         </span>
       </div>
-      <div class="input-FOAPA-field">
+      <!-- <div class="input-FOAPA-field">
         <span class="foapa-title-span">
           <label for="foapa-name">Amount</label>
           <img
@@ -66,8 +66,8 @@
             class="foapa-help-icon"
             title="Optional: Current balance of FOAPA number. Can be used to keep track of FOAPA spendings"
           />
-        </span>
-        <span class="input-FOAPA-field-span">
+        </span> -->
+        <!-- <span class="input-FOAPA-field-span">
           <Field
             type="text"
             style="width: 95px"
@@ -78,8 +78,8 @@
             v-model="currentlyInputtedFOAPA.initialAmount"
           />
           <ErrorMessage name="foapa-amount" class="error-field" />
-        </span>
-      </div>
+        </span> 
+      </div> -->
       <h5>:</h5>
 
       <div class="input-FOAPA-field">
@@ -218,7 +218,7 @@
       <tbody>
         <tr style="text-align: left">
           <th>Name</th>
-          <th>Amount</th>
+          <!-- <th>Amount</th> -->
           <th>FUND</th>
           <th>ORG</th>
           <th>ACCT</th>
@@ -238,9 +238,9 @@
               :title="foapa.description"
             />
           </td>
-          <td>
+          <!-- <td>
             {{ foapa.initialAmount ? `$${foapa.initialAmount}` : "N/A" }}
-          </td>
+          </td> -->
           <td>{{ foapa.fund }}</td>
           <td>{{ foapa.organization || "N/A" }}</td>
           <td>{{ foapa.account }}</td>
@@ -278,7 +278,7 @@ import {
   isValidFundNumber,
   isValidAccountNumber,
   isValidFoapaNumber,
-  isValidFoapaAmount,
+  // isValidFoapaAmount,
   isValidFoapaName,
   isValidActvNumber,
   isValidFoapaDescription,
@@ -297,9 +297,9 @@ let currentlyInputtedFOAPA = reactive<FoapaStuff>({
   program: "",
   activity: "",
   foapaName: "",
-  initialAmount: "",
-  currentAmount: "",
-  availableAmount: "",
+  // initialAmount: "",
+  // currentAmount: "",
+  // availableAmount: "",
   description: "",
 });
 
@@ -324,8 +324,8 @@ function retrieveAccountNumbers() {
 
 function addFoapa(values, { resetForm }) {
   resetForm();
-  currentlyInputtedFOAPA.currentAmount = currentlyInputtedFOAPA.initialAmount;
-  currentlyInputtedFOAPA.availableAmount = currentlyInputtedFOAPA.initialAmount;
+  // currentlyInputtedFOAPA.currentAmount = currentlyInputtedFOAPA.initialAmount;
+  // currentlyInputtedFOAPA.availableAmount = currentlyInputtedFOAPA.initialAmount;
   let addedFoapa = Object.assign({}, currentlyInputtedFOAPA);
   props.foapaDetails.push(addedFoapa);
   emits("changes-were-made");
@@ -365,7 +365,7 @@ function editFoapa(foapa) {
   currentlyInputtedFOAPA.program = foapa.program;
   currentlyInputtedFOAPA.activity = foapa.activity;
   currentlyInputtedFOAPA.foapaName = foapa.foapaName;
-  currentlyInputtedFOAPA.initialAmount = foapa.currentAmount;
+  // currentlyInputtedFOAPA.initialAmount = foapa.currentAmount;
   currentlyInputtedFOAPA.description = foapa.description;
   deleteFoapa(foapa.foapaName, foapa.fund, false);
 }

@@ -56,7 +56,7 @@
                 class="text-red-400 bottom-[-24px] absolute text-xs"
               ></ErrorMessage>
             </div>
-            <div class="flex flex-col gap-y-3 relative">
+            <!-- <div class="flex flex-col gap-y-3 relative">
               <label for="initialAmount" class="text-sm"
                 >Initial/Current Amount</label
               >
@@ -72,7 +72,7 @@
                 name="initialAmount"
                 class="text-red-400 bottom-[-24px] absolute text-xs"
               ></ErrorMessage>
-            </div>
+            </div> -->
 
             <!-- SECOND ROW -->
 
@@ -285,11 +285,11 @@
                 "You have not added a description for this FOAPA"
               }}
             </h4>
-            <h4 class="text-[13px] font-normal mt-3" v-if="foapa.initialAmount">
+            <!-- <h4 class="text-[13px] font-normal mt-3" v-if="foapa.initialAmount">
               Current amount: ${{ foapa.currentAmount }} | Available amount: ${{
                 foapa.availableAmount
               }}
-            </h4>
+            </h4> -->
             <div class="flex gap-5 items-center mt-4">
               <img
                 :src="EditIcon"
@@ -486,7 +486,7 @@
               research, and leadership capabilities.
             </h4>
           </div>
-          <div class="mt-10">
+          <!-- <div class="mt-10">
             <h4 class="font-semibold underline">Cost Information</h4>
             <h4 class="font-normal text-sm leading-7">
               <span class="font-medium leading-7">Initial amount</span> : This
@@ -504,7 +504,7 @@
               amount available in the FOAPA after the cost of submitted and
               accepted reimbursement claim expenses have been subtracted.
             </h4>
-          </div>
+          </div> -->
         </div>
       </div>
     </section>
@@ -526,7 +526,7 @@ import { TYPE, useToast } from "vue-toastification";
 import {
   isValidAccountNumber,
   isValidActvNumber,
-  isValidFoapaAmount,
+  // isValidFoapaAmount,
   isValidFoapaName,
   isValidFoapaNumber,
   isValidFundNumber,
@@ -614,9 +614,9 @@ let added_foapa = ref({
   program: "",
   activity: "",
   foapaName: "",
-  initialAmount: "",
-  availableAmount: "",
-  currentAmount: "",
+  // initialAmount: "",
+  // availableAmount: "",
+  // currentAmount: "",
   description: "",
 });
 
@@ -711,8 +711,8 @@ async function editFoapaValues(foapaValues, resetForm) {
     //   type: TYPE.INFO,
     // });
 
-    foapaValues.currentAmount = foapaValues.initialAmount;
-    foapaValues.availableAmount = foapaValues.initialAmount;
+    // foapaValues.currentAmount = foapaValues.initialAmount;
+    // foapaValues.availableAmount = foapaValues.initialAmount;
 
     if (foapaValues.account === "XXXX") {
       foapaValues.account = "";
@@ -762,8 +762,8 @@ async function addFoapa(values, { resetForm }) {
     // });
 
     // changes_were_made.value = true
-    values.currentAmount = values.initialAmount;
-    values.availableAmount = values.initialAmount;
+    // values.currentAmount = values.initialAmount;
+    // values.availableAmount = values.initialAmount;
 
     if (values.account === "XXXX") {
       values.account = "";

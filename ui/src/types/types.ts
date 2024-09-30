@@ -44,11 +44,11 @@ export type FoapaStuff = {
   activity: string;
   isUDMPU?: boolean;
   foapaName: string;
-  initialAmount: string;
   createdAt?: Date;
   updatedAt?: Date;
-  availableAmount: string;
-  currentAmount: string;
+  // initialAmount: string;
+  // availableAmount: string;
+  // currentAmount: string;
   description: string;
 };
 
@@ -79,8 +79,8 @@ export type FoapaNumbers = {
   employmentNumber: number;
   foapaNumber: string;
   foapaName: string;
-  currentAmount: number | "N/A";
-  initialAmount: number | "N/A";
+  // currentAmount: number | "N/A";
+  // initialAmount: number | "N/A";
 };
 
 export type FoapaInput = {

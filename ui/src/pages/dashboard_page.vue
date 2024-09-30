@@ -492,7 +492,8 @@ function retrieveUserInformationSummary() {
 function parseDate(dateString: string) {
   // console.log(dateString);
   const dateParsed = new Date(dateString);
-  const formattedDate = dateParsed.toISOString().slice(0, 10);
+  const date = dateParsed.toISOString().slice(0, 10);
+  const formattedDate = date.split("-")[1] + "/" + date.split("-")[2] + "/" + date.split("-")[0]
   return formattedDate;
 }
 

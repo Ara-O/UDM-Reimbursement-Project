@@ -16,7 +16,7 @@
       >
         <div v-for="section in sections">
           <div
-            class="h-20 w-100 flex justify-between items-center box-border px-10"
+            class="h-20 w-100 flex justify-between items-center box-border px-10 hover:bg-[#002d72EE] hover:text-gray-100 cursor-pointer"
             @click="changeSection(section.section)"
           >
             <h4 class="font-normal text-sm">{{ section.title }}</h4>

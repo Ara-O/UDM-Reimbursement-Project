@@ -437,12 +437,12 @@ input#direct-deposit {
   line-height: 26px;
 }
 
-.selected-foapa-amount {
+/* .selected-foapa-amount {
   margin-bottom: 0px;
   font-weight: 500;
   font-size: 13px;
   margin-top: 15px;
-}
+} */
 
 .activity-field span {
   display: flex;

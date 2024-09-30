@@ -18,8 +18,8 @@ export default function formatFoapaDetails(foapas) {
     foapaDetails.push({
       foapaName: userFoapa.foapaName,
       foapaNumber: concatFoapa,
-      initialAmount: userFoapa.initialAmount,
-      currentAmount: userFoapa.initialAmount,
+      // initialAmount: userFoapa.initialAmount,
+      // currentAmount: userFoapa.initialAmount,
       description: userFoapa.description,
     });
   });

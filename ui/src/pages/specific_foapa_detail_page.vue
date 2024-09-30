@@ -12,18 +12,18 @@
       <h3 class="font-semibold text-md mt-6">
         {{ foapa_information.foapa_information.description }}
       </h3>
-      <h3 class="font-normal text-[15px] leading-7">
+      <!-- <h3 class="font-normal text-[15px] leading-7">
         <p class="inline font-medium">Initial Amount:</p>
         ${{ foapa_information.foapa_information.initialAmount }} |
         <p class="inline font-medium">Current Amount:</p>
         : ${{ foapa_information.foapa_information.currentAmount }}
-      </h3>
-      <h3 class="font-normal mt-3 leading-7 text-[15px]">
+      </h3> -->
+      <!-- <h3 class="font-normal mt-3 leading-7 text-[15px]">
         Pending Amount: ${{
           foapa_information.foapa_information.availableAmount
         }}
         - This is the amount of money waiting on reimbursements
-      </h3>
+      </h3> -->
 
       <h2 class="text-xl font-semibold mt-20 underline">History</h2>
       <p class="text-sm leading-7">
