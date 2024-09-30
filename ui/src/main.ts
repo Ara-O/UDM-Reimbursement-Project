@@ -41,6 +41,6 @@ createApp(App)
   .use(pinia)
   .use(Toast, toastOptions)
   .use(PrimeVue, {
-    unstyled: true,
+    unstyled: false,
   })
   .mount("#app");

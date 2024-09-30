@@ -122,8 +122,32 @@
         Viewing as {{ currentView }}
       </button> -->
       <!-- TABLE -->
-      <div v-if="currentView === 'table'">
-        <table class="border table border-collapse border-solid border-black">
+      <div v-if="currentView === 'table'" class="p-datatable-wrapper">
+        <DataTable :value="filterReimbursements" tableStyle="min-width: 10rem" showGridlines class="border border-collapse border-solid border-black">
+          <Column field="reimbursementName" header="Name" sortable style="width: 25%"></Column>
+          <Column field="reimbursementStatus" header="Status" sortable style="width: 25%"></Column>
+          <Column field="reimbursementDate" header="Date" sortable style="width: 25%">
+            <template #body="slotProps">{{ parseDate(slotProps.data.reimbursementDate) }}</template>
+          </Column>
+          <Column field="cost" header="Cost" sortable style="width: 25%">
+            <template #body="slotProps">${{ slotProps.data.totalCost.toFixed(2) }}</template>
+          </Column>
+          <Column field="actions" header="Actions" style="width: 25%">
+            <template #body="slotProps">
+              <span
+                class="underline cursor-pointer"
+                @click="viewTicket(slotProps.data._id)"
+                v-if="slotProps.data.reimbursementStatus !== 'Submitted'"
+                >Modify</span>
+              <span
+                class="underline cursor-pointer"
+                @click="deleteReimbursement(slotProps.data._id)"
+                >Delete</span>
+            </template>
+          </Column>
+        </DataTable>
+        
+        <!-- <table class="border table border-collapse border-solid border-black">
           <tbody>
             <tr class="tr">
               <td class="font-medium td">Reimbursment Identifier</td>
@@ -152,7 +176,7 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
       </div>
       <!-- LIST/GRID -->
       <div v-else>
@@ -285,6 +309,9 @@ import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+
 
 const router = useRouter();
 const searchValue = ref<string>("");
@@ -552,6 +579,10 @@ onMounted(() => {
 }
 .table {
   width: 100%;
+}
+.p-datatable .p-datatable-thead > tr > th{
+  background-color: #002d72;
+  color:white;
 }
 .table,
 .td,
