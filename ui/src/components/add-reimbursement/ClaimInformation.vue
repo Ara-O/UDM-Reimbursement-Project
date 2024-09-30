@@ -93,5 +93,7 @@ import { ReimbursementTicket } from "../../types/types";
 const emits = defineEmits(["move-to-next-section"]);
 const props = defineProps<{ claim: ReimbursementTicket }>();
 
-function moveToNextSection() {}
+function moveToNextSection() {
+  emits("move-to-next-section");
+}
 </script>

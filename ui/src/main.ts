@@ -4,6 +4,7 @@ import Toast, { POSITION, PluginOptions } from "vue-toastification";
 import { createApp } from "vue";
 import { configure } from "vee-validate";
 import { createPinia } from "pinia";
+import PrimeVue from "primevue/config";
 import "vue-toastification/dist/index.css";
 import "./style.css";
 
@@ -35,4 +36,11 @@ Router.beforeEach((to, from, next) => {
 
 const pinia = createPinia();
 
-createApp(App).use(Router).use(pinia).use(Toast, toastOptions).mount("#app");
+createApp(App)
+  .use(Router)
+  .use(pinia)
+  .use(Toast, toastOptions)
+  .use(PrimeVue, {
+    unstyled: true,
+  })
+  .mount("#app");

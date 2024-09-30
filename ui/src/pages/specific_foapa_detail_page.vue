@@ -7,7 +7,7 @@
 
     <section class="mt-20" v-if="foapa_information.foapa_information">
       <h2 class="text-2xl font-semibold">
-        UDMP: {{ formatUserFoapa(foapa_information.foapa_information) }}
+        {{ formatUserFoapa(foapa_information.foapa_information) }}
       </h2>
       <h3 class="font-semibold text-md mt-6">
         {{ foapa_information.foapa_information.description }}
@@ -34,8 +34,9 @@
       <span class="flex items-center gap-3">
         <input
           type="text"
+          v-model="search_item"
           placeholder="Search by name"
-          class="border border-gray-200 px-4 border-solid w-72 h-8 rounded-md"
+          class="border border-gray-200 px-4 border-solid w-full max-w-96 h-8 rounded-md"
         />
         <img
           :src="SearchIcon"
@@ -43,12 +44,45 @@
           alt="Search icon"
         />
       </span>
+      <div class="flex mt-3 gap-4">
+        <!-- <p
+          class="text-sm hover:underline cursor-pointer"
+          @click="filterParam = 'NONE'"
+        >
+          Remove Filters
+        </p> -->
+        <p
+          class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          @click="sortParam = 'COST ASC'"
+        >
+          Sort by cost (ASC)
+        </p>
+        <p
+          class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          @click="sortParam = 'COST DESC'"
+        >
+          Sort by cost (DESC)
+        </p>
+
+        <p
+          class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          @click="sortParam = 'NAME ASC'"
+        >
+          Sort by name (ASC)
+        </p>
+        <p
+          class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          @click="sortParam = 'NAME DESC'"
+        >
+          Sort by name (DESC)
+        </p>
+      </div>
       <div
         v-if="Object.keys(foapa_information.claims_used).length !== 0"
         class="flex gap-4"
       >
         <div
-          v-for="claim in foapa_information.claims_used"
+          v-for="claim in foapaHistoryFiltered"
           class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-6"
         >
           <h3 class="text-[15px] mt-2 font-semibold text-gray-900">
@@ -73,13 +107,47 @@
 <script lang="ts" setup>
 import SearchIcon from "../assets/search-icon.png";
 import axios from "axios";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
 
 let foapa_information = ref<any>({});
+// let foapaHistoryFiltered = ref<any>({})
+let search_item = ref<string>("");
+
+let sortParam = ref<
+  "COST ASC" | "COST DESC" | "NAME ASC" | "NAME DESC" | "NONE"
+>("NONE");
+
+const foapaHistoryFiltered = computed(() => {
+  let foapas = foapa_information.value.claims_used.filter((info) => {
+    return info.reimbursementName
+      .toLowerCase()
+      .includes(search_item.value.toLowerCase());
+  });
+
+  if (sortParam.value === "COST ASC") {
+    return foapas.sort((a, b) => parseAmount(a) - parseAmount(b));
+  }
+
+  if (sortParam.value === "COST DESC") {
+    return foapas.sort((a, b) => parseAmount(b) - parseAmount(a));
+  }
+
+  if (sortParam.value === "NAME DESC") {
+    return foapas.sort((a, b) => a.reimbursementName > b.reimbursementName);
+  }
+
+  if (sortParam.value === "NAME ASC") {
+    return foapas.sort((a, b) => a.reimbursementName < b.reimbursementName);
+  }
+
+  if (sortParam.value === "NONE") {
+    return foapas;
+  }
+});
 
 function formatUserFoapa(foapa) {
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${

@@ -29,6 +29,7 @@
     "pdfmake": "^0.2.7",
     "pdfmake-unicode": "^0.0.1",
     "pinia": "^2.1.7",
+    "primevue": "^4.0.7",
     "vee-validate": "^4.13.2",
     "vue": "^3.2.47",
     "vue-cookies": "^1.8.3",

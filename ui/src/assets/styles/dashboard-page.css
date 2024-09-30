@@ -44,6 +44,7 @@
 .foapa-number-title {
   display: flex;
   align-items: center;
+  width: inherit;
   gap: 10px;
 }
 
