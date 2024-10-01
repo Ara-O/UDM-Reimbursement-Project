@@ -114,69 +114,56 @@
         </span>
       </div>
       <br />
-      <!-- <button
-        v-if="filterReimbursements.length > 0"
-        @click="changeView"
-        class=""
-      >
-        Viewing as {{ currentView }}
-      </button> -->
+
       <!-- TABLE -->
       <div v-if="currentView === 'table'" class="p-datatable-wrapper">
-        <DataTable :value="filterReimbursements" tableStyle="min-width: 10rem" showGridlines class="border border-collapse border-solid border-black">
-          <Column field="reimbursementName" header="Name" sortable style="width: 25%"></Column>
-          <Column field="reimbursementStatus" header="Status" sortable style="width: 25%"></Column>
-          <Column field="reimbursementDate" header="Date" sortable style="width: 25%">
-            <template #body="slotProps">{{ parseDate(slotProps.data.reimbursementDate) }}</template>
+        <DataTable
+          :value="filterReimbursements"
+          tableStyle="min-width: 10rem"
+          showGridlines
+          class="border border-collapse border-solid border-black"
+        >
+          <Column field="reimbursementName" header="Name" sortable></Column>
+          <Column
+            field="reimbursementStatus"
+            header="Status"
+            sortable
+            style="width: 25%"
+          ></Column>
+          <Column
+            field="reimbursementDate"
+            header="Date"
+            sortable
+            style="width: 25%"
+          >
+            <template #body="slotProps">{{
+              parseDate(slotProps.data.reimbursementDate)
+            }}</template>
           </Column>
           <Column field="cost" header="Cost" sortable style="width: 25%">
-            <template #body="slotProps">${{ slotProps.data.totalCost.toFixed(2) }}</template>
+            <template #body="slotProps"
+              >${{ slotProps.data.totalCost.toFixed(2) }}</template
+            >
           </Column>
           <Column field="actions" header="Actions" style="width: 25%">
             <template #body="slotProps">
-              <span
-                class="underline cursor-pointer"
-                @click="viewTicket(slotProps.data._id)"
-                v-if="slotProps.data.reimbursementStatus !== 'Submitted'"
-                >Modify</span>
-              <span
-                class="underline cursor-pointer"
-                @click="deleteReimbursement(slotProps.data._id)"
-                >Delete</span>
+              <div class="flex gap-3">
+                <span
+                  class="underline cursor-pointer"
+                  @click="viewTicket(slotProps.data._id)"
+                  v-if="slotProps.data.reimbursementStatus !== 'Submitted'"
+                  ><img :src="pencilIcon" alt="Pencil icon" class="w-4"
+                /></span>
+                <span
+                  class="underline cursor-pointer"
+                  @click="deleteReimbursement(slotProps.data._id)"
+                >
+                  <img :src="deleteIcon" alt="Delete Icon" class="w-4"
+                /></span>
+              </div>
             </template>
           </Column>
         </DataTable>
-        
-        <!-- <table class="border table border-collapse border-solid border-black">
-          <tbody>
-            <tr class="tr">
-              <td class="font-medium td">Reimbursment Identifier</td>
-              <td class="font-medium td">Status</td>
-              <td class="font-medium td">Date</td>
-              <td class="font-medium td">Cost</td>
-              <td class="font-medium td">Actions</td>
-            </tr>
-            <tr v-for="ticket in filterReimbursements" class="tr">
-              <td class="td">{{ ticket.reimbursementName }}</td>
-              <td class="td">{{ ticket.reimbursementStatus }}</td>
-              <td class="td">{{ parseDate(ticket.reimbursementDate) }}</td>
-              <td class="td">${{ ticket.totalCost.toFixed(2) }}</td>
-              <td class="flex td gap-4 border-none">
-                <span
-                  class="underline cursor-pointer"
-                  @click="viewTicket(ticket._id)"
-                  v-if="ticket.reimbursementStatus !== 'Submitted'"
-                  >Modify</span
-                >
-                <span
-                  class="underline cursor-pointer"
-                  @click="deleteReimbursement(ticket._id)"
-                  >Delete</span
-                >
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
       </div>
       <!-- LIST/GRID -->
       <div v-else>
@@ -309,10 +296,10 @@ import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-
-
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import deleteIcon from "../assets/red-delete-icon.png";
+import pencilIcon from "../assets/blue-pencil.png";
 const router = useRouter();
 const searchValue = ref<string>("");
 
@@ -520,7 +507,8 @@ function parseDate(dateString: string) {
   // console.log(dateString);
   const dateParsed = new Date(dateString);
   const date = dateParsed.toISOString().slice(0, 10);
-  const formattedDate = date.split("-")[1] + "/" + date.split("-")[2] + "/" + date.split("-")[0]
+  const formattedDate =
+    date.split("-")[1] + "/" + date.split("-")[2] + "/" + date.split("-")[0];
   return formattedDate;
 }
 
@@ -580,9 +568,9 @@ onMounted(() => {
 .table {
   width: 100%;
 }
-.p-datatable .p-datatable-thead > tr > th{
+.p-datatable .p-datatable-thead > tr > th {
   background-color: #002d72;
-  color:white;
+  color: white;
 }
 .table,
 .td,
@@ -591,5 +579,43 @@ onMounted(() => {
   border: solid 1px black;
   padding: 8px 14px;
   font-size: 13.5px;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #002d72;
+  color: white;
+  padding: 10px 25px;
+  font-size: 14px;
+}
+
+.p-datatable-column-header-content {
+  gap: 15px !important;
+}
+
+.p-datatable.p-component.p-datatable-gridlines.border.border-collapse.border-solid.border-black {
+  border: 1px solid #002d72;
+}
+
+.p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(
+    .p-datatable-tbody
+  )
+  .p-datatable-tbody
+  > tr
+  > td {
+  border-width: 0 0 1px 1px;
+  font-size: 14px;
+}
+.p-row-even,
+.p-row-odd {
+  height: 40px;
+}
+
+.p-datatable-table {
+  border: solid 2px #002967;
+  border-collapse: collapse;
+}
+
+td {
+  text-align: center;
 }
 </style>
