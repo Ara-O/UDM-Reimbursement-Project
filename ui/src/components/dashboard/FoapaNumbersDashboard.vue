@@ -22,16 +22,16 @@
         style="display: flex; flex-direction: column; align-items: start"
       >
         <span class="foapa-number-title">
-          <img
+          <!-- <img
             src="../../assets/trash-icon.png"
             alt="Trash"
             @click="showFoapaDeletionPopup(foapa)"
-          />
+          /> -->
           <h3
             :title="foapa.foapaName"
             style="
               font-weight: 500;
-              max-width: 200px;
+              max-width: 100%;
               text-overflow: ellipsis;
               overflow: hidden;
               white-space: nowrap;

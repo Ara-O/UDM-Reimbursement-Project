@@ -12,18 +12,10 @@
       <h3 class="font-semibold text-md mt-6">
         {{ foapa_information.foapa_information.description }}
       </h3>
-      <!-- <h3 class="font-normal text-[15px] leading-7">
-        <p class="inline font-medium">Initial Amount:</p>
-        ${{ foapa_information.foapa_information.initialAmount }} |
-        <p class="inline font-medium">Current Amount:</p>
-        : ${{ foapa_information.foapa_information.currentAmount }}
-      </h3> -->
-      <!-- <h3 class="font-normal mt-3 leading-7 text-[15px]">
-        Pending Amount: ${{
-          foapa_information.foapa_information.availableAmount
-        }}
-        - This is the amount of money waiting on reimbursements
-      </h3> -->
+      <h4 class="text-sm font-normal italic">
+        Last updated at
+        {{ parseDate(foapa_information.foapa_information.updatedAt) }}
+      </h4>
 
       <h2 class="text-xl font-semibold mt-20 underline">History</h2>
       <p class="text-sm leading-7">
@@ -45,12 +37,6 @@
         />
       </span>
       <div class="flex mt-3 gap-4">
-        <!-- <p
-          class="text-sm hover:underline cursor-pointer"
-          @click="filterParam = 'NONE'"
-        >
-          Remove Filters
-        </p> -->
         <p
           class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
           @click="sortParam = 'COST ASC'"
@@ -77,6 +63,20 @@
           Sort by name (DESC)
         </p>
       </div>
+      <div>
+        <img
+          :src="ListView"
+          alt="List view"
+          @click="view = 'List'"
+          class="invert w-4 cursor-pointer opacity-50"
+        />
+        <img
+          :src="GridView"
+          alt="Grid view"
+          class="invert ml-3 w-3 cursor-pointer opacity-50"
+          @click="view = 'Grid'"
+        />
+      </div>
       <div
         v-if="Object.keys(foapa_information.claims_used).length !== 0"
         class="flex gap-4"
@@ -85,13 +85,21 @@
           v-for="claim in foapaHistoryFiltered"
           class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-6"
         >
-          <h3 class="text-[15px] mt-2 font-semibold text-gray-900">
-            {{ claim.reimbursementName }}
-          </h3>
-          <p class="text-sm">
+          <div class="flex items-center justify-between">
+            <h3 class="text-[15px] my-0 font-semibold text-gray-900">
+              {{ claim.reimbursementName }}
+            </h3>
+            <p class="my-0 text-[14px]" v-if="view === 'List'">
+              ${{ parseAmount(claim) }}
+            </p>
+          </div>
+
+          <p class="text-sm" v-if="view === 'Grid'">
             ${{ parseAmount(claim) }} was used in this claim
           </p>
-          <p class="text-xs">Date: {{ parseDate(claim.reimbursementDate) }}</p>
+          <p class="text-xs" v-if="view === 'Grid'">
+            Date: {{ parseDate(claim.reimbursementDate) }}
+          </p>
         </div>
       </div>
       <h3 v-else class="text-sm font-normal italic">
@@ -108,13 +116,15 @@
 import SearchIcon from "../assets/search-icon.png";
 import axios from "axios";
 import { computed, onMounted, ref } from "vue";
+import ListView from "../assets/list-view.png";
+import GridView from "../assets/grid-view.png";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
 
 let foapa_information = ref<any>({});
-// let foapaHistoryFiltered = ref<any>({})
+let view = ref<string>("List");
 let search_item = ref<string>("");
 
 let sortParam = ref<

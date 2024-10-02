@@ -674,6 +674,9 @@ async function triggerFoapaEditMode(foapa: FoapaStuff) {
     );
 
     if (res.data.length > 0) {
+      // Scroll up
+      window.scrollTo(0, 0);
+
       edit_clashes.value = res.data;
       show_edit_clashes_dialogue.value = true;
       //@ts-ignore
