@@ -134,6 +134,7 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+import axios from "axios";
 import { ReimbursementTicket, Expense } from "../../types/types";
 import ActivityContainer from "./ActivityContainer.vue";
 import { generateRandomStringId } from "../../utils/generateRandomId";
@@ -244,6 +245,36 @@ function duplicateExpense(id: string) {
   delete clone?._id;
   clone.id = generateRandomStringId(24);
   expense.value = clone;
+}
+
+async function quickAddExpense() {
+  console.log("hello");
+  let extractResponse = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/extract-text`
+  );
+  let receiptText = extractResponse.data;
+
+  //console.log(receiptText)
+
+  console.log("___________________");
+
+  let numberedLines: { text: string; number: string; type: string }[] = [];
+  for (let line in receiptText) {
+    if (/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(receiptText[line]))
+      numberedLines.push({
+        text: receiptText[line],
+        number: receiptText[line].match(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/),
+        type: "date",
+      });
+    else if (/\d/.test(receiptText[line]))
+      numberedLines.push({
+        text: receiptText[line],
+        number: receiptText[line].match(/\d+/g),
+        type: "cost",
+      });
+  }
+
+  console.log(numberedLines);
 }
 </script>
 
