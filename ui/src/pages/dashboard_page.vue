@@ -147,15 +147,15 @@
           </Column>
           <Column field="actions" header="Actions" style="width: 25%">
             <template #body="slotProps">
-              <div class="flex gap-3">
+              <div class="flex gap-3 justify-center">
                 <span
-                  class="underline cursor-pointer"
+                  class="underline cursor-pointer h-[16px]"
                   @click="viewTicket(slotProps.data._id)"
                   v-if="slotProps.data.reimbursementStatus !== 'Submitted'"
                   ><img :src="pencilIcon" alt="Pencil icon" class="w-4"
                 /></span>
                 <span
-                  class="underline cursor-pointer"
+                  class="underline cursor-pointer h-[16px]"
                   @click="deleteReimbursement(slotProps.data._id)"
                 >
                   <img :src="deleteIcon" alt="Delete Icon" class="w-4"
@@ -588,12 +588,32 @@ onMounted(() => {
   font-size: 14px;
 }
 
+.border-solid {
+  border-style: none;
+}
+
 .p-datatable-column-header-content {
   gap: 15px !important;
+  justify-content: center;
+}
+
+.p-datatable-sortable-column:not(.p-datatable-column-sorted):hover {
+  background-color: #002d72 !important;
+  color: white !important;
 }
 
 .p-datatable.p-component.p-datatable-gridlines.border.border-collapse.border-solid.border-black {
   border: 1px solid #002d72;
+}
+
+.p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(
+    .p-datatable-tbody
+  )
+  .p-datatable-tbody
+  > tr
+  > td {
+  border-width: 0 0 1px 1px;
+  text-align: center;
 }
 
 .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(

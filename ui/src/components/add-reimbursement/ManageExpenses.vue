@@ -11,7 +11,8 @@
       />
     </span>
     <h4 class="font-medium text-gray-600 mb-1 text-sm">
-      Or try our experimental <u class="cursor-pointer">Quick Add</u> feature
+      Or try our experimental
+      <u class="cursor-pointer" @click="showQuickAddPopup">Quick Add</u> feature
     </h4>
 
     <form @submit.prevent="addExpense">
@@ -123,6 +124,12 @@
       ></activity-container>
     </div>
   </section>
+  <section
+    v-if="quickAddPopupIsVisible"
+    class="absolute flex items-center justify-center top-0 left-0 h-full bg-black bg-opacity-80 w-full"
+  >
+    <quick-add-popup></quick-add-popup>
+  </section>
 </template>
 
 <script lang="ts" setup>
@@ -131,11 +138,16 @@ import { ReimbursementTicket, Expense } from "../../types/types";
 import ActivityContainer from "./ActivityContainer.vue";
 import { generateRandomStringId } from "../../utils/generateRandomId";
 import { TYPE, useToast } from "vue-toastification";
-
+import QuickAddPopup from "./QuickAddPopup.vue";
 const props = defineProps<{
   claim: ReimbursementTicket;
 }>();
 
+const quickAddPopupIsVisible = ref<boolean>(true);
+
+function showQuickAddPopup() {
+  quickAddPopupIsVisible.value = true;
+}
 const toast = useToast();
 
 const emits = defineEmits(["move-to-next-section", "move-to-previous-section"]);

@@ -342,7 +342,7 @@
   box-shadow: 0px 2px 2px rgb(83 83 83 / 17%);
   width: 300px;
   text-align: center;
-  height: 59px;
+  /* height: 59px; */
   padding: 10px 0px;
   border: 1px solid rgba(246, 246, 246, 0.44);
 }
