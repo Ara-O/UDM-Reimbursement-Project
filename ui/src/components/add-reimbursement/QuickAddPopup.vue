@@ -12,41 +12,63 @@
       >
         Capture Receipt with Camera
       </button>
-      <button
-        class="bg-udmercy-blue cursor-pointer text-white border-none px-7 py-3 rounded-full"
-      >
-        Upload a Receipt
-      </button>
+      <input type="file" @change="onFileChange" accept="image/*" />
     </div>
 
     <!-- Receipt + Choices option -->
     <article
-      class="flex justify-between min-h-96 mt-7"
-      v-if="userIsTakingAPicture"
+      class="flex justify-between min-h-96 gap-5 mt-7"
+      v-if="userIsUploadingAFile || userIsTakingAPicture"
     >
-      <div class="w-full">
-        <video
-          autoplay
-          id="video"
-          ref="videoFeed"
-          class="w-full max-w-2xl rounded-md"
-          v-if="videoFeedIsActive"
-        ></video>
-        <canvas id="canvas" ref="receiptCanvas" class="hidden"></canvas>
-        <img
-          :src="imagePreviewURL"
-          v-if="!videoFeedIsActive && receiptImageHasBeenCaptured"
-          alt="Image preview url"
-        />
-        <button
-          class="bg-udmercy-blue mt-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
-          @click="takePicture"
-        >
-          Take Picture
-        </button>
+      <!-- LEFT SECTION -->
+      <div>
+        <!-- LEFT SECTION WHEN USER IS UPLOADING A FILE -->
+        <article v-if="userIsUploadingAFile">
+          <img :src="imagePreviewURL" class="w-full" alt="Image preview url" />
+        </article>
+
+        <!-- LEFT SECTION WHEN USER IS LTAKING A PICTURE -->
+        <article class="w-full" v-if="userIsTakingAPicture">
+          <video
+            autoplay
+            id="video"
+            ref="videoFeed"
+            class="w-full max-w-2xl rounded-md"
+            v-if="videoFeedIsActive"
+          ></video>
+          <canvas id="canvas" ref="receiptCanvas" class="hidden"></canvas>
+          <img
+            :src="imagePreviewURL"
+            class="w-full"
+            v-if="!videoFeedIsActive && receiptImageHasBeenCaptured"
+            alt="Image preview url"
+          />
+          <button
+            class="bg-udmercy-blue mt-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
+            @click="takePicture"
+            v-if="!receiptImageHasBeenCaptured"
+          >
+            Take Picture
+          </button>
+          <button
+            class="bg-udmercy-blue mt-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
+            v-if="receiptImageHasBeenCaptured"
+            @click="restartImageCaptureProcess"
+          >
+            Restart
+          </button>
+          <button
+            v-if="receiptImageHasBeenCaptured"
+            class="bg-udmercy-blue mt-3 ml-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
+          >
+            Scan for Events
+          </button>
+        </article>
       </div>
-      <div class="bg-pink-500 w-full">
-        <h3>hi</h3>
+
+      <!-- RIGHT SECTION -->
+      <div class="w-full">
+        <h3 class="text-sm font-medium">Waiting for receipt...</h3>
       </div>
     </article>
   </article>
@@ -60,27 +82,54 @@ const videoFeed = ref<HTMLVideoElement | null>(null);
 const toast = useToast();
 const videoFeedIsActive = ref<boolean>(true);
 const userIsTakingAPicture = ref<boolean>(false);
+const userIsUploadingAFile = ref<boolean>(false);
 const receiptCanvas = ref<HTMLCanvasElement | null>(null);
 const receiptImageHasBeenCaptured = ref<boolean>(false);
 const imagePreviewURL = ref<string>("");
+const uploadedImageURL = ref<string>("");
+let stream;
+
+function onFileChange(e: any) {
+  const file = e.target.files[0]; // Get the selected file
+  userIsUploadingAFile.value = true;
+  videoFeedIsActive.value = false;
+  receiptImageHasBeenCaptured.value = false;
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      imagePreviewURL.value = e.target.result; // Set the image URL for preview
+    };
+    reader.readAsDataURL(file); // Read the file as a base64 URL
+  }
+
+  if (stream) {
+    const tracks = stream.getTracks();
+    tracks.forEach((track) => track.stop());
+    if (videoFeed.value) videoFeed.value.srcObject = null;
+  }
+}
 
 function onCaptureReceiptWithCamera() {
-  let facingMode = { exact: "user" };
+  userIsUploadingAFile.value = false;
+  let videoParams;
+
   const userAgent = navigator.userAgent.toLowerCase();
 
   if (/mobile|android|iphone|ipad/.test(userAgent)) {
-    facingMode = { exact: "environment" };
+    console.log("working with mobile");
+    videoParams = { facingMode: { exact: "environment" } };
+  } else {
+    videoParams = true;
   }
 
   if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices
       .getUserMedia({
-        video: {
-          facingMode: facingMode,
-        },
+        video: videoParams,
       })
-      .then((stream) => {
-        if (videoFeed.value) videoFeed.value.srcObject = stream;
+      .then((mediaStream) => {
+        stream = mediaStream;
+        if (videoFeed.value) videoFeed.value.srcObject = mediaStream;
       })
       .catch((err) => {
         console.log(err);
@@ -102,7 +151,15 @@ function onCaptureReceiptWithCamera() {
         }
       });
   }
+  videoFeedIsActive.value = true;
   userIsTakingAPicture.value = true;
+}
+
+function restartImageCaptureProcess() {
+  userIsTakingAPicture.value = true;
+  videoFeedIsActive.value = true;
+  receiptImageHasBeenCaptured.value = false;
+  onCaptureReceiptWithCamera();
 }
 
 function takePicture() {
@@ -123,12 +180,10 @@ function takePicture() {
   videoFeedIsActive.value = false;
   receiptImageHasBeenCaptured.value = true;
 
-  //   receiptCanvas.value.toBlob((img: any) => {
-  //     console.log("image", img);
-
-  // capturedImagesBlob.value = img;
-  //   });
-
-  //   showCapturedImage.value = true;
+  if (stream) {
+    const tracks = stream.getTracks();
+    tracks.forEach((track) => track.stop());
+    if (videoFeed.value) videoFeed.value.srcObject = null;
+  }
 }
 </script>
