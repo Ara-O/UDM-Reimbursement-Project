@@ -12,7 +12,13 @@
       >
         Capture Receipt with Camera
       </button>
-      <input type="file" @change="onFileChange" accept="image/*" />
+      <button
+        class="bg-udmercy-blue cursor-pointer text-white border-none px-7 py-3 rounded-full"
+        @click="onCaptureReceiptWithCamera"
+      >
+        Upload a file
+      </button>
+      <!-- <input type="file" @change="onFileChange" accept="image/*" /> -->
     </div>
 
     <!-- Receipt + Choices option -->
@@ -21,10 +27,10 @@
       v-if="userIsUploadingAFile || userIsTakingAPicture"
     >
       <!-- LEFT SECTION -->
-      <div>
+      <div class="left-section">
         <!-- LEFT SECTION WHEN USER IS UPLOADING A FILE -->
         <article v-if="userIsUploadingAFile">
-          <img :src="imagePreviewURL" class="w-full" alt="Image preview url" />
+          <img :src="imagePreviewURL" class="w-52" alt="Image preview url" />
         </article>
 
         <!-- LEFT SECTION WHEN USER IS LTAKING A PICTURE -->

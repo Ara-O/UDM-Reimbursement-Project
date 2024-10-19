@@ -144,7 +144,7 @@ const props = defineProps<{
   claim: ReimbursementTicket;
 }>();
 
-const quickAddPopupIsVisible = ref<boolean>(true);
+const quickAddPopupIsVisible = ref<boolean>(false);
 
 function showQuickAddPopup() {
   quickAddPopupIsVisible.value = true;
