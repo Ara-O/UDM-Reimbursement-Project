@@ -1,6 +1,14 @@
 <template>
-  <article class="bg-white w-full max-w-[1000px] px-10 rounded-md py-9">
+  <article
+    class="bg-white relative w-full max-w-[1000px] px-10 rounded-md py-9"
+  >
     <h3 class="mt-0">Quick Add</h3>
+    <img
+      :src="CancelIcon"
+      alt="Cancel icon"
+      class="w-4 absolute top-10 cursor-pointer right-10"
+      @click="closeQuickAddPopup"
+    />
     <h4 class="font-normal text-sm leading-7">
       Welcome to our Quick-add feature! It is in the experimental phase so any
       feedback will be useful.
@@ -82,6 +90,7 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+import CancelIcon from "../../assets/cross-icon.svg";
 import { TYPE, useToast } from "vue-toastification";
 
 const videoFeed = ref<HTMLVideoElement | null>(null);
@@ -94,6 +103,8 @@ const receiptImageHasBeenCaptured = ref<boolean>(false);
 const imagePreviewURL = ref<string>("");
 const uploadedImageURL = ref<string>("");
 let stream;
+
+const emits = defineEmits(["closeQuickAddPopup"]);
 
 function onFileChange(e: any) {
   const file = e.target.files[0]; // Get the selected file
@@ -113,6 +124,18 @@ function onFileChange(e: any) {
     tracks.forEach((track) => track.stop());
     if (videoFeed.value) videoFeed.value.srcObject = null;
   }
+}
+
+function closeQuickAddPopup() {
+  if (stream) {
+    const tracks = stream.getTracks();
+    tracks.forEach((track) => track.stop());
+    if (videoFeed.value) videoFeed.value.srcObject = null;
+  }
+
+  userIsTakingAPicture.value = false;
+  videoFeedIsActive.value = false;
+  emits("closeQuickAddPopup");
 }
 
 function onCaptureReceiptWithCamera() {

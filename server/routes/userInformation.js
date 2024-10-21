@@ -9,7 +9,6 @@ import {
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { verifyToken } from "../middleware/auth.js";
-import { generateRandomStringId } from "../utils/generateRandomString.js";
 import { Auth } from "../models/auth.js";
 import { ZodError, z } from "zod";
 import logger from "../logger.js";
@@ -142,92 +141,6 @@ router.post("/verifyUserSignupToken", async (req, res) => {
 
     res.status(200).send({ userSignupData: decoded.userData });
   });
-});
-
-router.post("/send-confirmation-email", async (req, res) => {
-  try {
-    const schema = z.object({
-      workEmail: z.string().trim().toLowerCase(),
-      employmentNumber: z.string().trim().length(8),
-    });
-
-    const data = schema.parse(req.body);
-
-    data.workEmail += "@udmercy.edu";
-    data.employmentNumber = "T" + data.employmentNumber;
-
-    logger.info(`Sending account verification email to ${data.workEmail}`, {
-      api: "/api/send-confirmation-email",
-    });
-
-    let userAuthString = generateRandomStringId(6);
-
-    await transporter.sendMail({
-      from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
-      to: data.workEmail,
-      subject: "Welcome to the UDM Reimbursement System!",
-      html: `
-           
-<div style="border: solid 1px #efefef; padding: 20px 0px;">
-      <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
-<img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-<h3 style="font-weight: 600; margin: 0; padding: 10px 0; ">Verify Your Account</h3>
-        <h4 style="font-weight: 300; margin: 10px 0;">Hello,</h4>
-        <h4 style="font-weight: 300; margin: 10px 0;">Thanks for signing up for the University of Detroit Mercy Reimbursement System!</h4>
-        <h4 style="font-weight: 300; margin: 10px 0;">Please use the verification code below to activate your account:</h4>
-        <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${userAuthString}</h3>
-      </div>
-      <p style="font-weight: 400; font-size: 10px; color: gray; text-align: center; margin: 10px 0;">
-        If you did not sign up for this service, please ignore this email.
-      </p>
-</div>
-
-        `,
-    });
-
-    logger.info(`Verification email successfully sent to ${data.workEmail}`, {
-      api: "/api/send-confirmation-email",
-    });
-
-    //Check for existing codes and remove it
-    let existingAuth = await Auth.find({
-      workEmail: data.workEmail,
-      employmentNumber: data.employmentNumber,
-    });
-
-    if (existingAuth.length !== 0) {
-      for (let i = 0; i < existingAuth.length; i++) {
-        await Auth.findByIdAndDelete(existingAuth[i]._id);
-      }
-    }
-
-    //Store key in database along with email and employment number
-    const auth = new Auth({
-      workEmail: data.workEmail,
-      employmentNumber: data.employmentNumber,
-      authString: userAuthString,
-    });
-
-    await auth.save();
-
-    res.status(200).send({
-      message: "Email sent successfully!",
-    });
-  } catch (err) {
-    logger.error(err, { api: "/api/send-confirmation-email" });
-
-    if (err instanceof ZodError) {
-      return res.status(400).send({
-        message:
-          "There was an error with one of your inputs. Please revise them and try again.",
-      });
-    }
-
-    res.status(500).send({
-      message:
-        "There was an error sending you a verification email. Please try again later.",
-    });
-  }
 });
 
 router.post("/resetPassword", async (req, res) => {

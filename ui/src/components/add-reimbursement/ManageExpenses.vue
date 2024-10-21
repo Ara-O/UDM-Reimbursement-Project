@@ -128,7 +128,9 @@
     v-if="quickAddPopupIsVisible"
     class="absolute flex items-center justify-center top-0 left-0 h-full bg-black bg-opacity-80 w-full"
   >
-    <quick-add-popup></quick-add-popup>
+    <quick-add-popup
+      @close-quick-add-popup="quickAddPopupIsVisible = false"
+    ></quick-add-popup>
   </section>
 </template>
 
