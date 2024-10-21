@@ -12,6 +12,10 @@
             style="position: absolute; right: 20px; top: 8px; cursor: pointer; width: 20px; opacity: 25%;" />
           <img v-else class="hover:!opacity-100" src="../../assets/eyeslash.png" @click="togglePasswordVisibility"
             style="position: absolute; right: 20px; top: 8px; cursor: pointer; width: 20px; opacity: 25%" />
+            <h5 class="error-field" style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
+              v-if="userSignupData.password.length < 8 && userSignupData.password.length > 0">
+              Must be longer than 8 characters
+            </h5>
         </span>
       </div>
       <div class="input-field">
