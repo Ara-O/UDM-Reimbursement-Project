@@ -69,12 +69,19 @@
       <!-- RIGHT SECTION -->
       <div class="w-full">
         <h3 class="text-sm font-medium">Waiting for receipt...</h3>
+        <div id="potentialCosts">
+
+        </div>
+        <div id="potentialDates">
+
+        </div>
       </div>
     </article>
   </article>
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 import { ref } from "vue";
 import { TYPE, useToast } from "vue-toastification";
 
@@ -107,6 +114,8 @@ function onFileChange(e: any) {
     tracks.forEach((track) => track.stop());
     if (videoFeed.value) videoFeed.value.srcObject = null;
   }
+
+  quickAddExpense()
 }
 
 function onCaptureReceiptWithCamera() {
@@ -184,6 +193,50 @@ function takePicture() {
     const tracks = stream.getTracks();
     tracks.forEach((track) => track.stop());
     if (videoFeed.value) videoFeed.value.srcObject = null;
+  }
+}
+
+async function quickAddExpense() {
+  console.log("hello");
+  let extractResponse = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/extract-text`
+  );
+  let receiptText = extractResponse.data;
+
+  //console.log(receiptText)
+
+  console.log("___________________");
+
+  let numberedLines: { text: string; number: string; type: string }[] = [];
+  for (let line in receiptText) {
+    if (/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(receiptText[line]))
+      numberedLines.push({
+        text: receiptText[line],
+        number: receiptText[line].match(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/),
+        type: "date",
+      });
+    else if (/\d/.test(receiptText[line]))
+      numberedLines.push({
+        text: receiptText[line],
+        number: receiptText[line].match(/\d+/g),
+        type: "cost",
+      });
+  }
+
+  const costElement = document.querySelector("#potentialCosts")
+  const dateElement = document.querySelector("#potentialDates")
+
+  for(let line in numberedLines){
+    let p = document.createElement("p");
+
+    if(numberedLines[line].type == "cost"){
+      p.textContent = numberedLines[line].text + " | " + numberedLines[line].number
+      costElement?.appendChild(p);
+    }
+    else if (numberedLines[line].type == "date"){
+      p.textContent = numberedLines[line].text + " | " + numberedLines[line].number
+      dateElement?.appendChild(p);
+    }    
   }
 }
 </script>

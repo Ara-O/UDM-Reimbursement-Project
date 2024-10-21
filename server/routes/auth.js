@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
       .string()
       .length(10)
       .regex(/^[0-9]+$/),
-    password: z.string().min(8),
+    password: z.string().min(8, "Password must contain at least 8 character(s)"),
     postalCode: z.string(),
     city: z.string(),
     state: z.string(),
@@ -123,7 +123,7 @@ router.post("/register", async (req, res) => {
     if (error instanceof ZodError) {
       return res.status(400).send({
         message:
-          "There was an error with one of your inputs. Please revise them and try again.",
+          error.errors[0].message,
       });
     }
 
