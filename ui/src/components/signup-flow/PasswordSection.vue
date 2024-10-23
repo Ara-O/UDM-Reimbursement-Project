@@ -4,32 +4,105 @@
       <div class="input-field">
         <label for="password">Password: *</label>
         <span class="password-span">
-          <Field :type="passwordFieldType" name="password" id="password" :rules="passwordMatchesReenteredPassword"
-            v-model="userSignupData.password" style="padding-right: 50px;" />
+          <Field
+            :type="passwordFieldType"
+            name="password"
+            id="password"
+            :rules="passwordMatchesReenteredPassword"
+            v-model="userSignupData.password"
+            style="padding-right: 50px"
+          />
           <ErrorMessage name="password" class="error-field" />
-          <img v-if="passwordFieldType === 'password'" class="hover:!opacity-100" src="../../assets/eye.png"
+          <img
+            v-if="passwordFieldType === 'password'"
+            class="hover:!opacity-100"
+            src="../../assets/eye.png"
             @click="togglePasswordVisibility"
-            style="position: absolute; right: 20px; top: 8px; cursor: pointer; width: 20px; opacity: 25%;" />
-          <img v-else class="hover:!opacity-100" src="../../assets/eyeslash.png" @click="togglePasswordVisibility"
-            style="position: absolute; right: 20px; top: 8px; cursor: pointer; width: 20px; opacity: 25%" />
-            <h5 class="error-field" style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
-              v-if="userSignupData.password.length < 8 && userSignupData.password.length > 0">
-              Must be longer than 8 characters
-            </h5>
+            style="
+              position: absolute;
+              right: 20px;
+              top: 8px;
+              cursor: pointer;
+              width: 20px;
+              opacity: 25%;
+            "
+          />
+          <img
+            v-else
+            class="hover:!opacity-100"
+            src="../../assets/eyeslash.png"
+            @click="togglePasswordVisibility"
+            style="
+              position: absolute;
+              right: 20px;
+              top: 8px;
+              cursor: pointer;
+              width: 20px;
+              opacity: 25%;
+            "
+          />
+          <h5
+            class="error-field"
+            style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
+            v-if="
+              userSignupData.password.length < 8 &&
+              userSignupData.password.length > 0
+            "
+          >
+            Must be longer than 8 characters
+          </h5>
         </span>
       </div>
       <div class="input-field">
-        <label for="reenter-password" class="re-enter-password-label" style="width: auto">Re-enter password: *</label>
-        <span style="position: relative;">
-          <Field :type="passwordFieldType2" :rules="passwordMatches" name="re-enter-password" id="re-enter-password"
-            v-model="reEnteredPassword" style="padding-right: 50px;" />
-          <img v-if="passwordFieldType2 === 'password'" class="hover:!opacity-100" src="../../assets/eye.png"
+        <label
+          for="reenter-password"
+          class="re-enter-password-label"
+          style="width: auto"
+          >Re-enter password: *</label
+        >
+        <span style="position: relative">
+          <Field
+            :type="passwordFieldType2"
+            :rules="passwordMatches"
+            name="re-enter-password"
+            id="re-enter-password"
+            v-model="reEnteredPassword"
+            style="padding-right: 50px"
+          />
+          <img
+            v-if="passwordFieldType2 === 'password'"
+            class="hover:!opacity-100"
+            src="../../assets/eye.png"
             @click="togglePasswordVisibility2"
-            style="position: absolute; right: 20px; top: 8px; cursor: pointer; width: 20px; opacity: 25%; hover-opacity: 100%" />
-          <img v-else class="hover:!opacity-100" src="../../assets/eyeslash.png" @click="togglePasswordVisibility2"
-            style="position: absolute; right: 20px; top: 8px; cursor: pointer; width: 20px; opacity: 25%" />
-          <h5 class="error-field" style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
-            v-if="userSignupData.password !== reEnteredPassword">
+            style="
+              position: absolute;
+              right: 20px;
+              top: 8px;
+              cursor: pointer;
+              width: 20px;
+              opacity: 25%;
+              hover-opacity: 100%;
+            "
+          />
+          <img
+            v-else
+            class="hover:!opacity-100"
+            src="../../assets/eyeslash.png"
+            @click="togglePasswordVisibility2"
+            style="
+              position: absolute;
+              right: 20px;
+              top: 8px;
+              cursor: pointer;
+              width: 20px;
+              opacity: 25%;
+            "
+          />
+          <h5
+            class="error-field"
+            style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
+            v-if="userSignupData.password !== reEnteredPassword"
+          >
             Password does not match
           </h5>
         </span>
@@ -37,9 +110,7 @@
     </div>
 
     <div class="continue-buttons mt-s-0" style="margin-top: 5px">
-      <button class="signup-button mt-0" type="submit" 
-      v-if="userSignupData.password == reEnteredPassword && userSignupData.password.length > 7">
-      Continue</button>
+      <button class="signup-button mt-0" type="submit">Continue</button>
     </div>
   </Form>
 </template>
@@ -55,15 +126,17 @@ let reEnteredPassword = ref<string>("");
 const props = defineProps<{ userSignupData: UserData }>();
 const emits = defineEmits(["continue"]);
 
-const passwordFieldType = ref<string>('password');
-const passwordFieldType2 = ref<string>('password');
+const passwordFieldType = ref<string>("password");
+const passwordFieldType2 = ref<string>("password");
 
 function togglePasswordVisibility() {
-  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+  passwordFieldType.value =
+    passwordFieldType.value === "password" ? "text" : "password";
 }
 
 function togglePasswordVisibility2() {
-  passwordFieldType2.value = passwordFieldType2.value === 'password' ? 'text' : 'password';
+  passwordFieldType2.value =
+    passwordFieldType2.value === "password" ? "text" : "password";
 }
 function passwordMatches(value) {
   if (value.trim() === "") {

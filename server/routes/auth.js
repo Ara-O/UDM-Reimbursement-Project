@@ -148,7 +148,7 @@ router.post("/send-confirmation-email", async (req, res) => {
 
     await authCode.save();
 
-    res.status(200).send({
+    return res.status(200).send({
       message: "Email sent successfully!",
     });
   } catch (err) {
@@ -164,6 +164,68 @@ router.post("/send-confirmation-email", async (req, res) => {
     res.status(500).send({
       message:
         "There was an error sending you a verification email. Please try again later.",
+    });
+  }
+});
+
+// Verify code
+router.post("/verify-code", async (req, res) => {
+  try {
+    const schema = z.object({
+      userCode: z
+        .string()
+        .trim()
+        .length(6, "Verification code must be 6 digits"),
+      workEmail: z
+        .string({ required_error: "Work email is a required field" })
+        .trim()
+        .toLowerCase(),
+      employmentNumber: z
+        .string({ required_error: "Employment number is a required field" })
+        .trim()
+        .length(8, "Employment number must be 8 digits"),
+    });
+
+    const data = schema.parse(req.body);
+
+    data.workEmail += "@udmercy.edu";
+    data.employmentNumber = "T" + data.employmentNumber;
+
+    let authInfo = await Auth.findOne({
+      workEmail: data.workEmail,
+      employmentNumber: data.employmentNumber,
+    });
+
+    if (authInfo === null) {
+      return res.status(404).send({
+        message: "Your token has expired. Please restart the signup process.",
+      });
+    }
+
+    if (authInfo.authString === data.userCode) {
+      logger.info(`${data.workEmail}'s code was successfully verified`, {
+        api: "/api/verify-code",
+      });
+
+      return res.status(200).send({ message: "Code verified" });
+    } else {
+      return res
+        .status(404)
+        .send({ message: "Incorrect code. Please try again." });
+    }
+  } catch (err) {
+    logger.error(err, { api: "/api/verify-code" });
+
+    if (err instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "There was an error with one of your inputs. Please revise them and try again.",
+      });
+    }
+
+    return res.status(500).send({
+      message:
+        "There was an error verifying your code. Please try again later.",
     });
   }
 });
@@ -191,7 +253,9 @@ router.post("/register", async (req, res) => {
       .string()
       .length(10)
       .regex(/^[0-9]+$/),
-    password: z.string().min(8, "Password must contain at least 8 character(s)"),
+    password: z
+      .string()
+      .min(8, "Password must contain at least 8 character(s)"),
     postalCode: z.string(),
     city: z.string(),
     state: z.string(),
@@ -209,18 +273,24 @@ router.post("/register", async (req, res) => {
       api: "/api/register",
     });
 
-    let encryptedPassword = await encryptPassword(userData.password);
-    userData.password = encryptedPassword;
-
     let existingUser = await Faculty.findOne({
-      employmentNumber: userData.employmentNumber,
+      $or: [
+        {
+          employmentNumber: userData.employmentNumber,
+          workEmail: userData.workEmail,
+        },
+      ],
     });
 
     if (existingUser) {
       return res.status(409).send({ message: "Error: User already exists" });
     }
 
-    // Automatically generate 2 user foapas
+    // Hash password
+    let encryptedPassword = await encryptPassword(userData.password);
+    userData.password = encryptedPassword;
+
+    // Automatically generate 2 user foapas based on the user's department number
     const generalFoapa = {
       foapaName: "General Department Spending",
       description:
@@ -230,6 +300,7 @@ router.post("/register", async (req, res) => {
       account: "",
       program: "",
       activity: "",
+      isUDMPU: false,
     };
 
     const UDMPU = {
@@ -247,6 +318,7 @@ router.post("/register", async (req, res) => {
     userData.foapaDetails.push(generalFoapa, UDMPU);
 
     let faculty = new Faculty(userData);
+
     let savedFaculty = await faculty.save();
 
     //Creates a token thatll be used to authenticate the user for later api calls
@@ -279,8 +351,7 @@ router.post("/register", async (req, res) => {
 
     if (error instanceof ZodError) {
       return res.status(400).send({
-        message:
-          error.errors[0].message,
+        message: error.errors[0].message,
       });
     }
 
@@ -309,8 +380,7 @@ router.post("/login", async (req, res) => {
     }).select("workEmail password employmentNumber");
 
     if (facultyInfo === null) {
-      logger.log(
-        "info",
+      logger.warn(
         `${data.userInfo.workEmail} tried accessing their account with invalid credentials `,
         {
           api: "/api/login",
@@ -322,6 +392,7 @@ router.post("/login", async (req, res) => {
           "Incorrect credentials. Please check that your email and password are correct.",
       });
     } else {
+      // Decrypt the user's passsword
       let passwordMatches = await decryptPassword(
         data.userInfo.password,
         facultyInfo.password
@@ -336,10 +407,18 @@ router.post("/login", async (req, res) => {
           },
           (err, token) => {
             if (!err) {
+              logger.info(`${data.userInfo.workEmail} successfully signed in`, {
+                api: "/api/login",
+              });
+
               return res
                 .status(200)
-                .send({ message: "Login successful", token });
+                .send({ message: "Login successful", token: token });
             }
+
+            logger.error("There was an error creating the faculty's token", {
+              api: "/api/login",
+            });
 
             return res.status(500).send({
               message:
