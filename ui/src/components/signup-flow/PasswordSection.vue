@@ -37,7 +37,9 @@
     </div>
 
     <div class="continue-buttons mt-s-0" style="margin-top: 5px">
-      <button class="signup-button mt-0" type="submit">Continue</button>
+      <button class="signup-button mt-0" type="submit" 
+      v-if="userSignupData.password == reEnteredPassword && userSignupData.password.length > 7">
+      Continue</button>
     </div>
   </Form>
 </template>
