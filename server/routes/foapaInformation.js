@@ -8,13 +8,11 @@ import { verifyToken } from "../middleware/auth.js";
 // For retrieving a list of all the user's FOAPAs: GET /retrieve-foapa-details
 router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
   try {
-    const useridSchema = z.string();
-
-    // Verify the user id retrieved from the verifyToken middleware is of the proper format
-    const userID = useridSchema.parse(req.user.userId);
+    //Store user ID variable from the verifyToken middleware into the userId variable
+    const userId = req.user.userId;
 
     // Find the faculty's data but select only the foapaDetails array in the faculty's object
-    let facultyData = await Faculty.findById(userID).select("foapaDetails ");
+    let facultyData = await Faculty.findById(userId).select("foapaDetails ");
 
     // If no data for the faculty was found - no FOAPA means an empty array, but no data should indicate an error
     if (facultyData === null) {
@@ -43,33 +41,11 @@ router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/update-foapa-details", verifyToken, async (req, res) => {
-  try {
-    await Faculty.findByIdAndUpdate(req.user.userId, {
-      foapaDetails: req.body.foapaDetails,
-    });
-
-    res.status(200).send({ message: "FOAPA details updated successfully" });
-  } catch (err) {
-    logger.error("There was an error updating the user's FOAPA details", {
-      api: "/api/update-foapa-details",
-    });
-    logger.error(err, {
-      api: "/api/update-foapa-details",
-    });
-    res.status(500).send({
-      message:
-        "An unexpected error occured when saving your FOAPA details. Please try again later.",
-    });
-  }
-});
-
+// POST /add-foapa-details
 router.post("/add-foapa-details", verifyToken, async (req, res) => {
   try {
-    // Use zod to verify that the the user has a valid id format from the verifyToken middleware
-    const useridSchema = z.string();
-
-    const userId = useridSchema.parse(req.user.userId);
+    //Store user ID variable from the verifyToken middleware into the userId variable
+    const userId = req.user.userId;
 
     let faculty = await Faculty.findById(userId);
 
@@ -93,24 +69,12 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
 
     const foapa = foapaSchema.parse(req.body.foapaDetails);
 
-    //Replace the placeholders with the empty value - mainly for use by the
-    //default created FOAPAs where the user does not yet have an entered ACCT or PROG, but can if
-    //they know it
-
-    if (foapa.account === "XXXX") {
-      foapa.account = "";
-    }
-
-    if (foapa.program === "XXXX") {
-      foapa.program = "";
-    }
-
     // Push the new foapa to the faculty's data
     faculty.foapaDetails.push(foapa);
 
     await faculty.save();
 
-    logger.info(`${userId} successfully added a new FOAPA`, {
+    logger.info(`User ${userId} successfully added a new FOAPA`, {
       api: "/add-foapa-details",
     });
 
@@ -140,45 +104,102 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
   }
 });
 
+//POST /edit-foapa-detail
 router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
   try {
-    let faculty = await Faculty.findById(req.user.userId);
+    //Store user ID variable from the verifyToken middleware into the userId variable
+    const userId = req.user.userId;
+
+    let faculty = await Faculty.findById(userId);
 
     if (faculty === null) {
       throw new Error("Faculty not found");
     }
 
-    if (req.body.id === "") {
-      throw new Error("Invalid FOAPA ID");
-    }
+    const requestSchema = z.object({
+      id: z.string(),
+      foapaDetail: z.object({
+        foapaName: z.string().trim(),
+        description: z.string().trim(),
+        fund: z.string().length(6).trim(),
+        organization: z.string().trim().optional(),
+        account: z.string().length(4).trim().optional(),
+        program: z.string().length(4).trim().optional(),
+        activity: z.string().trim().optional(),
+        isUDMPU: z.boolean().optional(),
+      }),
+    });
+
+    // Verify the input coming from the front end, if it is valid, store in the requestData variable
+    const requestData = requestSchema.parse(req.body);
 
     //Finds the faculty FOAPA that matches the foapa the user wants to edit
     let foapa_to_edit_index = faculty.foapaDetails.findIndex(
-      (foapa) => foapa._id.toHexString() === req.body.id
+      (foapa) => foapa._id.toHexString() === requestData.id
     );
 
+    //If there is no foapa in the faculty's data that matches the foapa id the user wants to edit
     if (foapa_to_edit_index === -1) {
-      throw new Error("FOAPA doesn't found");
+      throw new Error("FOAPA was not found");
     }
 
     //Makes sure the newly edited foapa has the same _id as its previous value
-    req.body.foapaDetail._id = faculty.foapaDetails[foapa_to_edit_index]._id;
-    req.body.foapaDetail.createdAt =
+    requestData.foapaDetail._id = faculty.foapaDetails[foapa_to_edit_index]._id;
+
+    //Makes sure the created date also matches
+    requestData.foapaDetail.createdAt =
       faculty.foapaDetails[foapa_to_edit_index].createdAt;
-    req.body.foapaDetail.updatedAt = new Date();
 
-    faculty.foapaDetails[foapa_to_edit_index] = req.body.foapaDetail;
+    requestData.foapaDetail.updatedAt = new Date();
 
-    // faculty.foapaDetails.find;
+    // Updates the faculty's foapa data
+    faculty.foapaDetails[foapa_to_edit_index] = requestData.foapaDetail;
+
     await faculty.save();
 
-    res.status(200).send({ message: "FOAPA details updated successfully" });
-  } catch (err) {
-    logger.error("There was an error updating the user's FOAPA details", {
+    logger.info(`User ${userId} successfully edited FOAPA ${requestData.id}`, {
       api: "/api/edit-foapa-detail",
     });
+
+    res.status(200).send({ message: "FOAPA detail updated successfully" });
+  } catch (err) {
+    logger.error("There was an error editing the user's FOAPA details", {
+      api: "/api/edit-foapa-detail",
+    });
+
     logger.error(err, {
       api: "/api/edit-foapa-detail",
+    });
+
+    if (err instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "There was an error with one of your inputs. Please revise your inputs and try again.",
+      });
+    }
+
+    return res.status(500).send({
+      message:
+        "An unexpected error occured when saving your FOAPA details. Please try again later.",
+    });
+  }
+});
+
+router.post("/update-foapa-details", verifyToken, async (req, res) => {
+  try {
+    await Faculty.findByIdAndUpdate(req.user.userId, {
+      foapaDetails: req.body.foapaDetails,
+    });
+
+    return res
+      .status(200)
+      .send({ message: "FOAPA details updated successfully" });
+  } catch (err) {
+    logger.error("There was an error updating the user's FOAPA details", {
+      api: "/api/update-foapa-details",
+    });
+    logger.error(err, {
+      api: "/api/update-foapa-details",
     });
     res.status(500).send({
       message:
@@ -235,6 +256,7 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
     logger.error(err, {
       api: "/retrieve-foapa-detail",
     });
+
     return res.status(500).send({
       message:
         err?.message ||
@@ -269,30 +291,33 @@ router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
 
 router.get("/check-foapa-usage", verifyToken, async (req, res) => {
   try {
-    const foapaId = req.query.foapa_id;
+    const requestSchema = z.string();
 
-    logger.info("Checking Foapa ID - " + foapaId, {
-      api: "/api/check-foapa-usage",
-    });
+    const foapaId = requestSchema.parse(requestSchema);
+    const userId = req.user.userId;
 
-    const faculty = await Faculty.findById(req.user.userId).populate(
+    const faculty = await Faculty.findById(userId).populate(
       "reimbursementTickets"
     );
 
+    // Find the FOAPA we want to check's index in the facultys FOAPA array
     let index = faculty.foapaDetails.findIndex(
       (foapa) => foapa._id.toHexString() === foapaId
     );
 
-    if (index === -1)
+    // If the FOAPA was not found in the faculty's FOAPA list
+    if (index === -1) {
       throw new Error("There was an error finding this FOAPA's information");
+    }
 
     let foapaToCheck = faculty.foapaDetails[index];
 
+    // Stores all the reimbursement requests that the FOAPA is being used for
     let reimbursementClashes = [];
 
     //Looping through all the faculty's reimbursement tickets
     for (let i = 0; i < faculty.reimbursementTickets.length; i++) {
-      //Check to make sure the ticket is still in progress
+      //Skip submitted tickets as they no longer matter
       if (
         faculty.reimbursementTickets[i].reimbursementStatus !== "In Progress"
       ) {
@@ -307,11 +332,6 @@ router.get("/check-foapa-usage", verifyToken, async (req, res) => {
       for (let j = 0; j < foapasUsedInThisClaim.length; j++) {
         //The foapa matches the foapa we want to check
 
-        console.log(
-          foapasUsedInThisClaim[j].foapa_id,
-          "--",
-          foapaToCheck._id.toHexString()
-        );
         if (
           foapasUsedInThisClaim[j].foapa_id.toHexString() ===
           foapaToCheck._id.toHexString()
@@ -342,8 +362,6 @@ router.get("/check-foapa-usage", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/retrieveFoapaInformation", verifyToken, async (req, res) => {});
-
 router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
   try {
     console.log("THIS IS MARKED AS SUBMITTED");
@@ -364,9 +382,5 @@ router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
     res.status(400).send({ message: err.message });
   }
 });
-
-// router.post("/mark-claim-as-accepted", verifyToken, async(req, res)=>{
-
-// });
 
 export default router;

@@ -699,31 +699,20 @@ async function triggerFoapaEditMode(foapa: FoapaStuff) {
 }
 
 function discardEdits(reset: any) {
-  for (const prop of Object.getOwnPropertyNames(added_foapa.value)) {
-    delete added_foapa.value[prop];
-  }
+  //@ts-ignore
+  added_foapa.value._id = "";
+  //@ts-ignore
+  added_foapa.value.createdAt = "";
+  //@ts-ignore
+  added_foapa.value.updatedAt = "";
 
-  reset();
   state.value = "Add";
   edited_foapas_id.value = "";
+  reset();
 }
 
 async function editFoapaValues(foapaValues, resetForm) {
   try {
-    // toast("Editing FOAPA details...", {
-    //   type: TYPE.INFO,
-    // });
-
-    // foapaValues.currentAmount = foapaValues.initialAmount;
-    // foapaValues.availableAmount = foapaValues.initialAmount;
-
-    if (foapaValues.account === "XXXX") {
-      foapaValues.account = "";
-    }
-    if (foapaValues.program === "XXXX") {
-      foapaValues.program = "";
-    }
-
     await axios.post(`${import.meta.env.VITE_API_URL}/api/edit-foapa-detail`, {
       id: edited_foapas_id.value,
       foapaDetail: foapaValues,
@@ -739,7 +728,6 @@ async function editFoapaValues(foapaValues, resetForm) {
     state.value = "Add";
 
     resetForm();
-
     // Clear the foapa values
   } catch (err: any) {
     toast(
