@@ -22,11 +22,6 @@
         style="display: flex; flex-direction: column; align-items: start"
       >
         <span class="foapa-number-title">
-          <!-- <img
-            src="../../assets/trash-icon.png"
-            alt="Trash"
-            @click="showFoapaDeletionPopup(foapa)"
-          /> -->
           <h3
             :title="foapa.foapaName"
             style="
@@ -81,7 +76,6 @@ const router = useRouter();
 const toast = useToast();
 
 function formatUserFoapa(foapa: FoapaStuff) {
-  // console.log(foapa);
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${
     foapa.account || "XXXX"
   }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
@@ -92,11 +86,10 @@ function retrieveUserFoapaDetails() {
     .get(`${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`)
     .then((res) => {
       userFoapaNumbers.value = res.data;
-      // console.log(res);
     })
     .catch((err) => {
-      console.log("err fetching foapa");
-      console.log(err.message);
+      console.log("There was an error fetching FOAPA values");
+      console.log(err);
     });
 }
 

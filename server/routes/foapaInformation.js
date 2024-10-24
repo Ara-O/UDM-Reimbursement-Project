@@ -1,15 +1,47 @@
-import { Router } from "express";
 const router = Router();
 import Faculty from "../models/faculty.js";
-import { verifyToken } from "../middleware/auth.js";
-import { z } from "zod";
 import logger from "../logger.js";
+import z, { ZodError } from "zod";
+import { Router } from "express";
+import { verifyToken } from "../middleware/auth.js";
 
-function formatUserFoapa(foapa) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
-    foapa.program || "XXXX"
-  }-${foapa.activity || "XXXX"}`;
-}
+// For retrieving a list of all the user's FOAPAs: GET /retrieve-foapa-details
+router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
+  try {
+    const useridSchema = z.string();
+
+    // Verify the user id retrieved from the verifyToken middleware is of the proper format
+    const userID = useridSchema.parse(req.user.userId);
+
+    // Find the faculty's data but select only the foapaDetails array in the faculty's object
+    let facultyData = await Faculty.findById(userID).select("foapaDetails ");
+
+    // If no data for the faculty was found - no FOAPA means an empty array, but no data should indicate an error
+    if (facultyData === null) {
+      return res.status(404).send({
+        message:
+          "There was an error fetching your FOAPA details. Please try again later.",
+      });
+    }
+
+    const foapaDetails = facultyData.foapaDetails;
+
+    return res.status(200).send(foapaDetails);
+  } catch (error) {
+    logger.error(`There was an error fetching a user's FOAPA details`, {
+      api: "/api/retrieve-foapa-details",
+    });
+
+    logger.error(error, {
+      api: "/api/retrieve-foapa-details",
+    });
+
+    return res.status(500).send({
+      message:
+        "There was an error fetching your FOAPA details. Please try again later.",
+    });
+  }
+});
 
 router.post("/update-foapa-details", verifyToken, async (req, res) => {
   try {
@@ -162,36 +194,6 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
       message:
         err?.message ||
         "An unexpected error occured when retrieving this FOAPA detail",
-    });
-  }
-});
-
-router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
-  try {
-    let foapaDetails = await Faculty.findById(req.user.userId).select(
-      "foapaDetails "
-    );
-
-    if (foapaDetails === null) {
-      return res.status(404).send({
-        message:
-          "There was an error fetching your FOAPA details. Please try again later.",
-      });
-    }
-
-    res.status(200).send(foapaDetails.foapaDetails);
-  } catch (err) {
-    logger.error("There was an error fetching your FOAPA details", {
-      api: "/api/retrieve-foapa-details",
-    });
-
-    logger.error(error, {
-      api: "/api/retrieve-foapa-details",
-    });
-
-    return res.status(400).send({
-      message:
-        "There was an error fetching your FOAPA details. Please try again later.",
     });
   }
 });

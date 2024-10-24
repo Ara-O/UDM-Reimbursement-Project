@@ -448,7 +448,7 @@ function confirmDelete() {
       id: claim_to_delete_id.value,
     })
     .then(() => {
-      retrieveReimbursements();
+      retrieveDashboardData();
       delete_claim_confirmation_dialog.value = false;
       toast("Reimbursement claim deleted successfully", {
         type: TYPE.SUCCESS,
@@ -462,49 +462,43 @@ function confirmDelete() {
     });
 }
 
-function retrieveUserInformationSummary() {
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/retrieveUserInformationSummary`)
-    .then((res) => {
-      userInfo.value = res.data;
-      retrieveReimbursements();
-      // console.log(res);
-    })
-    .catch((err: any) => {
-      console.log("ERROR", err);
-      if (err.code === "ERR_NETWORK") {
-        toast(
-          err?.response?.data?.message ||
-            "An error has occured, please log in again",
-          {
-            type: TYPE.ERROR,
-          }
-        );
-        localStorage.setItem("token", "");
-        router.push("/");
-        return;
+async function retrieveDashboardData() {
+  try {
+    let res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/retrieve-dashboard-data`
+    );
+
+    userInfo.value = res.data;
+    reimbursementTickets.value = res.data.reimbursementTickets;
+  } catch (err: any) {
+    if (err.response.status === 403) {
+      localStorage.setItem("token", "");
+      router.push("/");
+      return;
+    }
+
+    if (err.code === "ERR_NETWORK") {
+      toast(
+        "There was an error with your network. Please check your internet connection and try again",
+        {
+          type: TYPE.ERROR,
+        }
+      );
+
+      return;
+    }
+
+    toast(
+      err?.response?.data?.message ||
+        "An unexpected error has occured. Please try again",
+      {
+        type: TYPE.ERROR,
       }
-      if (
-        err?.response?.status === 401 ||
-        err?.response?.status === 403 ||
-        err?.response.status === 404
-      ) {
-        //If JWT is expired, clear the token and go back to signup page
-        toast(
-          err?.response?.data?.message ||
-            "An error has occured, please log in again",
-          {
-            type: TYPE.ERROR,
-          }
-        );
-        localStorage.setItem("token", "");
-        router.push("/");
-      }
-    });
+    );
+  }
 }
 
 function parseDate(dateString: string) {
-  // console.log(dateString);
   const dateParsed = new Date(dateString);
   const date = dateParsed.toISOString().slice(0, 10);
   const formattedDate =
@@ -512,27 +506,11 @@ function parseDate(dateString: string) {
   return formattedDate;
 }
 
-function addReimbursement() {
-  router.push("bursement");
-}
-
 function viewTicket(reimbursementId: string) {
   router.push({ path: "/add-reimbursement", query: { reimbursementId } });
 }
 
 let sortParameter = ref<SortParameters>("Name");
-
-function retrieveReimbursements() {
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/retrieveReimbursements`)
-    .then((res) => {
-      // console.log(res);
-      reimbursementTickets.value = res.data;
-    })
-    .catch((err) => {
-      alert(err);
-    });
-}
 
 function useClaimAsTemplate(template) {
   router.push({
@@ -548,7 +526,7 @@ onMounted(() => {
   ) {
     router.push("/");
   } else {
-    retrieveUserInformationSummary();
+    retrieveDashboardData();
   }
 });
 </script>

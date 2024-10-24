@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import * as dotenv from "dotenv";
 import connectToDB from "./db.js";
 import auth from "./routes/auth.js";
+import dashboardRouter from "./routes/dashboard.js";
 import userInformationRouter from "./routes/userInformation.js";
 import foapaInformationRouter from "./routes/foapaInformation.js";
 import reimbursementInformation from "./routes/reimbursementInformation.js";
@@ -44,6 +45,7 @@ app.listen(port, () => {
 
 app.use("/api", userInformationRouter);
 app.use("/api", foapaInformationRouter);
+app.use("/api", dashboardRouter);
 app.use("/api", reimbursementInformation);
 app.use("/api", pdfInformation);
 app.use("/api", geographyInformation);
@@ -51,4 +53,3 @@ app.use("/api", auth);
 app.use("/health", (req, res) => {
   res.status(200).send("App is running!");
 });
- 
