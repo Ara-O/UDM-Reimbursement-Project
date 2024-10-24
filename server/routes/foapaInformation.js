@@ -66,31 +66,76 @@ router.post("/update-foapa-details", verifyToken, async (req, res) => {
 
 router.post("/add-foapa-details", verifyToken, async (req, res) => {
   try {
-    let faculty = await Faculty.findById(req.user.userId);
+    // Use zod to verify that the the user has a valid id format from the verifyToken middleware
+    const useridSchema = z.string();
 
-    logger.info(`${req.user.userId} is adding a FOAPA`, {
-      api: "/add-foapa-details",
-    });
+    const userId = useridSchema.parse(req.user.userId);
 
+    let faculty = await Faculty.findById(userId);
+
+    // Different approach to handling errors, directly go to the catch statement instead of
+    // returning the HTTP code with the error status code here
     if (faculty === null) {
       throw new Error("Faculty not found");
     }
 
-    faculty.foapaDetails.push(...req.body.foapaDetails);
+    // Parse FOAPA data the user wants to add
+    const foapaSchema = z.object({
+      foapaName: z.string().trim(),
+      description: z.string().trim(),
+      fund: z.string().length(6).trim(),
+      organization: z.string().trim().optional(),
+      account: z.string().length(4).trim().optional(),
+      program: z.string().length(4).trim().optional(),
+      activity: z.string().trim().optional(),
+      isUDMPU: z.boolean().optional(),
+    });
+
+    const foapa = foapaSchema.parse(req.body.foapaDetails);
+
+    //Replace the placeholders with the empty value - mainly for use by the
+    //default created FOAPAs where the user does not yet have an entered ACCT or PROG, but can if
+    //they know it
+
+    if (foapa.account === "XXXX") {
+      foapa.account = "";
+    }
+
+    if (foapa.program === "XXXX") {
+      foapa.program = "";
+    }
+
+    // Push the new foapa to the faculty's data
+    faculty.foapaDetails.push(foapa);
 
     await faculty.save();
 
-    res.status(200).send({ message: "FOAPA details added successfully" });
+    logger.info(`${userId} successfully added a new FOAPA`, {
+      api: "/add-foapa-details",
+    });
+
+    return res
+      .status(200)
+      .send({ message: "FOAPA details added successfully" });
   } catch (err) {
     logger.error("There was an error updating the user's FOAPA details", {
       api: "/api/add-foapa-details",
     });
+
     logger.error(err, {
       api: "/api/add-foapa-details",
     });
-    res.status(500).send({
+
+    if (err instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "There was an error with one of your inputs. Please revise and try again.",
+      });
+    }
+
+    return res.status(500).send({
       message:
-        "An unexpected error occured when saving your FOAPA details. Please try again later.",
+        "An unexpected error occured when adding this FOAPA. Please try again later.",
     });
   }
 });

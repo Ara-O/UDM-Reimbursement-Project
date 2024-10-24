@@ -760,27 +760,13 @@ async function addFoapa(values, { resetForm }) {
     return;
   }
   try {
-    // toast("Adding FOAPA", {
-    //   type: TYPE.INFO,
-    // });
+    // By default, the UDMPU flag is set to false, but we can explicitly set it to false here for
+    // redundancy
 
-    // changes_were_made.value = true
-    // values.currentAmount = values.initialAmount;
-    // values.availableAmount = values.initialAmount;
-
-    if (values.account === "XXXX") {
-      values.account = "";
-    }
-    if (values.program === "XXXX") {
-      values.program = "";
-    }
-
-    console.log(values);
-
-    // if(values.account === "XXXX")
+    values.isUDMPU = false;
 
     await axios.post(`${import.meta.env.VITE_API_URL}/api/add-foapa-details`, {
-      foapaDetails: [values],
+      foapaDetails: values,
     });
 
     resetForm();
@@ -853,20 +839,6 @@ function deleteFoapa(foapa_id) {
   toast("FOAPA deleted successfully", {
     type: TYPE.SUCCESS,
   });
-  // }
-  // } else {
-  //   let index = foapaDetails.value.findIndex(
-  //     (foapa) => foapa.foapaName === foapaName && foapa.fund === fund
-  //   );
-
-  //   if (index > -1) {
-  //     foapaDetails.value.splice(index, 1);
-  //   }
-
-  //   toast("FOAPA deleted successfully", {
-  //     type: TYPE.SUCCESS,
-  //   });
-  // }
 }
 
 async function retrieveUserFoapaDetails() {
