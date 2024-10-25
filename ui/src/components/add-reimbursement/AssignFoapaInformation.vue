@@ -32,6 +32,7 @@
         </span>
         <span>
           <h4 class="font-normal text-sm">Quantity to use from FOAPA</h4>
+          <span>$
           <input
             type="text"
             name="quantity-assigned"
@@ -40,6 +41,7 @@
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
           />
+        </span>
         </span>
       </div>
 

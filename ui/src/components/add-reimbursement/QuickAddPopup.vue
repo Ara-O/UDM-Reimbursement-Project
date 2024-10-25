@@ -83,12 +83,27 @@
       <!-- RIGHT SECTION -->
       <div class="w-full">
         <h3 class="text-sm font-medium">Waiting for receipt...</h3>
-        <div id="potentialCosts">
+        <!-- <div id="potentialCosts">
 
         </div>
         <div id="potentialDates">
 
-        </div>
+        </div> -->
+
+        <section class="container">
+          <div class="expenseSection">
+            <div class="labelItem"><label for="expense">Expense</label></div>
+            <div class="inputItem"><input type="text" name="expense" id="expense" placeholder="Expense Name" class="textBox"></div>
+          </div>
+          <div class="costSection">
+            <div class="labelItem"><label for="cost">Cost</label></div>
+            <div class="inputItem"><input type="text" name="cost" id="cost" placeholder="Cost" class="textBox"></div>
+          </div>
+          <div class="dateSection">
+            <div class="labelItem"><label for="date">Date</label></div>
+            <div class="inputItem"><input type="text" name="date" id="date" placeholder="Date: xx/xx/xxxx" class="textBox"></div>
+          </div>
+        </section>
       </div>
     </article>
   </article>
@@ -269,3 +284,29 @@ async function quickAddExpense() {
   }
 }
 </script>
+
+<style>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+  .container{
+    display: grid;
+    grid-auto-flow: row;
+  }
+  .expenseSection{
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .costSection{
+    grid-column: 2;
+    grid-row: auto;
+  }
+  .dateSection{
+    grid-column: 3;
+    grid-row: auto;
+  }
+  .textBox{
+    @apply border-[0.5px] h-11 rounded-md border-gray-200 w-auto box-border px-5 text-xs border-solid shadow-md
+  }
+</style>
