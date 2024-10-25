@@ -147,7 +147,7 @@
           </Column>
           <Column field="actions" header="Actions" style="width: 25%">
             <template #body="slotProps">
-              <div class="flex gap-3 justify-center">
+              <div class="flex gap-5 justify-center">
                 <span
                   class="underline cursor-pointer h-[16px]"
                   @click="viewTicket(slotProps.data._id)"
@@ -158,7 +158,7 @@
                   class="underline cursor-pointer h-[16px]"
                   @click="deleteReimbursement(slotProps.data._id)"
                 >
-                  <img :src="deleteIcon" alt="Delete Icon" class="w-4"
+                  <img src="../assets/trash-icon.png" alt="Delete Icon" class="w-4"
                 /></span>
               </div>
             </template>
@@ -175,7 +175,7 @@
           "
           v-if="!viewingTemplates"
         >
-          <div class="reimbursement" v-for="ticket in filterReimbursements">
+          <div class="reimbursement" v-for="ticket in filterReimbursements" style="background-color: #002d72; color:white;">
             <h3>{{ ticket.reimbursementName }}</h3>
             <h4>Status: {{ ticket.reimbursementStatus }}</h4>
             <h5>
@@ -186,10 +186,14 @@
               <button
                 @click="viewTicket(ticket._id)"
                 v-if="ticket.reimbursementStatus !== 'Submitted'"
+                title="Modify Request"
+                style="background-color:white; border:0px"
               >
-                Modify
+                <img :src="pencilIcon" alt="Pencil icon" class="w-4"/>
               </button>
-              <button @click="deleteReimbursement(ticket._id)">Delete</button>
+              <button @click="deleteReimbursement(ticket._id)" title="Delete Request" style="background-color: #a5093e">
+                <img :src="deleteIcon" alt="Delete Icon" class="w-4"/>
+              </button>
             </div>
           </div>
         </div>
@@ -298,7 +302,7 @@ import { useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import deleteIcon from "../assets/red-delete-icon.png";
+import deleteIcon from "../assets/trash-icon-white.png";
 import pencilIcon from "../assets/blue-pencil.png";
 const router = useRouter();
 const searchValue = ref<string>("");
