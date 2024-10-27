@@ -196,11 +196,18 @@ router.post("/delete-reimbursement", verifyToken, async (req, res) => {
 
     await faculty.save();
 
+    logger.info(
+      `User ${userId} has successfully deleted reimbursement ${reimbursementId}`,
+      {
+        api: "/api/delete-reimbursement",
+      }
+    );
+
     return res
       .status(200)
       .send({ message: "Reimbursement ticket deleted successfully" });
   } catch (err) {
-    logger.err(err, {
+    logger.error(err, {
       api: "/api/delete-reimbursement",
     });
 

@@ -163,7 +163,7 @@
           <button
             type="button"
             v-if="state === 'Edit'"
-            @click="discardEdits(handleReset)"
+            @click="discardData(handleReset)"
             class="bg-udmercy-red mt-10 ml-5 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
           >
             Discard Edits
@@ -698,7 +698,7 @@ async function triggerFoapaEditMode(foapa: FoapaStuff) {
   }
 }
 
-function discardEdits(reset: any) {
+function discardData(reset?: any) {
   //@ts-ignore
   added_foapa.value._id = "";
   //@ts-ignore
@@ -708,7 +708,10 @@ function discardEdits(reset: any) {
 
   state.value = "Add";
   edited_foapas_id.value = "";
-  reset();
+
+  if (reset) {
+    reset();
+  }
 }
 
 async function editFoapaValues(foapaValues, resetForm) {
@@ -737,6 +740,8 @@ async function editFoapaValues(foapaValues, resetForm) {
         type: TYPE.ERROR,
       }
     );
+
+    discardData();
     console.log(err);
   }
 }
@@ -747,17 +752,18 @@ async function addFoapa(values, { resetForm }) {
     resetForm();
     return;
   }
+
   try {
     // By default, the UDMPU flag is set to false, but we can explicitly set it to false here for
     // redundancy
-
     values.isUDMPU = false;
 
     await axios.post(`${import.meta.env.VITE_API_URL}/api/add-foapa-details`, {
       foapaDetails: values,
     });
 
-    resetForm();
+    discardData(resetForm);
+
     await retrieveUserFoapaDetails();
 
     toast("FOAPA successfully added", {

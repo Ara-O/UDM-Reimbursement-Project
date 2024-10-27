@@ -44,13 +44,7 @@
           <h5
             class="error-field"
             style="font-weight: 400; margin-top: 0px; margin-bottom: 0px"
-            v-if="
-              userSignupData.password.length < 8 &&
-              userSignupData.password.length > 0
-            "
-          >
-            Must be longer than 8 characters
-          </h5>
+          ></h5>
         </span>
       </div>
       <div class="input-field">
@@ -149,8 +143,10 @@ function passwordMatches(value) {
 }
 
 function passwordMatchesReenteredPassword(value) {
-  if (value.trim() === "") {
+  if (String(value).trim() === "") {
     return "Field can not be empty";
+  } else if (String(value).length < 8) {
+    return "Must be longer than 8 characters";
   } else {
     return true;
   }

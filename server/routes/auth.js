@@ -297,8 +297,8 @@ router.post("/register", async (req, res) => {
         "Default FOAPA: This FOAPA was added by default when your account was created.",
       fund: "111000",
       organization: getOrgNumber(userData.department),
-      account: "",
-      program: "",
+      account: "XXXX",
+      program: "XXXX",
       activity: "",
       isUDMPU: false,
     };
@@ -309,8 +309,8 @@ router.post("/register", async (req, res) => {
         "Default FOAPA: This FOAPA was added by default when your account was created.",
       fund: "260036",
       organization: getOrgNumber(userData.department),
-      account: "",
-      program: "",
+      account: "XXXX",
+      program: "XXXX",
       isUDMPU: true,
       activity: "",
     };
