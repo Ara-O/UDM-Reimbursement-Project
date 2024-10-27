@@ -48,6 +48,7 @@ const facultySchema = new Schema({
       paymentRetrievalMethod: String,
       UDMPUVoucher: Boolean,
       totalCost: Number,
+      knowFoapa: Boolean,
       guestInformation: [
         {
           employeeFirstName: String,
@@ -55,6 +56,12 @@ const facultySchema = new Schema({
           guestAssociation: String,
           guestFirstName: String,
           guestLastName: String,
+        },
+      ],
+      foapaDetails: [
+        {
+          cost: Number,
+          foapa_id: mongoose.Schema.Types.ObjectId,
         },
       ],
       reimbursementStatus: String,

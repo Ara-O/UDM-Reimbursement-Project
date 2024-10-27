@@ -32,7 +32,15 @@
         </span>
         <span>
           <h4 class="font-normal text-sm">Quantity to use from FOAPA</h4>
-          <span style="position:absolute; padding-left: 0.75rem; padding-top:10px; opacity: 50%;">$</span>
+          <span
+            style="
+              position: absolute;
+              padding-left: 0.75rem;
+              padding-top: 10px;
+              opacity: 50%;
+            "
+            >$</span
+          >
           <input
             type="text"
             name="quantity-assigned"
@@ -40,7 +48,7 @@
             v-model="assignedFoapa.cost"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
-            style="padding-left: 2rem;"
+            style="padding-left: 2rem"
           />
         </span>
       </div>
@@ -252,7 +260,11 @@ function editFOAPA(foapa_id) {
 }
 
 function moveToNextSection() {
-  if (assignedFoapa.value.foapa_id !== "" || assignedFoapa.value.cost !== "") {
+  console.log(assignedFoapa.value.cost);
+  if (
+    assignedFoapa.value.foapa_id !== "" ||
+    (assignedFoapa.value.cost !== "0" && assignedFoapa.value.cost !== "")
+  ) {
     let moveon = confirm(
       "Warning: You are moving to next section without adding your currently inputted FOAPA. Click 'OK' to discard the inputted FOAPA and move to the next section, or click 'Cancel' to return"
     );

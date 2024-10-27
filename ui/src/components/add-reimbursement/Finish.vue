@@ -367,10 +367,9 @@ async function saveAsTemplate() {
     // toast("Saving reimbursement claim as template...", {
     //   type: TYPE.INFO,
     // });
-    await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/save-as-template`,
-      props.claim
-    );
+    await axios.post(`${import.meta.env.VITE_API_URL}/api/save-as-template`, {
+      reimbursementTicket: props.claim,
+    });
     toast("Reimbursement saved as a template successfully.", {
       type: TYPE.SUCCESS,
     });
@@ -573,7 +572,7 @@ async function addReimbursement() {
     props.claim.totalCost = getAllActivitiesAmount();
     props.claim.reimbursementDate = parseDate(new Date().toISOString());
 
-    await axios.post(`${import.meta.env.VITE_API_URL}/api/addReimbursement`, {
+    await axios.post(`${import.meta.env.VITE_API_URL}/api/add-reimbursement`, {
       reimbursementTicket: props.claim,
     });
 

@@ -240,7 +240,7 @@
           class="flex flex-col mt-6 gap-7 sm:max-h-[28rem] h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]"
         >
           <div
-            class="border shadow-sm rounded w-auto box-border px-7 py-6 flex border-gray-200 border-solid h-auto"
+            class="border shadow-sm rounded w-auto box-border px-7 py-6 flex border-gray-200 border-solid h-auto justify-between"
             v-for="foapa in filteredFoapaDetails"
             v-if="view === 'List'"
           >
@@ -797,6 +797,7 @@ async function showDeleteFoapaDialogue(foapa_id) {
       return;
     }
 
+    window.scrollTo(0, 0);
     show_delete_foapa_dialogue.value = true;
     foapa_to_delete.value = foapa_id;
   } catch (err: any) {
@@ -807,26 +808,34 @@ async function showDeleteFoapaDialogue(foapa_id) {
   }
 }
 
-function deleteFoapa(foapa_id) {
-  show_delete_foapa_clash_dialogue.value = false;
-  show_delete_foapa_dialogue.value = false;
-  //@ts-ignore
-  document.querySelector("body").style.overflow = "auto";
+async function deleteFoapa(foapa_id) {
+  try {
+    show_delete_foapa_clash_dialogue.value = false;
+    show_delete_foapa_dialogue.value = false;
+    //@ts-ignore
+    document.querySelector("body").style.overflow = "auto";
 
-  // if (confirm_deletion) {
-  let index = foapaDetails.value.findIndex((foapa) => foapa._id === foapa_id);
+    toast("Deleting FOAPA...", {
+      type: TYPE.SUCCESS,
+    });
 
-  if (index > -1) {
-    foapaDetails.value.splice(index, 1);
+    await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/delete-foapa-detail`,
+      {
+        foapa_id: foapa_id,
+      }
+    );
+
+    await retrieveUserFoapaDetails();
+
+    toast("FOAPA deleted successfully", {
+      type: TYPE.SUCCESS,
+    });
+  } catch (err) {
+    toast("There was an error deleting this FOAPA. Please try again later", {
+      type: TYPE.ERROR,
+    });
   }
-
-  axios.post(`${import.meta.env.VITE_API_URL}/api/update-foapa-details`, {
-    foapaDetails: foapaDetails.value,
-  });
-
-  toast("FOAPA deleted successfully", {
-    type: TYPE.SUCCESS,
-  });
 }
 
 async function retrieveUserFoapaDetails() {
@@ -836,6 +845,7 @@ async function retrieveUserFoapaDetails() {
     );
 
     foapaDetails.value = res.data;
+
     loaded.value = true;
   } catch (err: any) {
     toast(

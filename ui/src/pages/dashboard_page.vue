@@ -158,7 +158,10 @@
                   class="underline cursor-pointer h-[16px]"
                   @click="deleteReimbursement(slotProps.data._id)"
                 >
-                  <img src="../assets/trash-icon.png" alt="Delete Icon" class="w-4"
+                  <img
+                    src="../assets/trash-icon.png"
+                    alt="Delete Icon"
+                    class="w-4"
                 /></span>
               </div>
             </template>
@@ -175,24 +178,34 @@
           "
           v-if="!viewingTemplates"
         >
-          <div class="reimbursement" v-for="ticket in filterReimbursements" style="background-color: #002d72; color:white;">
-            <h3>{{ ticket.reimbursementName }}</h3>
-            <h4>Status: {{ ticket.reimbursementStatus }}</h4>
+          <div
+            class="reimbursement"
+            v-for="ticket in filterReimbursements"
+            style="background-color: #002d72; color: white"
+          >
+            <h3>{{ ticket.reimbursementName || "Invalid Reimbursement" }}</h3>
+            <h4>Status: {{ ticket.reimbursementStatus || "Invalid" }}</h4>
             <h5>
               {{ parseDate(ticket.reimbursementDate) }}
             </h5>
-            <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
+            <div class="total-amount">
+              ${{ ticket.totalCost ? ticket.totalCost.toFixed(2) : "0" }}
+            </div>
             <div class="reimbursement-buttons">
               <button
                 @click="viewTicket(ticket._id)"
                 v-if="ticket.reimbursementStatus !== 'Submitted'"
                 title="Modify Request"
-                style="background-color:white; border:0px"
+                style="background-color: white; border: 0px"
               >
-                <img :src="pencilIcon" alt="Pencil icon" class="w-4"/>
+                <img :src="pencilIcon" alt="Pencil icon" class="w-4" />
               </button>
-              <button @click="deleteReimbursement(ticket._id)" title="Delete Request" style="background-color: #a5093e">
-                <img :src="deleteIcon" alt="Delete Icon" class="w-4"/>
+              <button
+                @click="deleteReimbursement(ticket._id)"
+                title="Delete Request"
+                style="background-color: #a5093e"
+              >
+                <img :src="deleteIcon" alt="Delete Icon" class="w-4" />
               </button>
             </div>
           </div>
@@ -213,12 +226,14 @@
           class="reimbursement"
           v-for="ticket in userInfo.reimbursementTemplates"
         >
-          <h3>{{ ticket.reimbursementName }}</h3>
-          <h4>Status: {{ ticket.reimbursementStatus }}</h4>
+          <h3>{{ ticket.reimbursementName || "Invalid Reimbursement" }}</h3>
+          <h4>Status: {{ ticket.reimbursementStatus || "Invalid" }}</h4>
           <h5>
             {{ parseDate(ticket.reimbursementDate) }}
           </h5>
-          <div class="total-amount">${{ ticket.totalCost.toFixed(2) }}</div>
+          <div class="total-amount">
+            ${{ ticket.totalCost ? ticket.totalCost.toFixed(2) : "0" }}
+          </div>
           <div class="reimbursement-buttons">
             <button
               v-if="ticket.reimbursementStatus !== 'Submitted'"
@@ -503,6 +518,7 @@ async function retrieveDashboardData() {
 }
 
 function parseDate(dateString: string) {
+  if (dateString === "" || dateString === undefined) return "Invalid";
   const dateParsed = new Date(dateString);
   const date = dateParsed.toISOString().slice(0, 10);
   const formattedDate =

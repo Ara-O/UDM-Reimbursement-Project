@@ -185,11 +185,25 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/update-foapa-details", verifyToken, async (req, res) => {
+router.post("/delete-foapa-detail", verifyToken, async (req, res) => {
   try {
-    await Faculty.findByIdAndUpdate(req.user.userId, {
-      foapaDetails: req.body.foapaDetails,
+    let userId = req.user.userId;
+    const requestSchema = z.string();
+
+    let foapaId = requestSchema.parse(req.body.foapa_id);
+
+    let faculty = await Faculty.findById(userId);
+
+    // Save all the faculty's FOAPAs that don't have the same id as the ID to be deleted
+    faculty.foapaDetails = faculty.foapaDetails.filter(
+      (foapa) => foapa._id.toHexString() !== foapaId
+    );
+
+    logger.log("info", `User ${userId} deleted FOAPA ${foapaId} succesfully`, {
+      api: "/api/delete-foapa-detail",
     });
+
+    await faculty.save();
 
     return res
       .status(200)
@@ -208,6 +222,7 @@ router.post("/update-foapa-details", verifyToken, async (req, res) => {
   }
 });
 
+// Retrieves a FOAPA's information
 router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
   try {
     let facultyId = req.user.userId;
@@ -238,11 +253,6 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
       //Loop through all the foapas used in the claim
       for (let j = 0; j < foapasUsedInThisClaim.length; j++) {
         //The foapa matches the foapa we want to check
-        console.log(
-          foapasUsedInThisClaim[j].foapa_id.toHexString(),
-          "-",
-          req.query.foapa_id
-        );
         if (
           foapasUsedInThisClaim[j].foapa_id.toHexString() === req.query.foapa_id
         ) {
@@ -265,35 +275,10 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/deleteFoapaDetail", verifyToken, async (req, res) => {
-  const foapaId = req.body.foapa._id;
-
-  try {
-    const faculty = await Faculty.findById(req.user.userId);
-
-    if (faculty === null) throw new Error("Faculty not found");
-
-    faculty.foapaDetails.pull(foapaId);
-    faculty.save();
-    res.status(200).send({ message: "Foapa deleted successfully" });
-  } catch (err) {
-    logger.error(err, {
-      api: "/api/deleteFoapaDetail",
-    });
-
-    return res.status(400).send({
-      message:
-        err?.message ||
-        "An unexpected error occured when deleting your FOAPA detail",
-    });
-  }
-});
-
+// Checks the clashes when the user wants to delete or edit a FOAPA: POST /check-foapa-usage
 router.get("/check-foapa-usage", verifyToken, async (req, res) => {
   try {
-    const requestSchema = z.string();
-
-    const foapaId = requestSchema.parse(requestSchema);
+    const foapaId = req.query.foapa_id;
     const userId = req.user.userId;
 
     const faculty = await Faculty.findById(userId).populate(
@@ -331,7 +316,6 @@ router.get("/check-foapa-usage", verifyToken, async (req, res) => {
       //Loop through all the foapas used in the claim
       for (let j = 0; j < foapasUsedInThisClaim.length; j++) {
         //The foapa matches the foapa we want to check
-
         if (
           foapasUsedInThisClaim[j].foapa_id.toHexString() ===
           foapaToCheck._id.toHexString()
@@ -345,8 +329,6 @@ router.get("/check-foapa-usage", verifyToken, async (req, res) => {
 
     let clashes = reimbursementClashes.map((claim) => claim.reimbursementName);
 
-    console.log("clashes", clashes);
-
     //Removing duplicates
     clashes = [...new Set(clashes)];
 
@@ -356,9 +338,10 @@ router.get("/check-foapa-usage", verifyToken, async (req, res) => {
       api: "/api/check-foapa-usage",
     });
 
-    return res
-      .status(400)
-      .send({ message: err.message || "An unexpected error occured" });
+    return res.status(500).send({
+      message:
+        "An unexpected error occured when verifying this FOAPA's usage. Please try again later.",
+    });
   }
 });
 

@@ -48,32 +48,17 @@
       <h3>Manage Foapa Details</h3>
     </div>
   </section>
-  <confirmation-popup
-    v-if="deleteFoapaPopupIsVisible"
-    :cancel-function="() => (deleteFoapaPopupIsVisible = false)"
-    :continue-function="() => deleteFoapa(foapaToDelete)"
-  >
-    <template #message>
-      Are you sure you want to delete this FOAPA. This process can not be
-      reversed. If yes, click Continue.
-    </template>
-  </confirmation-popup>
 </template>
 
 <script lang="ts" setup>
 import axios from "axios";
-import ConfirmationPopup from "../utilities/ConfirmationPopup.vue";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { FoapaStuff } from "../../types/types";
-import { TYPE, useToast } from "vue-toastification";
 
 let userFoapaNumbers = ref<FoapaStuff[]>([]);
-let deleteFoapaPopupIsVisible = ref<boolean>(false);
-let foapaToDelete = ref<FoapaStuff>();
 
 const router = useRouter();
-const toast = useToast();
 
 function formatUserFoapa(foapa: FoapaStuff) {
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${
@@ -90,30 +75,6 @@ function retrieveUserFoapaDetails() {
     .catch((err) => {
       console.log("There was an error fetching FOAPA values");
       console.log(err);
-    });
-}
-
-function showFoapaDeletionPopup(foapa: FoapaStuff) {
-  foapaToDelete.value = foapa;
-  deleteFoapaPopupIsVisible.value = true;
-}
-
-function deleteFoapa(foapa: FoapaStuff | undefined) {
-  axios
-    .post(`${import.meta.env.VITE_API_URL}/api/deleteFoapaDetail`, {
-      foapa,
-    })
-    .then(() => {
-      toast("FOAPA deleted successfully", {
-        type: TYPE.SUCCESS,
-      });
-
-      retrieveUserFoapaDetails();
-      deleteFoapaPopupIsVisible.value = false;
-    })
-    .catch((err) => {
-      console.log(err);
-      alert(err.response.data.message);
     });
 }
 

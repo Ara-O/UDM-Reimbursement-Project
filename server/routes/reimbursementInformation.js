@@ -1,137 +1,265 @@
-import { Router } from "express";
+import { request, Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
 import Faculty from "../models/faculty.js";
 import logger from "../logger.js";
+import z, { ZodError } from "zod";
 import ReimbursementTicket from "../models/reimbursement.js";
 const router = Router();
 
-//GET /api/retrieveReimbursements
-router.get("/retrieveReimbursements", verifyToken, async (req, res) => {
-  try {
-    let reimbursements = await Faculty.findById(req.user.userId)
-      .populate("reimbursementTickets")
-      .select("reimbursementTickets");
-    res.status(200).send(reimbursements.reimbursementTickets);
-  } catch (err) {
-    console.error(err);
-    res.status(400).send({ message: err.message });
-  }
+const reimbursementRequestSchema = z.object({
+  reimbursementTicket: z.object({
+    _id: z.string().optional(),
+    __v: z.number().optional(),
+    reimbursementName: z.string(),
+    totalCost: z.number(),
+    reimbursementReason: z.string(),
+    reimbursementStatus: z.string(),
+    reimbursementDate: z.string(),
+    activities: z.array(
+      z
+        .object({
+          name: z.string(),
+          cost: z.union([z.number(), z.string()]),
+          date: z.string(),
+          id: z.string(),
+        })
+        .optional()
+    ),
+    reimbursementReceipts: z.array(
+      z
+        .object({
+          _id: z.string().optional(),
+          id: z.string(),
+          name: z.string(),
+          url: z.string(),
+        })
+        .optional()
+    ),
+    destination: z.string(),
+    paymentRetrievalMethod: z.string(),
+    UDMPUVoucher: z.boolean(),
+    knowFoapa: z.boolean(),
+    guestInformation: z.array(
+      z
+        .object({
+          _id: z.string().optional(),
+          employeeFirstName: z.string(),
+          employeeLastName: z.string(),
+          guestAssociation: z.string(),
+          guestFirstName: z.string(),
+          guestLastName: z.string(),
+        })
+        .optional()
+    ),
+    foapaDetails: z.array(
+      z
+        .object({
+          _id: z.string().optional(),
+          cost: z.union([z.number(), z.string()]),
+          foapa_id: z.string(),
+        })
+        .optional()
+    ),
+  }),
 });
 
-// POST /api/addReimbursement
-router.post("/addReimbursement", verifyToken, async (req, res) => {
+// Add a reimbursement request: POST /api/add-reimbursement
+router.post("/add-reimbursement", verifyToken, async (req, res) => {
   try {
-    let userInfo = await Faculty.findById(req.user.userId);
+    const userId = req.user.userId;
+    const userInfo = await Faculty.findById(userId);
 
-    let reimbursementTicket = new ReimbursementTicket(
-      req.body.reimbursementTicket
-    );
+    const requestData = reimbursementRequestSchema.parse(req.body);
+    const reimbursement = requestData.reimbursementTicket;
 
+    let reimbursementTicket = new ReimbursementTicket(reimbursement);
+
+    //Stores the reimbursement request in the reimbursements database
     await reimbursementTicket.save();
-    userInfo.reimbursementTickets.push(reimbursementTicket);
-    userInfo.save();
 
-    res
+    //Add the reimbursement request ID to the faculty's reimbursement tickets list
+    userInfo.reimbursementTickets.push(reimbursementTicket);
+
+    await userInfo.save();
+
+    return res
       .status(200)
       .send({ message: "Reimbursement ticket added successfully" });
   } catch (err) {
-    res.status(400).send({ message: err.message });
+    logger.error("There was an error adding a reimbursement", {
+      api: "/api/add-reimbursement",
+    });
+
+    logger.error(err, {
+      api: "/api/add-reimbursement",
+    });
+
+    if (err instanceof ZodError) {
+      logger.error(err, {
+        api: "/api/add-reimbursement",
+      });
+
+      return res
+        .status(400)
+        .send({ messsage: "There was an error with one of your inputs" });
+    }
+
+    return res.status(500).send({
+      message:
+        "There was an error saving this reimbursement claim...Please try again later.",
+    });
   }
 });
 
-//GET /api/retrieve-ticket-information
+//When the user clicks modify reimbursement, this fetches the ticket info: GET /api/retrieve-ticket-information
 router.get("/retrieve-ticket-information", verifyToken, async (req, res) => {
   try {
-    const reimbursementId = req.query.reimbursementId;
+    const requestSchema = z.string();
+
+    const reimbursementId = requestSchema.parse(req.query.reimbursementId);
+
     let ticketInfo = await ReimbursementTicket.findById(reimbursementId);
+
     res.status(200).send(ticketInfo);
   } catch (err) {
     logger.error(err, {
       api: "/api/retrieve-ticket-information",
     });
-    res.status(400).send({ message: err.message });
+
+    if (err instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "An error occured when retrieving this reimbursement request...Please try again later.",
+      });
+    }
+
+    return res.status(500).send({
+      message: "An unexpected error has occured. Please try again later",
+    });
   }
 });
 
-//POST /api/update-reimbursement
+//Edit a reimbursement claim: POST /api/update-reimbursement
 router.post("/update-reimbursement", verifyToken, async (req, res) => {
-  const reimbursementTicket = req.body.reimbursementTicket;
   try {
+    // Validate the user's reimbursement data
+    const requestData = reimbursementRequestSchema.parse(req.body);
+
+    const reimbursementTicket = requestData.reimbursementTicket;
+
+    // Look for the reimbursement with the same id and update it with the user
+    // inputted updated reimbursement request
     await ReimbursementTicket.findByIdAndUpdate(
       reimbursementTicket._id,
       reimbursementTicket
     );
 
-    res.status(200).send({ message: "Reimbursement updated successfully!" });
+    logger.info(
+      `User ${req.user.userId} has successfully updated reimbursement ${reimbursementTicket._id}`,
+      {
+        api: "/api/update-reimbursement",
+      }
+    );
+
+    return res
+      .status(200)
+      .send({ message: "Reimbursement updated successfully!" });
   } catch (err) {
     logger.error(err, {
       api: "/api/update-reimbursement",
     });
 
-    res.status(500).send({
+    return res.status(500).send({
       message:
         "An unexpected error occured when updating this reimbursement's claim. Please try again later.",
     });
   }
 });
 
-//POST /api/delete-reimbursement
+// Delete reimbursement: POST /api/delete-reimbursement
 router.post("/delete-reimbursement", verifyToken, async (req, res) => {
-  const reimbursementId = req.body.id;
-  console.log("rem id", reimbursementId);
   try {
-    let faculty = await Faculty.findById(req.user.userId);
+    const requestSchema = z.string();
+
+    const userId = req.user.userId;
+
+    // Parse the reimbursement id
+    const reimbursementId = requestSchema.parse(req.body.id);
+
+    let faculty = await Faculty.findById(userId);
+
+    // Remove the reimbursement ID from the faculty's reimbursement list
     faculty.reimbursementTickets.pull(reimbursementId);
+
+    // Delete the reimbursement from the reimbursement table
     await ReimbursementTicket.findByIdAndDelete(reimbursementId);
+
     await faculty.save();
 
-    res
+    return res
       .status(200)
       .send({ message: "Reimbursement ticket deleted successfully" });
   } catch (err) {
-    console.log(err);
-    res.status(400).send({ message: err.message });
-  }
-});
-
-router.get("/retrieveActivity", verifyToken, async (req, res) => {
-  try {
-    const activityId = req.query.activityId;
-    let activityInfo = await Faculty.findOne({
-      activityId: req.user.activityId,
-      "activities.activityId": activityId,
+    logger.err(err, {
+      api: "/api/delete-reimbursement",
     });
-    console.log(activityInfo);
-    res.status(200).send(activityInfo.activities[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(400).send({ message: err.message });
+
+    return res.status(500).send({
+      message:
+        "An unexpected error occured when deleting this reimbursement...Please try again later.",
+    });
   }
 });
 
+// Save a reimbursement claim as a template: POST /save-as-template
 router.post("/save-as-template", verifyToken, async (req, res) => {
   try {
-    if (req.body._id) {
-      delete req.body._id;
+    const userId = req.user.userId;
+    const requestData = reimbursementRequestSchema.parse(req.body);
+
+    const reimbursementTicket = requestData.reimbursementTicket;
+
+    // Removes all the _id fields so the template can have a new ID
+    if (reimbursementTicket._id) {
+      delete reimbursementTicket._id;
     }
 
-    if (req?.body?.activities) {
-      req.body.activities.forEach((actv) => {
+    if (reimbursementTicket.activities) {
+      reimbursementTicket.activities.forEach((actv) => {
         delete actv._id;
       });
     }
 
-    if (req?.body?.guestInformation) {
-      req.body.guestInformation.forEach((guest) => {
+    if (reimbursementTicket.foapaDetails) {
+      reimbursementTicket.foapaDetails.forEach((foapa) => {
+        delete foapa._id;
+      });
+    }
+
+    if (reimbursementTicket.guestInformation) {
+      reimbursementTicket.guestInformation.forEach((guest) => {
         delete guest._id;
       });
     }
 
-    let user = await Faculty.findByIdAndUpdate(req.user.userId, {
+    if (reimbursementTicket.reimbursementReceipts) {
+      reimbursementTicket.reimbursementReceipts.forEach((receipt) => {
+        delete receipt._id;
+      });
+    }
+
+    await Faculty.findByIdAndUpdate(userId, {
       $push: {
-        reimbursementTemplates: req.body,
+        reimbursementTemplates: reimbursementTicket,
       },
     });
+
+    logger.info(
+      `User ${userId} has successfully saved a reimbursement request as a template`,
+      {
+        api: "/api/save-as-template",
+      }
+    );
 
     return res
       .status(200)
@@ -147,6 +275,7 @@ router.post("/save-as-template", verifyToken, async (req, res) => {
     logger.error(err, {
       api: "/api/save-as-template",
     });
+
     return res.status(500).send({
       message: "An unexpected error has occured. Please try again later",
     });
