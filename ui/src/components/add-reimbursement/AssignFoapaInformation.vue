@@ -23,7 +23,7 @@
             required
           >
             <!-- <option disabled selected value="">Select FOAPA</option> -->
-            <option :value="foapa._id" v-for="foapa in filteredUserFoapas">
+            <option :value="foapa._id" v-for="foapa in userFoapas">
               {{ foapa.foapaName }} - {{ formatUserFoapa(foapa) }}
             </option>
             <option value="Add a New FOAPA">Add a New FOAPA</option>
@@ -199,26 +199,6 @@ function moveToPreviousSection() {
   emits("move-to-previous-section");
 }
 
-//Removes a foapa from the list to select foapa from if they already added one
-const filteredUserFoapas = computed(() => {
-  let foapas: any = [];
-  userFoapas.value.forEach((foapa) => {
-    let wasFound = false;
-    for (let i = 0; i < props.claim.foapaDetails.length; i++) {
-      if (foapa._id === props.claim.foapaDetails[i].foapa_id) {
-        wasFound = true;
-        break;
-      }
-    }
-
-    if (wasFound === false) {
-      foapas.push(foapa);
-    }
-  });
-
-  return foapas;
-});
-
 function showFoapaPopup() {
   foapaPopupIsVisible.value = true;
   window.scrollTo(0, 0);
@@ -288,9 +268,23 @@ function addFoapa() {
     return;
   }
 
-  props.claim.foapaDetails.push(
-    JSON.parse(JSON.stringify(assignedFoapa.value))
-  );
+  let foapaWasAlreadyAdded = false;
+  for (let i = 0; i < props.claim.foapaDetails.length; i++) {
+    if (props.claim.foapaDetails[i].foapa_id === assignedFoapa.value.foapa_id) {
+      props.claim.foapaDetails[i].cost = String(
+        Number(props.claim.foapaDetails[i].cost) +
+          Number(assignedFoapa.value.cost)
+      );
+      foapaWasAlreadyAdded = true;
+      break;
+    }
+  }
+
+  if (!foapaWasAlreadyAdded) {
+    props.claim.foapaDetails.push(
+      JSON.parse(JSON.stringify(assignedFoapa.value))
+    );
+  }
 
   assignedFoapa.value = {
     cost: "",

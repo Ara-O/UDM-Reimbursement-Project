@@ -255,12 +255,14 @@
                 :src="EditIcon"
                 alt="Edit icon"
                 class="w-5 cursor-pointer"
+                title="Edit FOAPA"
                 @click="triggerFoapaEditMode(foapa)"
               />
               <img
                 :src="DeleteIcon"
                 alt="Trash icon"
                 class="w-4 cursor-pointer"
+                title="Delete FOAPA"
                 @click="showDeleteFoapaDialogue(foapa._id)"
               />
             </div>
@@ -294,12 +296,14 @@
               <img
                 :src="EditIcon"
                 alt="Edit icon"
+                title="Edit FOAPA"
                 class="w-5 cursor-pointer"
                 @click="triggerFoapaEditMode(foapa)"
               />
               <img
                 :src="DeleteIcon"
                 alt="Trash icon"
+                title="Delete FOAPA"
                 class="w-4 cursor-pointer"
                 @click="showDeleteFoapaDialogue(foapa._id)"
               />

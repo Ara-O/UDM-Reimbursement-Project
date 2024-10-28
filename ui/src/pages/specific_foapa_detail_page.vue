@@ -17,6 +17,26 @@
         {{ parseDate(foapa_information.foapa_information.updatedAt) }}
       </h4>
 
+      <!-- STATISTICS -->
+      <h2 class="text-xl font-semibold mt-10 underline">FOAPA Statistics</h2>
+      <article class="flex gap-4 flex-wrap">
+        <div
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+        >
+          <p class="text-sm font-medium">Total Requests Funded</p>
+          <p class="font-semibold text-md">
+            {{ foapa_information.claims_used.length }}
+          </p>
+        </div>
+        <div
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+        >
+          <p class="text-sm font-medium">Total Amount Used from FOAPA</p>
+          <p class="font-semibold text-md">${{ totalAmountUsed }}</p>
+        </div>
+      </article>
+
+      <!-- HISTORY -->
       <h2 class="text-xl font-semibold mt-20 underline">History</h2>
       <p class="text-sm leading-7">
         Keep track of the reimbursement claims that you have used by this FOAPA
@@ -77,16 +97,25 @@
           @click="view = 'Grid'"
         />
       </div>
+      <div class="mb-0">
+        <p class="mb-0 text-sm leading-7">
+          Note: Clicking the name of a reimbursement request below will take you
+          to the page where you can edit the request
+        </p>
+      </div>
       <div
         v-if="Object.keys(foapa_information.claims_used).length !== 0"
         class="flex gap-4"
       >
         <div
           v-for="claim in foapaHistoryFiltered"
-          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-6"
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
         >
           <div class="flex items-center justify-between">
-            <h3 class="text-[15px] my-0 font-semibold text-gray-900">
+            <h3
+              class="text-[15px] my-0 mt-1 cursor-pointer font-semibold text-gray-900"
+              @click="() => goToReimbursement(claim._id)"
+            >
               {{ claim.reimbursementName }}
             </h3>
             <p class="my-0 text-[14px]" v-if="view === 'List'">
@@ -94,11 +123,11 @@
             </p>
           </div>
 
-          <p class="text-sm" v-if="view === 'Grid'">
-            ${{ parseAmount(claim) }} was used in this claim
-          </p>
-          <p class="text-xs" v-if="view === 'Grid'">
-            Date: {{ parseDate(claim.reimbursementDate) }}
+          <p class="text-sm leading-7 my-2" v-if="view === 'Grid'">
+            ${{ parseAmount(claim) }} out of this request's total cost of ${{
+              claim.totalCost
+            }}
+            was covered by this FOAPA
           </p>
         </div>
       </div>
@@ -124,7 +153,7 @@ const route = useRoute();
 const router = useRouter();
 
 let foapa_information = ref<any>({});
-let view = ref<string>("List");
+let view = ref<string>("Grid");
 let search_item = ref<string>("");
 
 let sortParam = ref<
@@ -159,6 +188,23 @@ const foapaHistoryFiltered = computed(() => {
   }
 });
 
+const totalAmountUsed = computed(() => {
+  let totalAmount = 0;
+
+  //Loop through all the claims the foapa is used in,
+  //for each claim, match the foapa id out of the list of the foapas used in the claim
+  //and add its cost - the amount spent from it to the totalAmount
+  foapa_information.value.claims_used.forEach((claim) => {
+    claim.foapaDetails.forEach((foapa) => {
+      if (foapa.foapa_id === route.params.id) {
+        totalAmount += foapa.cost;
+      }
+    });
+  });
+
+  return totalAmount;
+});
+
 function formatUserFoapa(foapa) {
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${
     foapa.account || "XXXX"
@@ -179,6 +225,9 @@ function parseAmount(claim) {
   return found_claim.cost;
 }
 
+function goToReimbursement(reimbursementId) {
+  router.push({ path: "/add-reimbursement", query: { reimbursementId } });
+}
 onMounted(() => {
   if (route.params.id === null) {
     router.push("/dashboard");
