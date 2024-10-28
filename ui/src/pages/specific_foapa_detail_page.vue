@@ -212,8 +212,13 @@ function formatUserFoapa(foapa) {
 }
 
 function parseDate(dateString: string) {
-  const dateParsed = new Date(dateString);
-  const formattedDate = dateParsed.toISOString().slice(0, 10);
+  if (!dateString) return;
+  const year = dateString.split("-")[0]
+  const month = dateString.split("-")[1]
+  const day = dateString.split("-")[2].substring(0,2)
+  const formattedDate = month + "/" + day + "/" + year
+
+  console.log(dateString)
   return formattedDate;
 }
 
