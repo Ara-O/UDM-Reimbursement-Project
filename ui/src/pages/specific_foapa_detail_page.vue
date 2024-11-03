@@ -5,7 +5,7 @@
       <h4 class="font-normal text-sm text-gray-600 hover:underline">Go back</h4>
     </div>
 
-    <section class="mt-20" v-if="foapa_information.foapa_information">
+    <section class="mt-20" v-if="foapa_information.foapa_information" style="margin-bottom: 5vh;">
       <h2 class="text-2xl font-semibold">
         {{ formatUserFoapa(foapa_information.foapa_information) }}
       </h2>
@@ -96,6 +96,12 @@
           class="invert ml-3 w-3 cursor-pointer opacity-50"
           @click="view = 'Grid'"
         />
+        <img
+          :src="TableView"
+          alt="Table View"
+          @click="view = 'Table'"
+          class="w-3 ml-4 cursor-pointer opacity-50"
+        />
       </div>
       <div class="mb-0">
         <p class="mb-0 text-sm leading-7">
@@ -110,6 +116,7 @@
         <div
           v-for="claim in foapaHistoryFiltered"
           class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+          v-if="view !== 'Table'"
         >
           <div class="flex items-center justify-between">
             <h3
@@ -131,6 +138,36 @@
           </p>
         </div>
       </div>
+      <div style="margin-bottom: 30px;" v-if="view === 'Table'">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Cost</th>
+            <th>Status</th>
+            <th>Date Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="foapa in foapaHistoryFiltered"
+          >
+            <td @click="() => goToReimbursement(foapa._id)" class="cursor-pointer">
+              {{ foapa.reimbursementName }}
+            </td>
+            <td>
+              ${{ foapa.totalCost }}
+            </td>
+            <td>
+              {{ foapa.reimbursementStatus}}
+            </td>
+            <td>
+              {{ parseDate(foapa.reimbursementDate)}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
       <h3 v-else class="text-sm font-normal italic">
         This FOAPA hasn't been used yet
       </h3>
@@ -147,6 +184,7 @@ import axios from "axios";
 import { computed, onMounted, ref } from "vue";
 import ListView from "../assets/list-view.png";
 import GridView from "../assets/grid-view.png";
+import TableView from "../assets/table.png"
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
@@ -161,6 +199,10 @@ let sortParam = ref<
 >("NONE");
 
 const foapaHistoryFiltered = computed(() => {
+
+  if(Object.keys(foapa_information.value).length == 0 ){
+    return []
+  }
   let foapas = foapa_information.value.claims_used.filter((info) => {
     return info.reimbursementName
       .toLowerCase()
@@ -252,3 +294,15 @@ onMounted(() => {
     });
 });
 </script>
+<style>
+  table,th,td{
+    border: 3px solid black;
+    border-collapse:collapse;
+    padding:1rem;
+    font-size: 1rem
+  }
+  th{
+    background-color: #002d72;
+    color:white;
+  }
+</style>

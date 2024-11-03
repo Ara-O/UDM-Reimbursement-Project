@@ -284,6 +284,7 @@ import {
   isValidFoapaDescription,
   isValidProgramNumber,
 } from "../../utils/validators";
+import AutoComplete from 'primevue/autocomplete';
 
 const toast = useToast();
 let props = defineProps<{ foapaDetails: FoapaStuff[] }>();

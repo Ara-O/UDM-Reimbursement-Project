@@ -116,8 +116,10 @@
                 :rules="isValidAccountNumber"
                 v-model="added_foapa.account"
                 class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-28"
+                list="accounts"
               >
-              </Field>
+              <AutoComplete v-model="added_foapa.account" dropdown :suggestions="arrAcct" @complete="filterAccounts"/>
+            </Field>
               <ErrorMessage
                 name="account"
                 class="text-red-400 bottom-[-24px] absolute text-xs"
@@ -521,6 +523,8 @@ import axios from "axios";
 import EditIcon from "../assets/blue-pencil.png";
 import DeleteIcon from "../assets/red-delete-icon.png";
 import CancelIcon from "../assets/cross-icon.svg";
+import AutoComplete from 'primevue/autocomplete';
+
 // import SortIcon from "../assets/.png";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, onMounted, watch, computed } from "vue";
@@ -557,6 +561,9 @@ let state = ref<FoapaStates>("Add");
 const edited_foapas_id = ref<string>("");
 const return_to_dashboard = ref<boolean>(false);
 const foapa_to_delete = ref<string>("");
+const acctNums = ref<any[]>([]);
+const filteredAccounts = ref<any[]>([]);
+const arrAcct = ref<any[]>([]);
 
 type FilterValues = "Date(ASC)" | "Date(DESC)" | "Amount(ASC)" | "";
 let filterValues = ref<FilterValues>("");
@@ -623,6 +630,33 @@ let added_foapa = ref({
   // currentAmount: "",
   description: "",
 });
+
+async function retrieveAccountNumbers(){
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/api/retrieveAccountNumbers`)
+    .then((res)=>{
+      let accountNumbers = res.data
+      acctNums.value = accountNumbers[0].accountNumbers
+
+      arrAcct.value = acctNums.value.map((e) => {return e.number + ": " + e.description})
+
+      console.log(arrAcct)
+    })
+    .catch((err)=>{
+      console.log("There was an error retrieving the account numbers");
+      console.log(err);
+    })
+}
+
+function filterAccounts(event) {
+      const query = event.query.toLowerCase();
+      retrieveAccountNumbers();
+      filteredAccounts.value = acctNums.value.filter(acct =>
+        acct.number.includes(query)
+      );
+
+      return filteredAccounts;
+}
 
 function removeEditClashPopup() {
   show_edit_clashes_dialogue.value = false;
@@ -904,6 +938,7 @@ function stayOnPage() {
 
 onMounted(() => {
   retrieveUserFoapaDetails();
+  retrieveAccountNumbers();
 });
 </script>
 
