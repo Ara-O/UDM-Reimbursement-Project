@@ -118,7 +118,7 @@
                 class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-28"
                 list="accounts"
               >
-              <AutoComplete v-model="added_foapa.account" dropdown :suggestions="arrAcct" @complete="filterAccounts"/>
+              <AutoComplete placeholder="Enter ACCT" v-model="added_foapa.account" dropdown :suggestions="arrAcct" @complete="filterAccounts" class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-1rem" />
             </Field>
               <ErrorMessage
                 name="account"
