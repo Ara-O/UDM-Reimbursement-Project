@@ -492,7 +492,7 @@ async function retrieveDashboardData() {
   } catch (err: any) {
     if (err.response.status === 403) {
       toast(
-        "There was an error fetching your account information...Please create an account or log in.",
+        "There was an error fetching your account information. Please create an account or log in.",
         {
           type: TYPE.ERROR,
         }

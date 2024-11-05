@@ -106,7 +106,7 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
 
     return res.status(500).send({
       message:
-        "There was an error saving this reimbursement claim...Please try again later.",
+        "There was an error saving this reimbursement claim. Please try again later.",
     });
   }
 });
@@ -129,7 +129,7 @@ router.get("/retrieve-ticket-information", verifyToken, async (req, res) => {
     if (err instanceof ZodError) {
       return res.status(400).send({
         message:
-          "An error occured when retrieving this reimbursement request...Please try again later.",
+          "An error occured when retrieving this reimbursement request. Please try again later.",
       });
     }
 
@@ -213,7 +213,7 @@ router.post("/delete-reimbursement", verifyToken, async (req, res) => {
 
     return res.status(500).send({
       message:
-        "An unexpected error occured when deleting this reimbursement...Please try again later.",
+        "An unexpected error occured when deleting this reimbursement. Please try again later.",
     });
   }
 });

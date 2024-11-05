@@ -37,7 +37,7 @@
       </article>
 
       <!-- HISTORY -->
-      <h2 class="text-xl font-semibold mt-20 underline">History</h2>
+      <h2 class="text-xl font-semibold mt-12 underline">Foapa Usage History</h2>
       <p class="text-sm leading-7">
         Keep track of the reimbursement claims that you have used by this FOAPA
       </p>
@@ -105,7 +105,7 @@
       </div>
       <div
         v-if="Object.keys(foapa_information.claims_used).length !== 0"
-        class="flex gap-4"
+        class="flex gap-4 mb-16"
       >
         <div
           v-for="claim in foapaHistoryFiltered"
