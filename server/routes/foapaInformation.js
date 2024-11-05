@@ -1,6 +1,7 @@
 const router = Router();
 import Faculty from "../models/faculty.js";
 import logger from "../logger.js";
+import AccountNumbers from "../models/accountNumbers.js";
 import z, { ZodError } from "zod";
 import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
@@ -274,6 +275,28 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
     });
   }
 });
+
+router.get("/retrieveAccountNumbers", verifyToken, async (req, res) => {
+  try {
+    res.status(200).send( await AccountNumbers.find());
+  }
+  catch (err) {
+    logger.error(err, {
+      api: "/api/retrieveAccountNumbers",
+    });
+
+    if (err instanceof ZodError) {
+      return res.status(400).send({
+        message:
+          "An error occured when retrieving the Account Numbers...Please try again later. If the issue persists, contact support.",
+      });
+    }
+
+    return res.status(500).send({
+      message: "An unexpected error has occured. Please try again later. If this issue persists, please contact support.",
+    });
+  }
+})
 
 // Checks the clashes when the user wants to delete or edit a FOAPA: POST /check-foapa-usage
 router.get("/check-foapa-usage", verifyToken, async (req, res) => {
