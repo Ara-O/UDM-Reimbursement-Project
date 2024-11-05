@@ -62,7 +62,8 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
       description: z.string().trim(),
       fund: z.string().length(6).trim(),
       organization: z.string().trim().optional(),
-      account: z.string().length(4).trim().optional(),
+      // account: z.string().length(4).trim().optional(),
+      account: z.string().optional(),
       program: z.string().length(4).trim().optional(),
       activity: z.string().trim().optional(),
       isUDMPU: z.boolean().optional(),
@@ -124,7 +125,8 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
         description: z.string().trim(),
         fund: z.string().length(6).trim(),
         organization: z.string().trim().optional(),
-        account: z.string().length(4).trim().optional(),
+        // account: z.string().length(4).trim().optional(),
+        account: z.string().optional(),
         program: z.string().length(4).trim().optional(),
         activity: z.string().trim().optional(),
         isUDMPU: z.boolean().optional(),
@@ -278,9 +280,8 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
 
 router.get("/retrieveAccountNumbers", verifyToken, async (req, res) => {
   try {
-    res.status(200).send( await AccountNumbers.find());
-  }
-  catch (err) {
+    res.status(200).send(await AccountNumbers.find());
+  } catch (err) {
     logger.error(err, {
       api: "/api/retrieveAccountNumbers",
     });
@@ -293,10 +294,11 @@ router.get("/retrieveAccountNumbers", verifyToken, async (req, res) => {
     }
 
     return res.status(500).send({
-      message: "An unexpected error has occured. Please try again later. If this issue persists, please contact support.",
+      message:
+        "An unexpected error has occured. Please try again later. If this issue persists, please contact support.",
     });
   }
-})
+});
 
 // Checks the clashes when the user wants to delete or edit a FOAPA: POST /check-foapa-usage
 router.get("/check-foapa-usage", verifyToken, async (req, res) => {

@@ -118,8 +118,15 @@
                 class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-28"
                 list="accounts"
               >
-              <AutoComplete placeholder="Enter ACCT" v-model="added_foapa.account" dropdown :suggestions="arrAcct" @complete="filterAccounts" class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-1rem" />
-            </Field>
+                <AutoComplete
+                  placeholder="Enter ACCT"
+                  v-model="added_foapa.account"
+                  dropdown
+                  :suggestions="arrAcct"
+                  @complete="filterAccounts"
+                  class="acct-dropdown text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-1rem"
+                />
+              </Field>
               <ErrorMessage
                 name="account"
                 class="text-red-400 bottom-[-24px] absolute text-xs"
@@ -523,7 +530,7 @@ import axios from "axios";
 import EditIcon from "../assets/blue-pencil.png";
 import DeleteIcon from "../assets/red-delete-icon.png";
 import CancelIcon from "../assets/cross-icon.svg";
-import AutoComplete from 'primevue/autocomplete';
+import AutoComplete from "primevue/autocomplete";
 
 // import SortIcon from "../assets/.png";
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -631,31 +638,33 @@ let added_foapa = ref({
   description: "",
 });
 
-async function retrieveAccountNumbers(){
+async function retrieveAccountNumbers() {
   axios
     .get(`${import.meta.env.VITE_API_URL}/api/retrieveAccountNumbers`)
-    .then((res)=>{
-      let accountNumbers = res.data
-      acctNums.value = accountNumbers[0].accountNumbers
+    .then((res) => {
+      let accountNumbers = res.data;
+      acctNums.value = accountNumbers[0].accountNumbers;
 
-      arrAcct.value = acctNums.value.map((e) => {return e.number + ": " + e.description})
+      arrAcct.value = acctNums.value.map((e) => {
+        return e.number + ": " + e.description;
+      });
 
-      console.log(arrAcct)
+      console.log(arrAcct);
     })
-    .catch((err)=>{
+    .catch((err) => {
       console.log("There was an error retrieving the account numbers");
       console.log(err);
-    })
+    });
 }
 
 function filterAccounts(event) {
-      const query = event.query.toLowerCase();
-      retrieveAccountNumbers();
-      filteredAccounts.value = acctNums.value.filter(acct =>
-        acct.number.includes(query)
-      );
+  const query = event.query.toLowerCase();
+  retrieveAccountNumbers();
+  filteredAccounts.value = acctNums.value.filter((acct) =>
+    acct.number.includes(query)
+  );
 
-      return filteredAccounts;
+  return filteredAccounts;
 }
 
 function removeEditClashPopup() {
@@ -944,4 +953,36 @@ onMounted(() => {
 
 <style scoped>
 @import url("../assets/styles/add-foapa-page.css");
+</style>
+
+<style>
+#pv_id_1_panel {
+  margin-top: 20px;
+  margin-left: -15px;
+  background-color: white;
+  border: solid 1px rgb(226, 226, 226);
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.p-autocomplete-option {
+  margin-bottom: 7px;
+}
+
+.p-autocomplete {
+  width: 7rem !important;
+}
+
+.p-inputtext.p-component.p-autocomplete-input {
+  font-size: 0.75rem;
+}
+
+.p-icon {
+  display: none !important;
+}
+
+.p-inputtext::placeholder {
+  color: gray !important;
+}
 </style>

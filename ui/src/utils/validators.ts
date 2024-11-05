@@ -122,26 +122,26 @@ export function isValidFloat(value) {
 // }
 
 export function isValidAccountNumber(value) {
-  if (value === undefined || value === null) value = "";
-  value = String(value);
+  // if (value === undefined || value === null) value = "";
+  // value = String(value);
 
-  const isValidNumber = /^[0-9]+$/.test(value);
-  const hasValidLength = /^[0-9]{4}$/.test(value);
+  // const isValidNumber = /^[0-9]+$/.test(value);
+  // const hasValidLength = /^[0-9]{4}$/.test(value);
 
-  switch (true) {
-    case value.trim() === "":
-      return "Required";
-    case !isValidNumber:
-      if (value === "XXXX") {
-        return true;
-      } else {
-        return "Numbers only";
-      }
-    case !hasValidLength:
-      return "4-digits";
-    default:
-      return true;
-  }
+  // switch (true) {
+  //   case value.trim() === "":
+  //     return "Required";
+  //   case !isValidNumber:
+  //     if (value === "XXXX") {
+  //       return true;
+  //     } else {
+  //       return "Numbers only";
+  //     }
+  //   case !hasValidLength:
+  //     return "4-digits";
+  //   default:
+  return true;
+  // }
 }
 
 //Non required foapa numebrs
