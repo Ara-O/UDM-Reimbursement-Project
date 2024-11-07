@@ -114,57 +114,67 @@
         </p>
       </div>
       <div
-        v-if="Object.keys(foapa_information.claims_used).length !== 0"
+        v-if="
+          Object.keys(foapa_information.claims_used).length !== 0 &&
+          view !== 'Table'
+        "
         class="flex gap-4 mb-16"
       >
         <div
           v-for="claim in foapaHistoryFiltered"
-          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-80 h-32 flex flex-col justify-center overflow-auto mt-5"
           v-if="view !== 'Table'"
         >
-          <div class="flex items-center justify-between">
+          <div class="flex justify-between">
             <h3
-              class="text-[15px] my-0 mt-1 cursor-pointer font-semibold text-gray-900"
+              class="text-[15px] my-0 cursor-pointer whitespace-nowrap max-w-64 overflow-hidden text-ellipsis font-semibold text-gray-900"
               @click="() => goToReimbursement(claim._id)"
+              :title="
+                claim.reimbursementName + ' - ' + claim.reimbursementStatus
+              "
             >
-              {{ claim.reimbursementName }}
+              {{ claim.reimbursementName }} - {{ claim.reimbursementStatus }}
             </h3>
-            <p class="my-0 text-[14px]" v-if="view === 'List'">
+            <p class="text-[14px]" v-if="view === 'List'">
               ${{ parseAmount(claim) }}
             </p>
           </div>
 
-          <p class="text-sm leading-7 my-2" v-if="view === 'Grid'">
-            ${{ parseAmount(claim) }} out of this request's total cost of ${{
-              claim.totalCost
-            }}
-            was covered by this FOAPA
+          <p class="text-sm leading-7 mt-2 mb-0" v-if="view === 'Grid'">
+            Total cost: ${{ claim.totalCost }}
+          </p>
+          <p class="text-sm leading-7 mt-1 mb-0">
+            FOAPA usage: ${{ parseAmount(claim) }}
           </p>
         </div>
       </div>
-      <div style="margin-bottom: 30px" v-if="view === 'Table'">
-        <table class="table">
+      <div
+        style="margin-bottom: 30px"
+        class="mt-5"
+        v-if="view === 'Table' && foapaHistoryFiltered.length !== 0"
+      >
+        <table class="table border-1">
           <thead>
             <tr>
-              <th>Title</th>
-              <th>Cost</th>
-              <th>Status</th>
-              <th>Date Created</th>
+              <th class="font-medium border-2 text-sm">Title</th>
+              <th class="font-medium border-2 text-sm">Cost</th>
+              <th class="font-medium border-2 text-sm">Status</th>
+              <th class="font-medium border-2 text-sm">Date Created</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="foapa in foapaHistoryFiltered">
               <td
                 @click="() => goToReimbursement(foapa._id)"
-                class="cursor-pointer"
+                class="cursor-pointer text-sm border-2"
               >
                 {{ foapa.reimbursementName }}
               </td>
-              <td>${{ foapa.totalCost }}</td>
-              <td>
+              <td class="text-sm border-2">${{ foapa.totalCost }}</td>
+              <td class="text-sm border-2">
                 {{ foapa.reimbursementStatus }}
               </td>
-              <td>
+              <td class="text-sm border-2">
                 {{ parseDate(foapa.reimbursementDate) }}
               </td>
             </tr>

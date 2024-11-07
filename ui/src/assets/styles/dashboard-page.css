@@ -338,6 +338,10 @@
 }
 
 .user-information-wrapper div {
+  height: 94px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 5px;
   box-shadow: 0px 2px 2px rgb(83 83 83 / 17%);
   width: 300px;

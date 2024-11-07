@@ -5,7 +5,7 @@
 
     <!-- Middle section -->
     <section class="reimbursement-section">
-      <h3>Welcome {{ userInfo.firstName }}</h3>
+      <h3 class="mb-0 !text-[17px]">Welcome {{ userInfo.firstName }}</h3>
       <router-link to="/profile-page">
         <img src="../assets/user-icon.png" alt="User help" class="user-icon"
       /></router-link>
@@ -18,7 +18,18 @@
           onchange="filterReimbursements"
           placeholder="Search Reimbursement Claims"
         />
-        <div class="search-button">
+        <select
+          v-model="sortValue"
+          class="w-56 bg-white text-gray-600 select-dropdown reimbusement-search pl-4 pr-5 box-border"
+        >
+          <option value="Sort by" disabled selected>Sort</option>
+          <option value="Name" @select="orderByName">Sort by Name</option>
+          <option value="Date" @select="orderByDate">Sort by Date</option>
+          <option value="Status" @change="orderByStatus">Sort by Status</option>
+          <option value="Cost">Sort by Cost</option>
+          <option value="None">Sort by:</option>
+        </select>
+        <div class="search-button w-20">
           <img
             src="../assets/search-icon.png"
             alt="Search icon"
@@ -26,7 +37,7 @@
           />
         </div>
       </div>
-      <div class="search-filters">
+      <!-- <div class="search-filters">
         <div
           class="filter"
           :class="{ selected: sortParameter === 'Date' }"
@@ -43,7 +54,7 @@
         <div class="filter" @click="orderByCost()">
           <h3>Sort by Cost</h3>
         </div>
-      </div>
+      </div> -->
       <!--           :class="{ selected: sortParameter === 'Cost' }"
  -->
       <br />
@@ -299,7 +310,7 @@ import FoapaNumbers from "../components/dashboard/FoapaNumbersDashboard.vue";
 import axios from "axios";
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import "../assets/styles/dashboard-page.css";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
 import DataTable from "primevue/datatable";
@@ -344,8 +355,45 @@ let viewingTemplates = ref<boolean>(false);
 let viewPopupIsShown = ref<boolean>(false);
 let delete_claim_confirmation_dialog = ref<boolean>(false);
 let claim_to_delete_id = ref<string>("");
-
+const sortValue = ref<string>("None");
 let reimbursementTickets = ref<any>([]);
+
+// name, date, status, cost
+watch(sortValue, (newvalue) => {
+  console.log(newvalue);
+  switch (newvalue) {
+    case "Name":
+      reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
+        if (
+          b.reimbursementName.toUpperCase() < a.reimbursementName.toUpperCase()
+        ) {
+          return 1;
+        }
+      });
+      break;
+    case "Date":
+      reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
+        if (a.reimbursementDate < b.reimbursementDate) {
+          return 1;
+        }
+      });
+      break;
+    case "Status":
+      reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
+        if (a.reimbursementStatus === "Submitted") {
+          return 1;
+        }
+      });
+      break;
+    case "Cost":
+      reimbursementTickets.value = reimbursementTickets.value.sort((a, b) => {
+        if (a.totalCost < b.totalCost) {
+          return 1;
+        }
+      });
+      break;
+  }
+});
 
 let currentView = ref<"grid" | "list" | "table">("grid");
 function changeView(view: "grid" | "list" | "table") {
@@ -628,5 +676,11 @@ onMounted(() => {
 
 td {
   text-align: center;
+}
+
+.select-dropdown {
+  -moz-appearance: none; /* Firefox */
+  -webkit-appearance: none; /* Safari and Chrome */
+  appearance: none;
 }
 </style>
