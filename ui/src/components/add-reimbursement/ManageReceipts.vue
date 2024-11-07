@@ -40,7 +40,7 @@
       class="mt-6 flex gap-10 w-auto max-w-[1100px] max-h-72 overflow-auto flex-wrap"
     >
       <div
-        class="border border-solid border-gray-200 rounded-md flex items-center box-border w-auto px-5 gap-5 h-auto py-5 pr-10"
+        class=" bg-udmercy-blue border border-solid border-gray-200 text-white rounded-md flex items-center box-border w-auto px-5 gap-5 h-auto py-5 pr-10"
         v-for="(receipt, index) in props.claim.reimbursementReceipts"
       >
         <img
@@ -55,18 +55,27 @@
             Receipt {{ receipt.name }}
           </h3>
           <span class="flex gap-3">
-            <a :href="(receipt.url as string)" target="_blank"
+            <a :href="(receipt.url as string)" target="_blank" style="text-decoration:none"
               ><button
-                class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-5 py-2"
+                class="bg-white text-xs text-black rounded-full cursor-pointer border-none px-3.5 py-2 flex items-center gap-1 mt-1"
               >
-                View
+              <img
+              src="../../assets/expand-view.png"
+              alt="View Receipt"
+              class="trash-icon w-4"
+              title="View Receipt"
+            />
               </button>
             </a>
             <button
               @click="deleteReceipt(receipt.id)"
-              class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-5 py-2"
+              class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-4 py-1 mt-1"
             >
-              Delete
+            <img
+              src="../../assets/trash-icon-white.png"
+              alt="Trash icon"
+              class="trash-icon w-3 mt-1"
+            />
             </button>
           </span>
         </span>
