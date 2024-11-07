@@ -198,10 +198,11 @@
             <div class="reimbursement-buttons">
               <button
                 @click="viewTicket(ticket._id)"
-                v-if="ticket.reimbursementStatus !== 'Submitted'"
+                
                 title="Modify Request"
                 style="background-color: white; border: 0px"
               >
+              <!-- v-if="ticket.reimbursementStatus !== 'Submitted'" ENTER THIS WHEN V2.0 -->
                 <img :src="pencilIcon" alt="Pencil icon" class="w-4" />
               </button>
               <button
