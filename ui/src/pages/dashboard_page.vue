@@ -5,7 +5,7 @@
 
     <!-- Middle section -->
     <section class="reimbursement-section">
-      <h3>Welcome {{ userInfo.firstName }}</h3>
+      <div class="text-xl">Welcome {{ userInfo.firstName }}</div>
       <router-link to="/profile-page">
         <img src="../assets/user-icon.png" alt="User help" class="user-icon"
       /></router-link>

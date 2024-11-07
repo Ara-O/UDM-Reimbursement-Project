@@ -85,18 +85,18 @@
       <button
         type="button"
         @click="emits('move-to-previous-section')"
-        class="bg-udmercy-blue mt-6 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-around items-center"
+        class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
       >
-      <img src="../../assets/prev-arrow.png" class="w-4">
+      <img src="../../assets/prev-arrow.png" class="w-3">
         Previous Section
       </button>
       <button
           type="button"
           @click="emits('move-to-next-section')"
-          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-around items-center"
+          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5"
         >
           Next Section
-          <img src="../../assets/next-arrow.png" class="w-4">
+          <img src="../../assets/next-arrow.png" class="w-3">
         </button>
         </div>
     </form>
