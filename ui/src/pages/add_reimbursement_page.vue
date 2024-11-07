@@ -71,6 +71,7 @@
         :claim="currentReimbursement"
         v-if="selectedSection === 6"
         @on-claim-saved="onClaimSaved"
+        @move-to-previous-section="moveToPreviousSection"
       ></finish>
     </section>
     <confirmation-popup

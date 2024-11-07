@@ -212,7 +212,7 @@ const props = defineProps<{
 }>();
 const route = useRoute();
 const router = useRouter();
-const emits = defineEmits(["onClaimSaved"]);
+const emits = defineEmits(["onClaimSaved", "move-to-previous-section"]);
 
 let checked = false;
 let currentlyCreatingPDF = ref<boolean>(false);
@@ -222,12 +222,16 @@ let showEmailPopup = ref<boolean>(false);
 let knowFoapaText = "";
 //let foapaDetails;
 
+
 function returnToDashboard() {
   router.push("/dashboard");
 }
 
 function cancelConfirmationPopup() {
   showConfirmationPopup.value = false;
+}
+function moveToPreviousSection() {
+  emits("move-to-previous-section");
 }
 
 function emailPDF() {
