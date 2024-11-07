@@ -181,7 +181,10 @@
           </tbody>
         </table>
       </div>
-      <h3 v-else class="text-sm font-normal italic">
+      <h3
+        v-if="foapaHistoryFiltered.length === 0"
+        class="text-sm font-normal italic"
+      >
         This FOAPA hasn't been used yet
       </h3>
     </section>
