@@ -28,11 +28,12 @@
       title="Edit FOAPA"
       class="activity-option absolute right-24 bottom-5"
       @click="() => $emit('editFoapa', foapa.foapa_id)"
+      style="background-color: white;"
     >
       <img
-        src="../../assets/edit-icon.png"
-        alt="Trash icon"
-        class="trash-icon w-4 invert"
+        src="../../assets/blue-pencil.png"
+        alt="Edit Foapa"
+        class="trash-icon w-4"
       />
     </div>
   </div>
