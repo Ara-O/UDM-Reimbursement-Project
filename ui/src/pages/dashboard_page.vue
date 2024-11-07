@@ -34,80 +34,63 @@
         >
           <h3>Sort by Date</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Status' }"
-          @click="orderByStatus()"
-        >
+        <div class="filter" @click="orderByStatus()">
           <h3>Sort by Status</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Name' }"
-          @click="orderByName()"
-        >
+        <div class="filter" @click="orderByName()">
           <h3>Sort by Name</h3>
         </div>
-        <div
-          class="filter"
-          :class="{ selected: sortParameter === 'Cost' }"
-          @click="orderByCost()"
-        >
+        <div class="filter" @click="orderByCost()">
           <h3>Sort by Cost</h3>
         </div>
       </div>
+      <!--           :class="{ selected: sortParameter === 'Cost' }"
+ -->
       <br />
       <div style="display: flex; flex-direction: column">
         <h3 style="font-weight: 500; font-size: 14.5px">
           All Reimbursements -
         </h3>
         <span class="w-full flex relative">
-          <span class="w-full flex flex-wrap gap-2">
+          <span
+            class="w-full flex items-center flex-wrap justify-between gap-2"
+          >
             <button
               @click="$router.push('/add-reimbursement')"
-              class="filter add-reimbursement-ticket-button"
+              class="filter flex gap-3 add-reimbursement-ticket-button"
             >
-              Click to add new reimbursement
+              Add new reimbursement
+              <img
+                :src="PlusIcon"
+                alt="Add reimbursement"
+                title="Add reimbursement"
+                class="w-3"
+              />
             </button>
-            <button
-              @click="viewingTemplates = !viewingTemplates"
-              class="filter add-reimbursement-ticket-button"
-            >
-              {{
-                viewingTemplates === false
-                  ? "View Your Templates"
-                  : "View Claims"
-              }}
-            </button>
-            <div class="relative">
-              <button
-                class="filter add-reimbursement-ticket-button"
-                @click="viewPopupIsShown = !viewPopupIsShown"
-              >
-                Change View
-              </button>
-              <div
-                class="absolute right-0 shadow rounded-md z-20 px-5 bg-white top-12"
-                v-if="viewPopupIsShown"
-              >
-                <h4
-                  class="font-normal hover:underline cursor-pointer text-sm"
+
+            <div>
+              <div class="flex gap-2 items-center">
+                <img
+                  :src="GridView"
+                  alt="Grid view"
+                  :class="{ '!opacity-60': currentView == 'grid' }"
+                  class="w-4 cursor-pointer hover:opacity-40 transition-all opacity-30"
                   @click="changeView('grid')"
-                >
-                  Grid View
-                </h4>
-                <h4
-                  class="font-normal hover:underline cursor-pointer text-sm"
+                />
+                <img
+                  :src="ListView"
+                  alt="List view"
                   @click="changeView('list')"
-                >
-                  List View
-                </h4>
-                <h4
-                  class="font-normal hidden md:block hover:underline cursor-pointer text-sm"
+                  class="w-5 opacity-30 ml-3 h-[0.9rem] hover:opacity-40 transition-all cursor-pointer"
+                  :class="{ '!opacity-50': currentView == 'list' }"
+                />
+                <img
+                  :src="TableView"
+                  alt="Table View"
                   @click="changeView('table')"
-                >
-                  Table View
-                </h4>
+                  :class="{ '!opacity-50': currentView == 'table' }"
+                  class="w-4 ml-3 h-4 cursor-pointer hover:opacity-40 transition-all opacity-30"
+                />
               </div>
             </div>
           </span>
@@ -308,6 +291,10 @@
 </template>
 
 <script lang="ts" setup>
+import PlusIcon from "../assets/add-icon.png";
+import ListView from "../assets/list-view-2.png";
+import GridView from "../assets/grid-view-2.png";
+import TableView from "../assets/table.png";
 import FoapaNumbers from "../components/dashboard/FoapaNumbersDashboard.vue";
 import axios from "axios";
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
@@ -490,18 +477,6 @@ async function retrieveDashboardData() {
     userInfo.value = res.data;
     reimbursementTickets.value = res.data.reimbursementTickets;
   } catch (err: any) {
-    if (err.response.status === 403) {
-      toast(
-        "There was an error fetching your account information. Please create an account or log in.",
-        {
-          type: TYPE.ERROR,
-        }
-      );
-      localStorage.setItem("token", "");
-      router.push("/");
-      return;
-    }
-
     if (err.code === "ERR_NETWORK") {
       toast(
         "There was an error with your network. Please check your internet connection and try again",
@@ -510,6 +485,18 @@ async function retrieveDashboardData() {
         }
       );
 
+      return;
+    }
+
+    if (err?.response?.status === 403) {
+      toast(
+        "There was an error fetching your account information. Please create an account or log in.",
+        {
+          type: TYPE.ERROR,
+        }
+      );
+      localStorage.setItem("token", "");
+      router.push("/");
       return;
     }
 

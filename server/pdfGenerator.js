@@ -1,16 +1,16 @@
 function parseDate(dateString) {
   if (!dateString) return;
-  const year = dateString.split("-")[0]
-  const month = dateString.split("-")[1]
-  const day = dateString.split("-")[2]
-  const formattedDate = month + "/" + day + "/" + year
+  const year = dateString.split("-")[0];
+  const month = dateString.split("-")[1];
+  const day = dateString.split("-")[2];
+  const formattedDate = month + "/" + day + "/" + year;
   return formattedDate;
 }
 
 function formatFoapa(foapa) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
-    foapa.program || "XXXX"
-  }-${foapa.activity || "XXXX"}`;
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
+    foapa.account.slice(0, 4) || "XXXX"
+  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 }
 
 function fillArray(arrayToBeFilled, length) {

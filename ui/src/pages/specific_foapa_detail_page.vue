@@ -5,7 +5,11 @@
       <h4 class="font-normal text-sm text-gray-600 hover:underline">Go back</h4>
     </div>
 
-    <section class="mt-20" v-if="foapa_information.foapa_information" style="margin-bottom: 5vh;">
+    <section
+      class="mt-20"
+      v-if="foapa_information.foapa_information"
+      style="margin-bottom: 5vh"
+    >
       <h2 class="text-2xl font-semibold">
         {{ formatUserFoapa(foapa_information.foapa_information) }}
       </h2>
@@ -138,36 +142,35 @@
           </p>
         </div>
       </div>
-      <div style="margin-bottom: 30px;" v-if="view === 'Table'">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Cost</th>
-            <th>Status</th>
-            <th>Date Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="foapa in foapaHistoryFiltered"
-          >
-            <td @click="() => goToReimbursement(foapa._id)" class="cursor-pointer">
-              {{ foapa.reimbursementName }}
-            </td>
-            <td>
-              ${{ foapa.totalCost }}
-            </td>
-            <td>
-              {{ foapa.reimbursementStatus}}
-            </td>
-            <td>
-              {{ parseDate(foapa.reimbursementDate)}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <div style="margin-bottom: 30px" v-if="view === 'Table'">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Cost</th>
+              <th>Status</th>
+              <th>Date Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="foapa in foapaHistoryFiltered">
+              <td
+                @click="() => goToReimbursement(foapa._id)"
+                class="cursor-pointer"
+              >
+                {{ foapa.reimbursementName }}
+              </td>
+              <td>${{ foapa.totalCost }}</td>
+              <td>
+                {{ foapa.reimbursementStatus }}
+              </td>
+              <td>
+                {{ parseDate(foapa.reimbursementDate) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <h3 v-else class="text-sm font-normal italic">
         This FOAPA hasn't been used yet
       </h3>
@@ -184,7 +187,7 @@ import axios from "axios";
 import { computed, onMounted, ref } from "vue";
 import ListView from "../assets/list-view.png";
 import GridView from "../assets/grid-view.png";
-import TableView from "../assets/table.png"
+import TableView from "../assets/table.png";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
@@ -199,9 +202,8 @@ let sortParam = ref<
 >("NONE");
 
 const foapaHistoryFiltered = computed(() => {
-
-  if(Object.keys(foapa_information.value).length == 0 ){
-    return []
+  if (Object.keys(foapa_information.value).length == 0) {
+    return [];
   }
   let foapas = foapa_information.value.claims_used.filter((info) => {
     return info.reimbursementName
@@ -249,18 +251,18 @@ const totalAmountUsed = computed(() => {
 
 function formatUserFoapa(foapa) {
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account || "XXXX"
+    foapa.account.slice(0, 4) || "XXXX"
   }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 }
 
 function parseDate(dateString: string) {
   if (!dateString) return;
-  const year = dateString.split("-")[0]
-  const month = dateString.split("-")[1]
-  const day = dateString.split("-")[2].substring(0,2)
-  const formattedDate = month + "/" + day + "/" + year
+  const year = dateString.split("-")[0];
+  const month = dateString.split("-")[1];
+  const day = dateString.split("-")[2].substring(0, 2);
+  const formattedDate = month + "/" + day + "/" + year;
 
-  console.log(dateString)
+  console.log(dateString);
   return formattedDate;
 }
 
@@ -295,14 +297,16 @@ onMounted(() => {
 });
 </script>
 <style>
-  table,th,td{
-    border: 3px solid black;
-    border-collapse:collapse;
-    padding:1rem;
-    font-size: 1rem
-  }
-  th{
-    background-color: #002d72;
-    color:white;
-  }
+table,
+th,
+td {
+  border: 3px solid black;
+  border-collapse: collapse;
+  padding: 1rem;
+  font-size: 1rem;
+}
+th {
+  background-color: #002d72;
+  color: white;
+}
 </style>

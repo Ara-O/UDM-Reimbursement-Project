@@ -825,7 +825,7 @@ async function addFoapa(values, { resetForm }) {
 
 function formatUserFoapa(foapa: FoapaStuff) {
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account || "XXXX"
+    foapa.account.slice(0, 4) || "XXXX"
   }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 }
 
@@ -956,14 +956,15 @@ onMounted(() => {
 </style>
 
 <style>
-#pv_id_1_panel {
-  margin-top: 20px;
-  margin-left: -15px;
-  background-color: white;
-  border: solid 1px rgb(226, 226, 226);
-  padding: 10px 15px;
-  border-radius: 6px;
-  font-size: 14px;
+/* temporary */
+.p-autocomplete-overlay {
+  margin-top: 20px !important;
+  margin-left: -15px !important;
+  background-color: white !important;
+  border: solid 1px rgb(226, 226, 226) !important;
+  padding: 10px 15px !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
 }
 
 .p-autocomplete-option {

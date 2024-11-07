@@ -14,9 +14,13 @@
       <article
         class="shadow h-auto border-black border rounded-md w-[22rem] mt-8"
       >
-        <div v-for="section in sections">
+        <div v-for="(section, i) in sections">
           <div
             class="h-20 w-100 flex justify-between items-center box-border px-10 hover:bg-[#002d72EE] hover:text-gray-100 cursor-pointer"
+            :class="{
+              'rounded-tl-sm rounded-tr-sm': i == 0,
+              'rounded-bl-sm rounded-br-sm': i == sections.length - 1,
+            }"
             @click="changeSection(section.section)"
           >
             <h4 class="font-normal text-sm">{{ section.title }}</h4>

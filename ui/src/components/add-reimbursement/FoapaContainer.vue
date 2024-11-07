@@ -52,9 +52,9 @@ const props = defineProps<{
 
 function formatUserFoapa(foapa) {
   console.log(foapa);
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account}-${
-    foapa.program || "XXXX"
-  }-${foapa.activity || "XXXX"}`;
+  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
+    foapa.account.slice(0, 4) || "XXXX"
+  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 }
 
 const assignFoapaName = (event) => {

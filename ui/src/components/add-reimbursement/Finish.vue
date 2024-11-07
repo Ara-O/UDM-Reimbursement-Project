@@ -21,7 +21,7 @@
           @click="saveReimbursement"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
-          Save for later
+          Save as a Draft
         </button>
         <button
           @click="saveAsTemplate"

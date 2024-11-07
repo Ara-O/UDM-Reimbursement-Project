@@ -62,7 +62,7 @@ const router = useRouter();
 
 function formatUserFoapa(foapa: FoapaStuff) {
   return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account || "XXXX"
+    foapa.account.slice(0, 4) || "XXXX"
   }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 }
 
