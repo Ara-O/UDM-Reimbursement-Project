@@ -63,13 +63,22 @@
           Submit Reimbursement Claim
         </button>
       </div>
-
+      <div class="flex gap-5 items-center">
       <button
         @click="discardChanges"
         class="bg-udmercy-red mt-8 text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
       >
         Discard Changes
       </button>
+      <button
+        type="button"
+        @click="moveToPreviousSection"
+        class="bg-udmercy-blue mt-8 text-white border-none w-64 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-4"
+      >
+      <img src="../../assets/prev-arrow.png" class="w-3">
+        Previous Section
+      </button>
+      </div>
       <br />
       <span class="flex gap-5 flex-wrap"> </span>
       <h5 class="font-normal" v-if="currentlyCreatingPDF">
@@ -203,7 +212,7 @@ const props = defineProps<{
 }>();
 const route = useRoute();
 const router = useRouter();
-const emits = defineEmits(["onClaimSaved"]);
+const emits = defineEmits(["onClaimSaved", "move-to-previous-section"]);
 
 let checked = false;
 let currentlyCreatingPDF = ref<boolean>(false);
@@ -213,12 +222,16 @@ let showEmailPopup = ref<boolean>(false);
 let knowFoapaText = "";
 //let foapaDetails;
 
+
 function returnToDashboard() {
   router.push("/dashboard");
 }
 
 function cancelConfirmationPopup() {
   showConfirmationPopup.value = false;
+}
+function moveToPreviousSection() {
+  emits("move-to-previous-section");
 }
 
 function emailPDF() {

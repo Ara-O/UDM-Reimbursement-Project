@@ -83,7 +83,7 @@
         style="display:flex; justify-content: space-around; align-items:center;"
         >
           Next Section
-          <img src="../../assets/next-arrow.png" class="w-4">
+          <img src="../../assets/next-arrow.png" class="w-3">
       </button>
     </form>
   </section>
