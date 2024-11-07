@@ -132,20 +132,24 @@
     </section>
 
     <span class="flex gap-4 mt-6">
-      <button
-        type="button"
-        @click="emits('move-to-next-section')"
-        class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-      >
-        Next Section
-      </button>
+      <div class="flex gap-8 items-center">
       <button
         type="button"
         @click="moveToPreviousSection"
-        class="bg-udmercy-blue xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+        class="mt-6 bg-udmercy-blue xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-around items-center"
       >
+        <img src="../../assets/prev-arrow.png" class="w-4">
         Previous Section
       </button>
+      <button
+        type="button"
+        @click="emits('move-to-next-section')"
+        class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-around items-center"
+        >
+          Next Section
+          <img src="../../assets/next-arrow.png" class="w-4">
+      </button>
+    </div>
     </span>
   </section>
 </template>

@@ -60,21 +60,27 @@
         >
           {{ triggerAssignedFoapaEditMode ? "Edit FOAPA" : "Assign FOAPA" }}
         </button>
+        
+      </div>
+      <div class="flex gap-8 items-center">
+        <button
+        type="button"
+        @click="moveToPreviousSection"
+        class="bg-udmercy-blue mt-6 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-around items-center"
+      >
+      <img src="../../assets/prev-arrow.png" class="w-4">
+        Previous Section
+      </button>
         <button
           type="button"
           @click="moveToNextSection"
-          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+          class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+          style="display:flex; justify-content: space-around; align-items:center;"
         >
           Next Section
+          <img src="../../assets/next-arrow.png" class="w-4">
         </button>
       </div>
-      <button
-        type="button"
-        @click="moveToPreviousSection"
-        class="bg-udmercy-blue mt-6 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-      >
-        Previous Section
-      </button>
     </form>
 
     <!-- ALL FOAPA SECTION -->

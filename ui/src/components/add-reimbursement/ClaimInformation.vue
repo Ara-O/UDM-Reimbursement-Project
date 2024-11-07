@@ -80,8 +80,10 @@
       <button
         type="submit"
         class="mt-7 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-      >
-        Next Section
+        style="display:flex; justify-content: space-around; align-items:center;"
+        >
+          Next Section
+          <img src="../../assets/next-arrow.png" class="w-4">
       </button>
     </form>
   </section>

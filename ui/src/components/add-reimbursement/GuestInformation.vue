@@ -79,21 +79,26 @@
         >
           Add Information
         </button>
-        <button
-          type="button"
-          @click="emits('move-to-next-section')"
-          class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-        >
-          Next Section
-        </button>
+        
       </div>
+      <div class="flex gap-8 items-center">
       <button
         type="button"
         @click="emits('move-to-previous-section')"
-        class="bg-udmercy-blue mt-8 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+        class="bg-udmercy-blue mt-6 xl:hidden text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-around items-center"
       >
+      <img src="../../assets/prev-arrow.png" class="w-4">
         Previous Section
       </button>
+      <button
+          type="button"
+          @click="emits('move-to-next-section')"
+          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-around items-center"
+        >
+          Next Section
+          <img src="../../assets/next-arrow.png" class="w-4">
+        </button>
+        </div>
     </form>
 
     <table class="border border-solid border-collapse mt-10">
