@@ -117,7 +117,12 @@
           showGridlines
           class="border border-collapse border-solid border-black"
         >
-          <Column field="reimbursementName" header="Name" sortable></Column>
+          <Column
+            field="reimbursementName"
+            header="Name"
+            style="width: 45%; overflow: auto"
+            sortable
+          ></Column>
           <Column
             field="reimbursementStatus"
             header="Status"
@@ -177,7 +182,12 @@
             v-for="ticket in filterReimbursements"
             style="background-color: #002d72; color: white"
           >
-            <h3>{{ ticket.reimbursementName || "Invalid Reimbursement" }}</h3>
+            <h3
+              class="overflow-hidden text-ellipsis whitespace-nowrap max-w-80"
+              :title="ticket.reimbursementName || 'Invalid Reimbursement'"
+            >
+              {{ ticket.reimbursementName || "Invalid Reimbursement" }}
+            </h3>
             <h4>Status: {{ ticket.reimbursementStatus || "Invalid" }}</h4>
             <h5>
               {{ parseDate(ticket.reimbursementDate) }}
