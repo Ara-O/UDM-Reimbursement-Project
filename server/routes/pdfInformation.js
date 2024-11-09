@@ -178,7 +178,7 @@ function fetchImageBase64(url) {
 
 router.post("/generate-pdf", verifyToken, async (req, res) => {
   try {
-    // Parse the incoming reimbursement data
+    // Parse the incoming reimbursement data to make sure its data is properly structured
     const request = reimbursementRequestSchema.parse(req.body);
     const reimbursementRequestData = request.reimbursementTicket;
     const receipts = reimbursementRequestData.reimbursementReceipts;

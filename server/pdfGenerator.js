@@ -342,6 +342,28 @@ export default function createPdfDefinition(
   }
 
   let otherExpensesStructure = [];
+
+  // When there is no "Other", this makes it so there is still an 'Other' row
+  if (otherExpenses.length === 0) {
+    let structure = [{ text: "Other (Explain what expense is for)" }];
+
+    structure.push(
+      {
+        text: "",
+        colSpan: 7,
+        fontSize: 9,
+      },
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    );
+    otherExpensesStructure.push(structure);
+  }
+
   otherExpenses.forEach((expense) => {
     let structure = [
       { text: "Other (Explain what expense is for)" },

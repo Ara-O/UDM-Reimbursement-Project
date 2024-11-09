@@ -499,54 +499,57 @@ function getAllActivitiesAmount(): number {
   return sum;
 }
 
-function createPdf() {
-  toast("Creating your reimbursement claim PDF. Please wait...", {
-    type: TYPE.INFO,
-  });
+async function createPdf() {
+  try {
+    toast("Creating your reimbursement claim PDF. Please wait...", {
+      type: TYPE.INFO,
+    });
 
-  props.claim.totalCost = getAllActivitiesAmount();
+    props.claim.totalCost = getAllActivitiesAmount();
 
-  const totalCoveredFoapaCost = props.claim.foapaDetails.reduce(
-    (acc, curr) => (acc += Number(curr.cost)),
-    0
-  );
+    const totalCoveredFoapaCost = props.claim.foapaDetails.reduce(
+      (acc, curr) => (acc += Number(curr.cost)),
+      0
+    );
 
-  if (totalCoveredFoapaCost > props.claim.totalCost) {
-    toast(
-      "Warning: The amount of money you are retrieving from your FOAPAs is more than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.",
+    if (totalCoveredFoapaCost > props.claim.totalCost) {
+      toast(
+        "Warning: The amount of money you are retrieving from your FOAPAs is more than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.",
+        {
+          type: TYPE.WARNING,
+          timeout: false,
+        }
+      );
+    } else if (totalCoveredFoapaCost < props.claim.totalCost) {
+      toast(
+        "Warning: The amount of money you are retrieving from your FOAPAs is less than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.",
+        {
+          type: TYPE.WARNING,
+          timeout: false,
+        }
+      );
+    }
+
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/generate-pdf`,
       {
-        type: TYPE.WARNING,
-        timeout: false,
+        reimbursementTicket: props.claim,
       }
     );
-  } else if (totalCoveredFoapaCost < props.claim.totalCost) {
+
+    downloadPDF(res.data);
+    currentlyCreatingPDF.value = false;
+    // .catch((err) => {
+  } catch (err: any) {
+    console.log(err);
     toast(
-      "Warning: The amount of money you are retrieving from your FOAPAs is less than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.",
+      err?.response?.data?.message ||
+        "There was an error generating your PDF. Please try again later",
       {
-        type: TYPE.WARNING,
-        timeout: false,
+        type: TYPE.ERROR,
       }
     );
   }
-
-  axios
-    .post(`${import.meta.env.VITE_API_URL}/api/generate-pdf`, {
-      reimbursementTicket: props.claim,
-    })
-    .then((res) => {
-      console.log(res.data);
-      downloadPDF(res.data);
-      currentlyCreatingPDF.value = false;
-    })
-    .catch((err) => {
-      toast(
-        err?.response?.data?.message ||
-          "There was an error generating your PDF. Please try again later",
-        {
-          type: TYPE.ERROR,
-        }
-      );
-    });
 }
 
 async function updateReimbursement() {

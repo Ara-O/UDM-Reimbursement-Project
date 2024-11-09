@@ -140,7 +140,6 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import axios from "axios";
 import { ReimbursementTicket, Expense } from "../../types/types";
 import ActivityContainer from "./ActivityContainer.vue";
 import { generateRandomStringId } from "../../utils/generateRandomId";
