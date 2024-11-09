@@ -957,7 +957,7 @@ onMounted(() => {
 
 <style>
 /* temporary */
-.p-autocomplete-overlay {
+/* .p-autocomplete-overlay {
   margin-top: 20px !important;
   margin-left: -15px !important;
   background-color: white !important;
@@ -979,11 +979,7 @@ onMounted(() => {
   font-size: 0.75rem;
 }
 
-.p-icon {
-  display: none !important;
-}
-
 .p-inputtext::placeholder {
   color: gray !important;
-}
+} */
 </style>

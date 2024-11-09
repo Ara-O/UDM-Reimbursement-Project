@@ -1,17 +1,7 @@
-function parseDate(dateString) {
-  if (!dateString) return;
-  const year = dateString.split("-")[0];
-  const month = dateString.split("-")[1];
-  const day = dateString.split("-")[2];
-  const formattedDate = month + "/" + day + "/" + year;
-  return formattedDate;
-}
-
-function formatFoapa(foapa) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account.slice(0, 4) || "XXXX"
-  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
-}
+import logger from "./logger.js";
+import { parseDate } from "./utils/parseDate.js";
+import { formatFoapaDetails } from "./utils/formatFoapaDetails.js";
+import { retrieveDate } from "./utils/retrieveDate.js";
 
 function fillArray(arrayToBeFilled, length) {
   for (let i = 0; i < length; i++) {
@@ -27,44 +17,17 @@ function fillArray(arrayToBeFilled, length) {
   return arrayToBeFilled;
 }
 
-function combineOtherField(data) {
-  let parsedField = [
-    {
-      text: "",
-      colSpan: 7,
-      fontSize: 9,
-    },
-  ];
-
-  data.forEach((activity) => {
-    activity.text != "" ? (parsedField[0].text += activity.text + ". ") : "";
-  });
-
-  return parsedField;
-}
-
 export default function createPdfDefinition(
   reimbursementData,
-  userInfo,
-  allImageIds
+  facultyData,
+  receiptData
 ) {
-  // console.log("DATA", reimbursementData);
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  let mm = today.getMonth() + 1; // Months start at 0!
-  let dd = today.getDate();
-
-  if (dd < 10) dd = "0" + dd;
-  if (mm < 10) mm = "0" + mm;
-
-  const formattedToday = mm + "/" + dd + "/" + yyyy;
-  // console.log("generate pdf", userInfo);
-  // console.log(reimbursementData, userInfo);
-
-  const { activities } = reimbursementData;
+  const expenses = reimbursementData.activities;
   let content = [];
 
-  console.log("REIMBURSEMENT DATA:", reimbursementData);
+  logger.info("Generating PDF definition", {
+    api: "createPdfDefinition",
+  });
 
   //Top section
   content.push(
@@ -81,30 +44,33 @@ export default function createPdfDefinition(
       fontSize: 8,
     },
     {
-      text: `Date Submitted:   ${formattedToday}\n\n`,
+      text: `Date Submitted:   ${retrieveDate("MM/DD/YYYY")}\n\n`,
       italics: true,
       decoration: "underline",
     }
   );
 
   //   Faculty information section
-  let ticketTotal = 0;
+  let expenseTotal = 0;
 
-  // console.log("Reimbursement data", reimbursementData)
-  if (reimbursementData?.activities) {
-    reimbursementData.activities.forEach((activity) => {
-      ticketTotal += Number(activity.cost);
-    });
+  expenses.forEach((activity) => {
+    // Add the cost of all expenses - in cents to prevent decimal issues
+    expenseTotal += Number(activity.cost) * 100;
+  });
+
+  // Check if ticket total is not a number (should not happen, but just to be robust)
+  if (isNaN(expenseTotal)) {
+    expenseTotal = 0;
   }
 
-  ticketTotal = ticketTotal.toFixed(2);
+  // Convert expense total back to dollars
+  expenseTotal /= 100;
+
   content.push({
     table: {
-      //13
       widths: [50, 40, 40, 40, 40, 40, 40, 20, 20, 40, 20, 20, 33],
       height: 0,
       headerRows: 1,
-      // keepWithHeaderRows: 1,
       body: [
         [
           { text: "Name & Home Mailing Address", italics: true, colSpan: 3 },
@@ -112,24 +78,26 @@ export default function createPdfDefinition(
           {},
           { text: "Employee #", colSpan: 2, italics: true },
           {},
-          { text: `${userInfo.employmentNumber}`, colSpan: 2 },
+          { text: `${facultyData.employmentNumber}`, colSpan: 2 },
           {},
           { text: "Reimbursement", colSpan: 3, italics: true },
           {},
           {},
-          { text: "$" + `${ticketTotal}`, colSpan: 3 },
+          { text: "$" + `${expenseTotal}`, colSpan: 3 },
           {},
           {},
         ],
         [
-          { text: `${userInfo.firstName} ${userInfo.lastName}`, colSpan: 3 },
+          {
+            text: `${facultyData.firstName} ${facultyData.lastName}`,
+            colSpan: 3,
+          },
           {},
           {},
           { text: "Email", colSpan: 2, italics: true },
           {},
-          { text: `${userInfo.workEmail}`, colSpan: 2 },
+          { text: `${facultyData.workEmail}`, colSpan: 2 },
           {},
-          // HERE
           {
             text: "Hold for Pickup",
             colSpan: 2,
@@ -159,12 +127,12 @@ export default function createPdfDefinition(
           },
         ],
         [
-          { text: `${userInfo.mailingAddress}`, colSpan: 3 },
+          { text: `${facultyData.mailingAddress}`, colSpan: 3 },
           {},
           {},
           { text: "Phone", colSpan: 2, italics: true },
           {},
-          { text: `${userInfo.phoneNumber}`, colSpan: 2 },
+          { text: `${facultyData.phoneNumber}`, colSpan: 2 },
           {},
           {
             text: "Check if using UDMPU 11.6 voucher (please attach voucher/log)",
@@ -190,14 +158,14 @@ export default function createPdfDefinition(
         ],
         [
           {
-            text: `${userInfo.city}, ${userInfo.state}, ${userInfo.postalCode}`,
+            text: `${facultyData.city}, ${facultyData.state}, ${facultyData.postalCode}`,
             colSpan: 3,
           },
           {},
           {},
           { text: "Department", colSpan: 2, italics: true },
           {},
-          { text: `${userInfo.department}`, colSpan: 2 },
+          { text: `${facultyData.department}`, colSpan: 2 },
           {},
           { text: "", colSpan: 3, italics: true },
           {},
@@ -249,21 +217,22 @@ export default function createPdfDefinition(
     layout: {
       paddingTop: function (i, node) {
         return 6;
-        //return (i === node.table.widths.length - 1) ? 5 : 5;
       },
       paddingBottom: function (i, node) {
         return 2;
-        //return (i === node.table.widths.length - 1) ? 5 : 5;
       },
     },
   });
 
-  //Divider
   content.push({ text: " " }, { text: " " });
 
-  //Calculate activities section
-  let parsedActivity = {};
-  let pdfStructure = {
+  /*
+      Expenses Section
+  */
+
+  let parsedExpenses = {};
+
+  let pdfExpensesStructure = {
     Lodging: [{ text: "Lodging", fontSize: 10 }],
     Breakfast: [{ text: "Breakfast", fontSize: 10 }],
     Lunch: [{ text: "Lunch", fontSize: 10 }],
@@ -278,70 +247,117 @@ export default function createPdfDefinition(
   };
 
   let mileageExplanation = [];
-  //Calculating all the costs based on activity based ond date
 
-  if (activities) {
-    activities.forEach((activity) => {
-      if (activity.activityName === "Mileage") {
-        mileageExplanation.push(activity?.additionalInformation || "");
-      }
-      let activityDate = parseDate(activity.date);
-      if (!parsedActivity[activityDate]) {
-        parsedActivity[activityDate] = {};
+  if (expenses.length > 0) {
+    expenses.forEach((expense) => {
+      if (expense.name === "Mileage") {
+        mileageExplanation.push(expense?.additionalInformation || "");
       }
 
-      if (!parsedActivity[activityDate][activity.name]) {
-        parsedActivity[activityDate][activity.name] = Number(activity.cost);
+      const expenseDate = parseDate(expense.date);
+
+      /*Populate the object so that the date is the key
+      and the expense's  title + cost are the value
+
+      Format:
+      parsedExpenses: [
+        "11/12/2024": {
+            "Lunch": 200
+        }
+      ]*/
+
+      if (!parsedExpenses[expenseDate]) {
+        parsedExpenses[expenseDate] = {}; //Initialize an empty object for a new data
+      }
+
+      // If the date already has the same expense, then add the new expense cost to that date
+      // For example, if "11/12/2024" has a lunch of 200 and the new expense is on the same day
+      // and is also lunch but for $100, it will update the value to have a lunch of 300
+      if (parsedExpenses[expenseDate][expense.name]) {
+        parsedExpenses[expenseDate][expense.name] += Number(expense.cost) * 100;
       } else {
-        parsedActivity[activityDate][activity.name] += Number(activity.cost);
+        parsedExpenses[expenseDate][expense.name] = Number(expense.cost) * 100;
       }
     });
   }
 
-  parsedActivity = Object.fromEntries(
-    Object.entries(parsedActivity).sort(
+  // Sort expenses by date
+  parsedExpenses = Object.fromEntries(
+    Object.entries(parsedExpenses).sort(
       ([dateA], [dateB]) => new Date(dateA) - new Date(dateB)
     )
   );
 
-  if (Object.keys(parsedActivity).length > 7) {
-    console.log("Should be throwing an error");
+  for (let date in parsedExpenses) {
+    for (let category in parsedExpenses[date]) {
+      parsedExpenses[date][category] /= 100;
+    }
   }
 
-  let datesArray = [];
-  for (const key in parsedActivity) {
-    datesArray.push(key);
+  // Since there are only 7 date columns in the PDF, throw an error when
+  // the user wants to create a request that spans more than 7 days
+  if (Object.keys(parsedExpenses).length > 7) {
+    throw new Error(
+      "Your reimbursement request expenses have exceeded the maximum dates allowed (Your request expenses span over more than 6 dates)"
+    );
   }
 
-  datesArray = fillArray(datesArray, 8);
-  console.log(parsedActivity);
-  for (const parsedActivityDate in parsedActivity) {
-    for (const expenseTitle in pdfStructure) {
-      if (parsedActivity[parsedActivityDate][expenseTitle]) {
-        pdfStructure[expenseTitle].push(
-          `$${parsedActivity[parsedActivityDate][expenseTitle]}`
+  // Create an array of just the dates
+  let arrayOfExpensesDates = [];
+  for (const key in parsedExpenses) {
+    arrayOfExpensesDates.push(key);
+  }
+
+  // Creates an array starting with the dates, then padding it with
+  // 8 elements if there are than 8
+  arrayOfExpensesDates = fillArray(arrayOfExpensesDates, 8);
+
+  // For each date in the parsedExpenses object
+  for (const parsedExpensesDate in parsedExpenses) {
+    // Loop through each possible expense option
+    for (const expenseTitle in pdfExpensesStructure) {
+      // If under parsedExpenses, there is an expense under the specific date
+      if (parsedExpenses[parsedExpensesDate][expenseTitle]) {
+        // In the pdfExpensesStructure, push the cost to the corresponding expense title
+        pdfExpensesStructure[expenseTitle].push(
+          `$${parsedExpenses[parsedExpensesDate][expenseTitle]}`
         );
       } else {
-        pdfStructure[expenseTitle].push("");
+        // Or else push an empty space, meaning that under this specific date, there was no
+        // expense with this title
+        pdfExpensesStructure[expenseTitle].push("");
       }
     }
   }
 
-  pdfStructure.Other = pdfStructure.Other.filter((val) => val != "");
+  pdfExpensesStructure.Other = [];
 
-  for (const parsedActivityDate in parsedActivity) {
-    for (const activity in parsedActivity[parsedActivityDate]) {
-      if (!pdfStructure[activity]) {
-        pdfStructure.Other.push(activity);
-      }
-    }
+  //Handle Other expenses
+  const otherExpenses = expenses.filter((expense) => expense.name === "Other");
+
+  if (otherExpenses.length > 2) {
+    throw new Error(
+      "Your request exceeds the amount of 'Other' claims. The maximum is 2"
+    );
   }
 
-  for (const activity in pdfStructure) {
-    pdfStructure[activity] = fillArray(pdfStructure[activity], 8);
+  let otherExpensesStructure = [];
+  otherExpenses.forEach((expense) => {
+    let structure = [
+      { text: "Other (Explain what expense is for)" },
+      { text: expense.additionalInformation, colSpan: 7, fontSize: 9 },
+    ];
+
+    structure.push("", "", "", "", "", "");
+    structure.push({ text: "$" + expense.cost, fontSize: 8 });
+    otherExpensesStructure.push(structure);
+  });
+
+  for (const expense in pdfExpensesStructure) {
+    pdfExpensesStructure[expense] = fillArray(pdfExpensesStructure[expense], 8);
   }
 
-  let totalActivityCosts = {
+  let totalExpenseCosts = {
     Lodging: { cost: 0 },
     Breakfast: { cost: 0 },
     Lunch: { cost: 0 },
@@ -352,24 +368,28 @@ export default function createPdfDefinition(
     Parking: { cost: 0 },
     Registration: { cost: 0 },
     Mileage: { cost: 0 },
-    Other: { cost: 0 },
   };
 
-  for (const activityDate in parsedActivity) {
-    for (const activityName in parsedActivity[activityDate]) {
-      if (totalActivityCosts[activityName]) {
-        totalActivityCosts[activityName].cost +=
-          parsedActivity[activityDate][activityName];
-      } else {
-        totalActivityCosts.Other.cost +=
-          parsedActivity[activityDate][activityName];
+  for (const expenseDate in parsedExpenses) {
+    for (const expenseTitle in parsedExpenses[expenseDate]) {
+      if (totalExpenseCosts[expenseTitle]) {
+        totalExpenseCosts[expenseTitle].cost +=
+          parsedExpenses[expenseDate][expenseTitle] * 100;
       }
     }
   }
-  // console.log("costs", totalActivityCosts);
-  // console.log(pdfStructure);
 
-  //Expenses section
+  // Convert cents back to dollars
+  for (let key in totalExpenseCosts) {
+    if (totalExpenseCosts[key].hasOwnProperty("cost")) {
+      // Ensure 'cost' property exists
+      totalExpenseCosts[key].cost /= 100;
+    }
+  }
+  /*
+    Expenses section
+  */
+
   content.push({
     table: {
       widths: [160, 40, 40, 40, 40, 40, 40, 40, 40],
@@ -387,73 +407,68 @@ export default function createPdfDefinition(
         ],
         [
           { text: "All receipts MUST be original", italics: true },
-          ...datesArray,
+          ...arrayOfExpensesDates,
         ],
         [
-          ...pdfStructure.Lodging,
+          ...pdfExpensesStructure.Lodging,
           {
-            text: `$${totalActivityCosts.Lodging.cost.toFixed(2)}`,
+            text: `$${totalExpenseCosts.Lodging.cost}`,
             fontSize: 8,
           },
         ],
         [
-          ...pdfStructure.Breakfast,
+          ...pdfExpensesStructure.Breakfast,
           {
             fontSize: 8,
-            text: `$${totalActivityCosts.Breakfast.cost.toFixed(2)}`,
+            text: `$${totalExpenseCosts.Breakfast.cost}`,
           },
         ],
         [
-          ...pdfStructure.Lunch,
-          { text: `$${totalActivityCosts.Lunch.cost.toFixed(2)}`, fontSize: 8 },
+          ...pdfExpensesStructure.Lunch,
+          { text: `$${totalExpenseCosts.Lunch.cost}`, fontSize: 8 },
         ],
         [
-          ...pdfStructure.Dinner,
+          ...pdfExpensesStructure.Dinner,
           {
-            text: `$${totalActivityCosts.Dinner.cost.toFixed(2)}`,
-            fontSize: 8,
-          },
-        ],
-        [
-          ...pdfStructure["Business Guest Meals"],
-          {
-            text: `$${totalActivityCosts["Business Guest Meals"].cost.toFixed(
-              2
-            )}`,
+            text: `$${totalExpenseCosts.Dinner.cost}`,
             fontSize: 8,
           },
         ],
         [
-          ...pdfStructure["Air/Train"],
+          ...pdfExpensesStructure["Business Guest Meals"],
           {
-            text: `$${totalActivityCosts["Air/Train"].cost.toFixed(2)}`,
+            text: `$${totalExpenseCosts["Business Guest Meals"].cost}`,
             fontSize: 8,
           },
         ],
         [
-          ...pdfStructure["Taxi/Bus/Car Rental"],
+          ...pdfExpensesStructure["Air/Train"],
           {
-            text: `$${totalActivityCosts["Taxi/Bus/Car Rental"].cost.toFixed(
-              2
-            )}`,
+            text: `$${totalExpenseCosts["Air/Train"].cost}`,
             fontSize: 8,
           },
         ],
         [
-          ...pdfStructure.Parking,
+          ...pdfExpensesStructure["Taxi/Bus/Car Rental"],
           {
-            text: `$${totalActivityCosts.Parking.cost.toFixed(2)}`,
+            text: `$${totalExpenseCosts["Taxi/Bus/Car Rental"].cost}`,
             fontSize: 8,
           },
         ],
         [
-          ...pdfStructure.Registration,
+          ...pdfExpensesStructure.Parking,
           {
-            text: `$${totalActivityCosts.Registration.cost.toFixed(2)}`,
+            text: `$${totalExpenseCosts.Parking.cost}`,
             fontSize: 8,
           },
         ],
-        // [, ...pdfStructure.Mileage, "0.00"],
+        [
+          ...pdfExpensesStructure.Registration,
+          {
+            text: `$${totalExpenseCosts.Registration.cost}`,
+            fontSize: 8,
+          },
+        ],
         [
           "Mileage (Include destination)",
           {
@@ -468,52 +483,34 @@ export default function createPdfDefinition(
           "",
           "",
           {
-            text: `$${totalActivityCosts.Mileage.cost.toFixed(2)}`,
+            text: `$${totalExpenseCosts.Mileage.cost}`,
             colSpan: 1,
             fontSize: 8,
           },
         ],
-        // activitiesClassification["Mileage"].finalData,
-        // ["Other (Explain what expense is for )", ...pdfStructure.Other],
-        [
-          "Other (Explain what expense is for )",
-          ...combineOtherField(pdfStructure.Other),
-          "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          {
-            text: `$${totalActivityCosts.Other.cost.toFixed(2)}`,
-            colSpan: 1,
-            fontSize: 8,
-          },
-        ],
+        ...otherExpensesStructure,
       ],
     },
   });
 
   content.push({ text: " " }, { text: " " });
-  //Columns
 
   //FOAPA Number section
   let foapaDetails = {};
   let foapaArray = [];
 
-  if (reimbursementData?.activities) {
-    reimbursementData.activities.forEach((activity) => {
-      if (foapaDetails[activity.foapaNumber]) {
-        foapaDetails[activity.foapaNumber] += Number(activity.cost);
-      } else {
-        foapaDetails[activity.foapaNumber] = Number(activity.cost);
-      }
-    });
-  }
+  expenses.forEach((expense) => {
+    if (foapaDetails[expense.foapaNumber]) {
+      foapaDetails[expense.foapaNumber] += Number(expense.cost);
+    } else {
+      foapaDetails[expense.foapaNumber] = Number(expense.cost);
+    }
+  });
 
   for (const foapa in foapaDetails) {
     let subFoapaArray = [];
     subFoapaArray = foapa.split("-");
+
     if (subFoapaArray.length === 4) {
       subFoapaArray[4] = "";
     }
@@ -521,9 +518,7 @@ export default function createPdfDefinition(
     foapaArray.push(subFoapaArray);
   }
 
-  // EMployee section
-  console.log("=========");
-  // console.log(reimbursementData.guestInformation)
+  // Employee section
 
   let guestSection = [];
   if (
@@ -558,14 +553,14 @@ export default function createPdfDefinition(
 
   let fullFoapa = [];
   if (reimbursementData?.foapaDetails) {
-    console.log(userInfo);
     for (let i = 0; i < reimbursementData.foapaDetails.length; i++) {
       let foapa = reimbursementData.foapaDetails[i];
-      let val = userInfo.foapaDetails.find(
-        (foap) => foap._id === foapa.foapa_id
+
+      let val = facultyData.foapaDetails.find(
+        (foap) => foap._id.toHexString() === foapa.foapa_id
       );
 
-      let details = formatFoapa(val);
+      let details = formatFoapaDetails(val);
 
       let foapaArray = details.split("-");
       for (let i = 0; i < foapaArray.length; i++) {
@@ -584,8 +579,6 @@ export default function createPdfDefinition(
     }
   }
 
-  console.log(fullFoapa);
-
   content.push({
     columns: [
       {
@@ -596,7 +589,6 @@ export default function createPdfDefinition(
           body: [
             [
               { text: "FOAPA", colSpan: 6, alignment: "center" },
-              //TODO: HERE
               {},
               {},
               {},
@@ -658,7 +650,7 @@ export default function createPdfDefinition(
               {
                 text: [
                   "A. Total Actual Expenses $",
-                  { text: `${ticketTotal}`, decoration: "underline" },
+                  { text: `${expenseTotal}`, decoration: "underline" },
                 ],
                 border: [false, false, false, false],
                 bold: false,
@@ -753,7 +745,7 @@ export default function createPdfDefinition(
       bold: false,
     },
 
-    { text: "\n\n" },
+    { text: "\n" },
 
     {
       table: {
@@ -762,20 +754,14 @@ export default function createPdfDefinition(
         body: [
           [
             {
-              text: `${userInfo.firstName} ${userInfo.lastName}`,
+              text: `${facultyData.firstName} ${facultyData.lastName}`,
               border: [false, false, false, false],
-              italics: false,
+              italics: true,
               fontSize: 9,
             },
-            // {
-            //   text: "Signature of Employee",
-            //   border: [false, true, false, false],
-            //   italics: false,
-            //   fontSize: 9,
-            // },
             { text: "", border: [false, false, false, false] },
             {
-              text: `${formattedToday}`,
+              text: `${retrieveDate("MM/DD/YYYY")}`,
               border: [false, false, false, true],
               italics: false,
               fontSize: 9,
@@ -843,11 +829,13 @@ export default function createPdfDefinition(
     }
   );
 
-  allImageIds.forEach((imgid) => {
+  // Add all the images
+  receiptData.forEach((receipt) => {
     content.push({
-      image: imgid,
+      image: receipt,
       fit: [550, 550],
     });
   });
+
   return content;
 }

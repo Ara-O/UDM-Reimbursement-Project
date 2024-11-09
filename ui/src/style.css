@@ -5,16 +5,45 @@
 
 /* Order */
 @layer reset, primevue;
+/* 
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light !important;
+  }
+} */
 
 :root {
   --udmercy-red: #a5093e;
   --udmercy-blue: #002d72;
 }
+
+.p-select:not(.p-disabled).p-focus {
+  border-color: lightgray;
+}
+
+.p-select-option.p-select-option-selected {
+  background-color: #002e72ed !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+}
+
+.p-select-label.p-placeholder {
+  font-size: 0.75rem !important;
+  color: gray;
+  padding-left: 1.25rem !important;
+}
+
+.p-select-label {
+  color: black !important;
+  padding-left: 1.25rem !important;
+  font-size: 0.75rem !important;
+}
+
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
-    -webkit-box-shadow: 0 0 0 30px white inset !important;
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
 * {
@@ -26,71 +55,83 @@ body {
   color: rgb(33, 33, 33);
 }
 
-.Vue-Toastification__toast--info{
+.Vue-Toastification__toast--info {
   border-radius: 0px;
   font-size: 4px;
   background-color: white;
   color: black;
   border-left: solid 7px black;
-  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1), 0 2px 15px 0 rgba(161, 161, 161, 0.05);
-} 
+  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1),
+    0 2px 15px 0 rgba(161, 161, 161, 0.05);
+}
 
-.Vue-Toastification__toast--error{
+.Vue-Toastification__toast--error {
   border-radius: 0px;
   font-size: 4px;
   background-color: white;
   color: var(--udmercy-red);
   border-left: solid 7px var(--udmercy-red);
-  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1), 0 2px 15px 0 rgba(161, 161, 161, 0.05);
-} 
+  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1),
+    0 2px 15px 0 rgba(161, 161, 161, 0.05);
+}
 
-.Vue-Toastification__toast--warning{
+.Vue-Toastification__toast--warning {
   border-radius: 0px;
   font-size: 4px;
   background-color: white;
   color: #c78204;
   border-left: solid 7px #c78204;
-  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1), 0 2px 15px 0 rgba(161, 161, 161, 0.05);
-} 
+  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1),
+    0 2px 15px 0 rgba(161, 161, 161, 0.05);
+}
 
-.Vue-Toastification__toast--success{
+.Vue-Toastification__toast--success {
   border-radius: 0px;
   font-size: 4px;
   background-color: white;
   color: var(--udmercy-blue);
   border-left: solid 7px var(--udmercy-blue);
-  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1), 0 2px 15px 0 rgba(161, 161, 161, 0.05);
-} 
+  box-shadow: 0 1px 10px 0 rgba(111, 111, 111, 0.1),
+    0 2px 15px 0 rgba(161, 161, 161, 0.05);
+}
 
-
-.Vue-Toastification__toast--info .Vue-Toastification__close-button{
+.Vue-Toastification__toast--info .Vue-Toastification__close-button {
   color: black;
 }
 
-.Vue-Toastification__toast--info .Vue-Toastification__progress-bar{
+.Vue-Toastification__toast--info .Vue-Toastification__progress-bar {
   background-color: black;
 }
 
-.Vue-Toastification__toast--error .Vue-Toastification__close-button{
+.Vue-Toastification__toast--error .Vue-Toastification__close-button {
   color: var(--udmercy-red);
 }
 
-.Vue-Toastification__toast--success .Vue-Toastification__close-button{
+.Vue-Toastification__toast--success .Vue-Toastification__close-button {
   color: var(--udmercy-blue);
 }
-.Vue-Toastification__toast--warning .Vue-Toastification__close-button{
+.Vue-Toastification__toast--warning .Vue-Toastification__close-button {
   color: #c78204;
 }
 
-.Vue-Toastification__toast--error .Vue-Toastification__progress-bar{
+.Vue-Toastification__toast--error .Vue-Toastification__progress-bar {
   background-color: var(--udmercy-red);
 }
-.Vue-Toastification__toast--success .Vue-Toastification__progress-bar{
+.Vue-Toastification__toast--success .Vue-Toastification__progress-bar {
   background-color: var(--udmercy-blue);
 }
-.Vue-Toastification__toast--warning .Vue-Toastification__progress-bar{
+.Vue-Toastification__toast--warning .Vue-Toastification__progress-bar {
   background-color: #c78204;
 }
-.Vue-Toastification__toast-body{
+.Vue-Toastification__toast-body {
   font-size: 13.5px;
 }
+
+.p-select-list-container,
+.p-select-label {
+  font-size: 13px;
+}
+
+/* .p-select {
+  
+} */

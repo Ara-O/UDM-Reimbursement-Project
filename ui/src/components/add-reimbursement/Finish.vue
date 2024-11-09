@@ -24,11 +24,17 @@
           Save as a Draft
         </button>
         <button
+          @click="discardChanges"
+          class="bg-udmercy-red text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+        >
+          Discard Changes
+        </button>
+        <!-- <button
           @click="saveAsTemplate"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
           Save as Template
-        </button>
+        </button> -->
       </div>
 
       <h3 class="text-base font-semibold">Manage generated PDF:</h3>
@@ -53,31 +59,25 @@
           @click="emailPDF"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
-          Email Reimbursement Claim
+          Email Reimbursement Request
         </button>
 
         <button
           @click="submitTicket"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
-          Submit Reimbursement Claim
+          Submit Reimbursement Request
         </button>
       </div>
       <div class="flex gap-5 items-center">
-      <button
-        @click="discardChanges"
-        class="bg-udmercy-red mt-8 text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-      >
-        Discard Changes
-      </button>
-      <button
-        type="button"
-        @click="moveToPreviousSection"
-        class="bg-udmercy-blue mt-8 text-white border-none w-64 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-4"
-      >
-      <img src="../../assets/prev-arrow.png" class="w-3">
-        Previous Section
-      </button>
+        <button
+          type="button"
+          @click="moveToPreviousSection"
+          class="bg-udmercy-blue mt-8 text-white border-none w-64 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-4"
+        >
+          <img src="../../assets/prev-arrow.png" class="w-3" />
+          Previous Section
+        </button>
       </div>
       <br />
       <span class="flex gap-5 flex-wrap"> </span>
@@ -222,7 +222,6 @@ let showEmailPopup = ref<boolean>(false);
 let knowFoapaText = "";
 //let foapaDetails;
 
-
 function returnToDashboard() {
   router.push("/dashboard");
 }
@@ -245,7 +244,7 @@ async function sendEmail(values: any, { resetForm }) {
   let savedFoapaDetails;
   try {
     let response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
+      `${import.meta.env.VITE_API_URL}/api/retrieve-account-information`
     );
 
     savedFoapaDetails = await axios.get(
@@ -316,7 +315,7 @@ async function download() {
   });
 
   axios
-    .get(`${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`)
+    .get(`${import.meta.env.VITE_API_URL}/api/retrieve-account-information`)
     .then((response) => {
       props.claim.totalCost = getAllActivitiesAmount();
 
@@ -344,11 +343,9 @@ async function download() {
       }
 
       axios
-        .get(`${import.meta.env.VITE_API_URL}/api/generatePdf`, {
-          params: {
-            reimbursementData: props.claim,
-            userInfo: response.data,
-          },
+        .post(`${import.meta.env.VITE_API_URL}/api/generate-pdf`, {
+          reimbursementTicket: props.claim,
+          userInfo: response.data,
         })
         .then((res) => {
           const link = document.createElement("a");
@@ -359,9 +356,10 @@ async function download() {
           link.click();
         })
         .catch((err) => {
-          console.log("error: " + err);
+          // console.log("error: " + err.response);
           toast(
-            "There was an error generating your PDF. Please try again later",
+            err?.response?.message ||
+              "There was an error generating your PDF. Please try again later",
             {
               type: TYPE.ERROR,
             }
@@ -444,10 +442,8 @@ async function checkForUDMPU(): Promise<boolean> {
 }
 
 async function submitTicket() {
-  console.log("TICKET IS BEING SUBMITTED");
   try {
     await checkForUDMPU();
-    //CHeck for UDMPU
 
     if (props.claim.foapaDetails.length === 0) {
       toast(
@@ -471,7 +467,6 @@ async function submitTicket() {
 
     props.claim.reimbursementStatus = "Submitted";
 
-    console.log(props.claim);
     await axios.post(
       `${import.meta.env.VITE_API_URL}/api/update-reimbursement`,
       {
@@ -509,59 +504,48 @@ function createPdf() {
     type: TYPE.INFO,
   });
 
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`)
-    .then((response) => {
-      props.claim.totalCost = getAllActivitiesAmount();
+  props.claim.totalCost = getAllActivitiesAmount();
 
-      const totalCoveredFoapaCost = props.claim.foapaDetails.reduce(
-        (acc, curr) => (acc += Number(curr.cost)),
-        0
-      );
+  const totalCoveredFoapaCost = props.claim.foapaDetails.reduce(
+    (acc, curr) => (acc += Number(curr.cost)),
+    0
+  );
 
-      if (totalCoveredFoapaCost > props.claim.totalCost) {
-        toast(
-          "Warning: The amount of money you are retrieving from your FOAPAs is more than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.",
-          {
-            type: TYPE.WARNING,
-            timeout: false,
-          }
-        );
-      } else if (totalCoveredFoapaCost < props.claim.totalCost) {
-        toast(
-          "Warning: The amount of money you are retrieving from your FOAPAs is less than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.",
-          {
-            type: TYPE.WARNING,
-            timeout: false,
-          }
-        );
+  if (totalCoveredFoapaCost > props.claim.totalCost) {
+    toast(
+      "Warning: The amount of money you are retrieving from your FOAPAs is more than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.",
+      {
+        type: TYPE.WARNING,
+        timeout: false,
       }
+    );
+  } else if (totalCoveredFoapaCost < props.claim.totalCost) {
+    toast(
+      "Warning: The amount of money you are retrieving from your FOAPAs is less than the amount of money you are trying to get reimbursed for. Please double check your FOAPA coverages and make sure they match.",
+      {
+        type: TYPE.WARNING,
+        timeout: false,
+      }
+    );
+  }
 
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/generatePdf`, {
-          params: {
-            reimbursementData: props.claim,
-            userInfo: response.data,
-          },
-        })
-        .then((res) => {
-          console.log(res.data);
-          downloadPDF(res.data);
-          currentlyCreatingPDF.value = false;
-        })
-        .catch((err) => {
-          toast(
-            "There was an error generating your PDF. Please try again later",
-            {
-              type: TYPE.ERROR,
-            }
-          );
-        });
+  axios
+    .post(`${import.meta.env.VITE_API_URL}/api/generate-pdf`, {
+      reimbursementTicket: props.claim,
+    })
+    .then((res) => {
+      console.log(res.data);
+      downloadPDF(res.data);
+      currentlyCreatingPDF.value = false;
     })
     .catch((err) => {
-      toast("There was an error generating your PDF. Please try again later", {
-        type: TYPE.ERROR,
-      });
+      toast(
+        err?.response?.data?.message ||
+          "There was an error generating your PDF. Please try again later",
+        {
+          type: TYPE.ERROR,
+        }
+      );
     });
 }
 

@@ -6,6 +6,8 @@ import { configure } from "vee-validate";
 import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 import "vue-toastification/dist/index.css";
+//@ts-ignore
+import Aura from "@primevue/themes/aura";
 import "./style.css";
 
 configure({
@@ -41,6 +43,11 @@ createApp(App)
   .use(pinia)
   .use(Toast, toastOptions)
   .use(PrimeVue, {
-    unstyled: false,
+    theme: {
+      preset: Aura,
+      options: {
+        darkModeSelector: "",
+      },
+    },
   })
   .mount("#app");

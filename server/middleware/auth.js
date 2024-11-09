@@ -6,8 +6,10 @@ const config = process.env;
 
 export const verifyToken = async (req, res, next) => {
   try {
+    // Get the authorization header from request headers
     let token = req.headers.authorization;
 
+    // If it does not exist, send an error
     if (!token) {
       return res.status(403).send({
         message:

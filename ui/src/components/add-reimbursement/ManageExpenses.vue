@@ -19,31 +19,32 @@
       <div class="flex gap-x-14 gap-y-3 flex-wrap">
         <span>
           <h4 class="font-normal text-sm">Expense Name</h4>
-          <input
-            type="text"
-            list="default-list"
-            name="expense-name"
-            placeholder="Expense Name"
+
+          <Select
             v-model="expense.name"
-            class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required
+            :options="defaultExpenses"
+            placeholder="Select an Expense"
+            class="border-[0.5px] h-11 flex items-center rounded-md !border-gray-200 w-72 box-border text-xs border-solid !shadow-md"
           />
-          <datalist id="default-list">
-            <option :value="expense" v-for="expense in defaultExpenses">
-              {{ expense }}
-            </option>
-          </datalist>
         </span>
         <span>
           <h4 class="font-normal text-sm">Expense Cost</h4>
-          <span style="position:absolute; padding-left: 0.75rem; padding-top:10px; opacity: 50%;">$</span>
+          <span
+            style="
+              position: absolute;
+              padding-left: 0.75rem;
+              padding-top: 10px;
+              opacity: 50%;
+            "
+            >$</span
+          >
           <input
             type="text"
             name="expense-cost"
-            placeholder="$ Expense Cost"
+            placeholder="Expense Cost"
             v-model="expense.cost"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            style="padding-left: 2rem;"
+            style="padding-left: 2rem"
             required
           />
         </span>
@@ -58,7 +59,7 @@
             required
           />
         </span>
-        <span v-if="expense.name === 'Other'">
+        <span v-if="expense.name === 'Other' || expense.name === 'Mileage'">
           <h4 class="font-normal text-sm">Additional Information</h4>
           <input
             type="text"
@@ -85,26 +86,25 @@
         >
           Add Expense
         </button>
-        
       </div>
       <div class="flex gap-8 items-center">
-      <button
-        type="button"
-        @click="moveToPreviousSection"
-        class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
-      >
-        <img src="../../assets/prev-arrow.png" class="w-3">
-        Previous Section
-      </button>
-      <button
+        <button
+          type="button"
+          @click="moveToPreviousSection"
+          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
+        >
+          <img src="../../assets/prev-arrow.png" class="w-3" />
+          Previous Section
+        </button>
+        <button
           type="button"
           @click="moveToNextSection"
           class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5"
         >
           Next Section
-          <img src="../../assets/next-arrow.png" class="w-3">
+          <img src="../../assets/next-arrow.png" class="w-3" />
         </button>
-    </div>
+      </div>
     </form>
 
     <!-- ALL EXPENSES SECTION -->
@@ -118,9 +118,6 @@
       >
         Added expenses will be listed here.
       </h5>
-      <!-- <div v-if="props.claim.activities.length === 0">
-            <activity-container :expense="exampleExpense"></activity-container>
-        </div> -->
 
       <activity-container
         :expense="expense"
@@ -149,6 +146,8 @@ import ActivityContainer from "./ActivityContainer.vue";
 import { generateRandomStringId } from "../../utils/generateRandomId";
 import { TYPE, useToast } from "vue-toastification";
 import QuickAddPopup from "./QuickAddPopup.vue";
+import Select from "primevue/select";
+
 const props = defineProps<{
   claim: ReimbursementTicket;
 }>();
@@ -177,10 +176,10 @@ const defaultExpenses = [
   "Lodging",
   "Lunch",
   "Mileage",
-  "Other",
   "Parking",
   "Registration",
   "Taxi/Bus/Car Rental",
+  "Other",
 ];
 
 function moveToNextSection() {
@@ -215,6 +214,7 @@ function addExpense() {
     });
     return;
   }
+
   // Pushing a duplicate of the inputted expense to the main reimbursement data
   props.claim.activities.push(JSON.parse(JSON.stringify(expense.value)));
   expense.value = {
@@ -222,6 +222,7 @@ function addExpense() {
     cost: 0,
     date: "",
     id: generateRandomStringId(24),
+    additionalInformation: "",
   };
 }
 
@@ -271,5 +272,9 @@ function duplicateExpense(id: string) {
 .custom-scroll-bar::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background: #acacac;
+}
+
+.p-select:not(.p-disabled).p-focus {
+  border-color: lightgray;
 }
 </style>

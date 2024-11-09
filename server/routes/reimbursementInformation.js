@@ -22,6 +22,7 @@ const reimbursementRequestSchema = z.object({
           cost: z.union([z.number(), z.string()]),
           date: z.string(),
           id: z.string(),
+          additionalInformation: z.string().optional(),
         })
         .optional()
     ),
@@ -101,7 +102,7 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
 
       return res
         .status(400)
-        .send({ messsage: "There was an error with one of your inputs" });
+        .send({ message: "There was an error with one of your inputs" });
     }
 
     return res.status(500).send({

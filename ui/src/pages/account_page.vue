@@ -326,7 +326,7 @@ function save() {
 async function retrieveAccountInformation() {
   try {
     let res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/retrieveAccountInformation`
+      `${import.meta.env.VITE_API_URL}/api/retrieve-account-information`
     );
 
     res.data.employmentNumber = res.data.employmentNumber.replace("T", "");

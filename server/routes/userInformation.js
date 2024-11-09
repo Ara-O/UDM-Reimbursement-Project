@@ -16,22 +16,33 @@ dotenv.config();
 
 const router = Router();
 
-//Retrieve account infoemation - GET /api/retrieveAccountInformation
-router.get("/retrieveAccountInformation", verifyToken, async (req, res) => {
+//Retrieve account infoemation - GET /api/retrieve-account-information
+router.get("/retrieve-account-information", verifyToken, async (req, res) => {
   try {
     let facultyInfo = await Faculty.findById(req.user.userId);
 
+    // If the user does not exist
     if (facultyInfo === null) {
-      res.status(404).send({
-        message: "Unable to retrieve faculty information.",
+      return res.status(404).send({
+        message:
+          "There was an error retrieving your account information. Please try again later.",
       });
     } else {
-      console.log(facultyInfo);
-      res.status(200).send(facultyInfo);
+      return res.status(200).send(facultyInfo);
     }
   } catch (error) {
-    console.error(error);
-    res.status(400).send({ message: error.message });
+    logger.info("There was an error retrieving account information", {
+      api: "/api/retrieve-account-information",
+    });
+
+    logger.error(error, {
+      api: "/api/retrieve-account-information",
+    });
+
+    return res.status(400).send({
+      message:
+        "There was an error retrieving your acount information. Please try again later.",
+    });
   }
 });
 

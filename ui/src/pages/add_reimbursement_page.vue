@@ -61,15 +61,15 @@
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
       ></manage-receipts>
-      <guest-information
+      <!-- <guest-information
         :claim="currentReimbursement"
         v-if="selectedSection === 5"
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
-      ></guest-information>
+      ></guest-information> -->
       <finish
         :claim="currentReimbursement"
-        v-if="selectedSection === 6"
+        v-if="selectedSection === 5"
         @on-claim-saved="onClaimSaved"
         @move-to-previous-section="moveToPreviousSection"
       ></finish>
@@ -133,13 +133,13 @@ let sections = ref([
     title: "Manage Receipts",
     section: 4,
   },
-  {
-    title: "Guest Information (Optional)",
-    section: 5,
-  },
+  // {
+  //   title: "Guest Information (Optional)",
+  //   section: 5,
+  // },
   {
     title: "Finish",
-    section: 6,
+    section: 5,
   },
 ]);
 

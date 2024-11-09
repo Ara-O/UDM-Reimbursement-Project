@@ -5,7 +5,8 @@ import createPdfDefinition from "../pdfGenerator.js";
 import Pdfmake from "pdfmake";
 import multer from "multer";
 import ImageKit from "imagekit";
-import Tesseract from "tesseract.js"
+import Tesseract from "tesseract.js";
+import z, { ZodError } from "zod";
 import ReimbursementTicket from "../models/reimbursement.js";
 import fs from "fs";
 import { verifyToken } from "../middleware/auth.js";
@@ -15,7 +16,8 @@ import logger from "../logger.js";
 import { generateRandomStringId } from "../utils/generateRandomString.js";
 const upload = multer({ dest: "uploads/" });
 import Faculty from "../models/faculty.js";
-
+import { log } from "console";
+import PdfPrinter from "pdfmake";
 
 let imagekit = new ImageKit({
   publicKey: process.env.IMAGE_KIT_PUBLIC,
@@ -95,69 +97,159 @@ router.post(
   }
 );
 
-router.get("/generatePdf", verifyToken, (req, res) => {
-  // console.log(req.query);
-  let receipts = req.query.reimbursementData.reimbursementReceipts || [];
-  let promises = [];
-  receipts.forEach((receipt) => {
-    promises.push(
-      new Promise((resolve, reject) => {
-        https.get(receipt.url, (response) => {
-          let imageData = [];
+const reimbursementRequestSchema = z.object({
+  reimbursementTicket: z.object({
+    _id: z.string().optional(),
+    __v: z.number().optional(),
+    reimbursementName: z.string(),
+    totalCost: z.number(),
+    reimbursementReason: z.string(),
+    reimbursementStatus: z.string(),
+    reimbursementDate: z.string(),
+    activities: z.array(
+      z
+        .object({
+          name: z.string(),
+          cost: z.union([z.number(), z.string()]),
+          date: z.string(),
+          id: z.string(),
+          additionalInformation: z.string().optional(),
+        })
+        .optional()
+    ),
+    reimbursementReceipts: z.array(
+      z
+        .object({
+          _id: z.string().optional(),
+          id: z.string(),
+          name: z.string(),
+          url: z.string(),
+        })
+        .optional()
+    ),
+    destination: z.string(),
+    paymentRetrievalMethod: z.string(),
+    UDMPUVoucher: z.boolean(),
+    knowFoapa: z.boolean(),
+    guestInformation: z.array(
+      z
+        .object({
+          _id: z.string().optional(),
+          employeeFirstName: z.string(),
+          employeeLastName: z.string(),
+          guestAssociation: z.string(),
+          guestFirstName: z.string(),
+          guestLastName: z.string(),
+        })
+        .optional()
+    ),
+    foapaDetails: z.array(
+      z
+        .object({
+          _id: z.string().optional(),
+          cost: z.union([z.number(), z.string()]),
+          foapa_id: z.string(),
+        })
+        .optional()
+    ),
+  }),
+});
 
-          response.on("data", (chunk) => {
-            imageData.push(chunk);
-          });
+// This function takes an image URL, uses the http library to fetch the
+// image and turn it into its base64 representation, then returns it
+function fetchImageBase64(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (response) => {
+      let imageData = [];
 
-          response.on("end", () => {
-            imageData = Buffer.concat(imageData);
-            const base64Image = imageData.toString("base64");
-            let fullImageUrl = "data:image/png;base64," + base64Image;
-            resolve(fullImageUrl);
-          });
-        });
-      })
-    );
-  });
+      response.on("data", (chunk) => {
+        imageData.push(chunk);
+      });
 
-  Promise.all(promises).then((response) => {
-    let images = {};
-    let allImageIds = [];
-    response.forEach((imageData) => {
-      let randomId = generateRandomId();
-      images[randomId] = imageData;
-      allImageIds.push(randomId);
+      response.on("end", () => {
+        const base64Image = Buffer.concat(imageData).toString("base64");
+        resolve(`data:image/png;base64,${base64Image}`);
+      });
+
+      response.on("error", (err) => reject(err));
     });
+  });
+}
+
+router.post("/generate-pdf", verifyToken, async (req, res) => {
+  try {
+    // Parse the incoming reimbursement data
+    const request = reimbursementRequestSchema.parse(req.body);
+    const reimbursementRequestData = request.reimbursementTicket;
+    const receipts = reimbursementRequestData.reimbursementReceipts;
+
+    // Get the faculty's information to populate the pdf
+    // req.user.userId is gotten from the verifyToken middleware
+    const facultyInfo = await Faculty.findById(req.user.userId);
+
+    if (facultyInfo === null) {
+      throw new Error("Faculty account could not be retrieved");
+    }
+
+    // Pass receipts through the fetchImageBase64 function to retrieve the base64 image
+    // representation of all the receipts - Using promises as fetching the images is asynchronous
+    const base64Receipts = await Promise.all(
+      receipts.map((receipt) => fetchImageBase64(receipt.url))
+    );
+
+    //Calls the createPdfDefinition function imported from pdfGenerator.js
+    const content = createPdfDefinition(
+      reimbursementRequestData,
+      facultyInfo,
+      base64Receipts
+    );
+
+    // Define the definition for the PDF
     const docDefinition = {
-      content: createPdfDefinition(
-        req.query.reimbursementData,
-        req.query.userInfo,
-        allImageIds
-      ),
+      content: content,
+      pageMargins: [17, 15, 0, 0],
       defaultStyle: {
         fontSize: 10,
         bold: true,
       },
-      images: images,
-
-      pageMargins: [17, 15, 0, 0],
     };
-    generatePdf(
-      docDefinition,
-      function (base64String) {
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader(
-          "Content-Disposition",
-          "attachment; filename=product.pdf"
-        );
-        res.send(base64String);
-      },
-      function (error) {
-        console.log(error);
-        res.send("ERROR:" + error);
-      }
-    );
-  });
+
+    // Generate the PDF based on the definition, and when it is done, return the pdf to the user
+    generatePdf(docDefinition, function (base64String) {
+      logger.info("PDF successfully created", {
+        api: "/api/generate-pdf",
+      });
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=reimbursement_request.pdf"
+      );
+      res.status(200).send(base64String);
+    });
+  } catch (err) {
+    logger.error("There was an error generating a PDF", {
+      api: "/api/generate-pdf",
+    });
+    ``;
+
+    logger.error(err, {
+      api: "/api/generate-pdf",
+    });
+
+    if (err instanceof ZodError) {
+      return res.status(403).send({
+        message:
+          "There was an error with this reimbursement. Please try again later.",
+      });
+    }
+
+    return res.status(400).send({
+      message:
+        err?.message ||
+        "An unexpected error occured when creating your PDF. Please try again later.",
+    });
+  }
 });
 
 // Stores receipt images in imagekit and returns the URL of the image
@@ -328,10 +420,12 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       <div style="border: solid 1px #efefef; padding: 20px 0px;">
       <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
       <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
-                }</h3>
-      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.userInfo.workEmail
-                }</h5>
+      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
+        req.body.message || ""
+      }</h3>
+      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
+        req.body.userInfo.workEmail
+      }</h5>
       </div>
       </div>
       `,
@@ -380,10 +474,12 @@ router.post("/send-contact-email", verifyToken, async (req, res) => {
   <div style="border: solid 1px #efefef; padding: 20px 0px;">
   <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
   <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
-        }</h3>
-  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${facultyInfo.firstName
-        } ${facultyInfo.lastName}
+  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
+    req.body.message || ""
+  }</h3>
+  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
+    facultyInfo.firstName
+  } ${facultyInfo.lastName}
         </h5>
   </div>
   </div>
@@ -404,8 +500,12 @@ router.post("/send-contact-email", verifyToken, async (req, res) => {
 
 // Extract Text from Receipt - GET /api/extract-text
 router.get("/extract-text", verifyToken, (req, res) => {
-  Tesseract.recognize('https://ik.imagekit.io/kywjttb4q/1receipt_2fThUIhkzv?updatedAt=1727879197966', 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
-    res.status(200).send(text.split(/\r?\n/))
-  })
-})
+  Tesseract.recognize(
+    "https://ik.imagekit.io/kywjttb4q/1receipt_2fThUIhkzv?updatedAt=1727879197966",
+    "eng",
+    { logger: (m) => console.log(m) }
+  ).then(({ data: { text } }) => {
+    res.status(200).send(text.split(/\r?\n/));
+  });
+});
 export default router;
