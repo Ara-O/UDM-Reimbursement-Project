@@ -95,14 +95,16 @@
               <label for="organization" class="text-sm"
                 >ORGANIZATION (ORG)</label
               >
-              <Field
-                name="organization"
+              <AutoComplete
                 placeholder="Enter ORG"
-                :rules="isValidFoapaNumber"
                 v-model="added_foapa.organization"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-28"
-              >
-              </Field>
+                dropdown
+                :completeOnFocus="true"
+                empty-search-message="ORG not found - may still exist."
+                class="border-sm shadow-sm rounded-md border !w-full sm: !border-gray-100"
+                :suggestions="ORGs"
+                @complete="filterOrganization"
+              />
               <ErrorMessage
                 name="organization"
                 class="text-red-400 bottom-[-24px] absolute text-xs"
@@ -110,23 +112,16 @@
             </div>
             <div class="flex flex-col gap-y-3 relative">
               <label for="account" class="text-sm">ACCOUNT (ACCT)*</label>
-              <Field
-                name="account"
+              <AutoComplete
                 placeholder="Enter ACCT"
-                :rules="isValidAccountNumber"
                 v-model="added_foapa.account"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-28"
-                list="accounts"
-              >
-                <AutoComplete
-                  placeholder="Enter ACCT"
-                  v-model="added_foapa.account"
-                  dropdown
-                  :suggestions="arrAcct"
-                  @complete="filterAccounts"
-                  class="acct-dropdown text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-1rem"
-                />
-              </Field>
+                dropdown
+                :completeOnFocus="true"
+                empty-search-message="ACCT not found - may still exist."
+                class="border-sm shadow-sm rounded-md border !w-full sm: !border-gray-100"
+                :suggestions="ACCTs"
+                @complete="filterAccounts"
+              />
               <ErrorMessage
                 name="account"
                 class="text-red-400 bottom-[-24px] absolute text-xs"
@@ -134,14 +129,16 @@
             </div>
             <div class="flex flex-col gap-y-3 relative">
               <label for="program" class="text-sm">PROGRAM (PROG)*</label>
-              <Field
-                name="program"
+              <AutoComplete
                 placeholder="Enter PROG"
-                :rules="isValidProgramNumber"
                 v-model="added_foapa.program"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-28"
-              >
-              </Field>
+                dropdown
+                :completeOnFocus="true"
+                empty-search-message="PROG not found - may still exist."
+                class="border-sm shadow-sm rounded-md border !w-full sm: !border-gray-100"
+                :suggestions="PROG"
+                @complete="filterProgram"
+              />
               <ErrorMessage
                 name="program"
                 class="text-red-400 bottom-[-24px] absolute text-xs"
@@ -568,9 +565,13 @@ let state = ref<FoapaStates>("Add");
 const edited_foapas_id = ref<string>("");
 const return_to_dashboard = ref<boolean>(false);
 const foapa_to_delete = ref<string>("");
-const acctNums = ref<any[]>([]);
-const filteredAccounts = ref<any[]>([]);
-const arrAcct = ref<any[]>([]);
+const originalACCTs = ref<any[]>([]);
+const originalORGs = ref<any[]>([]);
+const originalPROG = ref<any[]>([]);
+
+const ACCTs = ref<any[]>([]);
+const ORGs = ref<any[]>([]);
+const PROG = ref<any[]>([]);
 
 type FilterValues = "Date(ASC)" | "Date(DESC)" | "Amount(ASC)" | "";
 let filterValues = ref<FilterValues>("");
@@ -632,39 +633,79 @@ let added_foapa = ref({
   program: "",
   activity: "",
   foapaName: "",
-  // initialAmount: "",
-  // availableAmount: "",
-  // currentAmount: "",
   description: "",
+  isUDMPU: false,
 });
 
-async function retrieveAccountNumbers() {
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/retrieveAccountNumbers`)
-    .then((res) => {
-      let accountNumbers = res.data;
-      acctNums.value = accountNumbers[0].accountNumbers;
+async function retrieveFoapaRegistry() {
+  try {
+    let res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-registry`
+    );
 
-      arrAcct.value = acctNums.value.map((e) => {
-        return e.number + ": " + e.description;
-      });
+    const acct_numbers = res.data.account;
+    const org_numbers = res.data.organization;
+    const prog_numbers = res.data.program;
 
-      console.log(arrAcct);
-    })
-    .catch((err) => {
-      console.log("There was an error retrieving the account numbers");
-      console.log(err);
+    originalACCTs.value = acct_numbers.map(
+      (acct) => acct.number + " - " + acct.description
+    );
+
+    ACCTs.value = originalACCTs.value;
+
+    originalORGs.value = org_numbers.map(
+      (org) => org.number + " - " + org.description
+    );
+
+    ORGs.value = originalORGs.value;
+
+    originalPROG.value = prog_numbers.map(
+      (prog) => prog.number + " - " + prog.description
+    );
+
+    PROG.value = originalPROG.value;
+  } catch (err) {
+    console.log(err);
+    toast("There was an error fetching FOAPA registry", {
+      type: TYPE.ERROR,
     });
+  }
 }
 
 function filterAccounts(event) {
   const query = event.query.toLowerCase();
-  retrieveAccountNumbers();
-  filteredAccounts.value = acctNums.value.filter((acct) =>
-    acct.number.includes(query)
-  );
 
-  return filteredAccounts;
+  if (!event.query.trim().length) {
+    ACCTs.value = [...originalACCTs.value];
+  } else {
+    ACCTs.value = originalACCTs.value.filter((acct) => {
+      return acct.toLowerCase().includes(query);
+    });
+  }
+}
+
+function filterOrganization(event) {
+  const query = event.query.toLowerCase();
+
+  if (!event.query.trim().length) {
+    ORGs.value = [...originalORGs.value];
+  } else {
+    ORGs.value = originalORGs.value.filter((acct) => {
+      return acct.toLowerCase().includes(query);
+    });
+  }
+}
+
+function filterProgram(event) {
+  const query = event.query.toLowerCase();
+
+  if (!event.query.trim().length) {
+    PROG.value = [...originalPROG.value];
+  } else {
+    PROG.value = originalPROG.value.filter((acct) => {
+      return acct.toLowerCase().includes(query);
+    });
+  }
 }
 
 function removeEditClashPopup() {
@@ -753,6 +794,8 @@ function discardData(reset?: any) {
   //@ts-ignore
   added_foapa.value.updatedAt = "";
 
+  added_foapa.value.account = "";
+
   state.value = "Add";
   edited_foapas_id.value = "";
 
@@ -795,7 +838,7 @@ async function editFoapaValues(foapaValues, resetForm) {
 
 async function addFoapa(values, { resetForm }) {
   if (state.value === "Edit") {
-    await editFoapaValues(values, resetForm);
+    await editFoapaValues(added_foapa.value, resetForm);
     resetForm();
     return;
   }
@@ -803,10 +846,10 @@ async function addFoapa(values, { resetForm }) {
   try {
     // By default, the UDMPU flag is set to false, but we can explicitly set it to false here for
     // redundancy
-    values.isUDMPU = false;
+    added_foapa.value.isUDMPU = false;
 
     await axios.post(`${import.meta.env.VITE_API_URL}/api/add-foapa-details`, {
-      foapaDetails: values,
+      foapaDetails: added_foapa.value,
     });
 
     discardData(resetForm);
@@ -947,7 +990,7 @@ function stayOnPage() {
 
 onMounted(() => {
   retrieveUserFoapaDetails();
-  retrieveAccountNumbers();
+  retrieveFoapaRegistry();
 });
 </script>
 

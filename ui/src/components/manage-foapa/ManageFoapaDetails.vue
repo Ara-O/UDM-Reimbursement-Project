@@ -67,7 +67,7 @@
             title="Optional: Current balance of FOAPA number. Can be used to keep track of FOAPA spendings"
           />
         </span> -->
-        <!-- <span class="input-FOAPA-field-span">
+      <!-- <span class="input-FOAPA-field-span">
           <Field
             type="text"
             style="width: 95px"
@@ -284,7 +284,7 @@ import {
   isValidFoapaDescription,
   isValidProgramNumber,
 } from "../../utils/validators";
-import AutoComplete from 'primevue/autocomplete';
+import AutoComplete from "primevue/autocomplete";
 
 const toast = useToast();
 let props = defineProps<{ foapaDetails: FoapaStuff[] }>();
@@ -308,7 +308,7 @@ let accountNumbers = ref<{ number: string; description: string }[]>([]);
 
 function retrieveAccountNumbers() {
   axios
-    .get(`${import.meta.env.VITE_API_URL}/api/retrieve-account-numbers`)
+    .get(`${import.meta.env.VITE_API_URL}/api/retrieve-ACCT-values`)
     .then((res) => {
       accountNumbers.value = res.data.accountNumbers;
     })

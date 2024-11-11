@@ -5,6 +5,7 @@ import AccountNumbers from "../models/accountNumbers.js";
 import z, { ZodError } from "zod";
 import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
+import FoapaRegistry from "../models/foapaRegistry.js";
 
 // For retrieving a list of all the user's FOAPAs: GET /retrieve-foapa-details
 router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
@@ -63,8 +64,8 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
       fund: z.string().length(6).trim(),
       organization: z.string().trim().optional(),
       // account: z.string().length(4).trim().optional(),
-      account: z.string().optional(),
-      program: z.string().length(4).trim().optional(),
+      account: z.string(),
+      program: z.string().trim().optional(),
       activity: z.string().trim().optional(),
       isUDMPU: z.boolean().optional(),
     });
@@ -278,12 +279,39 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/retrieveAccountNumbers", verifyToken, async (req, res) => {
+router.get("/retrieve-foapa-registry", verifyToken, async (req, res) => {
   try {
-    res.status(200).send(await AccountNumbers.find());
+    const foapa_registry = await FoapaRegistry.find();
+
+    if (foapa_registry.length === 0) {
+      return res
+        .status(400)
+        .send({ message: "FOAPA registry could not be found" });
+    }
+
+    return res.status(200).send(foapa_registry[0]);
+  } catch (err) {
+    return res.status(500).send({
+      message: "An unexpected error occured when retrieving the FOAPA regisery",
+    });
+  }
+});
+
+// Receive ACCT numbers
+router.get("/retrieve-ACCT-values", verifyToken, async (req, res) => {
+  try {
+    const results = await AccountNumbers.find();
+
+    if (results.length === 0) {
+      return res.status(404).send({ message: "No ACCT numbers were found." });
+    }
+
+    const ACCTNumbers = results[0].accountNumbers;
+
+    res.status(200).send(ACCTNumbers);
   } catch (err) {
     logger.error(err, {
-      api: "/api/retrieveAccountNumbers",
+      api: "/api/retrieve-ACCT-values",
     });
 
     if (err instanceof ZodError) {
