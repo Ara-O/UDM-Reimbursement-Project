@@ -46,9 +46,6 @@ export type FoapaStuff = {
   foapaName: string;
   createdAt?: Date;
   updatedAt?: Date;
-  // initialAmount: string;
-  // availableAmount: string;
-  // currentAmount: string;
   description: string;
 };
 

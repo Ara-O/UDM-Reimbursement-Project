@@ -11,7 +11,7 @@
       style="margin-bottom: 5vh"
     >
       <h2 class="text-2xl font-semibold">
-        {{ formatUserFoapa(foapa_information.foapa_information) }}
+        {{ formatFoapaDeails(foapa_information.foapa_information) }}
       </h2>
       <h3 class="font-semibold text-md mt-6">
         {{ foapa_information.foapa_information.description }}
@@ -202,6 +202,7 @@ import ListView from "../assets/list-view.png";
 import GridView from "../assets/grid-view.png";
 import TableView from "../assets/table.png";
 import { useRoute, useRouter } from "vue-router";
+import { formatFoapaDeails } from "../utils/formatFoapaDetails";
 
 const route = useRoute();
 const router = useRouter();
@@ -261,12 +262,6 @@ const totalAmountUsed = computed(() => {
 
   return totalAmount;
 });
-
-function formatUserFoapa(foapa) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account.slice(0, 4) || "XXXX"
-  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
-}
 
 function parseDate(dateString: string) {
   if (!dateString) return;

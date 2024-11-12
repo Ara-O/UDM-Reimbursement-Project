@@ -254,7 +254,7 @@
               class="font-semibold text-base my-0 cursor-pointer"
               @click="router.push(`foapa-information/${foapa._id}`)"
             >
-              {{ foapa.foapaName }}: {{ formatUserFoapa(foapa) }}
+              {{ foapa.foapaName }}: {{ formatFoapaDeails(foapa) }}
             </h3>
             <div class="flex items-center ml-5 gap-2">
               <img
@@ -282,7 +282,7 @@
               class="font-semibold text-base my-0 cursor-pointer"
               @click="router.push(`foapa-information/${foapa._id}`)"
             >
-              {{ foapa.foapaName }}: {{ formatUserFoapa(foapa) }}
+              {{ foapa.foapaName }}: {{ formatFoapaDeails(foapa) }}
             </h3>
             <h4
               :title="foapa.description"
@@ -544,6 +544,7 @@ import {
   isValidFundNumber,
   isValidProgramNumber,
 } from "../utils/validators";
+import { formatFoapaDeails } from "../utils/formatFoapaDetails";
 
 const router = useRouter();
 type Foapa = FoapaStuff & { _id?: string };
@@ -787,14 +788,17 @@ async function triggerFoapaEditMode(foapa: FoapaStuff) {
 }
 
 function discardData(reset?: any) {
-  //@ts-ignore
-  added_foapa.value._id = "";
-  //@ts-ignore
-  added_foapa.value.createdAt = "";
-  //@ts-ignore
-  added_foapa.value.updatedAt = "";
-
-  added_foapa.value.account = "";
+  //Clear added FOAPA
+  added_foapa.value = {
+    fund: "",
+    organization: "",
+    account: "",
+    program: "",
+    activity: "",
+    foapaName: "",
+    description: "",
+    isUDMPU: false,
+  };
 
   state.value = "Add";
   edited_foapas_id.value = "";
@@ -831,8 +835,9 @@ async function editFoapaValues(foapaValues, resetForm) {
       }
     );
 
-    discardData();
     console.log(err);
+  } finally {
+    discardData();
   }
 }
 
@@ -864,12 +869,6 @@ async function addFoapa(values, { resetForm }) {
       type: TYPE.ERROR,
     });
   }
-}
-
-function formatUserFoapa(foapa: FoapaStuff) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account.slice(0, 4) || "XXXX"
-  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
 }
 
 async function showDeleteFoapaDialogue(foapa_id) {

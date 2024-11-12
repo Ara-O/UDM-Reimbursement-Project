@@ -33,7 +33,7 @@
           </h3>
         </span>
         <div class="foapa-details-container">
-          <h3 style="margin-top: 10px">{{ formatUserFoapa(foapa) }}</h3>
+          <h3 style="margin-top: 10px">{{ formatFoapaDeails(foapa) }}</h3>
         </div>
       </div>
       <button
@@ -67,18 +67,11 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import { FoapaStuff } from "../types/types";
 import { TYPE, useToast } from "vue-toastification";
+import { formatFoapaDeails } from "../utils/formatFoapaDetails";
 
 let userFoapaNumbers = ref<FoapaStuff[]>([]);
 
 const router = useRouter();
-
-function formatUserFoapa(foapa: FoapaStuff) {
-  // console.log(foapa);
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${foapa.account.slice(
-    0,
-    4
-  )}-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
-}
 
 function retrieveUserFoapaDetails() {
   axios

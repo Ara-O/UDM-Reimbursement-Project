@@ -24,7 +24,7 @@
           >
             <!-- <option disabled selected value="">Select FOAPA</option> -->
             <option :value="foapa._id" v-for="foapa in userFoapas">
-              {{ foapa.foapaName }} - {{ formatUserFoapa(foapa) }}
+              {{ foapa.foapaName }} - {{ formatFoapaDeails(foapa) }}
             </option>
             <option value="Add a New FOAPA">Add a New FOAPA</option>
             <option value="Don't Know FOAPA">Don't Know FOAPA</option>
@@ -171,6 +171,7 @@ import {
 import BalanceContainer from "./BalanceContainer.vue";
 import { TYPE, useToast } from "vue-toastification";
 import { computed } from "@vue/reactivity";
+import { formatFoapaDeails } from "../../utils/formatFoapaDetails";
 let props = defineProps<{
   claim: ReimbursementTicket;
 }>();
@@ -360,12 +361,6 @@ onMounted(() => {
     calculateBalance.value > 0 ? "" + calculateBalance.value : "0";
   retrieveFoapaDetails();
 });
-
-function formatUserFoapa(foapa: FoapaStuff) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account.slice(0, 4) || "XXXX"
-  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
-}
 
 function deleteFOAPA(id: string) {
   props.claim.foapaDetails = props.claim.foapaDetails.filter(

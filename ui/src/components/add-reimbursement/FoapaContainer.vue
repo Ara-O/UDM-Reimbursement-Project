@@ -28,7 +28,7 @@
       title="Edit FOAPA"
       class="activity-option absolute right-24 bottom-5"
       @click="() => $emit('editFoapa', foapa.foapa_id)"
-      style="background-color: white;"
+      style="background-color: white"
     >
       <img
         src="../../assets/blue-pencil.png"
@@ -41,6 +41,7 @@
 
 <script lang="ts" setup>
 import { FoapaInput, FoapaStuff } from "../../types/types";
+import { formatFoapaDeails } from "../../utils/formatFoapaDetails";
 
 type FoapaDetails = FoapaStuff & { _id: string };
 
@@ -48,15 +49,6 @@ const props = defineProps<{
   foapa: FoapaInput;
   filteredUserFoapas: FoapaDetails[];
 }>();
-
-// const toast = new Toast();
-
-function formatUserFoapa(foapa) {
-  console.log(foapa);
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account.slice(0, 4) || "XXXX"
-  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
-}
 
 const assignFoapaName = (event) => {
   const selectedFoapaId = event;
@@ -88,7 +80,7 @@ const assignFoapaNumber = (event) => {
     // toast;
     return "ERROR";
   }
-  return formatUserFoapa(selectedFoapa);
+  return formatFoapaDeails(selectedFoapa);
 };
 
 defineEmits(["deleteFoapa", "editFoapa"]);

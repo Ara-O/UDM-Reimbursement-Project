@@ -36,7 +36,7 @@
           </h3>
         </span>
         <div class="foapa-details-container">
-          <h3 style="margin-top: 10px">{{ formatUserFoapa(foapa) }}</h3>
+          <h3 style="margin-top: 10px">{{ formatFoapaDeails(foapa) }}</h3>
         </div>
       </div>
     </div>
@@ -55,16 +55,11 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { FoapaStuff } from "../../types/types";
+import { formatFoapaDeails } from "../../utils/formatFoapaDetails";
 
 let userFoapaNumbers = ref<FoapaStuff[]>([]);
 
 const router = useRouter();
-
-function formatUserFoapa(foapa: FoapaStuff) {
-  return `${foapa.fund}-${foapa.organization || "XXXX"}-${
-    foapa.account.slice(0, 4) || "XXXX"
-  }-${foapa.program || "XXXX"}-${foapa.activity || "XXXX"}`;
-}
 
 function retrieveUserFoapaDetails() {
   axios

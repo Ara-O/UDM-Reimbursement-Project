@@ -64,7 +64,10 @@ function generatePdf(docDefinition, callback) {
 
     pdfDoc.end();
   } catch (err) {
-    console.log(err);
+    logger.error("There was an error in the generatePdf function", {
+      api: "generatePdf",
+    });
+    throw err;
   }
 }
 
@@ -350,73 +353,52 @@ router.post("/deleteReceiptImage", verifyToken, async (req, res) => {
 
 router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
   try {
-    console.log(req.body);
     let receipts = req.body.reimbursementData.reimbursementReceipts || [];
-    let promises = [];
-    receipts.forEach((receipt) => {
-      promises.push(
-        new Promise((resolve, reject) => {
-          https.get(receipt.url, (response) => {
-            let imageData = [];
 
-            response.on("data", (chunk) => {
-              imageData.push(chunk);
-            });
+    const facultyInfo = await Faculty.findById(req.user.userId);
 
-            response.on("end", () => {
-              imageData = Buffer.concat(imageData);
-              const base64Image = imageData.toString("base64");
-              let fullImageUrl = "data:image/png;base64," + base64Image;
-              resolve(fullImageUrl);
-            });
-          });
-        })
-      );
-    });
+    if (facultyInfo === null) {
+      throw new Error("Faculty account could not be retrieved");
+    }
 
-    Promise.all(promises).then((response) => {
-      let images = {};
-      let allImageIds = [];
-      response.forEach((imageData) => {
-        let randomId = generateRandomId();
-        images[randomId] = imageData;
-        allImageIds.push(randomId);
-      });
+    const base64Receipts = await Promise.all(
+      receipts.map((receipt) => fetchImageBase64(receipt.url))
+    );
 
-      const docDefinition = {
-        content: createPdfDefinition(
-          req.body.reimbursementData,
-          req.body.userInfo,
-          allImageIds
-        ),
-        defaultStyle: {
-          fontSize: 10,
-          bold: true,
-        },
-        images: images,
+    const content = createPdfDefinition(
+      req.body.reimbursementData,
+      facultyInfo,
+      base64Receipts
+    );
 
-        pageMargins: [17, 15, 0, 0],
-      };
+    const docDefinition = {
+      content: content,
+      pageMargins: [17, 15, 0, 0],
+      defaultStyle: {
+        fontSize: 10,
+        bold: true,
+      },
+    };
 
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-      const day = String(currentDate.getDate()).padStart(2, "0");
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(currentDate.getDate()).padStart(2, "0");
 
-      const formattedDate = `${month}-${day}-${year}`;
+    const formattedDate = `${month}-${day}-${year}`;
 
-      generatePdf(
-        docDefinition,
-        function (base64String) {
-          console.log("pdf done");
-          console.log(base64String.slice(0, 28));
-          base64String = base64String.slice(28);
-          transporter
-            .sendMail({
-              from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
-              to: [req.body.recipient, req.body.userInfo.workEmail],
-              subject: `${req.body.userInfo.firstName} ${req.body.userInfo.lastName} - ${req.body.subject}`,
-              html: `
+    generatePdf(
+      docDefinition,
+      function (base64String) {
+        console.log("pdf done");
+        console.log(base64String.slice(0, 28));
+        base64String = base64String.slice(28);
+        transporter
+          .sendMail({
+            from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
+            to: [req.body.recipient, req.body.userInfo.workEmail],
+            subject: `${req.body.userInfo.firstName} ${req.body.userInfo.lastName} - ${req.body.subject}`,
+            html: `
       <div style="border: solid 1px #efefef; padding: 20px 0px;">
       <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
       <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
@@ -429,29 +411,28 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       </div>
       </div>
       `,
-              attachments: [
-                {
-                  filename: `${req.body.userInfo.firstName}_${req.body.userInfo.lastName}_Reimbursement_Claim_${formattedDate}.pdf`,
-                  content: base64String,
-                  encoding: "base64",
-                  contentType: "application/pdf",
-                },
-              ],
-            })
-            .then(() => {
-              res.status(200).send({ message: "Email successfully sent" });
-              console.log("email should e sent");
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        },
-        function (error) {
-          console.log(error);
-          res.send("ERROR:" + error);
-        }
-      );
-    });
+            attachments: [
+              {
+                filename: `${req.body.userInfo.firstName}_${req.body.userInfo.lastName}_Reimbursement_Claim_${formattedDate}.pdf`,
+                content: base64String,
+                encoding: "base64",
+                contentType: "application/pdf",
+              },
+            ],
+          })
+          .then(() => {
+            res.status(200).send({ message: "Email successfully sent" });
+            console.log("email should e sent");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+      function (error) {
+        console.log(error);
+        res.send("ERROR:" + error);
+      }
+    );
   } catch (err) {
     logger.error(err, {
       api: "/send-reimbursement-email",
