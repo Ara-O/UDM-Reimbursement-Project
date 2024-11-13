@@ -212,13 +212,11 @@
       </button>
     </div>
   </Form>
-  <br />
-  <section style="width: auto">
+  <!-- <section style="width: auto">
     <table class="foapa-table">
       <tbody>
         <tr style="text-align: left">
           <th>Name</th>
-          <!-- <th>Amount</th> -->
           <th>FUND</th>
           <th>ORG</th>
           <th>ACCT</th>
@@ -238,14 +236,11 @@
               :title="foapa.description"
             />
           </td>
-          <!-- <td>
-            {{ foapa.initialAmount ? `$${foapa.initialAmount}` : "N/A" }}
-          </td> -->
           <td>{{ foapa.fund }}</td>
-          <td>{{ foapa.organization || "N/A" }}</td>
-          <td>{{ foapa.account }}</td>
-          <td>{{ foapa.program }}</td>
-          <td>{{ foapa.activity || "N/A" }}</td>
+          <td>{{ foapa.organization || "XXXX" }}</td>
+          <td>{{ foapa.account || "XXXX"}}</td>
+          <td>{{ foapa.program || "XXXX"}}</td>
+          <td>{{ foapa.activity || "XXXX" }}</td>
           <td>
             <img
               src="../../assets/trash-icon.png"
@@ -265,7 +260,7 @@
         </tr>
       </tbody>
     </table>
-  </section>
+  </section> -->
 </template>
 
 <script setup lang="ts">
@@ -274,6 +269,7 @@ import { TYPE, useToast } from "vue-toastification";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, reactive, onMounted } from "vue";
 import { FoapaStuff } from "../../types/types";
+type Foapa = FoapaStuff & { _id?: string };
 import {
   isValidFundNumber,
   isValidAccountNumber,
@@ -290,6 +286,7 @@ const toast = useToast();
 let props = defineProps<{ foapaDetails: FoapaStuff[] }>();
 let changes_were_made = ref<boolean>();
 const emits = defineEmits(["changes-were-made"]);
+let foapaDetails = ref<Foapa[]>([]);
 
 let currentlyInputtedFOAPA = reactive<FoapaStuff>({
   fund: "",
@@ -328,12 +325,35 @@ function addFoapa(values, { resetForm }) {
   // currentlyInputtedFOAPA.currentAmount = currentlyInputtedFOAPA.initialAmount;
   // currentlyInputtedFOAPA.availableAmount = currentlyInputtedFOAPA.initialAmount;
   let addedFoapa = Object.assign({}, currentlyInputtedFOAPA);
-  props.foapaDetails.push(addedFoapa);
-  emits("changes-were-made");
+  props.foapaDetails.push(addedFoapa)
+
+  toast("Saving FOAPA information...", {
+    type: TYPE.INFO,
+  });
+
+  axios
+    .post(`${import.meta.env.VITE_API_URL}/api/add-foapa-details`, {
+      foapaDetails: addedFoapa,
+    })
+    .then(() => {
+      toast("Successfully saved FOAPA information", {
+        type: TYPE.SUCCESS,
+      });
+    })
+    .catch((err) => {
+      toast(
+        err?.response?.data?.message ||
+          "An unexpected error occured when saving your FOAPA details. Please try again later",
+        {
+          type: TYPE.ERROR,
+        }
+      );
+    });
 }
 
-function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
+async function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
   emits("changes-were-made");
+  let idOfFoapa
   if (show_confirm_dialog) {
     const confirm_deletion = confirm(
       "Are you sure you want to delete this FOAPA. Click 'yes' to confirm"
@@ -345,7 +365,26 @@ function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
       );
 
       if (index > -1) {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
+        );
+        console.log("INDEX: ", index, props.foapaDetails[index], "RES: ", res)
+        for(let foapa of res.data){
+          if(foapa.foapaName === props.foapaDetails[index].foapaName 
+              && foapa.fund === props.foapaDetails[index].fund
+              && foapa.account == props.foapaDetails[index].account
+              && foapa.activity == props.foapaDetails[index].activity
+              && foapa.program == props.foapaDetails[index].program
+              && foapa.organization == props.foapaDetails[index].organization)
+            idOfFoapa = foapa._id
+        }
         props.foapaDetails.splice(index, 1);
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/delete-foapa-detail`,
+          {
+            foapa_id: idOfFoapa
+          }
+        );
       }
     }
   } else {
@@ -357,6 +396,7 @@ function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
       props.foapaDetails.splice(index, 1);
     }
   }
+  
 }
 
 function editFoapa(foapa) {

@@ -145,12 +145,12 @@
           <manage-foapa-details
             :foapa-details="foapaDetailsToAdd"
           ></manage-foapa-details>
-          <button
+          <!-- <button
             @click="saveFoapas"
             class="bg-udmercy-blue mt-7 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
           >
             Save FOAPAs
-          </button>
+          </button> -->
         </div>
       </div>
     </section>
@@ -213,6 +213,7 @@ function showFoapaPopup() {
 }
 
 function closeFoapaPopup() {
+  saveFoapas();
   foapaPopupIsVisible.value = false;
   assignedFoapa.value = {
     cost: "",
@@ -305,28 +306,24 @@ function saveFoapas() {
   toast("Saving FOAPA information...", {
     type: TYPE.INFO,
   });
-
-  axios
-    .post(`${import.meta.env.VITE_API_URL}/api/add-foapa-details`, {
-      foapaDetails: foapaDetailsToAdd.value,
-    })
-    .then(() => {
+    try{() => {
       toast("Successfully saved FOAPA information", {
         type: TYPE.SUCCESS,
       });
       retrieveFoapaDetails();
       foapaDetailsToAdd.value = [];
       foapaPopupIsVisible.value = false;
-    })
-    .catch((err) => {
+    }
+    } 
+    catch{((err) => {
       toast(
         err?.response?.data?.message ||
           "An unexpected error occured when saving your FOAPA details. Please try again later",
         {
           type: TYPE.ERROR,
         }
-      );
-    });
+      );});
+    }
 }
 
 function retrieveFoapaDetails() {
