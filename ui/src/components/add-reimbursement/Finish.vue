@@ -176,7 +176,7 @@
               for="submissionEmail"
               class="font-semibold text-sm leading-7"
             >
-              Mark Claim As Submitted?
+              Submit Request
               <img
                 src="../../assets/user-help-icon.png"
                 alt="Help"

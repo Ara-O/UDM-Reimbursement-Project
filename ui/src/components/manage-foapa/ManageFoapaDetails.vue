@@ -108,18 +108,18 @@
 
       <div class="input-FOAPA-field">
         <span class="foapa-title-span">
-          <label for="foapa-name">ORG</label>
+          <label for="foapa-name">ORG*</label>
           <img
             src="../../assets/user-help-icon.png"
             alt="Help"
             class="foapa-help-icon"
-            title="Optional: Organization, 4 digits&#013;The organization is the department that affected by the transaction."
+            title="Required: Organization, 4 digits&#013;The organization is the department that affected by the transaction."
           />
         </span>
         <span class="input-FOAPA-field-span">
           <Field
             type="text"
-            :rules="isValidFoapaNumber"
+            :rules="isValidOrgNumber"
             name="org-input"
             id="org-input"
             placeholder="xxxx"
@@ -279,6 +279,7 @@ import {
   isValidActvNumber,
   isValidFoapaDescription,
   isValidProgramNumber,
+  isValidOrgNumber,
 } from "../../utils/validators";
 import AutoComplete from "primevue/autocomplete";
 
