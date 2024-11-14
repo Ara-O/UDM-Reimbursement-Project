@@ -15,7 +15,7 @@
         No FOAPA has been added yet.
       </h4>
     </div>
-    <div class="foapa-number-wrapper">
+    <div class="foapa-number-wrapper max-h-[70vh] overflow-auto">
       <div
         class="foapa-number mt-5"
         v-for="foapa in userFoapaNumbers"

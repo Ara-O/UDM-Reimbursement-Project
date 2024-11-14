@@ -42,6 +42,10 @@
   /* outline: solid 1pxvar(--udmercy-blue) !important; */
 }
 
+.p-select {
+  @apply !border-[0.5px];
+}
+
 .p-select-option.p-select-option-selected,
 .p-autocomplete-option-selected {
   background-color: #002e72ed !important;

@@ -26,14 +26,13 @@
         </h4>
         <Form @submit="addFoapa" v-slot="{ handleReset }" class="max-w-auto">
           <div class="mt-7 flex flex-wrap gap-8 min-w-0 sm:min-w-[450px]">
-            <div class="flex flex-col gap-y-3 relative">
+            <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="foapaName" class="text-sm">FOAPA Name*</label>
               <Field
                 name="foapaName"
                 placeholder="Name"
                 :rules="isValidFoapaName"
                 v-model="added_foapa.foapaName"
-                :validate-on-input="false"
                 class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-40"
               >
               </Field>
@@ -42,7 +41,7 @@
                 class="text-red-400 bottom-[-24px] absolute text-xs"
               ></ErrorMessage>
             </div>
-            <div class="flex flex-col gap-y-3 relative">
+            <div class="flex flex-col gap-y-3 w-full sm:w-auto relative">
               <label for="description" class="text-sm">FOAPA Description</label>
               <Field
                 name="description"
@@ -56,34 +55,15 @@
                 class="text-red-400 bottom-[-24px] absolute text-xs"
               ></ErrorMessage>
             </div>
-            <!-- <div class="flex flex-col gap-y-3 relative">
-              <label for="initialAmount" class="text-sm"
-                >Initial/Current Amount</label
-              >
-              <Field
-                name="initialAmount"
-                placeholder="Enter Initial Amount"
-                :rules="isValidFoapaAmount"
-                v-model="added_foapa.initialAmount"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-40"
-              >
-              </Field>
-              <ErrorMessage
-                name="initialAmount"
-                class="text-red-400 bottom-[-24px] absolute text-xs"
-              ></ErrorMessage>
-            </div> -->
 
-            <!-- SECOND ROW -->
-
-            <div class="flex flex-col gap-y-3 relative">
+            <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="fund" class="text-sm">FUND*</label>
               <Field
                 name="fund"
                 placeholder="Enter FUND"
                 :rules="isValidFundNumber"
                 v-model="added_foapa.fund"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-28"
+                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-40"
               >
               </Field>
               <ErrorMessage
@@ -91,9 +71,9 @@
                 class="text-red-400 bottom-[-24px] absolute text-xs"
               ></ErrorMessage>
             </div>
-            <div class="flex flex-col gap-y-3 relative">
+            <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="organization" class="text-sm"
-                >ORGANIZATION (ORG)</label
+                >ORGANIZATION (ORG)*</label
               >
               <AutoComplete
                 placeholder="Enter ORG"
@@ -101,16 +81,19 @@
                 dropdown
                 :completeOnFocus="true"
                 empty-search-message="ORG not found - may still exist."
-                class="border-sm shadow-sm rounded-md border !w-full sm: !border-gray-100"
+                class="border-sm shadow-sm sm:!w-48 !w-full rounded-md border !border-gray-100"
                 :suggestions="ORGs"
                 @complete="filterOrganization"
               />
-              <ErrorMessage
+              <p
                 name="organization"
-                class="text-red-400 bottom-[-24px] absolute text-xs"
-              ></ErrorMessage>
+                class="text-red-400 my-0 bottom-[-24px] absolute text-xs"
+              >
+                {{ organization_error_msg }}
+              </p>
             </div>
-            <div class="flex flex-col gap-y-3 relative">
+
+            <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="account" class="text-sm">ACCOUNT (ACCT)*</label>
               <AutoComplete
                 placeholder="Enter ACCT"
@@ -118,16 +101,19 @@
                 dropdown
                 :completeOnFocus="true"
                 empty-search-message="ACCT not found - may still exist."
-                class="border-sm shadow-sm rounded-md border !w-full sm: !border-gray-100"
+                class="border-sm shadow-sm rounded-md border sm:!w-48 !w-full sm: !border-gray-100"
                 :suggestions="ACCTs"
                 @complete="filterAccounts"
               />
-              <ErrorMessage
+              <p
                 name="account"
-                class="text-red-400 bottom-[-24px] absolute text-xs"
-              ></ErrorMessage>
+                class="text-red-400 my-0 bottom-[-24px] absolute text-xs"
+              >
+                {{ account_error_msg }}
+              </p>
             </div>
-            <div class="flex flex-col gap-y-3 relative">
+
+            <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="program" class="text-sm">PROGRAM (PROG)*</label>
               <AutoComplete
                 placeholder="Enter PROG"
@@ -135,23 +121,25 @@
                 dropdown
                 :completeOnFocus="true"
                 empty-search-message="PROG not found - may still exist."
-                class="border-sm shadow-sm rounded-md border !w-full sm: !border-gray-100"
+                class="border-sm shadow-sm rounded-md sm:!w-48 border !w-full sm: !border-gray-100"
                 :suggestions="PROG"
                 @complete="filterProgram"
               />
-              <ErrorMessage
+              <p
                 name="program"
-                class="text-red-400 bottom-[-24px] absolute text-xs"
-              ></ErrorMessage>
+                class="text-red-400 my-0 bottom-[-24px] absolute text-xs"
+              >
+                {{ program_error_msg }}
+              </p>
             </div>
-            <div class="flex flex-col gap-y-3 relative">
+            <div class="flex flex-col gap-y-3 w-full sm:w-auto relative">
               <label for="activity" class="text-sm">ACTIVITY (ACTV)</label>
               <Field
                 name="activity"
                 placeholder="Enter ACTV"
                 :rules="isValidActvNumber"
                 v-model="added_foapa.activity"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-28"
+                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-9 border-solid sm:w-40"
               >
               </Field>
               <ErrorMessage
@@ -175,8 +163,8 @@
             Discard Edits
           </button>
           <h3 class="text-sm font-normal mt-6 leading-7">
-            Note: If you don't know your PROG or ACCT number, Enter XXXX as a
-            placeholder.
+            Note: If you don't know your ORG, PROG or ACCT number, Enter XXXX as
+            a placeholder.
           </h3>
         </Form>
       </section>
@@ -204,7 +192,7 @@
           </div> -->
           <!-- <img :src="SortIcon" alt="Sort icon" class="w-5 cursor-pointer" /> -->
         </div>
-        <div class="flex gap-3">
+        <div class="flex gap-x-3 flex-wrap">
           <span
             class="hover:border-gray-400 w-auto py-0 h-10 text-gray-500 hover:text-gray-600 transition-all duration-150 border mt-5 rounded-full cursor-pointer border-solid flex items-center px-2 border-gray-200"
             @click="filterValues = 'Date(ASC)'"
@@ -528,6 +516,7 @@ import EditIcon from "../assets/blue-pencil.png";
 import DeleteIcon from "../assets/red-delete-icon.png";
 import CancelIcon from "../assets/cross-icon.svg";
 import AutoComplete from "primevue/autocomplete";
+import { useField, useSetFieldError } from "vee-validate";
 
 // import SortIcon from "../assets/.png";
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -555,6 +544,10 @@ let show_foapa_help_dialogue = ref<boolean>(false);
 let show_edit_clashes_dialogue = ref<boolean>(false);
 let show_delete_foapa_dialogue = ref<boolean>(false);
 let show_delete_foapa_clash_dialogue = ref<boolean>(false);
+const organization_error_msg = ref<string>("");
+const program_error_msg = ref<string>("");
+const account_error_msg = ref<string>("");
+
 let view = ref<"List" | "Grid">("Grid");
 let loaded = ref<boolean>(false);
 const edit_clashes = ref([]);
@@ -841,7 +834,60 @@ async function editFoapaValues(foapaValues, resetForm) {
   }
 }
 
-async function addFoapa(values, { resetForm }) {
+// ADDED FOAPA WATCHERS
+watch(
+  () => added_foapa.value.organization,
+  (new_val, old_val) => {
+    if (new_val !== old_val) {
+      if (old_val.trim() === "" && new_val.trim() !== "") {
+        organization_error_msg.value = "";
+      }
+    }
+  }
+);
+
+watch(
+  () => added_foapa.value.account,
+  (new_val, old_val) => {
+    if (new_val !== old_val) {
+      if (old_val.trim() === "" && new_val.trim() !== "") {
+        account_error_msg.value = "";
+      }
+    }
+  }
+);
+
+watch(
+  () => added_foapa.value.program,
+  (new_val, old_val) => {
+    if (new_val !== old_val) {
+      if (old_val.trim() === "" && new_val.trim() !== "") {
+        program_error_msg.value = "";
+      }
+    }
+  }
+);
+
+async function addFoapa(values, { resetForm, setFieldError }) {
+  if (added_foapa.value.organization.trim() === "") {
+    organization_error_msg.value = "Required";
+  }
+
+  if (added_foapa.value.account.trim() === "") {
+    account_error_msg.value = "Required";
+  }
+
+  if (added_foapa.value.program.trim() === "") {
+    program_error_msg.value = "Required";
+  }
+  if (
+    organization_error_msg.value !== "" ||
+    account_error_msg.value !== "" ||
+    program_error_msg.value !== ""
+  ) {
+    return;
+  }
+
   if (state.value === "Edit") {
     await editFoapaValues(added_foapa.value, resetForm);
     resetForm();

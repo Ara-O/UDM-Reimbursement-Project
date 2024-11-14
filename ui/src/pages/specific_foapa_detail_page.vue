@@ -60,34 +60,34 @@
           alt="Search icon"
         />
       </span>
-      <div class="flex mt-3 gap-4">
+      <div class="mt-3 gap-4 hidden sm:flex">
         <p
-          class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
           @click="sortParam = 'COST ASC'"
         >
           Sort by cost (ASC)
         </p>
         <p
-          class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
           @click="sortParam = 'COST DESC'"
         >
           Sort by cost (DESC)
         </p>
 
         <p
-          class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
           @click="sortParam = 'NAME ASC'"
         >
           Sort by name (ASC)
         </p>
         <p
-          class="hover:underline cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
           @click="sortParam = 'NAME DESC'"
         >
           Sort by name (DESC)
         </p>
       </div>
-      <div>
+      <div class="mt-3">
         <img
           :src="ListView"
           alt="List view"
@@ -118,7 +118,7 @@
           Object.keys(foapa_information.claims_used).length !== 0 &&
           view !== 'Table'
         "
-        class="flex gap-4 mb-16"
+        class="flex gap-4 mb-16 flex-wrap"
       >
         <div
           v-for="claim in foapaHistoryFiltered"

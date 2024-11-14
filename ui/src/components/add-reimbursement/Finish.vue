@@ -63,10 +63,10 @@
         </button>
 
         <button
-          @click="submitTicket"
+          @click="markClaimAsSubmitted"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
-          Submit Reimbursement Request
+          Mark Request as Submitted
         </button>
       </div>
       <div class="flex gap-5 items-center">
@@ -188,15 +188,16 @@
         </span>
       </div>
     </div>
+    <ConfirmDialog></ConfirmDialog>
   </section>
 </template>
 
 <script lang="ts" setup>
 import axios from "axios";
 import parseDate from "../../utils/parseDate";
-import { Form, Field, ErrorMessage, validate } from "vee-validate";
+import { Form, Field, ErrorMessage } from "vee-validate";
 import { ReimbursementTicket } from "../../types/types";
-import { FoapaNumbers } from "../../types/types";
+import ConfirmDialog from "primevue/confirmdialog";
 import { onMounted, ref } from "vue";
 import ConfirmationPopup from "../utilities/ConfirmationPopup.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -204,7 +205,7 @@ import { TYPE, useToast } from "vue-toastification";
 import pdfMake from "pdfmake/build/pdfmake";
 import { isValidRecipientEmail } from "../../utils/validators";
 import CancelIcon from "../../assets/cross-icon.svg";
-
+import { useConfirm } from "primevue/useconfirm";
 const toast = useToast();
 
 const props = defineProps<{
@@ -235,7 +236,7 @@ function moveToPreviousSection() {
 
 function emailPDF() {
   knowFoapaText = "";
-  if (!props.claim.knowFoapa && props.claim.knowFoapa !== undefined)
+  if (props.claim.knowFoapa && props.claim.knowFoapa !== undefined)
     knowFoapaText = "I don't know one or more of my foapas";
   showEmailPopup.value = true;
 }
@@ -243,6 +244,10 @@ function emailPDF() {
 async function sendEmail(values: any, { resetForm }) {
   let savedFoapaDetails;
   try {
+    toast("Sending email...", {
+      type: TYPE.INFO,
+    });
+
     let response = await axios.get(
       `${import.meta.env.VITE_API_URL}/api/retrieve-account-information`
     );
@@ -441,46 +446,71 @@ async function checkForUDMPU(): Promise<boolean> {
   return true;
 }
 
+const confirmSubmission = useConfirm();
+const markClaimAsSubmitted = () => {
+  confirmSubmission.require({
+    message: `Marking this request as submitted does not submit the request itself. The submission process
+    is still a work-in-progress, and you will need to email the generated PDF from this reimbursement
+    request to the appropriate channel.`,
+    header: "Important",
+    // icon: "pi pi-exclamation-triangle",
+    rejectProps: {
+      label: "Cancel",
+      severity: "secondary",
+      outlined: true,
+    },
+    acceptProps: {
+      label: "Save",
+    },
+    accept: async () => {
+      try {
+        props.claim.reimbursementStatus = "Submitted";
+
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/update-reimbursement`,
+          {
+            reimbursementTicket: props.claim,
+          }
+        );
+        toast("Reimbursement claim submitted successfully", {
+          type: TYPE.SUCCESS,
+        });
+
+        emits("onClaimSaved");
+
+        router.push("/dashboard");
+      } catch (err) {
+        toast("An unexpected error occured", {
+          type: TYPE.ERROR,
+        });
+      }
+    },
+    reject: () => {},
+  });
+};
+
 async function submitTicket() {
   try {
-    await checkForUDMPU();
-
-    if (props.claim.foapaDetails.length === 0) {
-      toast(
-        "Warning: You are submitting this claim without adding any FOAPA numbers to cover the cost",
-        {
-          type: TYPE.WARNING,
-          timeout: false,
-        }
-      );
-    }
-    if (props.claim.reimbursementReceipts.length === 0) {
-      toast(
-        "Error: Before submission, you must have at least one proof of payment/receipt attached with this reimbursement claim.",
-        {
-          type: TYPE.ERROR,
-          timeout: false,
-        }
-      );
-      return;
-    }
-
-    props.claim.reimbursementStatus = "Submitted";
-
-    await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/update-reimbursement`,
-      {
-        reimbursementTicket: props.claim,
-      }
-    );
-
-    toast("Reimbursement claim submitted successfully", {
-      type: TYPE.SUCCESS,
-    });
-
-    emits("onClaimSaved");
-
-    router.push("/dashboard");
+    // await checkForUDMPU();
+    // if (props.claim.foapaDetails.length === 0) {
+    //   toast(
+    //     "Warning: You are submitting this claim without adding any FOAPA numbers to cover the cost",
+    //     {
+    //       type: TYPE.WARNING,
+    //       timeout: false,
+    //     }
+    //   );
+    // }
+    // if (props.claim.reimbursementReceipts.length === 0) {
+    //   toast(
+    //     "Error: Before submission, you must have at least one proof of payment/receipt attached with this reimbursement claim.",
+    //     {
+    //       type: TYPE.ERROR,
+    //       timeout: false,
+    //     }
+    //   );
+    //   return;
+    // }
   } catch (error) {
     toast(
       "An error occured while submitting your reimbursement claim. Please try again later",
@@ -635,3 +665,33 @@ onMounted(() => {
   }
 });
 </script>
+
+<style>
+.p-confirmdialog-accept-button {
+  background-color: var(--udmercy-blue) !important;
+  border: solid 1px var(--udmercy-blue) !important;
+}
+
+.p-confirmdialog-accept-button:hover {
+  background-color: var(--udmercy-blue) !important;
+  border: solid 1px var(--udmercy-blue) !important;
+}
+
+.p-confirmdialog {
+  max-width: 500px !important;
+  line-height: 30px;
+  font-size: 13px;
+}
+
+.p-dialog-title {
+  font-size: 16px !important;
+}
+
+.p-dialog-header {
+  margin-bottom: -18px;
+}
+
+.p-button-label {
+  font-size: 13px;
+}
+</style>
