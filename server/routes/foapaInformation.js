@@ -72,6 +72,8 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
 
     const foapa = foapaSchema.parse(req.body.foapaDetails);
 
+    // Check for duplicate FOAPA
+
     // Push the new foapa to the faculty's data
     faculty.foapaDetails.push(foapa);
 
@@ -380,7 +382,12 @@ router.get("/check-foapa-usage", verifyToken, async (req, res) => {
       }
     }
 
-    let clashes = reimbursementClashes.map((claim) => claim.reimbursementName);
+    let clashes = reimbursementClashes.map((claim) => {
+      return {
+        name: claim.reimbursementName,
+        reimbursement_id: claim._id,
+      };
+    });
 
     //Removing duplicates
     clashes = [...new Set(clashes)];
