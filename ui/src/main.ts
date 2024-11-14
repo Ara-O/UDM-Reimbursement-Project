@@ -7,6 +7,7 @@ import { createPinia } from "pinia";
 import PrimeVue from "primevue/config";
 import "vue-toastification/dist/index.css";
 //@ts-ignore
+import ConfirmationService from "primevue/confirmationservice";
 import Aura from "@primevue/themes/aura";
 import "./style.css";
 
@@ -50,4 +51,5 @@ createApp(App)
       },
     },
   })
+  .use(ConfirmationService)
   .mount("#app");
