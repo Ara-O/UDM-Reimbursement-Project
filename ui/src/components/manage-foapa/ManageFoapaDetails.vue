@@ -285,7 +285,7 @@ import AutoComplete from "primevue/autocomplete";
 const toast = useToast();
 let props = defineProps<{ foapaDetails: FoapaStuff[] }>();
 let changes_were_made = ref<boolean>();
-const emits = defineEmits(["changes-were-made"]);
+const emits = defineEmits(["changes-were-made", "foapa-added"]);
 let foapaDetails = ref<Foapa[]>([]);
 
 let currentlyInputtedFOAPA = reactive<FoapaStuff>({
@@ -336,6 +336,7 @@ function addFoapa(values, { resetForm }) {
       foapaDetails: addedFoapa,
     })
     .then(() => {
+      emits("foapa-added")
       toast("Successfully saved FOAPA information", {
         type: TYPE.SUCCESS,
       });

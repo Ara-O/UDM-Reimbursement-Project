@@ -22,7 +22,7 @@
             class="border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
           >
-            <!-- <option disabled selected value="">Select FOAPA</option> -->
+            <option disabled selected value="">xxxxx-xxxx-xxxx-xxxx-xxxx</option>
             <option :value="foapa._id" v-for="foapa in userFoapas">
               {{ foapa.foapaName }} - {{ formatFoapaDeails(foapa) }}
             </option>
@@ -144,6 +144,7 @@
           </div>
           <manage-foapa-details
             :foapa-details="foapaDetailsToAdd"
+            @foapa-added="closeFoapaPopup"
           ></manage-foapa-details>
           <!-- <button
             @click="saveFoapas"
@@ -219,6 +220,7 @@ function closeFoapaPopup() {
     cost: "",
     foapa_id: "",
   };
+  retrieveFoapaDetails()
   //@ts-ignore
   document.querySelector("body").style.overflow = "auto";
 }
