@@ -83,7 +83,7 @@
 
     <!-- ALL FOAPA SECTION -->
     <div class="flex gap-x-28 flex-wrap">
-      <div class="w-[330px]">
+      <div class="w-[370px]">
         <h4 class="underline mb-5 font-semibold text-lg text-gray-800">
           All FOAPA
         </h4>
