@@ -303,8 +303,8 @@
               />
               <span class="flex items-center gap-3">
                 <h4 class="text-xs my-0 font-normal">
-                  Created
-                  {{ formatDate(foapa.createdAt) }}
+                  Last Updated:
+                  {{ formatDate(foapa.updatedAt) }}
                 </h4>
                 <!-- <img :src="ViewIcon" alt="View icon" class="w-5 cursor-pointer"> -->
                 <!-- <h4 class="text-xs m-0 font-normal cursor underline cursor-pointer">Click to view more information</h4> -->
@@ -358,7 +358,13 @@
       <template #message>
         Warning: You are about to edit a FOAPA that is being used by the
         following reimbursement claims:
-        <p v-for="claim in edit_clashes" class="font-medium">{{ claim }}</p>
+        <p
+          v-for="claim in edit_clashes"
+          class="font-medium cursor-pointer underline"
+          @click="() => goToClashingRequest(claim.reimbursement_id)"
+        >
+          {{ claim.name || "Error" }}
+        </p>
         To stop editing, click 'Don't Edit.' To continue editing this FOAPA,
         click 'Continue.' Note: Continuing editing this FOAPA will cause the
         FOAPA values in the above-mentioned reimbursements to change as well.
@@ -391,7 +397,13 @@
       <template #message>
         Error: You are about to delete a FOAPA that is being used by the
         following reimbursement claims:
-        <p v-for="claim in delete_clashes" class="font-medium">{{ claim }}</p>
+        <p
+          v-for="claim in delete_clashes"
+          class="font-medium cursor-pointer underline"
+          @click="() => goToClashingRequest(claim.reimbursement_id)"
+        >
+          {{ claim.name || "Error" }}
+        </p>
         Please submit these claims before attempting to delete this FOAPA
       </template>
     </ConfirmationPopup>
@@ -550,8 +562,8 @@ const account_error_msg = ref<string>("");
 
 let view = ref<"List" | "Grid">("Grid");
 let loaded = ref<boolean>(false);
-const edit_clashes = ref([]);
-const delete_clashes = ref([]);
+const edit_clashes = ref<{ name: String; reimbursement_id: String }[]>([]);
+const delete_clashes = ref<{ name: String; reimbursement_id: String }[]>([]);
 
 type FoapaStates = "Add" | "Edit";
 let search_value = ref<string>("");
@@ -577,6 +589,13 @@ function formatDate(date) {
   const year = d.getFullYear();
 
   return `${month}/${day}/${year}`;
+}
+
+function goToClashingRequest(claim_id) {
+  router.push({
+    path: "/add-reimbursement",
+    query: { reimbursementId: claim_id },
+  });
 }
 
 const toast = useToast();

@@ -17,7 +17,9 @@
         {{ foapa_information.foapa_information.description }}
       </h3>
       <h4 class="text-sm font-normal italic">
-        Last updated at
+        Created at
+        {{ parseDate(foapa_information.foapa_information.createdAt) }} - Last
+        updated at
         {{ parseDate(foapa_information.foapa_information.updatedAt) }}
       </h4>
 

@@ -306,7 +306,7 @@ router.post("/register", async (req, res) => {
     const UDMPU = {
       foapaName: "UDMPU 11.6 Faculty Development",
       description:
-        "Default FOAPA: This FOAPA was added by default when your account was created.",
+        "Default FOAPA: For Full-Time Faculty Only. This FOAPA was added by default when your account was created.",
       fund: "260036",
       organization: getOrgNumber(userData.department),
       account: "XXXX",
