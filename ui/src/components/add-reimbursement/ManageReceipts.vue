@@ -40,7 +40,7 @@
       class="mt-6 flex gap-10 w-auto max-w-[1100px] max-h-72 overflow-auto flex-wrap"
     >
       <div
-        class=" bg-udmercy-blue border border-solid border-gray-200 text-white rounded-md flex items-center box-border w-auto px-5 gap-5 h-auto py-5 pr-10"
+        class="bg-udmercy-blue border border-solid border-gray-200 text-white rounded-md flex items-center box-border w-auto px-5 gap-5 h-auto py-5 pr-10"
         v-for="(receipt, index) in props.claim.reimbursementReceipts"
       >
         <img
@@ -55,27 +55,30 @@
             Receipt {{ receipt.name }}
           </h3>
           <span class="flex gap-3">
-            <a :href="(receipt.url as string)" target="_blank" style="text-decoration:none"
+            <a
+              :href="(receipt.url as string)"
+              target="_blank"
+              style="text-decoration: none"
               ><button
                 class="bg-white text-xs text-black rounded-full cursor-pointer border-none px-3.5 py-2 flex items-center gap-1 mt-1"
               >
-              <img
-              src="../../assets/expand-view.png"
-              alt="View Receipt"
-              class="trash-icon w-4"
-              title="View Receipt"
-            />
+                <img
+                  src="../../assets/expand-view.png"
+                  alt="View Receipt"
+                  class="trash-icon w-4"
+                  title="View Receipt"
+                />
               </button>
             </a>
             <button
               @click="deleteReceipt(receipt.id)"
               class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-4 py-1 mt-1"
             >
-            <img
-              src="../../assets/trash-icon-white.png"
-              alt="Trash icon"
-              class="trash-icon w-3 mt-1"
-            />
+              <img
+                src="../../assets/trash-icon-white.png"
+                alt="Trash icon"
+                class="trash-icon w-3 mt-1"
+              />
             </button>
           </span>
         </span>
@@ -142,23 +145,23 @@
 
     <span class="flex gap-4 mt-6">
       <div class="flex gap-8 items-center">
-      <button
-        type="button"
-        @click="moveToPreviousSection"
-        class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
-      >
-        <img src="../../assets/prev-arrow.png" class="w-3">
-        Previous Section
-      </button>
-      <button
-        type="button"
-        @click="emits('move-to-next-section')"
-        class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5"
+        <button
+          type="button"
+          @click="moveToPreviousSection"
+          class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
+        >
+          <img src="../../assets/prev-arrow.png" class="w-3" />
+          Previous Section
+        </button>
+        <button
+          type="button"
+          @click="emits('move-to-next-section')"
+          class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5"
         >
           Next Section
-          <img src="../../assets/next-arrow.png" class="w-3">
-      </button>
-    </div>
+          <img src="../../assets/next-arrow.png" class="w-3" />
+        </button>
+      </div>
     </span>
   </section>
 </template>
@@ -237,7 +240,7 @@ async function convertPDFtoImages(file_data: any) {
 
   try {
     PDFJS.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf.worker.mjs";
 
     // Upload pdf
     let formDataPDF = new FormData();
