@@ -180,7 +180,6 @@
           <div
             class="reimbursement"
             v-for="ticket in filterReimbursements"
-            style="background-color: #002d72; color: white"
           >
             <h3
               class="overflow-hidden text-ellipsis whitespace-nowrap max-w-80"
@@ -188,13 +187,18 @@
             >
               {{ ticket.reimbursementName || "Invalid Reimbursement" }}
             </h3>
-            <h4>Status: {{ ticket.reimbursementStatus || "Invalid" }}</h4>
+            <div>
+              ${{ ticket.totalCost ? ticket.totalCost.toFixed(2) : "0" }}
+            </div>
             <h5>
               {{ parseDate(ticket.reimbursementDate) }}
             </h5>
-            <div class="total-amount">
-              ${{ ticket.totalCost ? ticket.totalCost.toFixed(2) : "0" }}
-            </div>
+            <h4 class="total-amount"
+                :style="getStyle('Submitted')"
+            >
+              Submitted
+              <!-- {{ ticket.reimbursementStatus || "Invalid" }} -->
+            </h4>
             <div class="reimbursement-buttons">
               <button
                 @click="viewTicket(ticket._id)"
@@ -349,6 +353,28 @@ type UserData = {
 
 const toast = useToast();
 
+interface Ticket {
+  status: 'Submitted' | 'In Progress' | 'Approved' | 'Denied';
+}
+const getStyle = (status) => {
+  const bgColors: Record<Ticket['status'], string> = {
+    "Submitted": '#006672',           // blue
+    "In Progress": 'white',       // orange
+    "Approved": '#2D7200', // purple
+    "Denied": '#72002D',              // red
+  };
+  const colors: Record<Ticket['status'], string> ={
+    "Submitted" : "white",
+    "In Progress": "black",
+    "Approved": "white",
+    "Denied": "white"
+  }
+  return{
+    backgroundColor: bgColors[status] || '#002d72',
+    color: colors[status] || "white" // Default background
+  }
+};
+
 let costFlag = -1,
   nameFlag = -1,
   dateFlag = -1,
@@ -368,6 +394,10 @@ let delete_claim_confirmation_dialog = ref<boolean>(false);
 let claim_to_delete_id = ref<string>("");
 const sortValue = ref<string>("None");
 let reimbursementTickets = ref<any>([]);
+
+const theme = ref({
+  backgroundColor: 'red'
+})
 
 // name, date, status, cost
 watch(sortValue, (newvalue) => {

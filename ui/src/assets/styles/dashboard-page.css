@@ -106,7 +106,7 @@
 }
 
 .reimbursement-wrapper-list .reimbursement .total-amount {
-  font-size: 14px;
+  font-size: 20px;
 }
 
 .reimbursement-wrapper-list {
@@ -378,7 +378,8 @@
 .reimbursement-wrapper-grid .reimbursement .total-amount {
   position: absolute;
   bottom: 20px;
-  background-color: #a5093e;
+  background-color: v-bind('theme.backgroundColor'); /*#a5093e;*/
+  color: v-bind('theme.color');
   border-radius: 19px;
   min-width: 50px;
   padding: 0px 17px;
@@ -388,7 +389,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 300;
 }
 
