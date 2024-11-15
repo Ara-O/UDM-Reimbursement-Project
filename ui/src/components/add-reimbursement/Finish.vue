@@ -124,7 +124,7 @@
                 :rules="isValidRecipientEmail"
                 name="recipient"
                 type="text"
-                value="adairja@udmercy.edu"
+                value=""
               >
               </Field>
               <ErrorMessage
