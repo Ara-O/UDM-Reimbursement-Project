@@ -108,7 +108,12 @@
         </span>
       </div>
       <br />
-
+      <div 
+        v-if="filterReimbursements.length === 0"
+        class="flex justify-center mt-20 text-xl text-black/50"
+        >
+        <p>Nothing to Show... Try Creating a Reimbursement Request!</p>
+      </div>
       <!-- TABLE -->
       <div v-if="currentView === 'table'" class="p-datatable-wrapper">
         <DataTable
