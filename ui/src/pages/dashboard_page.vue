@@ -202,8 +202,7 @@
             <h4 class="total-amount"
                 :style="getStyle(ticket.reimbursementStatus)"
             >
-              Submitted
-              <!-- {{ ticket.reimbursementStatus || "Invalid" }} -->
+              {{ ticket.reimbursementStatus || "Invalid" }}
             </h4>
             <div class="reimbursement-buttons">
               <button
