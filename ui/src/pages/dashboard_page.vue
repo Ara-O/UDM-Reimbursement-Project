@@ -110,10 +110,10 @@
       <br />
       <div 
         v-if="filterReimbursements.length === 0"
-        class="flex flex-wrap mt-10 text-m text-black/50"
+        class="flex-row flex-wrap text-center mt-10 text-m text-black/50"
         >
-        <p>Nothing to Show...</p><br>
-        <p>Try Creating a Reimbursement Request!</p>
+        <img src="https://cdn-icons-png.flaticon.com/512/3404/3404152.png" class="w-8 opacity-50">
+        <p>Nothing to Show... Try Creating a Reimbursement Request!</p>
       </div>
       <!-- TABLE -->
       <div v-if="currentView === 'table'" class="p-datatable-wrapper">
