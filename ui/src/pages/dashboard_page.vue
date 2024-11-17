@@ -110,9 +110,10 @@
       <br />
       <div 
         v-if="filterReimbursements.length === 0"
-        class="flex justify-center mt-20 text-xl text-black/50"
+        class="flex flex-wrap mt-10 text-m text-black/50"
         >
-        <p>Nothing to Show... Try Creating a Reimbursement Request!</p>
+        <p>Nothing to Show...</p><br>
+        <p>Try Creating a Reimbursement Request!</p>
       </div>
       <!-- TABLE -->
       <div v-if="currentView === 'table'" class="p-datatable-wrapper">
@@ -199,7 +200,7 @@
               {{ parseDate(ticket.reimbursementDate) }}
             </h5>
             <h4 class="total-amount"
-                :style="getStyle('Submitted')"
+                :style="getStyle(ticket.reimbursementStatus)"
             >
               Submitted
               <!-- {{ ticket.reimbursementStatus || "Invalid" }} -->
