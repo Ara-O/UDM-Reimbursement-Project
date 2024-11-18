@@ -309,8 +309,9 @@
 .user-information-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: end;
   gap: 20px;
+  margin-right: 2vw;
 }
 
 .user-information-header {
@@ -356,11 +357,12 @@
   font-weight: 400;
 }
 
-.user-information-section button {
+.sign-out-button {
   background-color: var(--udmercy-red);
   border-radius: 7px;
   display: flex;
   align-items: center;
+  justify-content: center;
   color: white;
   font-size: 12px;
   height: 45px;

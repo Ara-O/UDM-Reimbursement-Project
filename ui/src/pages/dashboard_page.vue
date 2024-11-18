@@ -263,10 +263,10 @@
 
     <!-- USER INFORMATION -->
     <section class="user-information-section">
-      <div class="user-information-header">
+      <!-- <div class="user-information-header">
         <h3>User Information</h3>
-      </div>
-      <div class="user-information-wrapper">
+      </div> -->
+      <!-- <div class="user-information-wrapper">
         <div>
           <h3>Full Name: {{ userInfo.firstName }} {{ userInfo.lastName }}</h3>
         </div>
@@ -279,8 +279,34 @@
         <div>
           <h3>Phone Number: {{ formatPhoneNumber(userInfo.phoneNumber) }}</h3>
         </div>
+      </div> -->
+      <div class="flex gap-2 justify-center">
+        <img src="../assets/hamburger-stack.png" @click="visibleRight = true" class="w-7 cursor-pointer opacity-50"/>
       </div>
-      <router-link
+      <Drawer v-model:visible="visibleRight" header="Manage Info" position="right">
+        <div class="flex flex-col justify-evenly items-center h-full">
+          <router-link
+            to="/account"
+            class="text-black hover:text-udmercy-blue"
+            style="font-size: 14px"
+            >Manage account information</router-link
+          >
+          <router-link
+            to="/change-password"
+            class="text-black hover:text-udmercy-blue"
+            style="font-size: 14px"
+            >Change password</router-link
+          >
+          <router-link
+            to="/contact"
+            class="text-black hover:text-udmercy-blue"
+            style="font-size: 14px"
+            >Contact Us</router-link
+          >
+          <button class="sign-out-button" @click="signOut">Sign Out</button>
+        </div>
+      </Drawer>
+      <!-- <router-link
         to="/account"
         class="text-black hover:text-udmercy-blue"
         style="font-size: 14px"
@@ -300,7 +326,7 @@
         style="font-size: 14px"
         >Contact Us</router-link
       >
-      <button @click="signOut">Sign Out</button>
+      <button @click="signOut">Sign Out</button>-->
     </section>
     <confirmation-popup
       v-if="delete_claim_confirmation_dialog"
@@ -339,6 +365,8 @@ import deleteIcon from "../assets/trash-icon-white.png";
 import pencilIcon from "../assets/blue-pencil.png";
 const router = useRouter();
 const searchValue = ref<string>("");
+import Drawer from 'primevue/drawer';
+const visibleRight = ref(false);
 
 type SortParameters = "" | "Date" | "Name" | "Status" | "Cost";
 
