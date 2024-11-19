@@ -35,7 +35,9 @@
             {{ foapa.foapaName }}
           </h3>
         </span>
-        <div class="foapa-details-container">
+        <div
+          class="foapa-details-container overflow-hidden max-w-full text-ellipsis flex-nowrap"
+        >
           <h3 style="margin-top: 10px">{{ formatFoapaDeails(foapa) }}</h3>
         </div>
       </div>
