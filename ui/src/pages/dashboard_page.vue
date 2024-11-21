@@ -391,7 +391,7 @@ interface Ticket {
 }
 const getStyle = (status) => {
   const bgColors: Record<Ticket['status'], string> = {
-    "Submitted": '#006672',           // blue
+    "Submitted": '#bcb843',           // blue
     "In Progress": 'white',       // orange
     "Approved": '#2D7200', // purple
     "Denied": '#72002D',              // red
