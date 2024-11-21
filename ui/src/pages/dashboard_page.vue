@@ -5,7 +5,7 @@
 
     <!-- Middle section -->
     <section class="reimbursement-section">
-      <h3 class="mb-0 !text-[17px]">Welcome {{ userInfo.firstName }}</h3>
+      <h3 class="mb-0 !text-[16]">Welcome {{ userInfo.firstName }}</h3>
       <router-link to="/profile-page">
         <img src="../assets/user-icon.png" alt="User help" class="user-icon"
       /></router-link>
@@ -108,11 +108,14 @@
         </span>
       </div>
       <br />
-      <div 
+      <div
         v-if="filterReimbursements.length === 0"
         class="flex-row flex-wrap text-center mt-10 text-m text-black/50"
-        >
-        <img src="https://cdn-icons-png.flaticon.com/512/3404/3404152.png" class="w-8 opacity-50">
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/3404/3404152.png"
+          class="w-8 opacity-50"
+        />
         <p>Nothing to Show... Try Creating a Reimbursement Request!</p>
       </div>
       <!-- TABLE -->
@@ -183,10 +186,7 @@
           "
           v-if="!viewingTemplates"
         >
-          <div
-            class="reimbursement"
-            v-for="ticket in filterReimbursements"
-          >
+          <div class="reimbursement" v-for="ticket in filterReimbursements">
             <h3
               class="overflow-hidden text-ellipsis whitespace-nowrap max-w-80"
               :title="ticket.reimbursementName || 'Invalid Reimbursement'"
@@ -199,19 +199,19 @@
             <h5>
               {{ parseDate(ticket.reimbursementDate) }}
             </h5>
-            <h4 class="total-amount"
-                :style="getStyle(ticket.reimbursementStatus)"
+            <h4
+              class="total-amount !text-xs !font-medium"
+              :style="getStyle(ticket.reimbursementStatus)"
             >
               {{ ticket.reimbursementStatus || "Invalid" }}
             </h4>
             <div class="reimbursement-buttons">
               <button
                 @click="viewTicket(ticket._id)"
-                
                 title="Modify Request"
                 style="background-color: white; border: 0px"
               >
-              <!-- v-if="ticket.reimbursementStatus !== 'Submitted'" ENTER THIS WHEN V2.0 -->
+                <!-- v-if="ticket.reimbursementStatus !== 'Submitted'" ENTER THIS WHEN V2.0 -->
                 <img :src="pencilIcon" alt="Pencil icon" class="w-4" />
               </button>
               <button
@@ -281,9 +281,17 @@
         </div>
       </div> -->
       <div class="flex gap-2 justify-center">
-        <img src="../assets/hamburger-stack.png" @click="visibleRight = true" class="w-7 cursor-pointer opacity-50"/>
+        <img
+          src="../assets/hamburger-stack.png"
+          @click="visibleRight = true"
+          class="w-4 cursor-pointer mt-3"
+        />
       </div>
-      <Drawer v-model:visible="visibleRight" header="Manage Info" position="right">
+      <Drawer
+        v-model:visible="visibleRight"
+        header="Manage Info"
+        position="right"
+      >
         <div class="flex flex-col justify-evenly items-center h-full">
           <router-link
             to="/account"
@@ -365,7 +373,7 @@ import deleteIcon from "../assets/trash-icon-white.png";
 import pencilIcon from "../assets/blue-pencil.png";
 const router = useRouter();
 const searchValue = ref<string>("");
-import Drawer from 'primevue/drawer';
+import Drawer from "primevue/drawer";
 const visibleRight = ref(false);
 
 type SortParameters = "" | "Date" | "Name" | "Status" | "Cost";
@@ -387,25 +395,25 @@ type UserData = {
 const toast = useToast();
 
 interface Ticket {
-  status: 'Submitted' | 'In Progress' | 'Approved' | 'Denied';
+  status: "Submitted" | "In Progress" | "Approved" | "Denied";
 }
 const getStyle = (status) => {
   const bgColors: Record<Ticket['status'], string> = {
-    "Submitted": '#bcb843',           // blue
+    "Submitted": '#006672',           // blue
     "In Progress": 'white',       // orange
     "Approved": '#2D7200', // purple
     "Denied": '#72002D',              // red
   };
-  const colors: Record<Ticket['status'], string> ={
-    "Submitted" : "white",
-    "In Progress": "black",
-    "Approved": "white",
-    "Denied": "white"
-  }
-  return{
-    backgroundColor: bgColors[status] || '#002d72',
-    color: colors[status] || "white" // Default background
-  }
+  const colors: Record<Ticket["status"], string> = {
+    Submitted: "white",
+    "In Progress": "#002d72",
+    Approved: "white",
+    Denied: "white",
+  };
+  return {
+    backgroundColor: bgColors[status] || "#002d72",
+    color: colors[status] || "white", // Default background
+  };
 };
 
 let costFlag = -1,
@@ -429,8 +437,8 @@ const sortValue = ref<string>("None");
 let reimbursementTickets = ref<any>([]);
 
 const theme = ref({
-  backgroundColor: 'red'
-})
+  backgroundColor: "red",
+});
 
 // name, date, status, cost
 watch(sortValue, (newvalue) => {
