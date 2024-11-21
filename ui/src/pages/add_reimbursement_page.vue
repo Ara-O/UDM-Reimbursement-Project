@@ -122,15 +122,15 @@ let sections = ref([
     section: 1,
   },
   {
-    title: "Add or View Expenses",
+    title: "Expenses",
     section: 2,
   },
   {
-    title: "Assign FOAPA Information",
+    title: "FOAPA Information",
     section: 3,
   },
   {
-    title: "Manage Receipts",
+    title: "Receipts",
     section: 4,
   },
   // {
