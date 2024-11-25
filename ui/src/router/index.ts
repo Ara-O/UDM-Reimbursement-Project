@@ -96,7 +96,7 @@ export default createRouter({
       },
     },
     {
-      path: "/add-foapa",
+      path: "/manage-foapa",
       component: AddFoapaPage,
       meta: {
         requiresAuth: true,

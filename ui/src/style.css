@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
+@import url("primeicons/primeicons.css");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,7 +19,15 @@
 }
 
 .p-select:not(.p-disabled).p-focus {
-  border-color: lightgray;
+  border-color: var(--p-inputtext-hover-border-color) !important;
+}
+
+/* .p-select-label.p-placeholder {
+  width: 30px !important;
+} */
+
+.p-inputwrapper {
+  width: 140px !important;
 }
 
 /* .inputtext:enabled:focus,
@@ -62,7 +71,7 @@
 
 .p-select-label,
 .p-autocomplete-input {
-  color: black !important;
+  color: var(--p-inputtext-color) !important;
   padding-left: 1.25rem !important;
   font-size: 0.75rem !important;
 }
@@ -76,6 +85,47 @@
   font-size: 0.75rem;
 }
 
+.p-inputtext {
+  width: 100%;
+  padding-left: 25px;
+  height: 50px;
+  font-size: 14px !important;
+}
+
+.p-floatlabel label {
+  font-size: 14px !important;
+  padding-left: 12px;
+  font-weight: 400 !important;
+}
+
+.p-floatlabel .p-floatlabel-in {
+  padding-left: 12px !important;
+}
+.p-inputtext:enabled:focus {
+  border: solid 1px var(--p-inputtext-hover-border-color) !important;
+  border-radius: 4px;
+}
+
+.p-floatlabel:has(input:focus) label {
+  color: var(--p-inputtext-color) !important;
+  font-size: 10px !important;
+}
+
+.p-floatlabel:has(input:focus) label,
+.p-floatlabel:has(input:autofill) label,
+.p-floatlabel:has(textarea:focus) label,
+.p-floatlabel:has(.p-inputwrapper-focus) label {
+  padding-left: 0px !important;
+  left: 0px;
+}
+
+.p-floatlabel:has(input.p-filled) label,
+.p-floatlabel:has(textarea.p-filled) label,
+.p-floatlabel:has(.p-inputwrapper-filled) label {
+  font-size: 10px !important;
+  left: 0px;
+  padding-left: 0px;
+}
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

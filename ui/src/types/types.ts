@@ -36,19 +36,6 @@ export type UserDataAcct = {
   country: string;
 };
 
-export type FoapaStuff = {
-  fund: string;
-  organization: string;
-  account: string;
-  program: string;
-  activity: string;
-  isUDMPU?: boolean;
-  foapaName: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  description: string;
-};
-
 export type AddressDetails = {
   name: string;
   code: string;
@@ -99,6 +86,7 @@ export type GuestInfo = {
 };
 
 export type ReimbursementTicket = {
+  _id?: string;
   reimbursementName: string;
   reimbursementReason: string;
   destination: string;
@@ -118,4 +106,26 @@ export type ReimbursementTicket = {
   activities: Expense[];
   foapaDetails: FoapaInput[];
   knowFoapa: boolean;
+};
+
+// ----------
+
+export type UserInformationSummary = {
+  first_name: string;
+  full_name: string;
+  email_address: string;
+};
+
+export type FoapaStuff = {
+  _id?: string;
+  fund: string;
+  organization: string;
+  account: string;
+  program: string;
+  activity: string;
+  isUDMPU?: boolean;
+  foapaName: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  description: string;
 };
