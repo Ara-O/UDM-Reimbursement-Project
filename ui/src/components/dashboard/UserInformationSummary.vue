@@ -27,7 +27,6 @@ const user_information_data = inject<null | UserInformationSummary>("user_inform
 
 watch(user_information_data as object, (newValue) => {
     user_information_has_loaded.value = true;
-    console.log('Value changed:', newValue);
 });
 
 

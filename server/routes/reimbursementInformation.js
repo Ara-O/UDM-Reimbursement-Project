@@ -219,6 +219,91 @@ router.post("/delete-reimbursement", verifyToken, async (req, res) => {
   }
 });
 
+router.post("/duplicate-request", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const schema = z.string();
+
+    //Fetch the faculty's data
+    const faculty = await Faculty.findById(userId);
+
+    if (faculty === null) {
+      throw new Error(
+        "User information not found. Please reload and try again."
+      );
+    }
+
+    const requestToDuplicateID = schema.parse(req.body.id);
+    const request = await ReimbursementTicket.findById(requestToDuplicateID);
+
+    if (request === null) {
+      throw new Error(
+        "An error occured when fetching this request. Please reload and try again"
+      );
+    }
+
+    const newRequest = Object.assign({}, request.toObject());
+
+    // Update the request's name and make it new (this generates new _ids)
+    newRequest.reimbursementName = "Copy of " + newRequest.reimbursementName;
+    if (newRequest._id) {
+      delete newRequest._id;
+    }
+
+    if (newRequest.activities) {
+      newRequest.activities.forEach((actv) => {
+        delete actv._id;
+      });
+    }
+
+    if (newRequest.foapaDetails) {
+      newRequest.foapaDetails.forEach((foapa) => {
+        delete foapa._id;
+      });
+    }
+
+    if (newRequest.guestInformation) {
+      newRequest.guestInformation.forEach((guest) => {
+        delete guest._id;
+      });
+    }
+
+    if (newRequest.reimbursementReceipts) {
+      newRequest.reimbursementReceipts.forEach((receipt) => {
+        delete receipt._id;
+      });
+    }
+
+    const duplicatedRequest = new ReimbursementTicket(newRequest);
+
+    const duplicatedRequestRes = await duplicatedRequest.save();
+
+    faculty.reimbursementTickets.push(duplicatedRequestRes._id);
+
+    let fac = await faculty.save();
+    console.log(fac.reimbursementTickets);
+
+    logger.log(
+      "info",
+      `${userId} has successfully duplicated a reimbursement request`,
+      {
+        api: "/api/duplicate-request",
+      }
+    );
+
+    return res.status(200).send({ message: "Request duplicated successfully" });
+  } catch (err) {
+    logger.log("error", err, {
+      api: "/api/duplicate-request",
+    });
+
+    return res.status(500).send({
+      error:
+        "There was an error duplicating this request. Please try again later",
+    });
+  }
+});
+
 // Save a reimbursement claim as a template: POST /save-as-template
 router.post("/save-as-template", verifyToken, async (req, res) => {
   try {

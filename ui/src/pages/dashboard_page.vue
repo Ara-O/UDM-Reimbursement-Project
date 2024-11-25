@@ -1,15 +1,19 @@
 <template>
-  <section class="grid grid-cols-[400px_auto] h-screen overflow-auto">
-    <dashboard-left-panel class="my-0"></dashboard-left-panel>
+  <section class="grid lg:grid-cols-[400px_auto] grid-cols-[auto] h-screen overflow-auto">
+    <dashboard-left-panel class="my-0 hidden lg:block"></dashboard-left-panel>
     <dashboard-right-panel class="my-0"></dashboard-right-panel>
     <feedback-icon></feedback-icon>
   </section>
+  <article class="block lg:hidden">
+    <side-navigation-bar></side-navigation-bar>
+  </article>
 </template>
 
 <script lang="ts" setup>
 import DashboardLeftPanel from "../components/dashboard/DashboardLeftPanel.vue";
 import DashboardRightPanel from "../components/dashboard/DashboardRightPanel.vue";
 import FeedbackIcon from "../components/dashboard/FeedbackPill.vue"
+import SideNavigationBar from "../components/dashboard/SideNavigationBar.vue";
 import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed, watch, provide } from "vue";
@@ -20,38 +24,6 @@ import { FoapaStuff, ReimbursementTicket, UserInformationSummary } from "../type
 const router = useRouter();
 
 const toast = useToast();
-
-interface Ticket {
-  status: "Submitted" | "In Progress" | "Approved" | "Denied";
-}
-const getStyle = (status) => {
-  const bgColors: Record<Ticket["status"], string> = {
-    Submitted: "#006672", // blue
-    "In Progress": "white", // orange
-    Approved: "#2D7200", // purple
-    Denied: "#72002D", // red
-  };
-  const colors: Record<Ticket["status"], string> = {
-    Submitted: "white",
-    "In Progress": "#002d72",
-    Approved: "white",
-    Denied: "white",
-  };
-  return {
-    backgroundColor: bgColors[status] || "#002d72",
-    color: colors[status] || "white", // Default background
-  };
-};
-
-
-
-// function signOut() {
-//   localStorage.setItem("token", "");
-//   router.push("/");
-//   toast("Successfully signed out!", {
-//     type: TYPE.SUCCESS,
-//   });
-// }
 
 // Providers
 

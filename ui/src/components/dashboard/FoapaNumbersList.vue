@@ -34,7 +34,8 @@ const router = useRouter()
 
 watch(foapa_data as object, () => {
     foapa_numbers_has_loaded.value = true;
-    console.log("ozempizz", foapa_data)
+}, {
+    immediate: true
 })
 
 function goToManageFoapaDetailsPage() {
