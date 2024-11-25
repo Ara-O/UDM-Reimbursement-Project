@@ -4,7 +4,8 @@
         <h3 class="font-medium text-base my-0 w-min cursor-pointer" @click="goToReimbursementPage">{{
             props.request.reimbursementName }}</h3>
         <h5 class="my-0 font-normal">Last Updated: {{ parseDate(props.request.reimbursementDate) }}</h5>
-        <h5 class="my-0 font-normal">Cost: $500</h5>
+        <h5 class="my-0 font-normal">Cost: ${{ props.request.totalCost ? props.request.totalCost.toFixed(2) : "0.00" }}
+        </h5>
         <span class="flex items-center justify-between mt-2">
             <reimbursement-status :status="props.request.reimbursementStatus"></reimbursement-status>
             <div class="flex gap-4">
