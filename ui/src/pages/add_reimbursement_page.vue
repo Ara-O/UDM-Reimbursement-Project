@@ -20,15 +20,19 @@
             :class="{
               'rounded-tl-sm rounded-tr-sm': i == 0,
               'rounded-bl-sm rounded-br-sm': i == sections.length - 1,
+              'bg-[#002d72EE] text-white': selectedSection == section.section
             }"
+
             @click="changeSection(section.section)"
           >
             <h4 class="font-normal text-sm">{{ section.title }}</h4>
             <img
-              src="../assets/right-arrow.png"
+              src="../assets/next-arrow.png"
               alt="Next arrow"
               class="hover:contrast-50 w-4 transition-all duration-500"
-              :class="{ ' contrast-0': selectedSection != section.section }"
+              :class="{ ' contrast-0': selectedSection != section.section,
+                        '': selectedSection == section.section
+              }"
             />
           </div>
           <hr class="border-solid border-[0.5px] text-gray-200 h-[1] m-0" />
@@ -122,15 +126,15 @@ let sections = ref([
     section: 1,
   },
   {
-    title: "Add or View Expenses",
+    title: "Expenses",
     section: 2,
   },
   {
-    title: "Assign FOAPA Information",
+    title: "FOAPA Information",
     section: 3,
   },
   {
-    title: "Manage Receipts",
+    title: "Receipts",
     section: 4,
   },
   // {
