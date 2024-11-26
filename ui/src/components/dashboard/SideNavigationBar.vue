@@ -6,6 +6,9 @@
                 class="py-4 rounded-md bg-udmercy-blue text-white text-sm hover:underline no-underline text-center hover:text-white hover:bg-[#002865] transition-all duration-200">Manage
                 Account
                 Information</router-link>
+            <router-link to="/manage-foapa"
+                class="py-4 rounded-md bg-udmercy-blue text-white text-sm hover:underline no-underline text-center hover:text-white hover:bg-[#002865] transition-all duration-200">Manage
+                FOAPA Details</router-link>
             <router-link to="/change-password"
                 class="py-4 rounded-md bg-udmercy-blue text-white text-sm hover:underline no-underline text-center hover:text-white hover:bg-[#002865] transition-all duration-200">Change
                 password</router-link>

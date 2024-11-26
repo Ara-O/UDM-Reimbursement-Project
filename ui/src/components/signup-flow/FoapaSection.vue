@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import ManageFoapaDetails from "../manage-foapa/ManageFoapaDetails.vue";
+import ManageFoapaDetails from "../manage-foapa/AddFoapaPopup.vue";
 import { UserData } from "../../types/types";
 const emits = defineEmits(["finish", "goBack"]);
 defineProps<{ userSignupData: UserData }>();

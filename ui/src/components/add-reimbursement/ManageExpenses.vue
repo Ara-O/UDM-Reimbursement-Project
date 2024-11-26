@@ -4,10 +4,10 @@
       <h2 class="font-semibold my-0 text-[27px]">Add or View Expenses</h2>
       <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7 hidden md:block" />
     </span>
-    <h4 class="font-medium text-gray-600 mb-1 text-sm">
+    <!-- <h4 class="font-medium text-gray-600 mb-1 text-sm">
       Or try our experimental
       <u class="cursor-pointer" @click="showQuickAddPopup">Quick Add</u> feature
-    </h4>
+    </h4> -->
 
     <form @submit.prevent="addExpense">
       <div class="flex gap-x-14 gap-y-3 flex-wrap">

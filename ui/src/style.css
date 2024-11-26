@@ -27,7 +27,7 @@
 } */
 
 .p-inputwrapper {
-  width: 140px !important;
+  width: 140px;
 }
 
 /* .inputtext:enabled:focus,
@@ -83,13 +83,6 @@
 
 .p-autocomplete-option {
   font-size: 0.75rem;
-}
-
-.p-inputtext {
-  width: 100%;
-  padding-left: 25px;
-  height: 50px;
-  font-size: 14px !important;
 }
 
 .p-floatlabel label {

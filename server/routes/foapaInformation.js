@@ -61,7 +61,7 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
     const foapaSchema = z.object({
       foapaName: z.string().trim(),
       description: z.string().trim(),
-      fund: z.string().length(6).trim(),
+      fund: z.string().trim(),
       organization: z.string().trim().optional(),
       // account: z.string().length(4).trim().optional(),
       account: z.string(),
@@ -126,7 +126,7 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
       foapaDetail: z.object({
         foapaName: z.string().trim(),
         description: z.string().trim(),
-        fund: z.string().length(6).trim(),
+        fund: z.string().trim(),
         organization: z.string().trim().optional(),
         // account: z.string().length(4).trim().optional(),
         account: z.string(),

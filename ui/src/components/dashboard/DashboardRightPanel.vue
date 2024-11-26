@@ -7,12 +7,17 @@
                 {{ user_information_data?.first_name }}</h3>
         </div>
 
-        <InputText id="over_label" v-model="search_field" class="max-w-[90%] mt-2"
-            placeholder="Search through your reimbursement requests" />
+        <InputText id="over_label" v-model="search_field" class="max-w-[90%] w-full mt-2" style=".p-inputtext {
+  width: 100%;
+  padding-left: 25px;
+  height: 50px;
+  font-size: 14px !important;
+}
+" placeholder="Search through your reimbursement requests" />
 
         <div class="mt-4 flex gap-3 flex-wrap">
             <Select v-model="view" :options="views" default-value="Grid View" placeholder="Grid View"
-                class="w-full md:w-56">
+                class="w-full md:w-40">
                 <template #dropdownicon>
                     <i class="pi pi-th-large" v-if="view === 'Grid View'" />
                     <i class="pi pi-list" v-if="view === 'List View'" />
@@ -20,11 +25,11 @@
 
                 </template>
             </Select>
-            <Select v-model="filter" :options="filter_options" placeholder="Filter" class="w-full md:w-56">
+            <Select v-model="filter" :options="filter_options" placeholder="Filter" class="w-full md:w-40">
                 <template #dropdownicon>
                     <i class="pi pi-filter" />
                 </template>
-            </Select><Select v-model="sort" :options="sort_options" placeholder="Sort" class="w-full md:w-56">
+            </Select><Select v-model="sort" :options="sort_options" placeholder="Sort" class="w-full md:w-40">
                 <template #dropdownicon>
                     <i class="pi pi-sort-alt" />
                 </template>

@@ -2,7 +2,7 @@ export function isValidString(value) {
   if (value === undefined || value === null) value = "";
   value = String(value);
 
-  const isAString = /^[a-zA-Z0-9\s-]+$/.test(value);
+  const isAString = /^[a-zA-Z0-9\s,-]+$/.test(value);
   switch (true) {
     case value.trim() === "":
       return "Field can not be empty";
@@ -253,7 +253,7 @@ export function isValidProgramNumber(value) {
   }
 }
 
-export function isValidOrgNumber(value){
+export function isValidOrgNumber(value) {
   if (value === undefined || value === null) value = "";
   value = String(value);
 
