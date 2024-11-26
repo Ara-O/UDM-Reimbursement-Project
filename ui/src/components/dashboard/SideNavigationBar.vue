@@ -14,7 +14,7 @@
                 password</router-link>
             <router-link to="/contact"
                 class="py-4 rounded-md bg-udmercy-blue text-white text-sm hover:underline no-underline text-center hover:text-white hover:bg-[#002865] transition-all duration-200">Contact
-                Us</router-link>
+                Us</router-link>double check your FOAPA coverages and make sure they match.
             <button class="sign-out-button rounded-full py-3" @click="signOut">Sign Out</button>
         </div>
     </Drawer>
