@@ -548,11 +548,46 @@ export default function createPdfDefinition(
     reimbursementData?.guestInformation.length == 0
   ) {
     guestSection = [
-      ["", "", "", "", "", ""],
-      ["", "", "", "", "", ""],
-      ["", "", "", "", "", ""],
-      ["", "", "", "", "", ""],
-      ["", "", "", "", "", ""],
+      [
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+      ],
+      [
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+      ],
+      [
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+      ],
+      [
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+      ],
+      [
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+        { text: "", colSpan: 2 },
+      ],
     ];
   } else {
     reimbursementData.guestInformation.forEach((guest) => {
@@ -569,7 +604,7 @@ export default function createPdfDefinition(
     });
   }
 
-  for (let i = 0; i <= 5 - guestSection.length; i++) {
+  for (let i = 0; i <= 4 - guestSection.length; i++) {
     guestSection.push(["", "", "", "", "", ""]);
   }
 

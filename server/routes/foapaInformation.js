@@ -72,6 +72,27 @@ router.post("/add-foapa-details", verifyToken, async (req, res) => {
 
     const foapa = foapaSchema.parse(req.body.foapaDetails);
 
+    let duplicate_foapa = false;
+    faculty.foapaDetails.find((f) => {
+      if (
+        f.foapaName === foapa.foapaName &&
+        f.description === foapa.description &&
+        f.fund === foapa.fund &&
+        f.organization === foapa.organization &&
+        f.program === foapa.program &&
+        f.activity === foapa.activity &&
+        f.isUDMPU === foapa.isUDMPU
+      ) {
+        duplicate_foapa = true;
+      }
+    });
+
+    if (duplicate_foapa) {
+      return res.status(409).send({
+        message: "There already exists a FOAPA with this information",
+      });
+    }
+
     // Check for duplicate FOAPA
 
     // Push the new foapa to the faculty's data
@@ -138,6 +159,30 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
 
     // Verify the input coming from the front end, if it is valid, store in the requestData variable
     const requestData = requestSchema.parse(req.body);
+
+    let duplicate_foapa = false;
+
+    let foapa = requestData.foapaDetail;
+
+    faculty.foapaDetails.find((f) => {
+      if (
+        f.foapaName === foapa.foapaName &&
+        f.description === foapa.description &&
+        f.fund === foapa.fund &&
+        f.organization === foapa.organization &&
+        f.program === foapa.program &&
+        f.activity === foapa.activity &&
+        f.isUDMPU === foapa.isUDMPU
+      ) {
+        duplicate_foapa = true;
+      }
+    });
+
+    if (duplicate_foapa) {
+      return res.status(409).send({
+        message: "There already exists a FOAPA with this information",
+      });
+    }
 
     //Finds the faculty FOAPA that matches the foapa the user wants to edit
     let foapa_to_edit_index = faculty.foapaDetails.findIndex(

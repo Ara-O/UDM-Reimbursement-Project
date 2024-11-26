@@ -222,10 +222,27 @@ function moveToNextSection() {
 function addFoapa() {
   const num = parseFloat(assignedFoapa.value.cost);
 
-  if (isNaN(num) && !isFinite(num)) {
+  const isValidNumber = /^[0-9]*\.?[0-9]+$/.test(String(num));
+
+  if (!isValidNumber) {
     toast("Error: Assigned quantity must be a number", {
       type: TYPE.ERROR,
     });
+    return;
+  }
+
+  let total_expense_cost = props.claim.activities.reduce((prev, curr) => {
+    return prev + Number(curr.cost);
+  }, 0);
+
+  let total_foapa_cost = props.claim.foapaDetails.reduce((prev, curr) => {
+    return prev + Number(curr.cost);
+  }, 0);
+
+  if ((total_foapa_cost + Number(assignedFoapa.value.cost)) > total_expense_cost) {
+    toast("You are about to assign more money than this reimbursement request requires.", {
+      type: TYPE.ERROR
+    })
     return;
   }
 

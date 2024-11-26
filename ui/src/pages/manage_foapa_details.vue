@@ -149,7 +149,7 @@
         <div
           class="flex flex-col mt-6 gap-7 sm:max-h-[28rem] h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]">
           <div
-            class="border shadow-sm rounded w-auto box-border px-7 py-6 flex border-gray-200 border-solid h-auto justify-between"
+            class="border shadow-sm rounded w-auto box-border px-7 py-6 flex border-gray-200 border-solid h-auto max-w-[500px] justify-between"
             v-for="foapa in filteredFoapaDetails" v-if="view === 'List'">
             <h3 class="font-semibold text-base my-0 cursor-pointer"
               @click="router.push(`foapa-information/${foapa._id}`)">
@@ -162,7 +162,8 @@
                 @click="showDeleteFoapaDialogue(foapa._id)" />
             </div>
           </div>
-          <div class="border shadow-sm rounded w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto"
+          <div
+            class="border shadow-sm rounded w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto max-w-[500px]"
             v-for="foapa in filteredFoapaDetails" v-if="view === 'Grid'">
             <h3 class="font-semibold text-base my-0 cursor-pointer"
               @click="router.push(`foapa-information/${foapa._id}`)">
@@ -703,6 +704,8 @@ async function editFoapaValues(foapaValues, resetForm) {
 
     state.value = "Add";
 
+    discardData();
+
     resetForm();
     // Clear the foapa values
   } catch (err: any) {
@@ -714,9 +717,9 @@ async function editFoapaValues(foapaValues, resetForm) {
       }
     );
 
+    // discardData();
+
     console.log(err);
-  } finally {
-    discardData();
   }
 }
 
@@ -738,6 +741,17 @@ watch(
     if (new_val !== old_val) {
       if (old_val.trim() === "" && new_val.trim() !== "") {
         account_error_msg.value = "";
+      }
+    }
+  }
+);
+
+watch(
+  () => added_foapa.value.fund,
+  (new_val, old_val) => {
+    if (new_val !== old_val) {
+      if (old_val.trim() === "" && new_val.trim() !== "") {
+        fund_error_msg.value = "";
       }
     }
   }
@@ -785,13 +799,12 @@ async function addFoapa(values, { resetForm, setFieldError }) {
     return;
   }
 
-  if (state.value === "Edit") {
-    await editFoapaValues(added_foapa.value, resetForm);
-    resetForm();
-    return;
-  }
 
   try {
+    if (state.value === "Edit") {
+      await editFoapaValues(added_foapa.value, resetForm);
+      return;
+    }
     // By default, the UDMPU flag is set to false, but we can explicitly set it to false here for
     // redundancy
     added_foapa.value.isUDMPU = false;
@@ -807,8 +820,8 @@ async function addFoapa(values, { resetForm, setFieldError }) {
     toast("FOAPA successfully added", {
       type: TYPE.SUCCESS,
     });
-  } catch (err) {
-    toast("An unexpected error has occured. Please try again later", {
+  } catch (err: any) {
+    toast(err?.response?.data?.message || "An unexpected error has occured. Please try again later", {
       type: TYPE.ERROR,
     });
   }
