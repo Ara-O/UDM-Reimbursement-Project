@@ -1,9 +1,6 @@
 <template>
   <!-- Top section for returning -->
-  <div
-    class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
-    @click="goToDashboard"
-  >
+  <div class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer" @click="goToDashboard">
     <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
     <h4 class="font-normal text-sm text-gray-600">Return to dashboard</h4>
   </div>
@@ -11,9 +8,7 @@
     <!-- SECTIONS SECTION -->
     <section class="pl-32 hidden xl:block">
       <h3 class="text-2xl font-semibold">Section</h3>
-      <article
-        class="shadow h-auto border-black border rounded-md w-[22rem] mt-8"
-      >
+      <article class="shadow h-auto border-black border rounded-md w-[22rem] mt-8">
         <div v-for="(section, i) in sections">
           <div
             class="h-20 w-100 flex justify-between items-center box-border px-10 hover:bg-[#002d72EE] hover:text-gray-100 cursor-pointer"
@@ -21,19 +16,13 @@
               'rounded-tl-sm rounded-tr-sm': i == 0,
               'rounded-bl-sm rounded-br-sm': i == sections.length - 1,
               'bg-[#002d72EE] text-white': selectedSection == section.section
-            }"
-
-            @click="changeSection(section.section)"
-          >
+            }" @click="changeSection(section.section)">
             <h4 class="font-normal text-sm">{{ section.title }}</h4>
-            <img
-              src="../assets/next-arrow.png"
-              alt="Next arrow"
-              class="hover:contrast-50 w-4 transition-all duration-500"
-              :class="{ ' contrast-0': selectedSection != section.section,
-                        '': selectedSection == section.section
-              }"
-            />
+            <img src="../assets/next-arrow.png" alt="Next arrow"
+              class="hover:contrast-50 w-4 transition-all duration-500" :class="{
+                ' contrast-0': selectedSection != section.section,
+                '': selectedSection == section.section
+              }" />
           </div>
           <hr class="border-solid border-[0.5px] text-gray-200 h-[1] m-0" />
         </div>
@@ -42,49 +31,26 @@
 
     <!-- INFO SECTION -->
     <section class="w-auto">
-      <claim-information
-        :claim="currentReimbursement"
-        v-if="selectedSection === 1"
+      <claim-information :claim="currentReimbursement" v-if="selectedSection === 1"
+        @move-to-next-section="moveToNextSection"></claim-information>
+      <manage-expenses :claim="currentReimbursement" v-if="selectedSection === 2"
+        @move-to-next-section="moveToNextSection" @move-to-previous-section="moveToPreviousSection"></manage-expenses>
+      <assign-foapa-information :claim="currentReimbursement" v-if="selectedSection === 3"
         @move-to-next-section="moveToNextSection"
-      ></claim-information>
-      <manage-expenses
-        :claim="currentReimbursement"
-        v-if="selectedSection === 2"
-        @move-to-next-section="moveToNextSection"
-        @move-to-previous-section="moveToPreviousSection"
-      ></manage-expenses>
-      <assign-foapa-information
-        :claim="currentReimbursement"
-        v-if="selectedSection === 3"
-        @move-to-next-section="moveToNextSection"
-        @move-to-previous-section="moveToPreviousSection"
-      ></assign-foapa-information>
-      <manage-receipts
-        :claim="currentReimbursement"
-        v-if="selectedSection === 4"
-        @move-to-next-section="moveToNextSection"
-        @move-to-previous-section="moveToPreviousSection"
-      ></manage-receipts>
+        @move-to-previous-section="moveToPreviousSection"></assign-foapa-information>
+      <manage-receipts :claim="currentReimbursement" v-if="selectedSection === 4"
+        @move-to-next-section="moveToNextSection" @move-to-previous-section="moveToPreviousSection"></manage-receipts>
       <!-- <guest-information
         :claim="currentReimbursement"
         v-if="selectedSection === 5"
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
       ></guest-information> -->
-      <finish
-        :claim="currentReimbursement"
-        v-if="selectedSection === 5"
-        @on-claim-saved="onClaimSaved"
-        @move-to-previous-section="moveToPreviousSection"
-      ></finish>
+      <finish :claim="currentReimbursement" v-if="selectedSection === 5" @on-claim-saved="onClaimSaved"
+        @move-to-previous-section="moveToPreviousSection"></finish>
     </section>
-    <confirmation-popup
-      left-button-text="Discard Changes"
-      right-button-text="Go back"
-      v-if="show_confirm_dialog"
-      :cancel-function="discardChangesAndLeavePage"
-      :continue-function="goBack"
-    >
+    <confirmation-popup left-button-text="Discard Changes" right-button-text="Go back" v-if="show_confirm_dialog"
+      :cancel-function="discardChangesAndLeavePage" :continue-function="goBack">
       <template #message>
         You are about to leave this page without saving this reimbursement
         claim. This will discard your changes. To go back, click 'Go back'. To
@@ -214,9 +180,7 @@ onMounted(async () => {
       );
 
       // Clearing the id properties from mongo so it doesnt throw duplicate errors
-      // @ts-expect-error
       if (currentReimbursement.value._id) {
-        //@ts-expect-error
         delete currentReimbursement.value._id;
       }
 
