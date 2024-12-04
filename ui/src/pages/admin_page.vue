@@ -29,9 +29,9 @@
         </div>
   
         <!-- Cards Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> -->
           <!-- Single Card -->
-          <div
+          <!-- <div
             v-for="(request, index) in pendingRequests"
             :key="index"
             class="bg-blue-900 text-white rounded-lg shadow-lg p-4"
@@ -53,7 +53,7 @@
               </button>
               <button
                 class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
-              >
+                >
                 Approve
               </button>
               <button
@@ -63,38 +63,20 @@
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
       </section>
     </div>
   </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        pendingRequests: [
-          {
-            title: "University Conference",
-            sentBy: "Ethan Scheys",
-            date: "12/12/2024",
-          },
-          {
-            title: "University Conference",
-            sentBy: "Ethan Scheys",
-            date: "12/12/2024",
-          },
-          {
-            title: "University Conference",
-            sentBy: "Ethan Scheys",
-            date: "12/12/2024",
-          },
-        ],
-      };
-    },
-  };
+  <script lang="ts" setup>
+    import axios from 'axios';
+
+    async function populate_submitted_tickets(){
+      let res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/retrieve-submitted-requests`
+      );
+
+      return res
+    }
   </script>
-  
-  <style scoped>
-  /* Tailwind CSS styles are applied directly via classes. */
-  </style>
   
