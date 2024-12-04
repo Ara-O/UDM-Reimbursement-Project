@@ -35,6 +35,7 @@
           </template>
         </Select>
       </div>
+
       <!-- Cards Section -->
       <div class="flex mt-6">
         <div>
@@ -69,6 +70,7 @@ import { ReimbursementTicket, UserInformationSummary } from '../types/types';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'vue-toastification';
 import ReimbursementCardGridAdmin from '../components/dashboard/ReimbursementCardGridAdmin.vue';
+import axios from 'axios';
 
 const search_field = ref<string>("")
 const views = ["Grid View", "Table View", "List View"]
@@ -99,6 +101,7 @@ const filtered_pending_requests = ref<ReimbursementTicket[]>([{
 
 const confirm = useConfirm()
 const toast = useToast()
+populate_submitted_tickets()
 
 // watch(pending_requests, (newValue) => {
 //   filtered_pending_requests.value = newValue
@@ -106,15 +109,13 @@ const toast = useToast()
 //   immediate: true
 // })
 
-import axios from 'axios';
+async function populate_submitted_tickets(){
+  let res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/retrieve-submitted-requests`
+  );
 
-    async function populate_submitted_tickets(){
-      let res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/retrieve-submitted-requests`
-      );
-
-      return res
-    }
+  filtered_pending_requests.value = res.data
+}
 
 </script>
 

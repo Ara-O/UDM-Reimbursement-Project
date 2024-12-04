@@ -3,9 +3,9 @@
         class="relative h-48 overflow-auto flex flex-col justify-center gap-2.5 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md">
         <h3 class="font-medium text-base my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer"
             @click="goToReimbursementPage">{{
-                props.request.reimbursementName }}</h3>
-        <h5 class="my-0 font-normal">Sent by: [GET USER INFO FROM REQUEST]</h5>
-        <h5 class="my-0 font-normal">Date: {{ parseDate(props.request.reimbursementDate) }}
+                props.request.request.reimbursementName }}</h3>
+        <h5 class="my-0 font-normal">Submitted by: {{ props.request.faculty.firstName + " " + props.request.faculty.lastName }}</h5>
+        <h5 class="my-0 font-normal">Date: {{ parseDate(props.request.request.reimbursementDate) }}
         </h5>
         <span class="flex items-center justify-between mt-2">
             <div class="flex gap-3">
