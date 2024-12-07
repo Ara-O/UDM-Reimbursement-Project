@@ -56,18 +56,6 @@
           Add Expense
         </button>
       </div>
-      <div class="flex gap-8 items-center">
-        <button type="button" @click="moveToPreviousSection"
-          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3">
-          <img src="../../assets/prev-arrow.png" class="w-3" />
-          Previous Section
-        </button>
-        <button type="button" @click="moveToNextSection"
-          class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5">
-          Next Section
-          <img src="../../assets/next-arrow.png" class="w-3" />
-        </button>
-      </div>
     </form>
 
     <!-- ALL EXPENSES SECTION -->
@@ -85,6 +73,18 @@
     class="absolute flex items-center justify-center top-0 left-0 h-full bg-black bg-opacity-80 w-full">
     <quick-add-popup @close-quick-add-popup="quickAddPopupIsVisible = false"></quick-add-popup>
   </section>
+  <div class="flex gap-8 items-center">
+        <button type="button" @click="moveToPreviousSection"
+          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3">
+          <img src="../../assets/prev-arrow.png" class="w-3" />
+          Previous Section
+        </button>
+        <button type="button" @click="moveToNextSection"
+          class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5">
+          Next Section
+          <img src="../../assets/next-arrow.png" class="w-3" />
+        </button>
+      </div>
 </template>
 
 <script lang="ts" setup>

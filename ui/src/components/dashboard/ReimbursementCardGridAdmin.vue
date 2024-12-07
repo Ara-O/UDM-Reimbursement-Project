@@ -20,11 +20,11 @@
                     <h4 class=" text-black text-[12px] font-medium">Edit</h4>
                 </span> <span
                     class="bg-white px-4 h-8 cursor-pointer py-2 justify-center flex items-center content-center rounded-full"
-                    title="View PDF">
+                    title="View PDF" v-on:click="approveRequest()">
                     <h4 class=" text-black text-[12px] font-medium">Approve</h4>
                 </span> <span
                     class="bg-udmercy-red px-4 h-8 cursor-pointer py-2 justify-center flex items-center content-center rounded-full"
-                    title="View PDF">
+                    title="View PDF" v-on:click="denyRequest()">
                     <h4 class=" text-white text-[12px] font-medium">Deny</h4>
                 </span>
             </div>
@@ -73,6 +73,28 @@ async function duplicateRequest() {
             type: TYPE.ERROR
         })
     }
+}
+
+async function denyRequest(){
+    props.request.request.reimbursementStatus = "Denied"
+
+    await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/update-reimbursement`,
+          {
+            reimbursementTicket: props.request.request,
+          }
+        );
+}
+
+async function approveRequest(){
+    props.request.request.reimbursementStatus = "Approved"
+
+    await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/update-reimbursement`,
+          {
+            reimbursementTicket: props.request.request,
+          }
+        );
 }
 
 </script>

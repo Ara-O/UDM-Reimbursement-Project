@@ -29,8 +29,6 @@ router.get("/retrieve-submitted-requests", verifyToken, async (req, res) => {
                     )
             }
         }
-
-        console.log(results)
         res.status(200).send(results);
     } catch (err) {
         console.log(err)
