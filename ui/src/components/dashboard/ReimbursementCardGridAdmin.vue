@@ -39,14 +39,14 @@ import DeleteIcon from "../../assets/trash-icon-white.png"
 import parseDate from "../../utils/parseDateFormatted";
 import ReimbursementStatus from './ReimbursementStatus.vue';
 import { useRouter } from "vue-router";
-import { ReimbursementTicket } from "../../types/types";
+import { ReimbursementTicket, TicketAndFaculty } from "../../types/types";
 import { useConfirm } from "primevue/useconfirm";
 import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
 
 const router = useRouter()
 const props = defineProps<{
-    request: ReimbursementTicket
+    request: TicketAndFaculty
 }>()
 const emits = defineEmits(['user-wants-to-delete-request', 'user-duplicated-a-request'])
 const confirm = useConfirm()

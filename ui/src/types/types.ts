@@ -107,6 +107,30 @@ export type ReimbursementTicket = {
   foapaDetails: FoapaInput[];
   knowFoapa: boolean;
 };
+export type TicketAndFaculty = {
+  faculty: any;
+  request: any;
+  _id?: string;
+  reimbursementName: string;
+  reimbursementReason: string;
+  destination: string;
+  paymentRetrievalMethod: "Hold for Pickup" | "Direct Deposit" | "";
+  UDMPUVoucher: Boolean;
+  guestInformation: GuestInfo[];
+  totalCost: number;
+  reimbursementReceipts: {
+    url: string;
+    type: "image" | "pdf";
+    id: string;
+    name: string;
+    index?: number;
+  }[];
+  reimbursementStatus: string;
+  reimbursementDate: string;
+  activities: Expense[];
+  foapaDetails: FoapaInput[];
+  knowFoapa: boolean;
+};
 
 // ----------
 

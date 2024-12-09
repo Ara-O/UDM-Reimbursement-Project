@@ -66,7 +66,7 @@ import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Skeleton from 'primevue/skeleton';
 import { ref, watch } from 'vue';
-import { ReimbursementTicket, UserInformationSummary } from '../types/types';
+import { ReimbursementTicket, TicketAndFaculty, UserInformationSummary } from '../types/types';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'vue-toastification';
 import ReimbursementCardGridAdmin from '../components/dashboard/ReimbursementCardGridAdmin.vue';
@@ -82,7 +82,7 @@ const sort = ref<string>("")
 const pending_requests = ref<ReimbursementTicket[]>([])
 
 
-const filtered_pending_requests = ref<ReimbursementTicket[]>([{
+const filtered_pending_requests = ref<TicketAndFaculty[]>([{
   _id: "vew",
   reimbursementName: "baka",
   reimbursementReason: "something",
@@ -96,7 +96,9 @@ const filtered_pending_requests = ref<ReimbursementTicket[]>([{
   reimbursementDate: "12/12/2020",
   activities: [],
   foapaDetails: [],
-  knowFoapa: false
+  knowFoapa: false,
+  faculty: undefined,
+  request: undefined
 }])
 
 const confirm = useConfirm()
