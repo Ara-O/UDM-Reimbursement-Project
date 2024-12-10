@@ -54,7 +54,7 @@ async function retrieveDashboardData() {
 
     reimbursement_data.value = dashboard_data.reimbursementTickets
 
-    console.log(dashboard_data)
+    // console.log(dashboard_data)
   } catch (err) {
     toast('There was an error fetching your dashboard data. Please log-in again', {
       type: TYPE.ERROR

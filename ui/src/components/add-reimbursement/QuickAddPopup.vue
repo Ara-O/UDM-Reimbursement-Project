@@ -1,39 +1,26 @@
 <template>
-  <article
-    class="bg-white relative w-full max-w-[1000px] px-10 rounded-md py-9"
-  >
+  <article class="bg-white relative w-full max-w-[1000px] px-10 rounded-md py-9">
     <h3 class="mt-0">Quick Add</h3>
-    <img
-      :src="CancelIcon"
-      alt="Cancel icon"
-      class="w-4 absolute top-10 cursor-pointer right-10"
-      @click="closeQuickAddPopup"
-    />
+    <img :src="CancelIcon" alt="Cancel icon" class="w-4 absolute top-10 cursor-pointer right-10"
+      @click="closeQuickAddPopup" />
     <h4 class="font-normal text-sm leading-7">
       Welcome to our Quick-add feature! It is in the experimental phase so any
       feedback will be useful.
     </h4>
     <div class="flex gap-3">
-      <button
-        class="bg-udmercy-blue cursor-pointer text-white border-none px-7 py-3 rounded-full"
-        @click="onCaptureReceiptWithCamera"
-      >
+      <button class="bg-udmercy-blue cursor-pointer text-white border-none px-7 py-3 rounded-full"
+        @click="onCaptureReceiptWithCamera">
         Capture Receipt with Camera
       </button>
-      <button
-        class="bg-udmercy-blue cursor-pointer text-white border-none px-7 py-3 rounded-full"
-        @click="onCaptureReceiptWithCamera"
-      >
+      <button class="bg-udmercy-blue cursor-pointer text-white border-none px-7 py-3 rounded-full"
+        @click="onCaptureReceiptWithCamera">
         Upload a file
       </button>
       <!-- <input type="file" @change="onFileChange" accept="image/*" /> -->
     </div>
 
     <!-- Receipt + Choices option -->
-    <article
-      class="flex justify-between min-h-96 gap-5 mt-7"
-      v-if="userIsUploadingAFile || userIsTakingAPicture"
-    >
+    <article class="flex justify-between min-h-96 gap-5 mt-7" v-if="userIsUploadingAFile || userIsTakingAPicture">
       <!-- LEFT SECTION -->
       <div class="left-section">
         <!-- LEFT SECTION WHEN USER IS UPLOADING A FILE -->
@@ -43,38 +30,21 @@
 
         <!-- LEFT SECTION WHEN USER IS LTAKING A PICTURE -->
         <article class="w-full" v-if="userIsTakingAPicture">
-          <video
-            autoplay
-            id="video"
-            ref="videoFeed"
-            class="w-full max-w-2xl rounded-md"
-            v-if="videoFeedIsActive"
-          ></video>
+          <video autoplay id="video" ref="videoFeed" class="w-full max-w-2xl rounded-md"
+            v-if="videoFeedIsActive"></video>
           <canvas id="canvas" ref="receiptCanvas" class="hidden"></canvas>
-          <img
-            :src="imagePreviewURL"
-            class="w-full"
-            v-if="!videoFeedIsActive && receiptImageHasBeenCaptured"
-            alt="Image preview url"
-          />
-          <button
-            class="bg-udmercy-blue mt-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
-            @click="takePicture"
-            v-if="!receiptImageHasBeenCaptured"
-          >
+          <img :src="imagePreviewURL" class="w-full" v-if="!videoFeedIsActive && receiptImageHasBeenCaptured"
+            alt="Image preview url" />
+          <button class="bg-udmercy-blue mt-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
+            @click="takePicture" v-if="!receiptImageHasBeenCaptured">
             Take Picture
           </button>
-          <button
-            class="bg-udmercy-blue mt-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
-            v-if="receiptImageHasBeenCaptured"
-            @click="restartImageCaptureProcess"
-          >
+          <button class="bg-udmercy-blue mt-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
+            v-if="receiptImageHasBeenCaptured" @click="restartImageCaptureProcess">
             Restart
           </button>
-          <button
-            v-if="receiptImageHasBeenCaptured"
-            class="bg-udmercy-blue mt-3 ml-3 cursor-pointer text-white border-none px-7 py-3 rounded-full"
-          >
+          <button v-if="receiptImageHasBeenCaptured"
+            class="bg-udmercy-blue mt-3 ml-3 cursor-pointer text-white border-none px-7 py-3 rounded-full">
             Scan for Events
           </button>
         </article>
@@ -93,7 +63,8 @@
         <section class="container">
           <div class="expenseSection">
             <div class="labelItem"><label for="expense">Expense</label></div>
-            <div class="inputItem"><input type="text" name="expense" id="expense" placeholder="Expense Name" class="textBox"></div>
+            <div class="inputItem"><input type="text" name="expense" id="expense" placeholder="Expense Name"
+                class="textBox"></div>
           </div>
           <div class="costSection">
             <div class="labelItem"><label for="cost">Cost</label></div>
@@ -101,7 +72,8 @@
           </div>
           <div class="dateSection">
             <div class="labelItem"><label for="date">Date</label></div>
-            <div class="inputItem"><input type="text" name="date" id="date" placeholder="Date: xx/xx/xxxx" class="textBox"></div>
+            <div class="inputItem"><input type="text" name="date" id="date" placeholder="Date: xx/xx/xxxx"
+                class="textBox"></div>
           </div>
         </section>
       </div>
@@ -169,7 +141,7 @@ function onCaptureReceiptWithCamera() {
   const userAgent = navigator.userAgent.toLowerCase();
 
   if (/mobile|android|iphone|ipad/.test(userAgent)) {
-    console.log("working with mobile");
+    // console.log("working with mobile");
     videoParams = { facingMode: { exact: "environment" } };
   } else {
     videoParams = true;
@@ -270,17 +242,17 @@ async function quickAddExpense() {
   const costElement = document.querySelector("#potentialCosts")
   const dateElement = document.querySelector("#potentialDates")
 
-  for(let line in numberedLines){
+  for (let line in numberedLines) {
     let p = document.createElement("p");
 
-    if(numberedLines[line].type == "cost"){
+    if (numberedLines[line].type == "cost") {
       p.textContent = numberedLines[line].text + " | " + numberedLines[line].number
       costElement?.appendChild(p);
     }
-    else if (numberedLines[line].type == "date"){
+    else if (numberedLines[line].type == "date") {
       p.textContent = numberedLines[line].text + " | " + numberedLines[line].number
       dateElement?.appendChild(p);
-    }    
+    }
   }
 }
 </script>
@@ -290,23 +262,27 @@ async function quickAddExpense() {
 @tailwind components;
 @tailwind utilities;
 
-  .container{
-    display: grid;
-    grid-auto-flow: row;
-  }
-  .expenseSection{
-    grid-column: 1;
-    grid-row: auto;
-  }
-  .costSection{
-    grid-column: 2;
-    grid-row: auto;
-  }
-  .dateSection{
-    grid-column: 3;
-    grid-row: auto;
-  }
-  .textBox{
-    @apply border-[0.5px] h-11 rounded-md border-gray-200 w-auto box-border px-5 text-xs border-solid shadow-md
-  }
+.container {
+  display: grid;
+  grid-auto-flow: row;
+}
+
+.expenseSection {
+  grid-column: 1;
+  grid-row: auto;
+}
+
+.costSection {
+  grid-column: 2;
+  grid-row: auto;
+}
+
+.dateSection {
+  grid-column: 3;
+  grid-row: auto;
+}
+
+.textBox {
+  @apply border-[0.5px] h-11 rounded-md border-gray-200 w-auto box-border px-5 text-xs border-solid shadow-md
+}
 </style>

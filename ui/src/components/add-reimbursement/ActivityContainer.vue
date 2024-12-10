@@ -42,9 +42,9 @@ function parseDate(dateString: string) {
   }
   const dateParsed = new Date(dateString);
 
-  console.log(dateString);
-  console.log(dateParsed);
-  console.log("---------");
+  // console.log(dateString);
+  // console.log(dateParsed);
+  // console.log("---------");
   const year = dateParsed.getFullYear();
   const month = (dateParsed.getMonth() + 1).toString().padStart(2, "0"); // months are 0-indexed
   const day = dateParsed.getDate().toString().padStart(2, "0");

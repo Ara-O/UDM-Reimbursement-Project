@@ -2,12 +2,8 @@
   <section class="contact-us-page">
     <section class="left-section">
       <div class="udmercy-logo-wrapper">
-        <img
-          src="../assets/detroit-mercy-logo.png"
-          alt="Detroit mercy logo"
-          class="udmercy-logo"
-          @click="$router.push('/dashboard')"
-        />
+        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo"
+          @click="$router.push('/dashboard')" />
       </div>
     </section>
     <section class="right-section">
@@ -17,25 +13,16 @@
           <div class="messageSection">
             <span>
               <label style="font-size: 16px">Message</label><br />
-              <textarea
-                v-model="message"
-                class="messageTB mt-5 pt-3 leading-7"
-                name="message"
-                placeholder="Enter any of the following: &#10;- Feature Suggestions &#10;- Bug Reports &#10;- Compliments"
-              ></textarea>
+              <textarea v-model="message" class="messageTB mt-5 pt-3 leading-7" name="message"
+                placeholder="Enter any of the following: &#10;- Feature Suggestions &#10;- Bug Reports &#10;- Compliments"></textarea>
             </span>
           </div>
-          <button
-            type="button"
-            @click="$router.push('/dashboard')"
-            class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
-          >
+          <button type="button" @click="$router.push('/dashboard')"
+            class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs">
             Return to Dashboard
           </button>
-          <button
-            type="submit"
-            class="mt-6 mb-2 ml-4 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
-          >
+          <button type="submit"
+            class="mt-6 mb-2 ml-4 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs">
             Send Email
           </button>
         </form>

@@ -526,7 +526,7 @@ async function updateReimbursement() {
   props.claim.totalCost = getAllActivitiesAmount();
   props.claim.reimbursementDate = parseDate(new Date().toISOString());
 
-  console.log(props.claim);
+  // console.log(props.claim);
   await axios.post(`${import.meta.env.VITE_API_URL}/api/update-reimbursement`, {
     reimbursementTicket: props.claim,
   });
@@ -561,7 +561,7 @@ async function addReimbursement() {
 }
 
 async function saveReimbursement() {
-  console.log("Ticket is being saved");
+  // console.log("Ticket is being saved");
   try {
     if (props.claim.reimbursementName.trim() === "") {
       toast("Please add a title to this reimbursement claim", {

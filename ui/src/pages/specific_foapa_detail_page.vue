@@ -5,11 +5,7 @@
       <h4 class="font-normal text-sm text-gray-600 hover:underline">Go back</h4>
     </div>
 
-    <section
-      class="mt-20"
-      v-if="foapa_information.foapa_information"
-      style="margin-bottom: 5vh"
-    >
+    <section class="mt-20" v-if="foapa_information.foapa_information" style="margin-bottom: 5vh">
       <h2 class="text-2xl font-semibold">
         {{ formatFoapaDeails(foapa_information.foapa_information) }}
       </h2>
@@ -26,17 +22,13 @@
       <!-- STATISTICS -->
       <h2 class="text-xl font-semibold mt-10 underline">FOAPA Statistics</h2>
       <article class="flex gap-4 flex-wrap">
-        <div
-          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
-        >
+        <div class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5">
           <p class="text-sm font-medium">Total Requests Funded</p>
           <p class="font-semibold text-md">
             {{ foapa_information.claims_used.length }}
           </p>
         </div>
-        <div
-          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
-        >
+        <div class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5">
           <p class="text-sm font-medium">Total Amount Used from FOAPA</p>
           <p class="font-semibold text-md">${{ totalAmountUsed }}</p>
         </div>
@@ -50,64 +42,33 @@
 
       <!-- Search field -->
       <span class="flex items-center gap-3">
-        <input
-          type="text"
-          v-model="search_item"
-          placeholder="Search by name"
-          class="border border-gray-200 px-4 border-solid w-full max-w-96 h-8 rounded-md"
-        />
-        <img
-          :src="SearchIcon"
-          class="invert w-6 opacity-50 cursor-pointer"
-          alt="Search icon"
-        />
+        <input type="text" v-model="search_item" placeholder="Search by name"
+          class="border border-gray-200 px-4 border-solid w-full max-w-96 h-8 rounded-md" />
+        <img :src="SearchIcon" class="invert w-6 opacity-50 cursor-pointer" alt="Search icon" />
       </span>
       <div class="mt-3 gap-4 hidden sm:flex">
-        <p
-          class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
-          @click="sortParam = 'COST ASC'"
-        >
+        <p class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          @click="sortParam = 'COST ASC'">
           Sort by cost (ASC)
         </p>
-        <p
-          class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
-          @click="sortParam = 'COST DESC'"
-        >
+        <p class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          @click="sortParam = 'COST DESC'">
           Sort by cost (DESC)
         </p>
 
-        <p
-          class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
-          @click="sortParam = 'NAME ASC'"
-        >
+        <p class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          @click="sortParam = 'NAME ASC'">
           Sort by name (ASC)
         </p>
-        <p
-          class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
-          @click="sortParam = 'NAME DESC'"
-        >
+        <p class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
+          @click="sortParam = 'NAME DESC'">
           Sort by name (DESC)
         </p>
       </div>
       <div class="mt-3">
-        <img
-          :src="ListView"
-          alt="List view"
-          @click="view = 'List'"
-          class="invert w-4 cursor-pointer opacity-50"
-        />
-        <img
-          :src="GridView"
-          alt="Grid view"
-          class="invert ml-3 w-3 cursor-pointer opacity-50"
-          @click="view = 'Grid'"
-        />
-        <img
-          :src="TableView"
-          alt="Table View"
-          @click="view = 'Table'"
-          class="w-3 ml-4 cursor-pointer opacity-50"
-        />
+        <img :src="ListView" alt="List view" @click="view = 'List'" class="invert w-4 cursor-pointer opacity-50" />
+        <img :src="GridView" alt="Grid view" class="invert ml-3 w-3 cursor-pointer opacity-50" @click="view = 'Grid'" />
+        <img :src="TableView" alt="Table View" @click="view = 'Table'" class="w-3 ml-4 cursor-pointer opacity-50" />
       </div>
       <div class="mb-0">
         <p class="mb-0 text-sm leading-7">
@@ -115,26 +76,18 @@
           to the page where you can edit the request
         </p>
       </div>
-      <div
-        v-if="
-          Object.keys(foapa_information.claims_used).length !== 0 &&
-          view !== 'Table'
-        "
-        class="flex gap-4 mb-16 flex-wrap"
-      >
-        <div
-          v-for="claim in foapaHistoryFiltered"
+      <div v-if="
+        Object.keys(foapa_information.claims_used).length !== 0 &&
+        view !== 'Table'
+      " class="flex gap-4 mb-16 flex-wrap">
+        <div v-for="claim in foapaHistoryFiltered"
           class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-80 h-32 flex flex-col justify-center overflow-auto mt-5"
-          v-if="view !== 'Table'"
-        >
+          v-if="view !== 'Table'">
           <div class="flex justify-between">
             <h3
               class="text-[15px] my-0 cursor-pointer whitespace-nowrap max-w-64 overflow-hidden text-ellipsis font-semibold text-gray-900"
-              @click="() => goToReimbursement(claim._id)"
-              :title="
-                claim.reimbursementName + ' - ' + claim.reimbursementStatus
-              "
-            >
+              @click="() => goToReimbursement(claim._id)" :title="claim.reimbursementName + ' - ' + claim.reimbursementStatus
+                ">
               {{ claim.reimbursementName }} - {{ claim.reimbursementStatus }}
             </h3>
             <p class="text-[14px]" v-if="view === 'List'">
@@ -150,11 +103,7 @@
           </p>
         </div>
       </div>
-      <div
-        style="margin-bottom: 30px"
-        class="mt-5"
-        v-if="view === 'Table' && foapaHistoryFiltered.length !== 0"
-      >
+      <div style="margin-bottom: 30px" class="mt-5" v-if="view === 'Table' && foapaHistoryFiltered.length !== 0">
         <table class="table border-1">
           <thead>
             <tr>
@@ -166,10 +115,7 @@
           </thead>
           <tbody>
             <tr v-for="foapa in foapaHistoryFiltered">
-              <td
-                @click="() => goToReimbursement(foapa._id)"
-                class="cursor-pointer text-sm border-2"
-              >
+              <td @click="() => goToReimbursement(foapa._id)" class="cursor-pointer text-sm border-2">
                 {{ foapa.reimbursementName }}
               </td>
               <td class="text-sm border-2">${{ foapa.totalCost }}</td>
@@ -183,10 +129,7 @@
           </tbody>
         </table>
       </div>
-      <h3
-        v-if="foapaHistoryFiltered.length === 0"
-        class="text-sm font-normal italic"
-      >
+      <h3 v-if="foapaHistoryFiltered.length === 0" class="text-sm font-normal italic">
         This FOAPA hasn't been used yet
       </h3>
     </section>
@@ -272,7 +215,7 @@ function parseDate(dateString: string) {
   const day = dateString.split("-")[2].substring(0, 2);
   const formattedDate = month + "/" + day + "/" + year;
 
-  console.log(dateString);
+  // console.log(dateString);
   return formattedDate;
 }
 
@@ -315,6 +258,7 @@ td {
   padding: 1rem;
   font-size: 1rem;
 }
+
 th {
   background-color: #002d72;
   color: white;

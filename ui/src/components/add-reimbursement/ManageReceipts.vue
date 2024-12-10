@@ -180,7 +180,7 @@ const props = defineProps<{
 }>();
 
 function parseUrl(rec) {
-  console.log(rec);
+  // console.log(rec);
   return rec.url.split("/").at(-1)[0];
 }
 
@@ -412,7 +412,7 @@ function addCapturedImageAsReceipt() {
 
   let formData = new FormData();
   formData.append("receipt", capturedImagesBlob.value);
-  console.log(formData);
+  // console.log(formData);
 
   // Send the FormData object to the server using axios
   let res = axios
@@ -470,8 +470,7 @@ async function storeReceiptImage(files) {
         formData
       );
 
-      console.log("RES");
-      console.log(res);
+      // console.log(res);
 
       fileWasSelected.value = false;
 

@@ -43,7 +43,7 @@
             <label for="work-email">Work Email: *</label>
             <span>
               <span class="work-email-input-field">
-                <Field type="text" :rules="isValidString" name="work-email" id="work-email"
+                <Field type="text" class="!pl-5" :rules="isValidString" name="work-email" id="work-email"
                   v-model="userSignupData.workEmail" />
                 <h6 class="work-email-descriptor">@udmercy.edu</h6>
               </span>

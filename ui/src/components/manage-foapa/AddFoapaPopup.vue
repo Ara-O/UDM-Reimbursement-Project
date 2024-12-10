@@ -344,7 +344,7 @@ async function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
         );
-        console.log("INDEX: ", index, props.foapaDetails[index], "RES: ", res)
+        // console.log("INDEX: ", index, props.foapaDetails[index], "RES: ", res)
         for (let foapa of res.data) {
           if (foapa.foapaName === props.foapaDetails[index].foapaName
             && foapa.fund === props.foapaDetails[index].fund
