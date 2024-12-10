@@ -87,6 +87,7 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
       .status(200)
       .send({ message: "Reimbursement ticket added successfully" });
   } catch (err) {
+    console.log(req.body)
     logger.error("There was an error adding a reimbursement", {
       api: "/api/add-reimbursement",
     });

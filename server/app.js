@@ -11,6 +11,7 @@ import foapaInformationRouter from "./routes/foapaInformation.js";
 import reimbursementInformation from "./routes/reimbursementInformation.js";
 import pdfInformation from "./routes/pdfInformation.js";
 import geographyInformation from "./routes/geographyInformation.js";
+import admin from "./routes/admin.js"
 import sgMail from "@sendgrid/mail";
 import nodemailer from "nodemailer";
 import logger from "./logger.js";
@@ -50,6 +51,7 @@ app.use("/api", reimbursementInformation);
 app.use("/api", pdfInformation);
 app.use("/api", geographyInformation);
 app.use("/api", auth);
+app.use("/api", admin);
 app.use("/health", (req, res) => {
   res.status(200).send("App is running!");
 });

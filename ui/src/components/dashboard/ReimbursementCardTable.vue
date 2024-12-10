@@ -36,7 +36,7 @@
 import PencilIcon from "../../assets/blue-pencil.png"
 import DeleteIcon from "../../assets/red-delete-icon.png"
 import DuplicateIcon from "../../assets/duplicate-blue.png"
-import parseDate from "../../utils/parseDate";
+import parseDate from "../../utils/parseDateFormatted";
 import ReimbursementStatus from './ReimbursementStatus.vue';
 import { useRouter } from "vue-router";
 import { ReimbursementTicket } from "../../types/types";

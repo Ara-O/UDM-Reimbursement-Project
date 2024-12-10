@@ -93,6 +93,7 @@ import ReimbursementCardGrid from './ReimbursementCardGrid.vue';
 import ReimbursementCardTable from './ReimbursementCardTable.vue';
 import ReimbursementCardList from './ReimbursementCardList.vue';
 import ConfirmDialog from 'primevue/confirmdialog';
+import Button from 'primevue/button';
 import { inject, onMounted, ref, watch } from 'vue';
 import { ReimbursementTicket, UserInformationSummary } from '../../types/types';
 import { useRouter } from 'vue-router';
