@@ -3,7 +3,7 @@
     <!-- <img src="../../assets/exclamation-mark.png" alt="Error" class="activity-error" v-if="activityHasError" -->
     <!-- title="Deleted/Updated FOAPA number is in use. Please reassign a FOAPA number" /> -->
     <h3 class="overflow-hidden text-ellipsis whitespace-nowrap" :title="expense.name">
-      {{ expense.name }}
+      {{ expense.name !== "Other" ? expense.name : "Other: " + expense.additionalInformation }}
     </h3>
     <h4 class="overflow-hidden text-ellipsis whitespace-nowrap" :title="'' + expense.cost">
       Date: {{ parseDate(expense.date) }} || Cost: ${{ expense.cost }}

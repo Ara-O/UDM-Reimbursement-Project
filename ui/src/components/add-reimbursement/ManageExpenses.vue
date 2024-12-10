@@ -38,7 +38,7 @@
             style="padding-left: 2rem" required />
         </span>
         <span>
-          <h4 class="font-normal text-sm">Activity Date</h4>
+          <h4 class="font-normal text-sm">Expense Date</h4>
           <input type="date" name="activity-date" placeholder="Activity Date" v-model="expense.date"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required />
@@ -68,23 +68,24 @@
       <activity-container :expense="expense" v-for="expense in props.claim.activities" @delete-activity="deleteExpense"
         @edit-activity="editExpense" @duplicate-activity="duplicateExpense"></activity-container>
     </div>
+    <div class="flex gap-8 items-center">
+      <button type="button" @click="moveToPreviousSection"
+        class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3">
+        <img src="../../assets/prev-arrow.png" class="w-3" />
+        Previous Section
+      </button>
+      <button type="button" @click="moveToNextSection"
+        class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5">
+        Next Section
+        <img src="../../assets/next-arrow.png" class="w-3" />
+      </button>
+    </div>
   </section>
   <section v-if="quickAddPopupIsVisible"
     class="absolute flex items-center justify-center top-0 left-0 h-full bg-black bg-opacity-80 w-full">
     <quick-add-popup @close-quick-add-popup="quickAddPopupIsVisible = false"></quick-add-popup>
   </section>
-  <div class="flex gap-8 items-center">
-        <button type="button" @click="moveToPreviousSection"
-          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3">
-          <img src="../../assets/prev-arrow.png" class="w-3" />
-          Previous Section
-        </button>
-        <button type="button" @click="moveToNextSection"
-          class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5">
-          Next Section
-          <img src="../../assets/next-arrow.png" class="w-3" />
-        </button>
-      </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -155,9 +156,9 @@ function moveToPreviousSection() {
 }
 
 function addExpense() {
-  const num = parseFloat("" + expense.value.cost);
-  if (isNaN(num) && !isFinite(num)) {
-    toast("Error: Expense cost must be a number", {
+  const regex = /^\d+(\.\d{1,2})?$/
+  if (!regex.test(String(expense.value.cost))) {
+    toast("Error: Expense cost must be a valid number", {
       type: TYPE.ERROR,
     });
     return;
@@ -171,6 +172,22 @@ function addExpense() {
     }, 1000)
     return
   }
+
+  let other_claims = 0;
+  props.claim.activities.forEach((exp) => {
+    if (exp.name === "Other") {
+      other_claims++
+    }
+  }
+  )
+
+  if (other_claims == 2) {
+    toast("Due to constraints, reimbursement claims may not have more than 2 'Other' expenses. Please contact Jim Adair directly.", {
+      type: TYPE.ERROR
+    })
+    return
+  }
+
 
 
   // Pushing a duplicate of the inputted expense to the main reimbursement data

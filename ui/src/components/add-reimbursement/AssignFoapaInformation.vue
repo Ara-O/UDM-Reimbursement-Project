@@ -12,7 +12,7 @@
           <select name="foapa" id="foapa" v-model="assignedFoapa.foapa_id"
             class="border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required>
-            <option disabled selected value="">xxxxx-xxxx-xxxx-xxxx-xxxx</option>
+            <option disabled selected value="">Select FOAPA</option>
             <option :value="foapa._id" v-for="foapa in userFoapas">
               {{ foapa.foapaName }} - {{ formatFoapaDeails(foapa) }}
             </option>
@@ -98,17 +98,17 @@
       </div>
     </section>
     <div class="flex gap-8 items-center">
-        <button type="button" @click="moveToPreviousSection"
-          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3">
-          <img src="../../assets/prev-arrow.png" class="w-3" />
-          Previous Section
-        </button>
-        <button type="button" @click="moveToNextSection"
-          class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5">
-          Next Section
-          <img src="../../assets/next-arrow.png" class="w-3" />
-        </button>
-      </div>
+      <button type="button" @click="moveToPreviousSection"
+        class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3">
+        <img src="../../assets/prev-arrow.png" class="w-3" />
+        Previous Section
+      </button>
+      <button type="button" @click="moveToNextSection"
+        class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5">
+        Next Section
+        <img src="../../assets/next-arrow.png" class="w-3" />
+      </button>
+    </div>
   </section>
 </template>
 
@@ -179,12 +179,16 @@ function closeFoapaPopup() {
 }
 
 function dontKnowFoapa() {
+  retrieveFoapaDetails()
   toast(
     "You are moving on without a FOAPA assigned. Upon submission of the Reimbursement Request, a message to the admin will be added stating that you don't know your FOAPA.",
     {
       type: TYPE.INFO,
     }
   );
+
+  assignedFoapa.value.foapa_id = ""
+
   props.claim.knowFoapa = false;
 }
 
@@ -240,7 +244,7 @@ function addFoapa() {
   }, 0);
 
   if ((total_foapa_cost + Number(assignedFoapa.value.cost)) > total_expense_cost) {
-    toast("You are about to assign more money than this reimbursement request requires.", {
+    toast("You cannot assign more money than this reimbursement request requires.", {
       type: TYPE.ERROR
     })
     return;
@@ -268,6 +272,9 @@ function addFoapa() {
     cost: "",
     foapa_id: "",
   };
+
+  assignedFoapa.value.cost =
+    calculateBalance.value > 0 ? "" + calculateBalance.value : "0";
 
   if (triggerAssignedFoapaEditMode.value) {
     triggerAssignedFoapaEditMode.value = false;

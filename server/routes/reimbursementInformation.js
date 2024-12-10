@@ -87,7 +87,7 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
       .status(200)
       .send({ message: "Reimbursement ticket added successfully" });
   } catch (err) {
-    console.log(req.body)
+    console.log(req.body);
     logger.error("There was an error adding a reimbursement", {
       api: "/api/add-reimbursement",
     });
@@ -151,10 +151,16 @@ router.post("/update-reimbursement", verifyToken, async (req, res) => {
 
     // Look for the reimbursement with the same id and update it with the user
     // inputted updated reimbursement request
-    await ReimbursementTicket.findByIdAndUpdate(
+    let resp = await ReimbursementTicket.findByIdAndUpdate(
       reimbursementTicket._id,
       reimbursementTicket
     );
+
+    if (resp === null) {
+      return res.status(400).send({
+        message: "Please save this request before marking it as submited.",
+      });
+    }
 
     logger.info(
       `User ${req.user.userId} has successfully updated reimbursement ${reimbursementTicket._id}`,
@@ -274,6 +280,8 @@ router.post("/duplicate-request", verifyToken, async (req, res) => {
         delete receipt._id;
       });
     }
+
+    newRequest.reimbursementStatus = "In Progress";
 
     const duplicatedRequest = new ReimbursementTicket(newRequest);
 

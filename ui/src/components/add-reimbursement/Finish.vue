@@ -390,7 +390,7 @@ const markClaimAsSubmitted = () => {
   confirmSubmission.require({
     message: `Marking this request as submitted does not submit the request itself. The submission process
     is still a work-in-progress, and you will need to email the generated PDF from this reimbursement
-    request to the appropriate channel.`,
+    request to the appropriate channel. Moreoever, marking a request as submitted does not save this reimbursement request. Please make sure to save as a draft.`,
     header: "Important",
     // icon: "pi pi-exclamation-triangle",
     rejectProps: {
@@ -399,7 +399,7 @@ const markClaimAsSubmitted = () => {
       outlined: true,
     },
     acceptProps: {
-      label: "Save",
+      label: "Mark as Submitted",
     },
     accept: async () => {
       try {
@@ -411,15 +411,16 @@ const markClaimAsSubmitted = () => {
             reimbursementTicket: props.claim,
           }
         );
-        toast("Reimbursement claim submitted successfully", {
+
+        toast("Reimbursement claim marked as submitted successfully", {
           type: TYPE.SUCCESS,
         });
 
         emits("onClaimSaved");
 
         router.push("/dashboard");
-      } catch (err) {
-        toast("An unexpected error occured", {
+      } catch (err: any) {
+        toast(err?.response?.data?.message || "An unexpected error occured", {
           type: TYPE.ERROR,
         });
       }

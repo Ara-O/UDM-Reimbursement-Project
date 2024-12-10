@@ -1,15 +1,16 @@
 <template>
   <section class="login-page" v-if="section === 'login'">
-    <div class="udmercy-logo-wrapper">
-      <img :src="DetroitMercyLogo" alt="Detroit mercy logo" class="udmercy-logo" />
+    <div class="udmercy-logo-wrapper !h-40 mb-4">
+      <img :src="DetroitMercyLogo" alt="Detroit mercy logo" class="w-24 p-3" />
     </div>
     <h3 class="login-title mt-10">Detroit Mercy Reimbursement System</h3>
     <Form @submit="loginUser" class="login-form mt-6">
       <div class="login-field">
         <label for="work-email">Work Email: </label>
         <span>
-          <div class="work-email-input-field">
-            <Field v-model="userInfo.workEmail" type="text" name="work-email" id="work-email" :rules="isValidString" />
+          <div class="work-email-input-field !pl-0">
+            <Field v-model="userInfo.workEmail" type="text" name="work-email" id="work-email" :rules="isValidString"
+              class="!w-[128px]" />
 
             <h6 class="work-email-descriptor">@udmercy.edu</h6>
           </div>
@@ -55,14 +56,14 @@
     </Form>
   </section>
   <section class="login-page" v-if="section === 'forgot-password'">
-    <div class="udmercy-logo-wrapper">
-      <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo" />
+    <div class="udmercy-logo-wrapper !h-40 mb-4">
+      <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="w-24 p-3" />
     </div>
     <br />
     <h3 class="login-title">Detroit Mercy Reimbursement System</h3>
     <br />
     <Form @submit="sendEmail" class="login-form">
-      <h6 class="email-help pt-5">
+      <h6 class="email-help pt-5 text-center">
         We will send a link to your email to reset your account password
       </h6>
       <div class="login-field">
@@ -78,9 +79,9 @@
         </span>
       </div>
       <span style="display: flex; align-items: center; gap: 10px; margin-top: -10px">
-        <router-link to="/signup" class="btn-link">Create an Account</router-link>
+        <router-link to="/signup" class="btn-link !text-black">Create an Account</router-link>
         <h3 style="font-weight: 300">|</h3>
-        <a class="btn-link" @click="section = 'login'"> Back to login </a>
+        <a class="btn-link !text-black" @click="section = 'login'"> Back to login </a>
       </span>
       <button class="login-button" type="submit">Receive link</button>
     </Form>

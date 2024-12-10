@@ -88,7 +88,7 @@
           </div>
           <button type="submit"
             class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
-            {{ state === "Add" ? "Add Foapa" : "Edit Foapa" }}
+            {{ state === "Add" ? "Add Foapa" : "Save Changes" }}
           </button>
           <button type="button" v-if="state === 'Edit'" @click="discardData(handleReset)"
             class="bg-udmercy-red mt-10 ml-5 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
