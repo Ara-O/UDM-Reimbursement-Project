@@ -5,7 +5,6 @@
 //   return dateString.slice(0, 10);
 // }
 
-
 export default function parseDate(date, format = "MM/DD/YYYY") {
   // If the date is not formatted as an ISO String, it can lead
   // to bugs

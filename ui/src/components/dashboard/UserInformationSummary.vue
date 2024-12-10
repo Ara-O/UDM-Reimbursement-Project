@@ -10,7 +10,11 @@
             </p>
             <skeleton v-if="!user_information_has_loaded" height="20px" width="60px"></skeleton>
             <p class="text-nm my-0 font-medium h-5" v-else>{{ user_information_data?.email_address || "Error" }}</p>
-            <router-link to="/account" class="underline my-0 text-xs text-black">Manage account</router-link>
+            <span class="flex gap-3">
+                <router-link to="/account" class="underline my-0 text-xs text-black">Manage account</router-link>
+                <p @click="signOut" class="underline my-0 text-xs cursor-pointer text-black">Sign Out</p>
+
+            </span>
         </span>
     </div>
 </template>
@@ -20,14 +24,26 @@ import { inject, ref, watch } from "vue";
 import DetroitMercyLogo from "../../assets/detroit-mercy-logo.png";
 import Skeleton from "primevue/skeleton";
 import { UserInformationSummary } from "../../types/types";
+import { useRouter } from "vue-router";
+import { useToast, TYPE } from "vue-toastification";
 
 const user_information_has_loaded = ref<boolean>(false);
 
 const user_information_data = inject<null | UserInformationSummary>("user_information_data")
 
+const router = useRouter()
+const toast = useToast()
+
 watch(user_information_data as object, (newValue) => {
     user_information_has_loaded.value = true;
 });
 
+function signOut() {
+    localStorage.setItem("token", "");
+    router.push("/");
+    toast("Successfully signed out!", {
+        type: TYPE.SUCCESS,
+    });
+}
 
 </script>
