@@ -10,8 +10,7 @@
         <span>
           <div class="work-email-input-field !pl-0">
             <Field v-model="userInfo.workEmail" type="text" name="work-email" id="work-email" :rules="isValidString"
-              class="!w-[128px]" />
-
+              class="!w-[128px] pl-5" />
             <h6 class="work-email-descriptor">@udmercy.edu</h6>
           </div>
           <ErrorMessage name="work-email" class="error-field" />
