@@ -117,12 +117,12 @@
             <h3 class="text-sm font-medium leading-6">
               Note: Your reimbursement claim PDF will be attached to this email
             </h3>
-            <input type="checkbox" id="submitCB" name="submitCB" v-model="checked" />
-            <label for="submissionEmail" class="font-semibold text-sm leading-7">
+            <!-- <input type="checkbox" id="submitCB" name="submitCB" v-model="checked" /> -->
+            <!-- <label for="submissionEmail" class="font-semibold text-sm leading-7">
               Submit Request
               <img src="../../assets/user-help-icon.png" alt="Help" class="w-4"
                 title="By checking this box the claim will be marked as submitted. This will deduct the respective amounts from each of your saved FOAPA." />
-            </label>
+            </label> -->
           </Form>
         </span>
       </div>
@@ -183,7 +183,7 @@ function emailPDF() {
 async function sendEmail(values: any, { resetForm }) {
   let savedFoapaDetails;
   try {
-    toast("Sending email...", {
+    toast("Sending email... Please wait", {
       type: TYPE.INFO,
     });
 

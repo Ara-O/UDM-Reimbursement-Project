@@ -1,6 +1,7 @@
 import { Router } from "express";
 const router = Router();
 import https from "https";
+import sgMail from "@sendgrid/mail";
 import createPdfDefinition from "../pdfGenerator.js";
 import Pdfmake from "pdfmake";
 import multer from "multer";
@@ -391,11 +392,10 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       docDefinition,
       function (base64String) {
         console.log("pdf done");
-        console.log(base64String.slice(0, 28));
         base64String = base64String.slice(28);
-        transporter
-          .sendMail({
-            from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
+        sgMail
+          .send({
+            from: "oladipea@udmercy.edu",
             to: [req.body.recipient, req.body.userInfo.workEmail],
             subject: `${req.body.userInfo.firstName} ${req.body.userInfo.lastName} - ${req.body.subject}`,
             html: `
@@ -413,10 +413,10 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       `,
             attachments: [
               {
-                filename: `${req.body.userInfo.firstName}_${req.body.userInfo.lastName}_Reimbursement_Claim_${formattedDate}.pdf`,
                 content: base64String,
+                filename: `${req.body.userInfo.firstName}_${req.body.userInfo.lastName}_Reimbursement_Claim_${formattedDate}.pdf`,
                 encoding: "base64",
-                contentType: "application/pdf",
+                type: "application/pdf",
               },
             ],
           })
@@ -425,7 +425,7 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
             console.log("email should e sent");
           })
           .catch((err) => {
-            console.log(err);
+            console.log(err.response.body);
           });
       },
       function (error) {
@@ -434,7 +434,7 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       }
     );
   } catch (err) {
-    logger.error(err, {
+    logger.error(err.body, {
       api: "/send-reimbursement-email",
     });
   }
