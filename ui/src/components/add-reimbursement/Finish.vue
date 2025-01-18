@@ -254,6 +254,7 @@ function downloadPDF(pdfData: string) {
 }
 
 async function download() {
+  toast.clear()
   toast("Creating your reimbursement claim PDF. Please wait...", {
     type: TYPE.INFO,
   });
@@ -317,27 +318,6 @@ async function download() {
     });
 }
 
-async function saveAsTemplate() {
-  try {
-    // toast("Saving reimbursement claim as template...", {
-    //   type: TYPE.INFO,
-    // });
-    await axios.post(`${import.meta.env.VITE_API_URL}/api/save-as-template`, {
-      reimbursementTicket: props.claim,
-    });
-    toast("Reimbursement saved as a template successfully.", {
-      type: TYPE.SUCCESS,
-    });
-  } catch (error) {
-    toast(
-      "An unexpected error occured when saving your claim as a template. Please try again later",
-      {
-        type: TYPE.ERROR,
-      }
-    );
-  }
-}
-
 async function checkForUDMPU(): Promise<boolean> {
   let users_foapa_details = await axios.get(
     `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
@@ -362,7 +342,7 @@ async function checkForUDMPU(): Promise<boolean> {
 
   if (props.claim.UDMPUVoucher === true && user_has_added_UDMPU === false) {
     toast(
-      "Error: You have selected that you will be using a UDMPU Voucher but you have not used your UDMPU FOAPA. Please, either unselect this option, or add a UDMPU FOAPA",
+      "Error: You have selected that you will be using a UDMPU Voucher but you have not used your UDMPU FOAPA. Please, either unselect this option, or add the default UDMPU FOAPA",
       {
         type: TYPE.ERROR,
       }
@@ -471,6 +451,7 @@ function getAllActivitiesAmount(): number {
 
 async function createPdf() {
   try {
+    toast.clear()
     toast("Creating your reimbursement claim PDF. Please wait...", {
       type: TYPE.INFO,
     });

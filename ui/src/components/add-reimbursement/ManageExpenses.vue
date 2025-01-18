@@ -14,13 +14,17 @@
         <span>
           <h4 class="font-normal text-sm">Expense Name</h4>
 
-          <Select v-model="expense.name" :options="defaultExpenses" style="width: 18rem !important;"
+          <Select v-model="expense.name" :options="defaultExpenses" style="width: 18rem !important"
             :invalid="expense_field_is_empty" placeholder="Select an Expense"
-            class="border-[0.5px] h-11 flex items-center rounded-md !border-gray-200  box-border text-xs border-solid !shadow-md" />
+            class="border-[0.5px] h-11 flex items-center rounded-md !border-gray-200 box-border text-xs border-solid !shadow-md" />
         </span>
         <span v-if="expense.name === 'Other' || expense.name === 'Mileage'">
-          <h4 class="font-normal text-sm">Additional Information</h4>
-          <input type="text" name="additional-information" placeholder="Other..."
+          <h4 class="font-normal text-sm">
+            {{ expense.name === "Other" ? "Additional Information" : "Mileage Destination" }}
+            <a href="https://www.irs.gov/tax-professionals/standard-mileage-rates" v-if="expense.name === 'Mileage'"
+              target="_blank">(Mileage rates)</a>
+          </h4>
+          <input type="text" name="additional-information" :placeholder="otherPlaceholderText(expense.name)"
             v-model="expense.additionalInformation"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required />
@@ -85,7 +89,6 @@
     class="absolute flex items-center justify-center top-0 left-0 h-full bg-black bg-opacity-80 w-full">
     <quick-add-popup @close-quick-add-popup="quickAddPopupIsVisible = false"></quick-add-popup>
   </section>
-
 </template>
 
 <script lang="ts" setup>
@@ -107,7 +110,7 @@ function showQuickAddPopup() {
   quickAddPopupIsVisible.value = true;
 }
 const toast = useToast();
-const expense_field_is_empty = ref<boolean>(false)
+const expense_field_is_empty = ref<boolean>(false);
 const emits = defineEmits(["move-to-next-section", "move-to-previous-section"]);
 
 let expense = ref<Expense>({
@@ -155,8 +158,20 @@ function moveToPreviousSection() {
   emits("move-to-previous-section");
 }
 
+function otherPlaceholderText(expense_type: string) {
+  if (expense_type === "Other") {
+    return "Explain what expense is for";
+  }
+
+  if ((expense_type = "Mileage")) {
+    return "Include Destination for Mileage";
+  }
+
+  return "";
+}
+
 function addExpense() {
-  const regex = /^\d+(\.\d{1,2})?$/
+  const regex = /^\d+(\.\d{1,2})?$/;
   if (!regex.test(String(expense.value.cost))) {
     toast("Error: Expense cost must be a valid number", {
       type: TYPE.ERROR,
@@ -169,26 +184,26 @@ function addExpense() {
 
     window.setTimeout(() => {
       expense_field_is_empty.value = false;
-    }, 1000)
-    return
+    }, 1000);
+    return;
   }
 
   let other_claims = 0;
   props.claim.activities.forEach((exp) => {
     if (exp.name === "Other") {
-      other_claims++
+      other_claims++;
     }
-  }
-  )
+  });
 
   if (other_claims == 2) {
-    toast("Due to constraints, reimbursement claims may not have more than 2 'Other' expenses. Please contact Jim Adair directly.", {
-      type: TYPE.ERROR
-    })
-    return
+    toast(
+      "Due to constraints, reimbursement claims may not have more than 2 'Other' expenses. Please contact Jim Adair directly.",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+    return;
   }
-
-
 
   // Pushing a duplicate of the inputted expense to the main reimbursement data
   props.claim.activities.push(JSON.parse(JSON.stringify(expense.value)));

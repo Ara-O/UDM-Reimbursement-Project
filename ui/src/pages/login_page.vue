@@ -122,22 +122,19 @@ function togglePasswordVisibility() {
 
 async function loginUser() {
   try {
-    const toastId = toast("Logging in...", {
-      type: TYPE.INFO,
-    });
-
     let res = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
       userInfo: userInfo.value,
     });
 
     localStorage.setItem("token", res.data.token);
 
-    toast.dismiss(toastId);
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
 
+    toast.clear()
     router.push("/dashboard");
   } catch (err: any) {
+    toast.clear()
     toast(
       err?.response?.data?.message ||
       "There was an issue logging you in. Pease try again later.",

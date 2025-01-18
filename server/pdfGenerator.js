@@ -147,7 +147,7 @@ export default function createPdfDefinition(
           {},
           {
             svg:
-              reimbursementData.UDMPUVoucher === "false"
+              String(reimbursementData.UDMPUVoucher) === "false"
                 ? `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/></svg>`
                 : `<svg viewBox="0 0 13 17" xmlns="http://www.w3.org/2000/svg">
             <rect x="0.5" y="4.5" width="12" height="12" fill="white" stroke="black" stroke-width="1"/>
@@ -367,7 +367,12 @@ export default function createPdfDefinition(
   otherExpenses.forEach((expense) => {
     let structure = [
       { text: "Other (Explain what expense is for)" },
-      { text: expense.additionalInformation, colSpan: 7, fontSize: 9 },
+      {
+        text:
+          expense.additionalInformation + " (" + parseDate(expense.date) + ")",
+        colSpan: 7,
+        fontSize: 9,
+      },
     ];
 
     structure.push("", "", "", "", "", "");
