@@ -367,19 +367,21 @@ async function checkForUDMPU(): Promise<boolean> {
 
 const confirmSubmission = useConfirm();
 const markClaimAsSubmitted = () => {
+  createPdf();
   confirmSubmission.require({
-    message: `Marking this request as submitted does not submit the request itself. The submission process
-    is still a work-in-progress, and you will need to email the generated PDF from this reimbursement
-    request to the appropriate channel. Moreoever, marking a request as submitted does not save this reimbursement request. Please make sure to save as a draft.`,
+    message: `Please verify that the generated PDF reflects the desired information before confirming the submission.`,
+    // message: `Marking this request as submitted does not submit the request itself. The submission process
+    // is still a work-in-progress, and you will need to email the generated PDF from this reimbursement
+    // request to the appropriate channel. Moreoever, marking a request as submitted does not save this reimbursement request. Please make sure to save as a draft.`,
     header: "Important",
     // icon: "pi pi-exclamation-triangle",
     rejectProps: {
       label: "Cancel",
-      severity: "secondary",
+      severity: "danger",
       outlined: true,
     },
     acceptProps: {
-      label: "Mark as Submitted",
+      label: "Submit",
     },
     accept: async () => {
       try {
