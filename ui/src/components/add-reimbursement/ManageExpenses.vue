@@ -164,7 +164,7 @@ function otherPlaceholderText(expense_type: string) {
   }
 
   if ((expense_type = "Mileage")) {
-    return "Include Destination for Mileage";
+    return "Include Destination and Mileage Rate"; //Include Destination for Mileage
   }
 
   return "";
