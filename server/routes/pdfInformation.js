@@ -396,18 +396,16 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
         sgMail
           .send({
             from: "oladipea@udmercy.edu",
-            to: [req.body.recipient, req.body.userInfo.workEmail],
+            to: req.body.userInfo.workEmail !== req.body.recipient ? [req.body.recipient, req.body.userInfo.workEmail] : [req.body.recipient],
             subject: `${req.body.userInfo.firstName} ${req.body.userInfo.lastName} - ${req.body.subject}`,
             html: `
       <div style="border: solid 1px #efefef; padding: 20px 0px;">
       <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
       <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
-        req.body.message || ""
-      }</h3>
-      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
-        req.body.userInfo.workEmail
-      }</h5>
+      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
+              }</h3>
+      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.userInfo.workEmail
+              }</h5>
       </div>
       </div>
       `,
@@ -455,12 +453,10 @@ router.post("/send-contact-email", verifyToken, async (req, res) => {
   <div style="border: solid 1px #efefef; padding: 20px 0px;">
   <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
   <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
-    req.body.message || ""
-  }</h3>
-  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
-    facultyInfo.firstName
-  } ${facultyInfo.lastName}
+  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
+        }</h3>
+  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${facultyInfo.firstName
+        } ${facultyInfo.lastName}
         </h5>
   </div>
   </div>
