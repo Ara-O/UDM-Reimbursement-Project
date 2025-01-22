@@ -96,7 +96,8 @@
             <div>
               <h4 class="font-semibold text-sm">Subject</h4>
               <Field class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md" name="subject"
-                type="text" value="Reimbursement Request">
+                type="text" :value="`${props.claim.reimbursementName} - ${props.claim.reimbursementReason}`"
+                >
               </Field>
               <ErrorMessage name="subject" class="text-red-400 text-xs mt-2" />
             </div>
