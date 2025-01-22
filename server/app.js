@@ -11,10 +11,11 @@ import foapaInformationRouter from "./routes/foapaInformation.js";
 import reimbursementInformation from "./routes/reimbursementInformation.js";
 import pdfInformation from "./routes/pdfInformation.js";
 import geographyInformation from "./routes/geographyInformation.js";
-import admin from "./routes/admin.js"
+import admin from "./routes/admin.js";
 import sgMail from "@sendgrid/mail";
 import nodemailer from "nodemailer";
 import logger from "./logger.js";
+import adminReimbursementInformation from "./routes/adminReimbursementInformation.js";
 dotenv.config();
 sgMail.setApiKey(process.env.UDM_EMAIL_KEY);
 const port = process.env.PORT || 8080;
@@ -44,6 +45,7 @@ app.listen(port, () => {
   });
 });
 
+// FACULTY
 app.use("/api", userInformationRouter);
 app.use("/api", foapaInformationRouter);
 app.use("/api", dashboardRouter);
@@ -52,6 +54,11 @@ app.use("/api", pdfInformation);
 app.use("/api", geographyInformation);
 app.use("/api", auth);
 app.use("/api", admin);
+
+// ADMIN
+app.use("/admin", adminReimbursementInformation);
+
+// HEALTH
 app.use("/health", (req, res) => {
   res.status(200).send("App is running!");
 });

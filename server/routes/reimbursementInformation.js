@@ -4,6 +4,7 @@ import Faculty from "../models/faculty.js";
 import logger from "../logger.js";
 import z, { ZodError } from "zod";
 import ReimbursementTicket from "../models/reimbursement.js";
+import AdditionalReimbursementMessages from "../models/reimbursementMessages.js";
 const router = Router();
 
 const reimbursementRequestSchema = z.object({
@@ -401,6 +402,29 @@ router.post("/dont-know-foapa", verifyToken, async (req, res) => {
       console.log(err);
       res.status(400).send({ message: err.message });
     }
+  }
+});
+
+// This fetches the admin's message for a reimbursement request. Essentially
+// when the admin denies a request, it stores the denial message in a table assoicated with the
+// reimbursement request id. Then when the faculty wants to retrieve the message, this api gets called that
+// fetches the message based on the same request id
+router.get("/fetch-request-admin-message", verifyToken, async (req, res) => {
+  try {
+    const requestId = req.query.id;
+
+    const message = await AdditionalReimbursementMessages.findOne({
+      reimbursementID: requestId,
+    });
+
+    return res.status(200).send({ message: message.message });
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/fetch-request-admin-message",
+    });
+    return res.status(400).send({
+      message: "An unexpected error occured when fetching admin messages",
+    });
   }
 });
 

@@ -13,6 +13,10 @@ const facultySchema = new Schema({
   postalCode: String,
   city: String,
   state: String,
+  role: {
+    type: String,
+    default: "FACULTY",
+  },
   country: String,
   foapaDetails: [
     {

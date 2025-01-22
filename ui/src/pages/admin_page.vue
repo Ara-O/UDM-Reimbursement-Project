@@ -1,20 +1,37 @@
 <template>
-  <div class="px-12 py-10">
-    <header class="mb-8">
-      <h1 class="text-2xl font-semibold">Admin Dashboard</h1>
-    </header>
+  <main class="px-12 py-10">
+    <div class="flex items-center gap-10">
+      <img :src="DetroitMercyLogo" alt="Detroit Mercy Logo" class=" w-44">
 
+      <div>
+        <header class="mb-8">
+          <h1 class="text-xl font-semibold">Welcome Admin,</h1>
+        </header>
+
+        <!-- Summary Section -->
+        <section>
+          <h2 class="text-lg ml-0 font-semibold m-4  text-gray-800">Overview</h2>
+          <summary-section :pending-requests="filtered_pending_requests"></summary-section>
+        </section>
+      </div>
+
+      <!-- Top Right Icons -->
+      <img :src="NotificationIcon" alt="Notification Icon" class="absolute top-[3.75rem] cursor-pointer right-16 w-5">
+    </div>
+
+    <!-- Naviagation Menu -->
+    <div class="mt-10 flex gap-6">
+      <p class="text-sm underline cursor-pointer">View All Submitted Requests History</p>
+      <p class="text-sm underline cursor-pointer">View Feedback</p>
+
+    </div>
     <!-- Pending Requests Section -->
-    <section>
-      <h2 class="text-lg font-semibold mb-4">Pending Requests</h2>
+    <section class="mt-10">
+      <h2 class="text-lg font-semibold mb-4">Manage Pending Requests</h2>
 
-      <InputText id="over_label" v-model="search_field" class="max-w-[90%] w-full mt-2" style=".p-inputtext {
-    width: 100%;
-    padding-left: 25px;
-    height: 50px;
-    font-size: 14px !important;
-  }
-  " placeholder="Search through pending requests" />
+      <input v-model="search_field"
+        class="max-w-[50%] py-3 px-5 border-gray-300 border border-solid rounded-md w-full mt-2"
+        placeholder="Search through pending requests" />
       <div class="mt-4 flex gap-3 flex-wrap">
         <Select v-model="view" :options="views" default-value="Grid View" placeholder="Grid View"
           class="w-full md:w-40">
@@ -40,37 +57,31 @@
       <div class="flex mt-6">
         <div>
           <!-- GRID VIEW -->
-          <!-- <div class="flex gap-3 flex-wrap" v-if="view === 'Grid View'"> -->
           <div class="flex gap-3 flex-wrap">
             <reimbursement-card-grid-admin v-for="request in filtered_pending_requests"
-              :request="request"></reimbursement-card-grid-admin>
+              v-if="filtered_pending_requests.length !== 0" :request="request"
+              @reload-requests-list="populate_submitted_tickets"></reimbursement-card-grid-admin>
           </div>
-
-          <!-- LIST VIEW -->
-          <!-- <div class="reimbursement-wrapper-list" v-if="view === 'List View'"> -->
-          <!-- <reimbursement-card-list v-for="request in filtered_reimbursement_data" :request="request"
-                         @user-duplicated-a-request="userDuplicatedARequest"
-                        @user-wants-to-delete-request="confirmDelete"></reimbursement-card-list>
-                    <skeleton height="11rem" width="24rem" v-else></skeleton>
-                </div> -->
-
 
         </div>
       </div>
     </section>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Skeleton from 'primevue/skeleton';
+import NotificationIcon from "../assets/notification-icon.png"
 import { ref, watch } from 'vue';
 import { ReimbursementTicket, TicketAndFaculty, UserInformationSummary } from '../types/types';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'vue-toastification';
 import ReimbursementCardGridAdmin from '../components/dashboard/ReimbursementCardGridAdmin.vue';
 import axios from 'axios';
+import SummarySection from '../components/admin/SummarySection.vue';
+import DetroitMercyLogo from "../assets/detroit-mercy-logo.png"
 
 const search_field = ref<string>("")
 const views = ["Grid View", "Table View", "List View"]
@@ -82,24 +93,7 @@ const sort = ref<string>("")
 const pending_requests = ref<ReimbursementTicket[]>([])
 
 
-const filtered_pending_requests = ref<TicketAndFaculty[]>([{
-  _id: "vew",
-  reimbursementName: "baka",
-  reimbursementReason: "something",
-  destination: "",
-  paymentRetrievalMethod: "Hold for Pickup",
-  UDMPUVoucher: false,
-  guestInformation: [],
-  totalCost: 300,
-  reimbursementReceipts: [],
-  reimbursementStatus: "In progress",
-  reimbursementDate: "12/12/2020",
-  activities: [],
-  foapaDetails: [],
-  knowFoapa: false,
-  faculty: undefined,
-  request: undefined
-}])
+const filtered_pending_requests = ref<TicketAndFaculty[]>([])
 
 const confirm = useConfirm()
 const toast = useToast()
@@ -111,7 +105,7 @@ populate_submitted_tickets()
 //   immediate: true
 // }) I really just be testing someting
 
-async function populate_submitted_tickets(){
+async function populate_submitted_tickets() {
   let res = await axios.get(
     `${import.meta.env.VITE_API_URL}/api/retrieve-submitted-requests`
   );
