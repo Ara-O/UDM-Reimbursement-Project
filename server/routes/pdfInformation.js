@@ -388,53 +388,71 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
 
     const formattedDate = `${month}-${day}-${year}`;
 
-    generatePdf(
-      docDefinition,
-      function (base64String) {
-        console.log("pdf done");
-        base64String = base64String.slice(28);
-        sgMail
-          .send({
-            from: "oladipea@udmercy.edu",
-            to: req.body.userInfo.workEmail !== req.body.recipient ? [req.body.recipient, req.body.userInfo.workEmail] : [req.body.recipient],
-            subject: `${req.body.userInfo.firstName} ${req.body.userInfo.lastName} - ${req.body.subject}`,
-            html: `
+    generatePdf(docDefinition, function (base64String) {
+      logger.info("PDF was generated successfully", {
+        api: "generatePDF_function",
+      });
+
+      base64String = base64String.slice(28);
+      sgMail
+        .send({
+          from: "oladipea@udmercy.edu",
+          to:
+            req.body.userInfo.workEmail !==
+            String(req.body.recipient).toLowerCase()
+              ? [req.body.recipient, req.body.userInfo.workEmail]
+              : [req.body.recipient],
+          subject: `${req.body.userInfo.firstName} ${req.body.userInfo.lastName} - ${req.body.subject}`,
+          html: `
       <div style="border: solid 1px #efefef; padding: 20px 0px;">
       <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
       <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
-              }</h3>
-      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${req.body.userInfo.workEmail
-              }</h5>
+      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
+        req.body.message || ""
+      }</h3>
+      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
+        req.body.userInfo.workEmail
+      }</h5>
       </div>
       </div>
       `,
-            attachments: [
-              {
-                content: base64String,
-                filename: `${req.body.userInfo.firstName}_${req.body.userInfo.lastName}_Reimbursement_Claim_${formattedDate}.pdf`,
-                encoding: "base64",
-                type: "application/pdf",
-              },
-            ],
-          })
-          .then(() => {
-            res.status(200).send({ message: "Email successfully sent" });
-            console.log("email should e sent");
-          })
-          .catch((err) => {
-            console.log(err.response.body);
+          attachments: [
+            {
+              content: base64String,
+              filename: `${req.body.userInfo.firstName}_${req.body.userInfo.lastName}_Reimbursement_Claim_${formattedDate}.pdf`,
+              encoding: "base64",
+              type: "application/pdf",
+            },
+          ],
+        })
+        .then(() => {
+          logger.info("Email successfully sent", {
+            api: "generatePDF_function",
           });
-      },
-      function (error) {
-        console.log(error);
-        res.send("ERROR:" + error);
-      }
-    );
+          return res.status(200).send({ message: "Email successfully sent" });
+        })
+        .catch((err) => {
+          logger.error("There was an error in sending the email", {
+            api: "generatePDF_function",
+          });
+
+          logger.info(err.response.body, {
+            api: "generatePDF_function",
+          });
+
+          return res.status(500).send({
+            message:
+              "There was an unexpected error sending this email. Please try again later",
+          });
+        });
+    });
   } catch (err) {
-    logger.error(err.body, {
+    console.log(err);
+    logger.error(err, {
       api: "/send-reimbursement-email",
     });
+
+    return res.status(500).send({ message: err });
   }
 });
 
@@ -442,8 +460,8 @@ router.post("/send-contact-email", verifyToken, async (req, res) => {
   try {
     let facultyInfo = await Faculty.findById(req.user.userId);
 
-    await transporter.sendMail({
-      from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
+    await sgMail.send({
+      from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
       to: [
         '"The Support Team" <theduckateers@gmail.com>',
         facultyInfo.workEmail,
@@ -453,24 +471,34 @@ router.post("/send-contact-email", verifyToken, async (req, res) => {
   <div style="border: solid 1px #efefef; padding: 20px 0px;">
   <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
   <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${req.body.message || ""
-        }</h3>
-  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${facultyInfo.firstName
-        } ${facultyInfo.lastName}
+  <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${
+    req.body.message || ""
+  }</h3>
+  <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${
+    facultyInfo.firstName
+  } ${facultyInfo.lastName}
         </h5>
   </div>
   </div>
   `,
     });
 
+    logger.info(`${facultyInfo.workEmail} sent a feedback/contact message`, {
+      api: "/api/send-contact-email",
+    });
     return res.status(200).send({ message: "Email send successfully" });
   } catch (err) {
     logger.error("An error occured when sending an email", {
       api: "/api/send-contact-email",
     });
 
-    logger.error(err, {
+    logger.error(err.response.body, {
       api: "/api/send-contact-email",
+    });
+
+    return res.status(500).send({
+      message:
+        "An error occured when sending your message. Please try again later",
     });
   }
 });

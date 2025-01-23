@@ -185,7 +185,7 @@ export function isValidRecipientEmail(value) {
   switch (true) {
     case value.trim() === "":
       return "Required";
-    case !value.includes("@udmercy.edu"):
+    case !String(value).toLowerCase().includes("@udmercy.edu"):
       return "Recipient must have a udmercy email";
     default:
       return true;

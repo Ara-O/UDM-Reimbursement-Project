@@ -111,7 +111,7 @@ router.post("/send-confirmation-email", async (req, res) => {
 
     await sgMail.send({
       to: data.workEmail,
-      from: "oladipea@udmercy.edu",
+      from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
       subject: `Welcome to the UDM Reimbursement System - ${userAuthString}!`,
       html: `
       <div style="border: solid 1px #efefef; padding: 20px 0px;">

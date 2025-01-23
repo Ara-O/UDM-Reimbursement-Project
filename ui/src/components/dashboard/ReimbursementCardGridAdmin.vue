@@ -51,10 +51,12 @@
       </div>
     </span>
   </div>
-  <ConfirmDialog></ConfirmDialog>
+
   <Dialog
+    :dismissable-mask="true"
     v-model:visible="denyPopupIsVisible"
     modal
+    :key="props.request.reimbursementName"
     header="Request Denial Confirmation"
     :style="{ width: '25rem' }"
   >
@@ -154,12 +156,13 @@ function confirmRequestApproval() {
 
 async function denyRequest() {
   try {
-    props.request.request.reimbursementStatus = "Denied";
+    // props.request.request.reimbursementStatus = "Denied";
 
     await axios.post(
       `${import.meta.env.VITE_API_URL}/admin/deny-reimbursement`,
       {
         reimbursementTicket: props.request.request,
+        facultyID: props.request.faculty._id,
         denialMessage: requestDenialMessage.value,
       }
     );
@@ -180,12 +183,12 @@ async function denyRequest() {
 
 async function approveRequest() {
   try {
-    props.request.request.reimbursementStatus = "Approved";
-
+    // props.request.request.reimbursementStatus = "Approved";
     await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/update-reimbursement`,
+      `${import.meta.env.VITE_API_URL}/admin/approve-reimbursement`,
       {
         reimbursementTicket: props.request.request,
+        facultyID: props.request.faculty._id,
       }
     );
 

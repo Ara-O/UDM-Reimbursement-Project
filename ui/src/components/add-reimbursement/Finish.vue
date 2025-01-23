@@ -231,6 +231,7 @@ function emailPDF() {
 async function sendEmail(values: any, { resetForm }) {
   let savedFoapaDetails;
   try {
+    toast.clear();
     toast("Sending email... Please wait, this might take a minute.", {
       type: TYPE.INFO,
     });
@@ -273,7 +274,15 @@ async function sendEmail(values: any, { resetForm }) {
     resetForm();
     showEmailPopup.value = false;
     //clear email values etc
-  } catch (err) {
+  } catch (err: any) {
+    toast.clear();
+    toast(
+      err?.response?.data?.message ||
+        "An unexpected error occured when sending this email. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
     console.log(err);
   }
 }

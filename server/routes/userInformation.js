@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { transporter } from "../app.js";
+import sgMail from "@sendgrid/mail";
 import AccountNumbers from "../models/accountNumbers.js";
 import Faculty from "../models/faculty.js";
 import {
@@ -73,48 +74,58 @@ router.post("/updateAccountInfo", verifyToken, async (req, res) => {
 
 router.post("/forgotPassword", async (req, res) => {
   try {
-    console.log(req.body);
+    const email = req.body.workEmail.trim() + "@udmercy.edu";
+
     let userData = await Faculty.findOne({
-      workEmail: req.body.workEmail.trim() + "@udmercy.edu",
+      workEmail: email,
     }).select("workEmail");
 
     if (userData === null) {
-      console.log("null");
-      res
+      logger.error(`User account not found for ${email}`, {
+        api: "/api/forgotPassword",
+      });
+
+      return res
         .status(404)
         .send({ message: "A user with that email address was not found." });
-    } else {
-      console.log(userData);
-      jwt.sign(
-        { workEmail: userData.workEmail },
-        process.env.JWT_SECRET,
-        { expiresIn: "15m" },
-        async (err, token) => {
-          if (err) {
-            res
-              .status(400)
-              .send({ message: "There has been an error, please try again" });
-          } else {
-            console.log("here token", token);
-            token = token.replaceAll(".", "$");
+    }
 
-            // send mail with defined transport object
-            let resp = await transporter.sendMail({
-              from: '"UDM Reimbursement Team" <ara@araoladipo.dev>',
-              to: req.body.workEmail.trim() + "@udmercy.edu",
-              subject: "Password Reset Instructions",
-              html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
+    logger.info(`${userData.workEmail} forgot their password`, {
+      api: "/api/forgotPassword",
+    });
+
+    jwt.sign(
+      { workEmail: userData.workEmail },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" },
+      async (err, token) => {
+        if (err) {
+          return res
+            .status(400)
+            .send({ message: "There has been an error, please try again" });
+        }
+
+        token = token.replaceAll(".", "$");
+
+        // send mail with defined transport object
+        let resp = await sgMail.send({
+          from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+          to: [
+            String(req.body.workEmail).trim().toLowerCase() + "@udmercy.edu",
+          ],
+          subject: "Password Reset Instructions",
+          html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
               with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udm-reimbursement-project.vercel.app/forgot-password/${token}' >Click here</a>
               <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
-            });
+        });
 
-            console.log(resp);
+        logger.info(`Forgot password email sent successfully to ${email}`, {
+          api: "/api/forgotPassword",
+        });
 
-            res.status(200).send({ message: "Sent email" });
-          }
-        }
-      );
-    }
+        return res.status(200).send({ message: "Sent email" });
+      }
+    );
   } catch (err) {
     console.log(err);
   }
