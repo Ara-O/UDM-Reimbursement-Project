@@ -1,5 +1,7 @@
 <template>
-  <section class="grid lg:grid-cols-[400px_auto] grid-cols-[auto] h-screen overflow-auto">
+  <section
+    class="grid lg:grid-cols-[400px_auto] grid-cols-[auto] h-screen overflow-auto"
+  >
     <dashboard-left-panel class="my-0 hidden lg:block"></dashboard-left-panel>
     <dashboard-right-panel class="my-0"></dashboard-right-panel>
     <feedback-icon></feedback-icon>
@@ -12,14 +14,18 @@
 <script lang="ts" setup>
 import DashboardLeftPanel from "../components/dashboard/DashboardLeftPanel.vue";
 import DashboardRightPanel from "../components/dashboard/DashboardRightPanel.vue";
-import FeedbackIcon from "../components/dashboard/FeedbackPill.vue"
+import FeedbackIcon from "../components/dashboard/FeedbackPill.vue";
 import SideNavigationBar from "../components/dashboard/SideNavigationBar.vue";
 import axios from "axios";
 import "../assets/styles/dashboard-page.css";
 import { onMounted, ref, computed, watch, provide } from "vue";
 import { useRouter } from "vue-router";
 import { TYPE, useToast } from "vue-toastification";
-import { FoapaStuff, ReimbursementTicket, UserInformationSummary } from "../types/types";
+import {
+  FoapaStuff,
+  ReimbursementTicket,
+  UserInformationSummary,
+} from "../types/types";
 
 const router = useRouter();
 
@@ -27,14 +33,14 @@ const toast = useToast();
 
 // Providers
 
-const user_information_data = ref<null | UserInformationSummary>(null)
-provide("user_information_data", user_information_data)
+const user_information_data = ref<null | UserInformationSummary>(null);
+provide("user_information_data", user_information_data);
 
-const foapa_data = ref<FoapaStuff[]>([])
-provide("foapa_data", foapa_data)
+const foapa_data = ref<FoapaStuff[]>([]);
+provide("foapa_data", foapa_data);
 
-const reimbursement_data = ref<ReimbursementTicket[]>([])
-provide("reimbursement_data", { reimbursement_data, reloadReimbursementData })
+const reimbursement_data = ref<ReimbursementTicket[]>([]);
+provide("reimbursement_data", { reimbursement_data, reloadReimbursementData });
 
 async function retrieveDashboardData() {
   try {
@@ -47,25 +53,27 @@ async function retrieveDashboardData() {
     user_information_data.value = {
       first_name: dashboard_data.firstName,
       full_name: dashboard_data.firstName + " " + dashboard_data.lastName,
-      email_address: dashboard_data.workEmail
-    }
+      email_address: dashboard_data.workEmail,
+      role: dashboard_data?.role || "FACULTY",
+    };
 
-    foapa_data.value = dashboard_data.foapaDetails
+    foapa_data.value = dashboard_data.foapaDetails;
 
-    reimbursement_data.value = dashboard_data.reimbursementTickets
+    reimbursement_data.value = dashboard_data.reimbursementTickets;
 
     // console.log(dashboard_data)
   } catch (err) {
-    toast('There was an error fetching your dashboard data. Please log-in again', {
-      type: TYPE.ERROR
-    })
+    toast(
+      "There was an error fetching your dashboard data. Please log-in again",
+      {
+        type: TYPE.ERROR,
+      }
+    );
     localStorage.setItem("token", "");
     router.push("/");
-    console.log(err)
-
+    console.log(err);
   }
 }
-
 
 async function reloadReimbursementData() {
   try {
@@ -75,12 +83,11 @@ async function reloadReimbursementData() {
 
     const dashboard_data = res.data;
 
-    reimbursement_data.value = dashboard_data.reimbursementTickets
-
+    reimbursement_data.value = dashboard_data.reimbursementTickets;
   } catch (err) {
-    toast('There was an error when updating your dashboard data', {
-      type: TYPE.ERROR
-    })
+    toast("There was an error when updating your dashboard data", {
+      type: TYPE.ERROR,
+    });
   }
 }
 onMounted(() => {
@@ -112,7 +119,7 @@ onMounted(() => {
   width: 100%;
 }
 
-.p-datatable .p-datatable-thead>tr>th {
+.p-datatable .p-datatable-thead > tr > th {
   background-color: #002d72;
   color: white;
 }
@@ -126,7 +133,7 @@ onMounted(() => {
   font-size: 13.5px;
 }
 
-.p-datatable .p-datatable-thead>tr>th {
+.p-datatable .p-datatable-thead > tr > th {
   background-color: #002d72;
   color: white;
   padding: 10px 25px;
@@ -151,12 +158,22 @@ onMounted(() => {
   border: 1px solid #002d72;
 }
 
-.p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody>tr>td {
+.p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(
+    .p-datatable-tbody
+  )
+  .p-datatable-tbody
+  > tr
+  > td {
   border-width: 0 0 1px 1px;
   text-align: center;
 }
 
-.p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody>tr>td {
+.p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(
+    .p-datatable-tbody
+  )
+  .p-datatable-tbody
+  > tr
+  > td {
   border-width: 0 0 1px 1px;
   font-size: 14px;
 }

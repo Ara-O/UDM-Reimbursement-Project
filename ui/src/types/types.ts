@@ -138,6 +138,7 @@ export type UserInformationSummary = {
   first_name: string;
   full_name: string;
   email_address: string;
+  role: "ADMIN" | "FACULTY";
 };
 
 export type FoapaStuff = {
