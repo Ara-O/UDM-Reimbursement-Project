@@ -9,8 +9,14 @@
         <label for="work-email">Work Email: </label>
         <span>
           <div class="work-email-input-field !pl-0">
-            <Field v-model="userInfo.workEmail" type="text" name="work-email" id="work-email" :rules="isValidString"
-              class="!w-[128px] pl-5" />
+            <Field
+              v-model="userInfo.workEmail"
+              type="text"
+              name="work-email"
+              id="work-email"
+              :rules="isValidString"
+              class="!w-[128px] pl-5"
+            />
             <h6 class="work-email-descriptor">@udmercy.edu</h6>
           </div>
           <ErrorMessage name="work-email" class="error-field" />
@@ -19,11 +25,22 @@
       <div class="login-field">
         <label for="password">Password:</label>
         <span style="position: relative">
-          <Field v-model="userInfo.password" :type="passwordFieldType" class="login-password-input" name="password"
-            :rules="isNotEmpty" required id="password" />
+          <Field
+            v-model="userInfo.password"
+            :type="passwordFieldType"
+            class="login-password-input"
+            name="password"
+            :rules="isNotEmpty"
+            required
+            id="password"
+          />
           <ErrorMessage name="password" class="error-field" />
-          <img v-if="passwordFieldType === 'password'" class="hover:!opacity-100" src="../assets/eye.png"
-            @click="togglePasswordVisibility" style="
+          <img
+            v-if="passwordFieldType === 'password'"
+            class="hover:!opacity-100"
+            src="../assets/eye.png"
+            @click="togglePasswordVisibility"
+            style="
               position: absolute;
               right: 20px;
               top: 28%;
@@ -32,8 +49,14 @@
               width: 20px;
               opacity: 25%;
               hover-opacity: 100%;
-            " />
-          <img v-else class="hover:!opacity-100" src="../assets/eyeslash.png" @click="togglePasswordVisibility" style="
+            "
+          />
+          <img
+            v-else
+            class="hover:!opacity-100"
+            src="../assets/eyeslash.png"
+            @click="togglePasswordVisibility"
+            style="
               position: absolute;
               right: 20px;
               top: 28%;
@@ -41,11 +64,14 @@
               cursor: pointer;
               width: 20px;
               opacity: 25%;
-            " />
+            "
+          />
         </span>
       </div>
       <span style="display: flex; align-items: center; gap: 10px">
-        <router-link to="/signup" class="btn-link !text-black">Create an Account</router-link>
+        <router-link to="/signup" class="btn-link !text-black"
+          >Create an Account</router-link
+        >
         <h3 style="font-weight: 300">|</h3>
         <a class="btn-link !text-black" @click="section = 'forgot-password'">
           Forgot Password
@@ -56,7 +82,11 @@
   </section>
   <section class="login-page" v-if="section === 'forgot-password'">
     <div class="udmercy-logo-wrapper !h-40 mb-4">
-      <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="w-24 p-3" />
+      <img
+        src="../assets/detroit-mercy-logo.png"
+        alt="Detroit mercy logo"
+        class="w-24 p-3"
+      />
     </div>
     <br />
     <h3 class="login-title">Detroit Mercy Reimbursement System</h3>
@@ -69,28 +99,43 @@
         <label for="work-email">Work Email: </label>
         <span>
           <div class="work-email-input-field">
-            <Field v-model="forgotPasswordWorkEmail" type="text" name="forgot-work-email" id="forgot-work-email"
-              class="w-24" :rules="isValidString" />
+            <Field
+              v-model="forgotPasswordWorkEmail"
+              type="text"
+              name="forgot-work-email"
+              id="forgot-work-email"
+              class="w-24 pl-[20px]"
+              :rules="isValidString"
+            />
 
             <h6 class="work-email-descriptor">@udmercy.edu</h6>
           </div>
           <ErrorMessage name="forgot-work-email" class="error-field" />
         </span>
       </div>
-      <span style="display: flex; align-items: center; gap: 10px; margin-top: -10px">
-        <router-link to="/signup" class="btn-link !text-black">Create an Account</router-link>
+      <span
+        style="display: flex; align-items: center; gap: 10px; margin-top: -10px"
+      >
+        <router-link to="/signup" class="btn-link !text-black"
+          >Create an Account</router-link
+        >
         <h3 style="font-weight: 300">|</h3>
-        <a class="btn-link !text-black" @click="section = 'login'"> Back to login </a>
+        <a class="btn-link !text-black" @click="section = 'login'">
+          Back to login
+        </a>
       </span>
       <button class="login-button" type="submit">Receive link</button>
     </Form>
-    <h5 v-if="emailSent" style="
+    <h5
+      v-if="emailSent"
+      style="
         font-weight: 400;
         max-width: 400px;
         width: auto;
         line-height: 25px;
         text-align: center;
-      ">
+      "
+    >
       We will send a password reset e-mail to
       {{ forgotPasswordWorkEmail }}@udmercy.edu. Remember to check your
       spam/junk folder if it doesn't arrive in a few minutes.
@@ -99,7 +144,7 @@
 </template>
 
 <script lang="ts" setup>
-import DetroitMercyLogo from "../assets/detroit-mercy-logo.png"
+import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import axios from "axios";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { ref, onMounted, VueElement } from "vue";
@@ -131,13 +176,13 @@ async function loginUser() {
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
 
-    toast.clear()
+    toast.clear();
     router.push("/dashboard");
   } catch (err: any) {
-    toast.clear()
+    toast.clear();
     toast(
       err?.response?.data?.message ||
-      "There was an issue logging you in. Pease try again later.",
+        "There was an issue logging you in. Pease try again later.",
       {
         type: TYPE.ERROR,
       }
@@ -161,6 +206,14 @@ function sendEmail() {
       // console.log(res);
     })
     .catch((err) => {
+      toast.clear();
+      toast(
+        err?.response?.data?.message ||
+          "There was an error resetting your account password. Please try again later",
+        {
+          type: TYPE.ERROR,
+        }
+      );
       console.log(err);
     });
 }

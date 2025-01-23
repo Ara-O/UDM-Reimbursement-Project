@@ -1,97 +1,171 @@
 <template>
   <main class="xl:px-32 2xl:h-screen h-auto px-16 flex flex-col justify-center">
     <div class="absolute top-0 hidden top_indicator"></div>
-    <div class="flex items-center absolute top-0 gap-4 pt-10 return_to_dashboard cursor-pointer"
-      @click="returnToDashboard">
+    <div
+      class="flex items-center absolute top-0 gap-4 pt-10 return_to_dashboard cursor-pointer"
+      @click="returnToDashboard"
+    >
       <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
       <h4 class="font-normal text-sm text-gray-600 hover:underline">
         Return to dashboard
       </h4>
     </div>
     <section
-      class="flex flex-wrap lg:flex-nowrap items-center justify-start gap-y-32 w-full gap-x-28 mb-20 mt-20 xl:mt-20">
+      class="flex flex-wrap lg:flex-nowrap items-center justify-start gap-y-32 w-full gap-x-28 mb-20 mt-20 xl:mt-20"
+    >
       <section>
         <h3 class="font-semibold text-3xl mt-20 leading-10 xl:mt-7">
           Manage FOAPA Details
         </h3>
         <h4 class="font-semibold text-lg mb-5">Add FOAPA Details</h4>
-        <h4 class="font-normal cursor-pointer inline underline leading-7 text-sm mt-0 text-gray-700"
-          @click="showHelpScreen">
+        <h4
+          class="font-normal cursor-pointer inline underline leading-7 text-sm mt-0 text-gray-700"
+          @click="showHelpScreen"
+        >
           Need help? Click here to learn more about FOAPA and how to use them.
         </h4>
         <Form @submit="addFoapa" v-slot="{ handleReset }" class="max-w-auto">
           <div class="mt-7 flex flex-wrap gap-8 min-w-0 sm:min-w-[450px]">
             <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="foapaName" class="text-sm">FOAPA Name*</label>
-              <Field name="foapaName" placeholder="Name" :rules="isValidFoapaName" v-model="added_foapa.foapaName"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-10 border-solid sm:w-40">
+              <Field
+                name="foapaName"
+                placeholder="Name"
+                :rules="isValidFoapaName"
+                v-model="added_foapa.foapaName"
+                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-10 border-solid sm:w-40"
+              >
               </Field>
-              <ErrorMessage name="foapaName" class="text-red-400 bottom-[-24px] absolute text-xs"></ErrorMessage>
+              <ErrorMessage
+                name="foapaName"
+                class="text-red-400 bottom-[-24px] absolute text-xs"
+              ></ErrorMessage>
             </div>
             <div class="flex flex-col gap-y-3 w-full sm:w-auto relative">
               <label for="description" class="text-sm">FOAPA Description</label>
-              <Field name="description" placeholder="Description" v-model="added_foapa.description"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-10 border-solid sm:w-40">
+              <Field
+                name="description"
+                placeholder="Description"
+                v-model="added_foapa.description"
+                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-10 border-solid sm:w-40"
+              >
               </Field>
-              <ErrorMessage name="description" class="text-red-400 bottom-[-24px] absolute text-xs"></ErrorMessage>
+              <ErrorMessage
+                name="description"
+                class="text-red-400 bottom-[-24px] absolute text-xs"
+              ></ErrorMessage>
             </div>
 
             <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="fund" class="text-sm">FUND*</label>
-              <AutoComplete placeholder="Enter FUND" v-model="added_foapa.fund" dropdown :completeOnFocus="true"
-                empty-search-message="FUND not found - may still exist." style="height: 30px"
+              <AutoComplete
+                placeholder="Enter FUND"
+                v-model="added_foapa.fund"
+                dropdown
+                :completeOnFocus="true"
+                empty-search-message="FUND not found - may still exist."
+                style="height: 30px"
                 class="border-sm shadow-sm sm:!w-40 !w-full rounded-md !h-10 border !border-gray-100"
-                :suggestions="FUND" @complete="filterFund" />
-              <p name="fund" class="text-red-400 my-0 bottom-[-24px] absolute text-xs">
+                :suggestions="FUND"
+                @complete="filterFund"
+              />
+              <p
+                name="fund"
+                class="text-red-400 my-0 bottom-[-24px] absolute text-xs"
+              >
                 {{ fund_error_msg }}
               </p>
             </div>
             <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
-              <label for="organization" class="text-sm">ORGANIZATION (ORG)*</label>
-              <AutoComplete placeholder="Enter ORG" v-model="added_foapa.organization" dropdown :completeOnFocus="true"
-                empty-search-message="ORG not found - may still exist." style="height: 30px"
+              <label for="organization" class="text-sm"
+                >ORGANIZATION (ORG)*</label
+              >
+              <AutoComplete
+                placeholder="Enter ORG"
+                v-model="added_foapa.organization"
+                dropdown
+                :completeOnFocus="true"
+                empty-search-message="ORG not found - may still exist."
+                style="height: 30px"
                 class="border-sm shadow-sm sm:!w-40 !w-full rounded-md !h-10 border !border-gray-100"
-                :suggestions="ORGs" @complete="filterOrganization" />
-              <p name="organization" class="text-red-400 my-0 bottom-[-24px] absolute text-xs">
+                :suggestions="ORGs"
+                @complete="filterOrganization"
+              />
+              <p
+                name="organization"
+                class="text-red-400 my-0 bottom-[-24px] absolute text-xs"
+              >
                 {{ organization_error_msg }}
               </p>
             </div>
 
             <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="account" class="text-sm">ACCOUNT (ACCT)*</label>
-              <AutoComplete placeholder="Enter ACCT" v-model="added_foapa.account" dropdown :completeOnFocus="true"
+              <AutoComplete
+                placeholder="Enter ACCT"
+                v-model="added_foapa.account"
+                dropdown
+                :completeOnFocus="true"
                 empty-search-message="ACCT not found - may still exist."
-                class="border-sm shadow-sm rounded-md  border sm:!w-40 !w-full sm: !border-gray-100"
-                :suggestions="ACCTs" @complete="filterAccounts" />
-              <p name="account" class="text-red-400 my-0 bottom-[-24px] absolute text-xs">
+                class="border-sm shadow-sm rounded-md border sm:!w-40 !w-full sm: !border-gray-100"
+                :suggestions="ACCTs"
+                @complete="filterAccounts"
+              />
+              <p
+                name="account"
+                class="text-red-400 my-0 bottom-[-24px] absolute text-xs"
+              >
                 {{ account_error_msg }}
               </p>
             </div>
 
             <div class="flex flex-col w-full sm:w-auto gap-y-3 relative">
               <label for="program" class="text-sm">PROGRAM (PROG)*</label>
-              <AutoComplete placeholder="Enter PROG" v-model="added_foapa.program" dropdown :completeOnFocus="true"
+              <AutoComplete
+                placeholder="Enter PROG"
+                v-model="added_foapa.program"
+                dropdown
+                :completeOnFocus="true"
                 empty-search-message="PROG not found - may still exist."
-                class="border-sm shadow-sm rounded-md sm:!w-40 border !w-full sm: !border-gray-100" :suggestions="PROG"
-                @complete="filterProgram" />
-              <p name="program" class="text-red-400 my-0 bottom-[-24px] absolute text-xs">
+                class="border-sm shadow-sm rounded-md sm:!w-40 border !w-full sm: !border-gray-100"
+                :suggestions="PROG"
+                @complete="filterProgram"
+              />
+              <p
+                name="program"
+                class="text-red-400 my-0 bottom-[-24px] absolute text-xs"
+              >
                 {{ program_error_msg }}
               </p>
             </div>
             <div class="flex flex-col gap-y-3 w-full sm:w-auto relative">
               <label for="activity" class="text-sm">ACTIVITY (ACTV)</label>
-              <Field name="activity" placeholder="Enter ACTV" :rules="isValidActvNumber" v-model="added_foapa.activity"
-                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-10 border-solid sm:w-40">
+              <Field
+                name="activity"
+                placeholder="Enter ACTV"
+                :rules="isValidActvNumber"
+                v-model="added_foapa.activity"
+                class="text-xs border-box px-4 rounded-md border w-full border-gray-100 shadow-md h-10 border-solid sm:w-40"
+              >
               </Field>
-              <ErrorMessage name="activity" class="text-red-400 bottom-[-24px] absolute text-xs"></ErrorMessage>
+              <ErrorMessage
+                name="activity"
+                class="text-red-400 bottom-[-24px] absolute text-xs"
+              ></ErrorMessage>
             </div>
           </div>
-          <button type="submit"
-            class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
+          <button
+            type="submit"
+            class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+          >
             {{ state === "Add" ? "Add Foapa" : "Save Changes" }}
           </button>
-          <button type="button" v-if="state === 'Edit'" @click="discardData(handleReset)"
-            class="bg-udmercy-red mt-10 ml-5 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
+          <button
+            type="button"
+            v-if="state === 'Edit'"
+            @click="discardData(handleReset)"
+            class="bg-udmercy-red mt-10 ml-5 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+          >
             Discard Edits
           </button>
           <h3 class="text-sm font-normal mt-6 leading-7">
@@ -113,8 +187,12 @@
 
         <!-- FOAPA DETAILS -->
         <div class="flex items-center gap-4">
-          <input type="text" v-model="search_value" placeholder="Search by FOAPA name"
-            class="border rounded-md box-border px-4 border-gray-200 border-solid w-auto md:w-full h-10" />
+          <input
+            type="text"
+            v-model="search_value"
+            placeholder="Search by FOAPA name"
+            class="border rounded-md box-border px-4 border-gray-200 border-solid w-auto md:w-full h-10"
+          />
           <!-- <div class="border border-solid">
             <h3>View as list</h3>
           </div> -->
@@ -123,89 +201,137 @@
         <div class="flex gap-x-3 flex-wrap">
           <span
             class="hover:border-gray-400 w-auto py-0 h-10 text-gray-500 hover:text-gray-600 transition-all duration-150 border mt-5 rounded-full cursor-pointer border-solid flex items-center px-2 border-gray-200"
-            @click="filterValues = 'Date(ASC)'" :class="filterValues === 'Date(ASC)'
-              ? 'border-gray-400 text-gray-600'
-              : ''
-              ">
-            <h4 class="my-1 px-3 leading-7 h-auto font-normal text-xs m-auto text-inherit">
+            @click="filterValues = 'Date(ASC)'"
+            :class="
+              filterValues === 'Date(ASC)'
+                ? 'border-gray-400 text-gray-600'
+                : ''
+            "
+          >
+            <h4
+              class="my-1 px-3 leading-7 h-auto font-normal text-xs m-auto text-inherit"
+            >
               Sort by date (ASC)
             </h4>
           </span>
           <span
             class="hover:border-gray-400 w-auto py-0 h-10 text-gray-500 hover:text-gray-600 transition-all duration-150 border mt-5 rounded-full cursor-pointer border-solid flex items-center px-2 border-gray-200"
-            @click="filterValues = 'Date(DESC)'" :class="filterValues === 'Date(DESC)'
-              ? 'border-gray-400 text-gray-600'
-              : ''
-              ">
-            <h4 class="my-1 px-3 leading-7 h-auto font-normal text-xs m-auto text-inherit">
+            @click="filterValues = 'Date(DESC)'"
+            :class="
+              filterValues === 'Date(DESC)'
+                ? 'border-gray-400 text-gray-600'
+                : ''
+            "
+          >
+            <h4
+              class="my-1 px-3 leading-7 h-auto font-normal text-xs m-auto text-inherit"
+            >
               Sort by date added (DESC)
             </h4>
           </span>
         </div>
-        <h3 @click="view === 'Grid' ? (view = 'List') : (view = 'Grid')"
-          class="text-sm mb-[-10px] font-normal cursor-pointer hover:underline">
+        <h3
+          @click="view === 'Grid' ? (view = 'List') : (view = 'Grid')"
+          class="text-sm mb-[-10px] font-normal cursor-pointer hover:underline"
+        >
           View as {{ view === "Grid" ? "list" : "grid" }}
         </h3>
         <div
-          class="flex flex-col mt-6 gap-7 sm:max-h-[28rem] h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]">
+          class="flex flex-col mt-6 gap-7 sm:max-h-[28rem] h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]"
+        >
+          <!-- LIST VIEW -->
           <div
             class="border shadow-sm rounded w-auto box-border px-7 py-6 flex border-gray-200 border-solid h-auto max-w-[500px] justify-between"
-            v-for="foapa in filteredFoapaDetails" v-if="view === 'List'">
-            <h3 class="font-semibold text-base my-0 cursor-pointer"
-              @click="router.push(`foapa-information/${foapa._id}`)">
+            v-for="foapa in filteredFoapaDetails"
+            v-if="view === 'List'"
+          >
+            <h3
+              class="font-semibold text-base my-0 cursor-pointer"
+              @click="router.push(`foapa-information/${foapa._id}`)"
+            >
               {{ foapa.foapaName }}: {{ formatFoapaDeails(foapa) }}
             </h3>
             <div class="flex items-center ml-5 gap-2">
-              <img :src="EditIcon" alt="Edit icon" class="w-5 cursor-pointer" title="Edit FOAPA"
-                @click="triggerFoapaEditMode(foapa)" />
-              <img :src="DeleteIcon" alt="Trash icon" class="w-4 cursor-pointer" title="Delete FOAPA"
-                @click="showDeleteFoapaDialogue(foapa._id)" />
+              <img
+                :src="EditIcon"
+                alt="Edit icon"
+                class="w-5 cursor-pointer"
+                title="Edit FOAPA"
+                @click="triggerFoapaEditMode(foapa)"
+              />
+              <img
+                :src="DeleteIcon"
+                alt="Trash icon"
+                class="w-4 cursor-pointer"
+                title="Delete FOAPA"
+                @click="showDeleteFoapaDialogue(foapa._id)"
+              />
             </div>
           </div>
+          <!-- GRID VIEW -->
           <div
-            class="border shadow-sm rounded w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto max-w-[500px]"
-            v-for="foapa in filteredFoapaDetails" v-if="view === 'Grid'">
-            <h3 class="font-semibold text-base my-0 cursor-pointer"
-              @click="router.push(`foapa-information/${foapa._id}`)">
+            class="border relative shadow-sm rounded w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto max-w-[500px]"
+            v-for="foapa in filteredFoapaDetails"
+            v-if="view === 'Grid'"
+          >
+            <h3
+              class="font-semibold text-base my-0 cursor-pointer"
+              @click="router.push(`foapa-information/${foapa._id}`)"
+            >
               {{ foapa.foapaName }}: {{ formatFoapaDeails(foapa) }}
             </h3>
-            <h4 :title="foapa.description"
-              class="text-sm mt-3 font-normal mb-0 leading-7 max-h-28 overflow-hidden text-ellipsis">
+            <h4
+              :title="foapa.description"
+              class="text-sm mt-3 font-normal mb-0 leading-7 max-h-28 overflow-hidden text-ellipsis"
+            >
               {{
                 foapa.description ||
                 "You have not added a description for this FOAPA"
               }}
             </h4>
-            <!-- <h4 class="text-[13px] font-normal mt-3" v-if="foapa.initialAmount">
-              Current amount: ${{ foapa.currentAmount }} | Available amount: ${{
-                foapa.availableAmount
-              }}
-            </h4> -->
+
             <div class="flex gap-5 items-center mt-4">
-              <img :src="EditIcon" alt="Edit icon" title="Edit FOAPA" class="w-5 cursor-pointer"
-                @click="triggerFoapaEditMode(foapa)" />
-              <img :src="DeleteIcon" alt="Trash icon" title="Delete FOAPA" class="w-4 cursor-pointer"
-                @click="showDeleteFoapaDialogue(foapa._id)" />
+              <img
+                :src="EditIcon"
+                alt="Edit icon"
+                title="Edit FOAPA"
+                class="w-5 cursor-pointer"
+                @click="triggerFoapaEditMode(foapa)"
+              />
+              <img
+                :src="DeleteIcon"
+                alt="Trash icon"
+                title="Delete FOAPA"
+                class="w-4 cursor-pointer"
+                @click="showDeleteFoapaDialogue(foapa._id)"
+              />
               <span class="flex items-center gap-3">
                 <h4 class="text-xs my-0 font-normal">
                   Last Updated:
                   {{ formatDate(foapa.updatedAt) }}
                 </h4>
-                <!-- <img :src="ViewIcon" alt="View icon" class="w-5 cursor-pointer"> -->
-                <!-- <h4 class="text-xs m-0 font-normal cursor underline cursor-pointer">Click to view more information</h4> -->
               </span>
             </div>
+            <span
+              class="bg-udmercy-red text-white absolute bottom-6 right-8 text-sm font-semibold px-2 rounded-md py-1"
+              v-if="foapa.isUDMPU"
+              title="This is your UDMPU FOAPA"
+            >
+              UDMPU
+            </span>
           </div>
           <div v-if="loaded && foapaDetails.length === 0">
             <h4 class="font-medium text-sm mt-0">
               You have not added any FOAPAs yet
             </h4>
           </div>
-          <div v-if="
-            loaded &&
-            foapaDetails.length !== 0 &&
-            filteredFoapaDetails.length === 0
-          ">
+          <div
+            v-if="
+              loaded &&
+              foapaDetails.length !== 0 &&
+              filteredFoapaDetails.length === 0
+            "
+          >
             <h4 class="font-medium text-sm mt-0">
               No results found for {{ search_value }}
             </h4>
@@ -215,8 +341,13 @@
       </section>
     </section>
 
-    <ConfirmationPopup :continue-function="stayOnPage" :cancel-function="discardChanges" v-show="show_leave_dialogue"
-      left-button-text="Discard Changes" right-button-text="Go Back">
+    <ConfirmationPopup
+      :continue-function="stayOnPage"
+      :cancel-function="discardChanges"
+      v-show="show_leave_dialogue"
+      left-button-text="Discard Changes"
+      right-button-text="Go Back"
+    >
       <template #message>
         You have some unsaved changes (You have inputted some FOAPA values
         without adding them). To discard these changes, click 'Discard Changes.'
@@ -224,14 +355,23 @@
       </template>
     </ConfirmationPopup>
 
-    <ConfirmationPopup v-if="show_edit_clashes_dialogue" class="clashes_dialogue"
-      :cancel-function="removeEditClashPopup" :continue-function="continueEditAfterClash" left-button-text="Don't Edit"
-      right-button-text="Continue" title="Warning">
+    <ConfirmationPopup
+      v-if="show_edit_clashes_dialogue"
+      class="clashes_dialogue"
+      :cancel-function="removeEditClashPopup"
+      :continue-function="continueEditAfterClash"
+      left-button-text="Don't Edit"
+      right-button-text="Continue"
+      title="Warning"
+    >
       <template #message>
         Warning: You are about to edit a FOAPA that is being used by the
         following reimbursement claims:
-        <p v-for="claim in edit_clashes" class="font-medium cursor-pointer underline"
-          @click="() => goToClashingRequest(claim.reimbursement_id)">
+        <p
+          v-for="claim in edit_clashes"
+          class="font-medium cursor-pointer underline"
+          @click="() => goToClashingRequest(claim.reimbursement_id)"
+        >
           {{ claim.name || "Error" }}
         </p>
         To stop editing, click 'Don't Edit.' To continue editing this FOAPA,
@@ -240,9 +380,14 @@
       </template>
     </ConfirmationPopup>
 
-    <ConfirmationPopup v-if="show_delete_foapa_dialogue" :cancel-function="removeDeletePopup"
-      :continue-function="() => deleteFoapa(foapa_to_delete)" left-button-text="Don't Delete" right-button-text="Delete"
-      title="Caution">
+    <ConfirmationPopup
+      v-if="show_delete_foapa_dialogue"
+      :cancel-function="removeDeletePopup"
+      :continue-function="() => deleteFoapa(foapa_to_delete)"
+      left-button-text="Don't Delete"
+      right-button-text="Delete"
+      title="Caution"
+    >
       <template #message>
         Warning: You are about to delete a FOAPA. Are you sure you want to
         delete this?
@@ -250,13 +395,22 @@
     </ConfirmationPopup>
 
     <!-- Make not two OK buttons -->
-    <ConfirmationPopup v-if="show_delete_foapa_clash_dialogue" :cancel-function="removeDeletePopup"
-      :continue-function="removeDeletePopup" left-button-text="HIDE" right-button-text="OK" title="Error">
+    <ConfirmationPopup
+      v-if="show_delete_foapa_clash_dialogue"
+      :cancel-function="removeDeletePopup"
+      :continue-function="removeDeletePopup"
+      left-button-text="HIDE"
+      right-button-text="OK"
+      title="Error"
+    >
       <template #message>
         Error: You are about to delete a FOAPA that is being used by the
         following reimbursement claims:
-        <p v-for="claim in delete_clashes" class="font-medium cursor-pointer underline"
-          @click="() => goToClashingRequest(claim.reimbursement_id)">
+        <p
+          v-for="claim in delete_clashes"
+          class="font-medium cursor-pointer underline"
+          @click="() => goToClashingRequest(claim.reimbursement_id)"
+        >
           {{ claim.name || "Error" }}
         </p>
         Please submit these claims before attempting to delete this FOAPA
@@ -264,14 +418,22 @@
     </ConfirmationPopup>
 
     <section v-if="show_foapa_help_dialogue">
-      <div class="absolute z-50 bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center">
+      <div
+        class="absolute z-50 bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center"
+      >
         <div
-          class="bg-white max-w-4xl max-h-[700px] shadow-md border border-solid border-gray-100 h-96 overflow-auto md:h-min px-6 py-9 rounded-md">
+          class="bg-white max-w-4xl max-h-[700px] shadow-md border border-solid border-gray-100 h-96 overflow-auto md:h-min px-6 py-9 rounded-md"
+        >
           <div class="flex justify-between">
             <h3 class="text-md font-semibold mb-6 mt-0 underline">
               FOAPA Help
             </h3>
-            <img :src="CancelIcon" alt="Cancel icon" class="w-4 h-4 my-0 cursor-pointer" @click="removeFoapaHelp" />
+            <img
+              :src="CancelIcon"
+              alt="Cancel icon"
+              class="w-4 h-4 my-0 cursor-pointer"
+              @click="removeFoapaHelp"
+            />
           </div>
           <div class="flex flex-wrap gap-y-10 gap-x-4">
             <span class="flex flex-col gap-3 w-72 justify-between">
@@ -328,7 +490,9 @@
               free to edit or delete them.
             </h4>
             <h4 class="font-normal text-sm leading-7">
-              <span class="font-medium leading-7">General Department Spending</span>
+              <span class="font-medium leading-7"
+                >General Department Spending</span
+              >
               : Allocated for routine operational expenses within the
               department, covering costs such as supplies, minor equipment, and
               other essential activities that support departmental functions.
@@ -527,9 +691,7 @@ async function retrieveFoapaRegistry() {
 
     PROG.value = originalPROG.value;
 
-    originalFUND.value = fund_numbers.map(
-      (fund) => fund.number
-    );
+    originalFUND.value = fund_numbers.map((fund) => fund.number);
 
     FUND.value = originalFUND.value;
   } catch (err) {
@@ -587,7 +749,6 @@ function filterFund(event) {
     });
   }
 }
-
 
 function removeEditClashPopup() {
   show_edit_clashes_dialogue.value = false;
@@ -711,7 +872,7 @@ async function editFoapaValues(foapaValues, resetForm) {
   } catch (err: any) {
     toast(
       err?.response?.data?.message ||
-      "An unexpected error has occured. Please try again later",
+        "An unexpected error has occured. Please try again later",
       {
         type: TYPE.ERROR,
       }
@@ -781,7 +942,6 @@ async function addFoapa(values, { resetForm, setFieldError }) {
     program_error_msg.value = "Required";
   }
 
-
   // if (added_foapa.value.fund.trim().length !== 6) {
   //   fund_error_msg.value = "Must be 6 characters";
   // }
@@ -790,7 +950,6 @@ async function addFoapa(values, { resetForm, setFieldError }) {
     fund_error_msg.value = "Required";
   }
 
-
   if (
     organization_error_msg.value !== "" ||
     account_error_msg.value !== "" ||
@@ -798,7 +957,6 @@ async function addFoapa(values, { resetForm, setFieldError }) {
   ) {
     return;
   }
-
 
   try {
     if (state.value === "Edit") {
@@ -821,9 +979,13 @@ async function addFoapa(values, { resetForm, setFieldError }) {
       type: TYPE.SUCCESS,
     });
   } catch (err: any) {
-    toast(err?.response?.data?.message || "An unexpected error has occured. Please try again later", {
-      type: TYPE.ERROR,
-    });
+    toast(
+      err?.response?.data?.message ||
+        "An unexpected error has occured. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
   }
 }
 
@@ -901,7 +1063,7 @@ async function retrieveUserFoapaDetails() {
   } catch (err: any) {
     toast(
       err?.response?.data?.message ||
-      "There was an error fetching your FOAPA details. Please try again later",
+        "There was an error fetching your FOAPA details. Please try again later",
       {
         type: TYPE.ERROR,
       }

@@ -2,12 +2,20 @@
   <section class="signup-page">
     <section class="left-section">
       <div class="udmercy-logo-wrapper">
-        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo" />
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo"
+        />
       </div>
     </section>
     <section class="right-section">
       <div class="udmercy-logo-wrapper-mobile">
-        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo-mobile" />
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo-mobile"
+        />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
 
@@ -25,12 +33,19 @@
       <section class="signup-form">
         <!-- SECTION 2 -->
         <section v-show="surveyProgress === 1" class="signup-form">
-          <PasswordSection :user-signup-data="userSignupData" @continue="surveyProgress++" />
+          <PasswordSection
+            :user-signup-data="userSignupData"
+            @continue="surveyProgress++"
+          />
         </section>
 
         <!-- SECTION 3 -->
         <section v-show="surveyProgress === 2" class="signup-form">
-          <AddressSection :user-signup-data="userSignupData" @continue="registerUser" @go-back="surveyProgress--" />
+          <AddressSection
+            :user-signup-data="userSignupData"
+            @continue="registerUser"
+            @go-back="surveyProgress--"
+          />
         </section>
 
         <!-- SECTION 4 -->
@@ -43,8 +58,13 @@
         </section>
         <br /> -->
 
-        <router-link to="/" class="already-have-account mt-5">Already have an Account</router-link>
-        <h5 class="required-field-note" style="font-weight: 300; margin-top: 25px">
+        <router-link to="/" class="already-have-account mt-5"
+          >Already have an Account</router-link
+        >
+        <h5
+          class="required-field-note"
+          style="font-weight: 300; margin-top: 25px"
+        >
           Note: All required fields are marked with an asterisk and must be
           completed.
         </h5>
@@ -91,6 +111,7 @@ let userSignupData = reactive<UserData>({
 
 async function registerUser() {
   try {
+    toast.clear();
     toast("Creating account...", {
       type: TYPE.INFO,
     });
@@ -105,13 +126,14 @@ async function registerUser() {
       localStorage.getItem("token");
     router.push("/dashboard");
 
+    toast.clear();
     toast("Account successfully created...", {
       type: TYPE.SUCCESS,
     });
   } catch (err: any) {
     toast(
       err?.response?.data?.message ||
-      "There was an error creating your account. Please try again later",
+        "There was an error creating your account. Please try again later",
       {
         type: TYPE.ERROR,
       }

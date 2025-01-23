@@ -152,7 +152,7 @@ input {
 }
 
 .work-email-input-field {
-  padding-left: 20px;
+  /* padding-left: 20px; */
   width: 210px;
   box-sizing: border-box;
   height: 36px;
@@ -170,10 +170,11 @@ input {
 .work-email-input-field input {
   border: none;
   font-size: 13px;
-  width: 60px;
+  width: 80px;
+  padding-left: 20px;
 }
 
-.password-span{
+.password-span {
   position: relative;
 }
 .input-field input,
@@ -215,11 +216,11 @@ input {
   background: #a5093e;
   border-radius: 26px;
   transition: all 250ms ease-in-out;
-  }
-  
-  .signup-button:hover {
-    background: #9c0839;
-  }
+}
+
+.signup-button:hover {
+  background: #9c0839;
+}
 
 .signup-button-arrow {
   display: flex;
@@ -358,7 +359,7 @@ input {
     padding: 0px 20px;
   }
 
-  .signup_form{
+  .signup_form {
     text-align: center;
   }
 
@@ -414,7 +415,7 @@ input {
   }
 
   .input-field span,
-  .work-email-section>span {
+  .work-email-section > span {
     display: flex;
     flex-direction: column;
     align-items: center;

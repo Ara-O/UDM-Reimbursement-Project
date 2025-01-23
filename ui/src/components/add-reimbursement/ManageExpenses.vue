@@ -1,8 +1,14 @@
 <template>
-  <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0">
+  <section
+    class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0"
+  >
     <span class="flex items-center gap-6 mb-2">
       <h2 class="font-semibold my-0 text-[27px]">Add or View Expenses</h2>
-      <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7 hidden md:block" />
+      <img
+        src="../../assets/edit-icon.png"
+        alt="Edit icon"
+        class="w-7 hidden md:block"
+      />
     </span>
     <!-- <h4 class="font-medium text-gray-600 mb-1 text-sm">
       Or try our experimental
@@ -14,49 +20,84 @@
         <span>
           <h4 class="font-normal text-sm">Expense Name</h4>
 
-          <Select v-model="expense.name" :options="defaultExpenses" style="width: 18rem !important"
-            :invalid="expense_field_is_empty" placeholder="Select an Expense"
-            class="border-[0.5px] h-11 flex items-center rounded-md !border-gray-200 box-border text-xs border-solid !shadow-md" />
+          <Select
+            v-model="expense.name"
+            :options="defaultExpenses"
+            style="width: 18rem !important"
+            :invalid="expense_field_is_empty"
+            placeholder="Select an Expense"
+            class="border-[0.5px] h-11 flex items-center rounded-md !border-gray-200 box-border text-xs border-solid !shadow-md"
+          />
         </span>
         <span v-if="expense.name === 'Other' || expense.name === 'Mileage'">
           <h4 class="font-normal text-sm">
-            {{ expense.name === "Other" ? "Additional Information" : "Mileage Destination" }}
-            <a href="https://www.irs.gov/tax-professionals/standard-mileage-rates" v-if="expense.name === 'Mileage'"
-              target="_blank">(Mileage rates)</a>
+            {{
+              expense.name === "Other"
+                ? "Additional Information"
+                : "Mileage Destination"
+            }}
+            <a
+              href="https://www.irs.gov/tax-professionals/standard-mileage-rates"
+              v-if="expense.name === 'Mileage'"
+              target="_blank"
+              >(Mileage rates)</a
+            >
           </h4>
-          <input type="text" name="additional-information" :placeholder="otherPlaceholderText(expense.name)"
+          <input
+            type="text"
+            name="additional-information"
+            :placeholder="otherPlaceholderText(expense.name)"
             v-model="expense.additionalInformation"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required />
+            required
+          />
         </span>
         <span>
           <h4 class="font-normal text-sm">Expense Cost</h4>
-          <span style="
+          <span
+            style="
               position: absolute;
               padding-left: 0.75rem;
               padding-top: 10px;
               opacity: 50%;
-            ">$</span>
-          <input type="text" name="expense-cost" placeholder="Expense Cost" v-model="expense.cost"
+            "
+            >$</span
+          >
+          <input
+            type="text"
+            name="expense-cost"
+            placeholder="Expense Cost"
+            v-model="expense.cost"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            style="padding-left: 2rem" required />
+            style="padding-left: 2rem"
+            required
+          />
         </span>
         <span>
           <h4 class="font-normal text-sm">Expense Date</h4>
-          <input type="date" name="activity-date" placeholder="Activity Date" v-model="expense.date"
+          <input
+            type="date"
+            name="activity-date"
+            placeholder="Activity Date"
+            v-model="expense.date"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required />
+            required
+          />
         </span>
       </div>
 
-      <h4 class="text-[13px] font-light text-gray-700 leading-7 w-auto max-w-[40rem]">
+      <h4
+        class="text-[13px] font-light text-gray-700 leading-7 w-auto max-w-[40rem]"
+      >
         By adding an activity; I hereby certify that this claim is correct and
         reimbursable under published travel expense Policies & Procedures of UDM
       </h4>
 
       <div class="flex gap-5">
-        <button type="submit"
-          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
+        <button
+          type="submit"
+          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+        >
           Add Expense
         </button>
       </div>
@@ -64,30 +105,50 @@
 
     <!-- ALL EXPENSES SECTION -->
     <h4 class="underline font-semibold text-lg text-gray-800">All Expenses</h4>
-    <div class="h-48 sm:h-auto max-h-48 overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto">
-      <h5 class="mt-0 font-medium text-gray-500" v-if="props.claim.activities.length === 0">
+    <div
+      class="h-48 sm:h-auto max-h-48 overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto"
+    >
+      <h5
+        class="mt-0 font-medium text-gray-500"
+        v-if="props.claim.activities.length === 0"
+      >
         Added expenses will be listed here.
       </h5>
 
-      <activity-container :expense="expense" v-for="expense in props.claim.activities" @delete-activity="deleteExpense"
-        @edit-activity="editExpense" @duplicate-activity="duplicateExpense"></activity-container>
+      <activity-container
+        :expense="expense"
+        v-for="expense in props.claim.activities"
+        @delete-activity="deleteExpense"
+        @edit-activity="editExpense"
+        @duplicate-activity="duplicateExpense"
+      ></activity-container>
     </div>
     <div class="flex gap-8 items-center">
-      <button type="button" @click="moveToPreviousSection"
-        class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3">
+      <button
+        type="button"
+        @click="moveToPreviousSection"
+        class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
+      >
         <img src="../../assets/prev-arrow.png" class="w-3" />
         Previous Section
       </button>
-      <button type="button" @click="moveToNextSection"
-        class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5">
+      <button
+        type="button"
+        @click="moveToNextSection"
+        class="mt-6 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5"
+      >
         Next Section
         <img src="../../assets/next-arrow.png" class="w-3" />
       </button>
     </div>
   </section>
-  <section v-if="quickAddPopupIsVisible"
-    class="absolute flex items-center justify-center top-0 left-0 h-full bg-black bg-opacity-80 w-full">
-    <quick-add-popup @close-quick-add-popup="quickAddPopupIsVisible = false"></quick-add-popup>
+  <section
+    v-if="quickAddPopupIsVisible"
+    class="absolute flex items-center justify-center top-0 left-0 h-full bg-black bg-opacity-80 w-full"
+  >
+    <quick-add-popup
+      @close-quick-add-popup="quickAddPopupIsVisible = false"
+    ></quick-add-popup>
   </section>
 </template>
 
@@ -173,6 +234,7 @@ function otherPlaceholderText(expense_type: string) {
 function addExpense() {
   const regex = /^\d+(\.\d{1,2})?$/;
   if (!regex.test(String(expense.value.cost))) {
+    toast.clear();
     toast("Error: Expense cost must be a valid number", {
       type: TYPE.ERROR,
     });

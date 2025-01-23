@@ -1,5 +1,7 @@
 <template>
-  <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0">
+  <section
+    class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0"
+  >
     <span class="flex items-center gap-6 mb-2">
       <h2 class="font-semibold my-0 text-[27px]">Finish</h2>
       <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7" />
@@ -15,12 +17,16 @@
         Save your reimbursement claim:
       </h3>
       <div class="flex gap-5 mt-6 flex-wrap">
-        <button @click="saveReimbursement"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
+        <button
+          @click="saveReimbursement"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+        >
           Save as a Draft
         </button>
-        <button @click="discardChanges"
-          class="bg-udmercy-red text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
+        <button
+          @click="discardChanges"
+          class="bg-udmercy-red text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+        >
           Discard Changes
         </button>
         <!-- <button
@@ -33,31 +39,42 @@
 
       <h3 class="text-base font-semibold">Manage generated PDF:</h3>
       <div class="flex gap-5 mt-6 flex-wrap">
-        <button @click="createPdf"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
+        <button
+          @click="createPdf"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+        >
           Preview generated PDF
         </button>
-        <button @click="download"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
+        <button
+          @click="download"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+        >
           Download generated PDF
         </button>
       </div>
 
       <h3 class="text-base font-semibold">Submit generated PDF:</h3>
       <div class="flex gap-5 mt-6 flex-wrap">
-        <button @click="emailPDF"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
+        <button
+          @click="emailPDF"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+        >
           Email Reimbursement Request
         </button>
 
-        <button @click="markClaimAsSubmitted"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs">
+        <button
+          @click="markClaimAsSubmitted"
+          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+        >
           Mark Request as Submitted
         </button>
       </div>
       <div class="flex gap-5 items-center">
-        <button type="button" @click="moveToPreviousSection"
-          class="bg-udmercy-blue mt-8 text-white border-none w-64 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-4">
+        <button
+          type="button"
+          @click="moveToPreviousSection"
+          class="bg-udmercy-blue mt-8 text-white border-none w-64 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-4"
+        >
           <img src="../../assets/prev-arrow.png" class="w-3" />
           Previous Section
         </button>
@@ -68,35 +85,61 @@
         Generating PDF, please wait...
       </h5>
     </div>
-    <confirmation-popup v-if="showConfirmationPopup" left-button-text="Discard Changes" right-button-text="Cancel"
-      :cancel-function="returnToDashboard" :continue-function="cancelConfirmationPopup">
+    <confirmation-popup
+      v-if="showConfirmationPopup"
+      left-button-text="Discard Changes"
+      right-button-text="Cancel"
+      :cancel-function="returnToDashboard"
+      :continue-function="cancelConfirmationPopup"
+    >
       <template #message>
         Are you sure you want to discard the changes you made to this
         reimbursement claim?
       </template>
     </confirmation-popup>
-    <div v-if="showEmailPopup"
-      class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center">
-      <div class="bg-white shadow-md border border-solid border-gray-100 h-min px-6 box-border w-96 py-3 rounded-md">
+    <div
+      v-if="showEmailPopup"
+      class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center"
+    >
+      <div
+        class="bg-white shadow-md border border-solid border-gray-100 h-min px-6 box-border w-96 py-3 rounded-md"
+      >
         <span class="flex items-center m-0">
           <h3 class="font-semibold mb-0">
             Send this claim attached to an email
           </h3>
-          <img :src="CancelIcon" alt="Cancel icon" class="w-3 cursor-pointer" @click="showEmailPopup = false" />
+          <img
+            :src="CancelIcon"
+            alt="Cancel icon"
+            class="w-3 cursor-pointer"
+            @click="showEmailPopup = false"
+          />
         </span>
         <span>
           <Form @submit="sendEmail">
             <div>
               <h4 class="font-semibold text-sm">Recipient</h4>
-              <Field class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md"
-                :rules="isValidRecipientEmail" name="recipient" type="text" value="">
+              <Field
+                class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md"
+                :rules="isValidRecipientEmail"
+                name="recipient"
+                type="text"
+                value=""
+              >
               </Field>
-              <ErrorMessage name="recipient" class="text-red-400 text-xs mt-2" />
+              <ErrorMessage
+                name="recipient"
+                class="text-red-400 text-xs mt-2"
+              />
             </div>
             <div>
               <h4 class="font-semibold text-sm">Subject</h4>
-              <Field class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md" name="subject"
-                type="text" :value="`${props.claim.reimbursementName} - ${props.claim.reimbursementReason}`">
+              <Field
+                class="h-8 w-full box-border px-3 border-gray-300 border-solid border rounded-md"
+                name="subject"
+                type="text"
+                :value="`${props.claim.reimbursementName} - ${props.claim.reimbursementReason}`"
+              >
               </Field>
               <ErrorMessage name="subject" class="text-red-400 text-xs mt-2" />
             </div>
@@ -104,14 +147,20 @@
               <h4 class="font-semibold text-sm leading-7">
                 Message (Any supplementary info will be included in your email)
               </h4>
-              <Field name="message" type="text"
+              <Field
+                name="message"
+                type="text"
                 class="h-20 resize-none w-full box-border px-3 py-3 text-sm border-gray-300 border-solid border rounded-md"
-                as="textarea" :value="knowFoapaText">
+                as="textarea"
+                :value="knowFoapaText"
+              >
               </Field>
               <ErrorMessage name="message" class="text-red-400" />
             </div>
-            <button type="submit"
-              class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs">
+            <button
+              type="submit"
+              class="mt-6 mb-2 bg-udmercy-blue text-white border-none w-auto px-5 h-11 rounded-full cursor-pointer text-xs"
+            >
               Send email
             </button>
             <h3 class="text-sm font-medium leading-6">
@@ -182,7 +231,7 @@ function emailPDF() {
 async function sendEmail(values: any, { resetForm }) {
   let savedFoapaDetails;
   try {
-    toast("Sending email... Please wait", {
+    toast("Sending email... Please wait, this might take a minute.", {
       type: TYPE.INFO,
     });
 
@@ -216,6 +265,7 @@ async function sendEmail(values: any, { resetForm }) {
       }
     );
 
+    toast.clear();
     toast("Your email was sent successfully", {
       type: TYPE.SUCCESS,
     });
@@ -253,7 +303,7 @@ function downloadPDF(pdfData: string) {
 }
 
 async function download() {
-  toast.clear()
+  toast.clear();
   toast("Creating your reimbursement claim PDF. Please wait...", {
     type: TYPE.INFO,
   });
@@ -303,7 +353,7 @@ async function download() {
           // console.log("error: " + err.response);
           toast(
             err?.response?.message ||
-            "There was an error generating your PDF. Please try again later",
+              "There was an error generating your PDF. Please try again later",
             {
               type: TYPE.ERROR,
             }
@@ -406,7 +456,7 @@ const markClaimAsSubmitted = () => {
         });
       }
     },
-    reject: () => { },
+    reject: () => {},
   });
 };
 
@@ -452,7 +502,7 @@ function getAllActivitiesAmount(): number {
 
 async function createPdf() {
   try {
-    toast.clear()
+    toast.clear();
     toast("Creating your reimbursement claim PDF. Please wait...", {
       type: TYPE.INFO,
     });
@@ -496,7 +546,7 @@ async function createPdf() {
     console.log(err);
     toast(
       err?.response?.data?.message ||
-      "There was an error generating your PDF. Please try again later",
+        "There was an error generating your PDF. Please try again later",
       {
         type: TYPE.ERROR,
       }
@@ -513,6 +563,7 @@ async function updateReimbursement() {
     reimbursementTicket: props.claim,
   });
 
+  toast.clear();
   toast("Reimbursement claim updated successfully.", {
     type: TYPE.SUCCESS,
   });
@@ -546,6 +597,7 @@ async function saveReimbursement() {
   // console.log("Ticket is being saved");
   try {
     if (props.claim.reimbursementName.trim() === "") {
+      toast.clear();
       toast("Please add a title to this reimbursement claim", {
         type: TYPE.ERROR,
       });

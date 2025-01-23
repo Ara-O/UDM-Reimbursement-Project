@@ -2,12 +2,20 @@
   <main class="signup-page">
     <section class="left-section">
       <div class="udmercy-logo-wrapper">
-        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo" />
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo"
+        />
       </div>
     </section>
     <section class="right-section">
       <div class="udmercy-logo-wrapper-mobile">
-        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo-mobile" />
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo-mobile"
+        />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
       <h3 class="signup-title-description">Basic Questions</h3>
@@ -16,16 +24,26 @@
           <div class="input-field">
             <label for="first-name">First Name: *</label>
             <span>
-              <Field type="text" name="first-name" :rules="isValidString" id="first-name"
-                v-model="userSignupData.firstName" />
+              <Field
+                type="text"
+                name="first-name"
+                :rules="isValidString"
+                id="first-name"
+                v-model="userSignupData.firstName"
+              />
               <ErrorMessage name="first-name" class="error-field" />
             </span>
           </div>
           <div class="input-field">
             <label for="first-name">Last Name: *</label>
             <span>
-              <Field type="text" name="last-name" :rules="isValidString" id="last-name"
-                v-model="userSignupData.lastName" />
+              <Field
+                type="text"
+                name="last-name"
+                :rules="isValidString"
+                id="last-name"
+                v-model="userSignupData.lastName"
+              />
               <ErrorMessage name="last-name" class="error-field" />
             </span>
           </div>
@@ -34,8 +52,13 @@
           <div class="input-field">
             <label for="phone-number" class="mt-0">Phone Number: *</label>
             <span>
-              <Field type="text" name="phone-number" id="phone-number" :rules="isValidPhoneNumber"
-                v-model="userSignupData.phoneNumber" />
+              <Field
+                type="text"
+                name="phone-number"
+                id="phone-number"
+                :rules="isValidPhoneNumber"
+                v-model="userSignupData.phoneNumber"
+              />
               <ErrorMessage name="phone-number" class="error-field" />
             </span>
           </div>
@@ -43,8 +66,13 @@
             <label for="work-email">Work Email: *</label>
             <span>
               <span class="work-email-input-field">
-                <Field type="text" class="!pl-5" :rules="isValidString" name="work-email" id="work-email"
-                  v-model="userSignupData.workEmail" />
+                <Field
+                  type="text"
+                  :rules="isValidString"
+                  name="work-email"
+                  id="work-email"
+                  v-model="userSignupData.workEmail"
+                />
                 <h6 class="work-email-descriptor">@udmercy.edu</h6>
               </span>
               <ErrorMessage name="work-email" class="error-field" />
@@ -53,14 +81,21 @@
         </div>
         <div class="input-field-wrapper">
           <div class="input-field">
-            <label for="employment-number" class="mt-0">Employment Number: *</label>
+            <label for="employment-number" class="mt-0"
+              >Employment Number: *</label
+            >
             <span>
               <span class="relative">
                 <span class="employment-number-section">
                   <h3>T</h3>
                 </span>
-                <Field type="text" :rules="isValidEmploymentNumber" name="employment-number" id="employment-number"
-                  v-model="userSignupData.employmentNumber" />
+                <Field
+                  type="text"
+                  :rules="isValidEmploymentNumber"
+                  name="employment-number"
+                  id="employment-number"
+                  v-model="userSignupData.employmentNumber"
+                />
               </span>
               <ErrorMessage name="employment-number" class="error-field" />
             </span>
@@ -68,8 +103,14 @@
           <div class="input-field">
             <label for="department">Department: *</label>
             <span>
-              <Field name="department" :title="userSignupData.department" id="department" as="select"
-                class="!pr-10 text-ellipsis" v-model="userSignupData.department">
+              <Field
+                name="department"
+                :title="userSignupData.department"
+                id="department"
+                as="select"
+                class="!pr-10 text-ellipsis"
+                v-model="userSignupData.department"
+              >
                 <option :value="department" v-for="department in departments">
                   {{ department }}
                 </option>
@@ -82,9 +123,14 @@
       </Form>
 
       <div class="account-feedback-message">
-        <router-link to="/" class="already-have-account underline hover:underline text-black">Already have an
-          Account?</router-link>
-        <h5 class="required-field-note text-center md:text-left px-18 md: px-0 leading-7 mb-0">
+        <router-link
+          to="/"
+          class="already-have-account underline hover:underline text-black"
+          >Already have an Account?</router-link
+        >
+        <h5
+          class="required-field-note text-center md:text-left px-18 md: px-0 leading-7 mb-0"
+        >
           Note: All required fields are marked with an asterisk and must be
           completed.
         </h5>
@@ -145,6 +191,7 @@ let userSignupData = reactive<UserData>({
 
 async function verifyInformation() {
   try {
+    toast.clear();
     toast("Verifying your information...", {
       type: TYPE.INFO,
     });
@@ -176,9 +223,10 @@ async function verifyInformation() {
     router.push("/verify-account");
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   } catch (err: any) {
+    toast.clear();
     toast(
       err?.response?.data?.message ||
-      "There was an error verifying your information. Please try again later",
+        "There was an error verifying your information. Please try again later",
       {
         type: TYPE.ERROR,
       }

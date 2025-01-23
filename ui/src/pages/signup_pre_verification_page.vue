@@ -71,6 +71,7 @@ let tries = ref<number>(0);
 
 async function verifySixCharacterCode() {
   if (userCode.value.length !== 6) {
+    toast.clear();
     toast("Please enter 6 characters", {
       type: TYPE.ERROR,
     });
@@ -131,6 +132,7 @@ async function resendCode() {
       return;
     }
 
+    toast.clear();
     toast("Resending code...", {
       type: TYPE.INFO,
     });
@@ -148,6 +150,7 @@ async function resendCode() {
       );
 
       tries.value++;
+      toast.clear();
       toast("Code was re-sent successfully", {
         type: TYPE.SUCCESS,
       });
