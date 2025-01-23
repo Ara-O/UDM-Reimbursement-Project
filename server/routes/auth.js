@@ -14,6 +14,7 @@ import jwt from "jsonwebtoken";
 import { ZodError } from "zod";
 import sgMail from "@sendgrid/mail";
 import z from "zod";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = Router();
 
@@ -458,4 +459,24 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/role", verifyToken, async (req, res) => {
+  try {
+    logger.info(`User ${req.user.userId} fetched their role`, {
+      api: "/api/role",
+    });
+
+    let faculty = await Faculty.findById(req.user.userId);
+
+    const role = faculty?.role || "FACULTY";
+
+    return res.status(200).send({ role: role });
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/role",
+    });
+    return res.status(500).send({
+      message: "There was an error verifying your role. Please try again later",
+    });
+  }
+});
 export default router;
