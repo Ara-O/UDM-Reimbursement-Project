@@ -216,9 +216,10 @@ async function verifyInformation() {
 
     userStore.updateUserData(userSignupData);
 
-    toast("Successfully verified your information!", {
-      type: TYPE.SUCCESS,
-    });
+    toast.clear();
+    // toast("Successfully verified your information!", {
+    //   type: TYPE.SUCCESS,
+    // });
 
     router.push("/verify-account");
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });

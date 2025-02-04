@@ -371,6 +371,7 @@ async function download() {
           link.href = res.data;
           link.download = fileName;
           link.click();
+          toast.clear();
         })
         .catch((err) => {
           // console.log("error: " + err.response);
@@ -548,6 +549,7 @@ async function createPdf() {
       }
     );
 
+    toast.clear();
     downloadPDF(res.data);
     currentlyCreatingPDF.value = false;
     // .catch((err) => {

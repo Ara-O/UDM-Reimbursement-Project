@@ -6,6 +6,7 @@ import Faculty from "../models/faculty.js";
 
 const router = Router();
 
+// Loops through all submitted tickets and finds the corresponding faculty member it belongs to
 router.get("/retrieve-submitted-requests", verifyToken, async (req, res) => {
   try {
     let results = [];
