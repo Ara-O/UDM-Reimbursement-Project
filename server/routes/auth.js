@@ -2,7 +2,7 @@ import { Router } from "express";
 import logger from "../logger.js";
 import Faculty from "../models/faculty.js";
 import { Auth } from "../models/auth.js";
-import { transporter } from "../app.js";
+// import { transporter } from "../app.js";
 import { getOrgNumber } from "../utils/getDepartmentORGNumber.js";
 import {
   encryptPassword,

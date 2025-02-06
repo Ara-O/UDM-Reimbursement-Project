@@ -6,9 +6,7 @@ dotenv.config();
 
 export default function connectToDB() {
   mongoose
-    .connect(
-      `mongodb+srv://admin:${process.env.MONGO_DATABASE_URL}@cluster0.dvz7pba.mongodb.net/?retryWrites=true&w=majority`
-    )
+    .connect(`${process.env.MONGO_DATABASE_URL}`)
     .then(() => {
       logger.info("Connection to MongoDB successful", {
         api: "server",

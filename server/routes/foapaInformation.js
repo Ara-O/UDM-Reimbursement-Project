@@ -1,7 +1,6 @@
 const router = Router();
 import Faculty from "../models/faculty.js";
 import logger from "../logger.js";
-import AccountNumbers from "../models/accountNumbers.js";
 import z, { ZodError } from "zod";
 import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
@@ -340,37 +339,6 @@ router.get("/retrieve-foapa-registry", verifyToken, async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       message: "An unexpected error occured when retrieving the FOAPA regisery",
-    });
-  }
-});
-
-// Receive ACCT numbers
-router.get("/retrieve-ACCT-values", verifyToken, async (req, res) => {
-  try {
-    const results = await AccountNumbers.find();
-
-    if (results.length === 0) {
-      return res.status(404).send({ message: "No ACCT numbers were found." });
-    }
-
-    const ACCTNumbers = results[0].accountNumbers;
-
-    res.status(200).send(ACCTNumbers);
-  } catch (err) {
-    logger.error(err, {
-      api: "/api/retrieve-ACCT-values",
-    });
-
-    if (err instanceof ZodError) {
-      return res.status(400).send({
-        message:
-          "An error occured when retrieving the Account Numbers...Please try again later. If the issue persists, contact support.",
-      });
-    }
-
-    return res.status(500).send({
-      message:
-        "An unexpected error has occured. Please try again later. If this issue persists, please contact support.",
     });
   }
 });

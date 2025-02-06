@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { transporter } from "../app.js";
+// import { transporter } from "../app.js";
 import sgMail from "@sendgrid/mail";
-import AccountNumbers from "../models/accountNumbers.js";
 import Faculty from "../models/faculty.js";
 import {
   encryptPassword,
@@ -191,29 +190,6 @@ router.post("/changePassword", verifyToken, async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(404).send({ message: "There has been an error" });
-  }
-});
-
-router.get("/retrieve-account-numbers", async (req, res) => {
-  try {
-    let allAccountNumbers = await AccountNumbers.find();
-
-    res.status(200).send(allAccountNumbers[0]);
-  } catch (err) {
-    logger.error(
-      "There was an error retrieving the account (ACCT) numbers list",
-      {
-        api: "/api/retrieve-account-numbers",
-      }
-    );
-
-    logger.error(err, {
-      api: "/api/retrieve-account-numbers",
-    });
-
-    return res.status(500).send({
-      message: "There was an error retrieving the account (ACCT) numbers list",
-    });
   }
 });
 

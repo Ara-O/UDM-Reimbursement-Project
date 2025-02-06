@@ -24,15 +24,15 @@ const port = process.env.PORT || 8080;
 
 const app = express();
 
-export const transporter = nodemailer.createTransport({
-  host: process.env.SEND_GRID_HOST,
-  port: 465,
-  secure: true,
-  auth: {
-    user: "apikey",
-    pass: process.env.SEND_GRID_KEY,
-  },
-});
+// export const transporter = nodemailer.createTransport({
+//   host: process.env.SEND_GRID_HOST,
+//   port: 465,
+//   secure: true,
+//   auth: {
+//     user: "apikey",
+//     pass: process.env.SEND_GRID_KEY,
+//   },
+// });
 
 app.use(helmet());
 app.use(cors());
