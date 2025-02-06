@@ -105,7 +105,6 @@ export type ReimbursementTicket = {
   reimbursementDate: string;
   activities: Expense[];
   foapaDetails: FoapaInput[];
-  knowFoapa: boolean;
 };
 export type TicketAndFaculty = {
   faculty: any;
@@ -129,7 +128,6 @@ export type TicketAndFaculty = {
   reimbursementDate: string;
   activities: Expense[];
   foapaDetails: FoapaInput[];
-  knowFoapa: boolean;
 };
 
 // ----------

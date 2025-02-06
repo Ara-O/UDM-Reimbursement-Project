@@ -162,7 +162,6 @@ let currentReimbursement = ref<ReimbursementTicket>({
   destination: "",
   paymentRetrievalMethod: "Direct Deposit",
   UDMPUVoucher: false,
-  knowFoapa: false,
   guestInformation: [],
   foapaDetails: [],
 });

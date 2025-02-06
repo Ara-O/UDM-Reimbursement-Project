@@ -40,7 +40,16 @@
               href="https://www.irs.gov/tax-professionals/standard-mileage-rates"
               v-if="expense.name === 'Mileage'"
               target="_blank"
-              >(Mileage rates)</a
+              >View Rates</a
+            >
+            <p class="inline" v-if="expense.name === 'Mileage'">
+              &nbsp;/&nbsp;
+            </p>
+            <a
+              href="https://www.travelperk.com/calculators/mileage-reimbursement/us/"
+              v-if="expense.name === 'Mileage'"
+              target="_blank"
+              >Calculate Rates</a
             >
           </h4>
           <input

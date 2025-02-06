@@ -63,12 +63,9 @@ async function retrieveDashboardData() {
 
     // console.log(dashboard_data)
   } catch (err) {
-    toast(
-      "There was an error fetching your dashboard data. Please log-in again",
-      {
-        type: TYPE.ERROR,
-      }
-    );
+    toast("Your session has ended. Please log-in again", {
+      type: TYPE.ERROR,
+    });
     localStorage.setItem("token", "");
     router.push("/");
     console.log(err);

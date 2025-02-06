@@ -45,7 +45,7 @@
             title="Deny Request"
             v-on:click="confirmRequestDenial"
           >
-            <img :src="DenyIcon" alt="Deny request" class="w-4" />
+            <img :src="DenyIcon" alt="Deny request" class="w-3" />
           </span>
         </div>
       </div>

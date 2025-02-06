@@ -134,7 +134,6 @@ const reimbursementRequestSchema = z.object({
     destination: z.string(),
     paymentRetrievalMethod: z.string(),
     UDMPUVoucher: z.boolean(),
-    knowFoapa: z.boolean(),
     guestInformation: z.array(
       z
         .object({

@@ -5,7 +5,11 @@
       <h4 class="font-normal text-sm text-gray-600 hover:underline">Go back</h4>
     </div>
 
-    <section class="mt-20" v-if="foapa_information.foapa_information" style="margin-bottom: 5vh">
+    <section
+      class="mt-20"
+      v-if="foapa_information.foapa_information"
+      style="margin-bottom: 5vh"
+    >
       <h2 class="text-2xl font-semibold">
         {{ formatFoapaDeails(foapa_information.foapa_information) }}
       </h2>
@@ -22,13 +26,17 @@
       <!-- STATISTICS -->
       <h2 class="text-xl font-semibold mt-10 underline">FOAPA Statistics</h2>
       <article class="flex gap-4 flex-wrap">
-        <div class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5">
+        <div
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+        >
           <p class="text-sm font-medium">Total Requests Funded</p>
           <p class="font-semibold text-md">
             {{ foapa_information.claims_used.length }}
           </p>
         </div>
-        <div class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5">
+        <div
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+        >
           <p class="text-sm font-medium">Total Amount Used from FOAPA</p>
           <p class="font-semibold text-md">${{ totalAmountUsed }}</p>
         </div>
@@ -42,68 +50,88 @@
 
       <!-- Search field -->
       <span class="flex items-center gap-3">
-        <input type="text" v-model="search_item" placeholder="Search by name"
-          class="border border-gray-200 px-4 border-solid w-full max-w-96 h-8 rounded-md" />
-        <img :src="SearchIcon" class="invert w-6 opacity-50 cursor-pointer" alt="Search icon" />
+        <InputText
+          id="over_label"
+          v-model="search_item"
+          class="max-w-[800px] !border-gray-200 w-full"
+          style="
+            .p-inputtext {
+              width: 100%;
+              padding-left: 25px;
+              height: 45px;
+              font-size: 14px !important;
+            }
+          "
+          placeholder="Search through your FOAPA"
+        />
       </span>
-      <div class="mt-3 gap-4 hidden sm:flex">
-        <p class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
-          @click="sortParam = 'COST ASC'">
-          Sort by cost (ASC)
-        </p>
-        <p class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
-          @click="sortParam = 'COST DESC'">
-          Sort by cost (DESC)
-        </p>
+      <div class="mt-4 flex gap-3 flex-wrap">
+        <Select
+          v-model="view"
+          :options="views"
+          default-value="Grid View"
+          placeholder="Grid View"
+          class="w-full md:w-40"
+        >
+          <template #dropdownicon>
+            <i class="pi pi-th-large" v-if="view === 'Grid View'" />
+            <i class="pi pi-list" v-if="view === 'List View'" />
+          </template>
+        </Select>
+        <Select
+          v-model="sort"
+          :options="sort_options"
+          placeholder="Sort"
+          class="w-full md:w-40"
+        >
+          <template #dropdownicon>
+            <i class="pi pi-sort-alt" />
+          </template>
+        </Select>
 
-        <p class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
-          @click="sortParam = 'NAME ASC'">
-          Sort by name (ASC)
-        </p>
-        <p class="hover:underline text-center cursor-pointer px-4 text-xs py-3 rounded-full bg-udmercy-blue text-white"
-          @click="sortParam = 'NAME DESC'">
-          Sort by name (DESC)
-        </p>
+        <!-- FILTER -->
+        <div class="mt-3 gap-4 hidden sm:flex"></div>
       </div>
-      <div class="mt-3">
-        <img :src="ListView" alt="List view" @click="view = 'List'" class="invert w-4 cursor-pointer opacity-50" />
-        <img :src="GridView" alt="Grid view" class="invert ml-3 w-3 cursor-pointer opacity-50" @click="view = 'Grid'" />
-        <img :src="TableView" alt="Table View" @click="view = 'Table'" class="w-3 ml-4 cursor-pointer opacity-50" />
-      </div>
+
       <div class="mb-0">
         <p class="mb-0 text-sm leading-7">
           Note: Clicking the name of a reimbursement request below will take you
           to the page where you can edit the request
         </p>
       </div>
-      <div v-if="
-        Object.keys(foapa_information.claims_used).length !== 0 &&
-        view !== 'Table'
-      " class="flex gap-4 mb-16 flex-wrap">
-        <div v-for="claim in foapaHistoryFiltered"
-          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-80 h-32 flex flex-col justify-center overflow-auto mt-5"
-          v-if="view !== 'Table'">
-          <div class="flex justify-between">
-            <h3
-              class="text-[15px] my-0 cursor-pointer whitespace-nowrap max-w-64 overflow-hidden text-ellipsis font-semibold text-gray-900"
-              @click="() => goToReimbursement(claim._id)" :title="claim.reimbursementName + ' - ' + claim.reimbursementStatus
-                ">
-              {{ claim.reimbursementName }} - {{ claim.reimbursementStatus }}
-            </h3>
-            <p class="text-[14px]" v-if="view === 'List'">
-              ${{ parseAmount(claim) }}
-            </p>
-          </div>
 
-          <p class="text-sm leading-7 mt-2 mb-0" v-if="view === 'Grid'">
-            Total cost: ${{ claim.totalCost }}
-          </p>
-          <p class="text-sm leading-7 mt-1 mb-0">
+      <!-- GRID VIEW -->
+      <div
+        class="flex gap-3 mt-3"
+        v-if="
+          Object.keys(foapa_information.claims_used).length !== 0 &&
+          view === 'Grid View'
+        "
+      >
+        <div
+          v-for="claim in foapaHistoryFiltered"
+          class="relative h-36 overflow-auto flex flex-col justify-center gap-2 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
+        >
+          <h3
+            @click="goToReimbursement(claim._id)"
+            class="font-medium text-base cursor-pointer my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
+            :title="claim.reimbursementName + ' - ' + claim.reimbursementStatus"
+          >
+            {{ claim.reimbursementName }} - {{ claim.reimbursementStatus }}
+          </h3>
+          <h5 class="my-0 font-normal">Total cost: ${{ claim.totalCost }}</h5>
+          <h5 class="my-0 font-normal">
             FOAPA usage: ${{ parseAmount(claim) }}
-          </p>
+          </h5>
         </div>
       </div>
-      <div style="margin-bottom: 30px" class="mt-5" v-if="view === 'Table' && foapaHistoryFiltered.length !== 0">
+
+      <!-- TABLE VIEW -->
+      <div
+        style="margin-bottom: 30px"
+        class="mt-5"
+        v-if="view === 'Table View' && foapaHistoryFiltered.length !== 0"
+      >
         <table class="table border-1">
           <thead>
             <tr>
@@ -115,7 +143,10 @@
           </thead>
           <tbody>
             <tr v-for="foapa in foapaHistoryFiltered">
-              <td @click="() => goToReimbursement(foapa._id)" class="cursor-pointer text-sm border-2">
+              <td
+                @click="() => goToReimbursement(foapa._id)"
+                class="cursor-pointer text-sm border-2"
+              >
                 {{ foapa.reimbursementName }}
               </td>
               <td class="text-sm border-2">${{ foapa.totalCost }}</td>
@@ -129,23 +160,24 @@
           </tbody>
         </table>
       </div>
-      <h3 v-if="foapaHistoryFiltered.length === 0" class="text-sm font-normal italic">
+      <h3
+        v-if="foapaHistoryFiltered.length === 0"
+        class="text-sm font-normal italic"
+      >
         This FOAPA hasn't been used yet
       </h3>
     </section>
-    <section class="mt-20" v-else>
+    <!-- <section class="mt-20" v-else>
       <h3 class="text-sm font-medium">Loading...</h3>
-    </section>
+    </section> -->
   </main>
 </template>
 
 <script lang="ts" setup>
-import SearchIcon from "../assets/search-icon.png";
+import Select from "primevue/select";
+import InputText from "primevue/inputtext";
 import axios from "axios";
 import { computed, onMounted, ref } from "vue";
-import ListView from "../assets/list-view.png";
-import GridView from "../assets/grid-view.png";
-import TableView from "../assets/table.png";
 import { useRoute, useRouter } from "vue-router";
 import { formatFoapaDeails } from "../utils/formatFoapaDetails";
 
@@ -153,42 +185,59 @@ const route = useRoute();
 const router = useRouter();
 
 let foapa_information = ref<any>({});
-let view = ref<string>("Grid");
+let view = ref<string>("Grid View");
 let search_item = ref<string>("");
 
-let sortParam = ref<
-  "COST ASC" | "COST DESC" | "NAME ASC" | "NAME DESC" | "NONE"
->("NONE");
+let sort = ref<
+  | "Cost (ASC)"
+  | "Cost (DESC)"
+  | "Name (ASC)"
+  | "Name (DESC)"
+  | "Sort By: Default"
+>("Sort By: Default");
+
+const views = ["Grid View", "Table View"];
+
+const sort_options = [
+  "Cost (ASC)",
+  "Cost (DESC)",
+  "Name (ASC)",
+  "Name (DESC)",
+  "Sort By: Default",
+];
 
 const foapaHistoryFiltered = computed(() => {
   if (Object.keys(foapa_information.value).length == 0) {
     return [];
   }
+
   let foapas = foapa_information.value.claims_used.filter((info) => {
     return info.reimbursementName
       .toLowerCase()
       .includes(search_item.value.toLowerCase());
   });
 
-  if (sortParam.value === "COST ASC") {
+  if (sort.value === "Cost (ASC)") {
     return foapas.sort((a, b) => parseAmount(a) - parseAmount(b));
   }
 
-  if (sortParam.value === "COST DESC") {
+  if (sort.value === "Cost (DESC)") {
     return foapas.sort((a, b) => parseAmount(b) - parseAmount(a));
   }
 
-  if (sortParam.value === "NAME DESC") {
+  if (sort.value === "Name (ASC)") {
     return foapas.sort((a, b) => a.reimbursementName > b.reimbursementName);
   }
 
-  if (sortParam.value === "NAME ASC") {
+  if (sort.value === "Name (DESC)") {
     return foapas.sort((a, b) => a.reimbursementName < b.reimbursementName);
   }
 
-  if (sortParam.value === "NONE") {
+  if (sort.value === "Sort By: Default") {
     return foapas;
   }
+
+  return foapas;
 });
 
 const totalAmountUsed = computed(() => {

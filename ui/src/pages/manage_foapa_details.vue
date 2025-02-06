@@ -187,55 +187,46 @@
 
         <!-- FOAPA DETAILS -->
         <div class="flex items-center gap-4">
-          <input
-            type="text"
+          <InputText
+            id="over_label"
             v-model="search_value"
-            placeholder="Search by FOAPA name"
-            class="border rounded-md box-border px-4 border-gray-200 border-solid w-auto md:w-full h-10"
+            class="max-w-[90%] !border-gray-200 w-full"
+            style="
+              .p-inputtext {
+                width: 100%;
+                padding-left: 25px;
+                height: 45px;
+                font-size: 14px !important;
+              }
+            "
+            placeholder="Search through your FOAPA"
           />
-          <!-- <div class="border border-solid">
-            <h3>View as list</h3>
-          </div> -->
-          <!-- <img :src="SortIcon" alt="Sort icon" class="w-5 cursor-pointer" /> -->
         </div>
-        <div class="flex gap-x-3 flex-wrap">
-          <span
-            class="hover:border-gray-400 w-auto py-0 h-10 text-gray-500 hover:text-gray-600 transition-all duration-150 border mt-5 rounded-full cursor-pointer border-solid flex items-center px-2 border-gray-200"
-            @click="filterValues = 'Date(ASC)'"
-            :class="
-              filterValues === 'Date(ASC)'
-                ? 'border-gray-400 text-gray-600'
-                : ''
-            "
+        <div class="mt-4 flex gap-3 flex-wrap">
+          <Select
+            v-model="view"
+            :options="views"
+            default-value="Grid View"
+            placeholder="Grid View"
+            class="w-full md:w-40"
           >
-            <h4
-              class="my-1 px-3 leading-7 h-auto font-normal text-xs m-auto text-inherit"
-            >
-              Sort by date (ASC)
-            </h4>
-          </span>
-          <span
-            class="hover:border-gray-400 w-auto py-0 h-10 text-gray-500 hover:text-gray-600 transition-all duration-150 border mt-5 rounded-full cursor-pointer border-solid flex items-center px-2 border-gray-200"
-            @click="filterValues = 'Date(DESC)'"
-            :class="
-              filterValues === 'Date(DESC)'
-                ? 'border-gray-400 text-gray-600'
-                : ''
-            "
+            <template #dropdownicon>
+              <i class="pi pi-th-large" v-if="view === 'Grid View'" />
+              <i class="pi pi-list" v-if="view === 'List View'" />
+            </template>
+          </Select>
+          <Select
+            v-model="sort"
+            :options="sort_options"
+            placeholder="Sort"
+            class="w-full md:w-40"
           >
-            <h4
-              class="my-1 px-3 leading-7 h-auto font-normal text-xs m-auto text-inherit"
-            >
-              Sort by date added (DESC)
-            </h4>
-          </span>
+            <template #dropdownicon>
+              <i class="pi pi-sort-alt" />
+            </template>
+          </Select>
         </div>
-        <h3
-          @click="view === 'Grid' ? (view = 'List') : (view = 'Grid')"
-          class="text-sm mb-[-10px] font-normal cursor-pointer hover:underline"
-        >
-          View as {{ view === "Grid" ? "list" : "grid" }}
-        </h3>
+        <div class="flex gap-x-3 flex-wrap"></div>
         <div
           class="flex flex-col mt-6 gap-7 sm:max-h-[28rem] h-[28rem] overflow-auto overflow-y-scroll sm:max-w-none max-w-[300px]"
         >
@@ -243,7 +234,7 @@
           <div
             class="border shadow-sm rounded w-auto box-border px-7 py-6 flex border-gray-200 border-solid h-auto max-w-[500px] justify-between"
             v-for="foapa in filteredFoapaDetails"
-            v-if="view === 'List'"
+            v-if="view === 'List View'"
           >
             <h3
               class="font-semibold text-base my-0 cursor-pointer"
@@ -272,7 +263,7 @@
           <div
             class="border relative shadow-sm rounded w-auto box-border px-7 py-6 border-gray-200 border-solid h-auto max-w-[500px]"
             v-for="foapa in filteredFoapaDetails"
-            v-if="view === 'Grid'"
+            v-if="view === 'Grid View'"
           >
             <h3
               class="font-semibold text-base my-0 cursor-pointer"
@@ -505,25 +496,6 @@
               research, and leadership capabilities.
             </h4>
           </div>
-          <!-- <div class="mt-10">
-            <h4 class="font-semibold underline">Cost Information</h4>
-            <h4 class="font-normal text-sm leading-7">
-              <span class="font-medium leading-7">Initial amount</span> : This
-              is the amount available in the FOAPA at the time of entry. For
-              example, if you have $550 in a FOAPA when adding it to this
-              system, the initial amount recorded should be $550.
-            </h4>
-            <h4 class="font-normal text-sm leading-7">
-              <span class="font-medium leading-7">Available amount</span> : This
-              is the amount available in the FOAPA after the cost of accepted
-              reimbursement claim expenses have been subtracted.
-            </h4>
-            <h4 class="font-normal text-sm leading-7">
-              <span class="font-medium">Current amount</span> : This is the
-              amount available in the FOAPA after the cost of submitted and
-              accepted reimbursement claim expenses have been subtracted.
-            </h4>
-          </div> -->
         </div>
       </div>
     </section>
@@ -537,7 +509,9 @@ import EditIcon from "../assets/blue-pencil.png";
 import DeleteIcon from "../assets/red-delete-icon.png";
 import CancelIcon from "../assets/cross-icon.svg";
 import AutoComplete from "primevue/autocomplete";
+import Select from "primevue/select";
 import { useField, useSetFieldError } from "vee-validate";
+import InputText from "primevue/inputtext";
 
 // import SortIcon from "../assets/.png";
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -569,8 +543,9 @@ const organization_error_msg = ref<string>("");
 const program_error_msg = ref<string>("");
 const account_error_msg = ref<string>("");
 const fund_error_msg = ref<string>("");
+const views = ["Grid View", "List View"];
 
-let view = ref<"List" | "Grid">("Grid");
+let view = ref<"List View" | "Grid View">("Grid View");
 let loaded = ref<boolean>(false);
 const edit_clashes = ref<{ name: String; reimbursement_id: String }[]>([]);
 const delete_clashes = ref<{ name: String; reimbursement_id: String }[]>([]);
@@ -591,8 +566,9 @@ const ACCTs = ref<any[]>([]);
 const ORGs = ref<any[]>([]);
 const PROG = ref<any[]>([]);
 
-type FilterValues = "Date(ASC)" | "Date(DESC)" | "Amount(ASC)" | "";
-let filterValues = ref<FilterValues>("");
+const sort_options = ["Date (ASC)", "Date (DESC)"];
+type SortValues = "Date (ASC)" | "Date (DESC)" | "";
+let sort = ref<SortValues>("");
 
 function formatDate(date) {
   const d = new Date(date);
@@ -620,7 +596,7 @@ const filteredFoapaDetails: any = computed(() => {
     );
   }
 
-  if (filterValues.value === "Date(ASC)") {
+  if (sort.value === "Date (ASC)") {
     return foapaDetails.value.sort((a, b) => {
       if (a.createdAt && b.createdAt) {
         return (
@@ -633,7 +609,7 @@ const filteredFoapaDetails: any = computed(() => {
     });
   }
 
-  if (filterValues.value === "Date(DESC)") {
+  if (sort.value === "Date (DESC)") {
     return foapaDetails.value.sort((a, b) => {
       if (a.createdAt && b.createdAt) {
         return (
