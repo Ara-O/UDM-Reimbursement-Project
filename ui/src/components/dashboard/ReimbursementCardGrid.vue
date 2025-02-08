@@ -44,29 +44,37 @@
         </span>
       </div>
     </span>
-    <span
+    <!-- <span
       @click="showDenialMessage"
       title="View Reason for Denial"
       v-if="props.request.reimbursementStatus == 'Denied'"
       class="bg-white border-udmercy-red border-2 hover:text-lg transition-all border-solid absolute right-5 top-7 h-8 w-12 px-4 cursor-pointer justify-center py-2 flex items-center content-center rounded-full"
     >
       ❓
+    </span> -->
+    <span
+      @click="showHistory"
+      title="View History of Request"
+      v-if="props.request.request_history != null"
+      class="bg-white border-udmercy-red border-2 hover:text-lg transition-all border-solid absolute right-5 top-7 h-8 w-12 px-4 cursor-pointer justify-center py-2 flex items-center content-center rounded-full"
+      >
+      ❓
     </span>
     <Dialog
-      v-model:visible="reason_for_denial_dialog_is_visible"
+      v-model:visible="history_messages_dialog_is_visible"
       modal
-      header="Reason for Denial"
+      header="History of Request"
       :style="{ width: '25rem' }"
     >
       <p class="text-sm font-normal my-2">
         {{
-          reason_for_denial || "No reason for denial was given. Please email..."
+          history_messages || "No reason for denial was given. Please email..."
         }}
       </p>
       <button
         type="button"
         class="bg-udmercy-blue mt-4 text-white border-none rounded-md px-3 py-2 cursor-pointer"
-        @click="reason_for_denial_dialog_is_visible = false"
+        @click="history_messages_dialog_is_visible = false"
       >
         Okay
       </button>
@@ -98,8 +106,8 @@ const emits = defineEmits([
 ]);
 const confirm = useConfirm();
 const toast = useToast();
-const reason_for_denial = ref<string>("");
-const reason_for_denial_dialog_is_visible = ref<boolean>(false);
+const history_messages = ref<History[]>([]);
+const history_messages_dialog_is_visible = ref<boolean>(false);
 
 function goToReimbursementPage() {
   router.push({
@@ -133,21 +141,17 @@ async function duplicateRequest() {
   }
 }
 
-async function showDenialMessage() {
-  try {
-    let res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/fetch-request-admin-message`,
-      {
-        params: {
-          id: props.request._id,
-        },
-      }
-    );
+async function showHistory() {
+  try{
+    let res = props.request.request_history
 
-    reason_for_denial.value = res.data.message;
+    history_messages[0].value = res[0];
+    history_messages[1].value = res[1];
 
-    reason_for_denial_dialog_is_visible.value = true;
-  } catch (err) {
+    console.log(history)
+
+    history_messages_dialog_is_visible.value = true;
+  } catch (err){
     toast.clear();
     toast(
       "An unexpected error occured when fetching this request's message. Please try again later",
@@ -157,4 +161,29 @@ async function showDenialMessage() {
     );
   }
 }
+
+// async function showDenialMessage() {
+//   try {
+//     let res = await axios.get(
+//       `${import.meta.env.VITE_API_URL}/api/fetch-request-admin-message`,
+//       {
+//         params: {
+//           id: props.request._id,
+//         },
+//       }
+//     );
+
+//     reason_for_denial.value = res.data.message;
+
+//     reason_for_denial_dialog_is_visible.value = true;
+//   } catch (err) {
+//     toast.clear();
+//     toast(
+//       "An unexpected error occured when fetching this request's message. Please try again later",
+//       {
+//         type: TYPE.ERROR,
+//       }
+//     );
+//   }
+// }
 </script>

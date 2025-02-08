@@ -41,6 +41,12 @@ export const reimbursementSchema = new Schema({
       cost: Number,
     },
   ],
+  request_history: [
+    {
+      date_of_request: String,
+      request_message: String,
+    }
+  ]
 });
 
 //reimbursements

@@ -131,6 +131,7 @@ let currentReimbursement = ref<ReimbursementTicket>({
   knowFoapa: false,
   guestInformation: [],
   foapaDetails: [],
+  request_history: [],
 });
 
 function moveToNextSection() {

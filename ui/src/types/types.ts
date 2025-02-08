@@ -72,6 +72,11 @@ export type FoapaInput = {
   cost: string;
 };
 
+export type History = {
+  date_of_message: string;
+  request_message: string;
+}
+
 export type FoapaInputWithID = {
   cost: string;
   foapa_id: string;
@@ -106,6 +111,7 @@ export type ReimbursementTicket = {
   activities: Expense[];
   foapaDetails: FoapaInput[];
   knowFoapa: boolean;
+  request_history: History[];
 };
 export type TicketAndFaculty = {
   faculty: any;
@@ -130,6 +136,7 @@ export type TicketAndFaculty = {
   activities: Expense[];
   foapaDetails: FoapaInput[];
   knowFoapa: boolean;
+  request_history: History[];
 };
 
 // ----------
