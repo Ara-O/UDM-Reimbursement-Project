@@ -3,8 +3,7 @@
     class="relative h-44 overflow-auto flex flex-col justify-center gap-2 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
   >
     <h3
-      class="font-medium text-base my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer"
-      @click="goToReimbursementPage"
+      class="font-medium text-base my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
     >
       {{ props.request.reimbursementName }}
     </h3>
@@ -22,18 +21,22 @@
       ></reimbursement-status>
       <div class="flex gap-4">
         <span
-          class="bg-white px-4 h-8 w-12 cursor-pointer py-2 justify-center flex items-center content-center rounded-full"
-          @click="goToReimbursementPage"
-          title="Edit Request"
-        >
-          <img :src="PencilIcon" class="w-4" alt="Pencil Icon" />
-        </span>
-        <span
           class="bg-white px-4 h-8 w-12 justify-center cursor-pointer py-2 flex items-center content-center rounded-full"
           @click="duplicateRequest"
           title="Duplicate Request"
         >
           <img :src="DuplicateIcon" class="w-5" alt="Pencil Icon" />
+        </span>
+        <span
+          class="bg-white px-4 h-8 w-12 cursor-pointer py-2 justify-center flex items-center content-center rounded-full"
+          @click="goToReimbursementPage"
+          title="Edit Request"
+          v-if="
+            props.request.reimbursementStatus != 'Submitted' &&
+            props.request.reimbursementStatus != 'Approved'
+          "
+        >
+          <img :src="PencilIcon" class="w-4" alt="Pencil Icon" />
         </span>
         <span
           @click="deleteRequest"

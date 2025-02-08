@@ -12,7 +12,7 @@ import ReimbursementTicket from "../models/reimbursement.js";
 import fs from "fs";
 import { verifyToken } from "../middleware/auth.js";
 import { request } from "http";
-import { transporter } from "../app.js";
+// import { transporter } from "../app.js";
 import logger from "../logger.js";
 import { generateRandomStringId } from "../utils/generateRandomString.js";
 const upload = multer({ dest: "uploads/" });
@@ -134,7 +134,6 @@ const reimbursementRequestSchema = z.object({
     destination: z.string(),
     paymentRetrievalMethod: z.string(),
     UDMPUVoucher: z.boolean(),
-    knowFoapa: z.boolean(),
     guestInformation: z.array(
       z
         .object({

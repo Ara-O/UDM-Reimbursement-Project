@@ -152,7 +152,6 @@
                 type="text"
                 class="h-20 resize-none w-full box-border px-3 py-3 text-sm border-gray-300 border-solid border rounded-md"
                 as="textarea"
-                :value="knowFoapaText"
               >
               </Field>
               <ErrorMessage name="message" class="text-red-400" />
@@ -183,7 +182,7 @@
       header="Submitting the Request"
       :style="{ width: '25rem' }"
     >
-      <p class="text-sm font-normal my-2">
+      <p class="text-sm font-normal my-2 leading-7">
         Would you like this reimbursement request to be submitted? Only do this
         if you are desiring to officially turn your request in for approval.
       </p>
@@ -196,7 +195,7 @@
       </button>
       <button
         type="button"
-        class="bg-udmercy-blue mt-4 text-white border-none rounded-md px-3 py-2 cursor-pointer"
+        class="bg-udmercy-blue mt-4 ml-4 text-white border-none rounded-md px-3 py-2 cursor-pointer"
         @click="markClaimAsSubmitted"
       >
         Submit
@@ -234,7 +233,6 @@ let userIsEditingReimbursement = ref<boolean>(false);
 let showConfirmationPopup = ref<boolean>(false);
 let showEmailPopup = ref<boolean>(false);
 let showSubmitPopup = ref<boolean>(false);
-let knowFoapaText = "";
 //let foapaDetails;
 
 function returnToDashboard() {
@@ -249,9 +247,6 @@ function moveToPreviousSection() {
 }
 
 function emailPDF() {
-  knowFoapaText = "";
-  if (props.claim.knowFoapa && props.claim.knowFoapa !== undefined)
-    knowFoapaText = "I don't know one or more of my foapas";
   showEmailPopup.value = true;
 }
 

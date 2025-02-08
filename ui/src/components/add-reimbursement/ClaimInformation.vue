@@ -10,6 +10,15 @@
         class="w-7 hidden md:block"
       />
     </span>
+    <p class="text-[15px] font-medium mt-5 max-w-[80%] leading-8">
+      Important: Please review the universities reimbursement policies
+      <a
+        href="https://www.udmercy.edu/faculty-staff/procurement-services/policies.php"
+        target="_blank"
+        >here</a
+      >. Reimbursements/advances must be submitted within 30 calendar days after
+      the expense(s) has occurred or trip completed.
+    </p>
 
     <form @submit.prevent="moveToNextSection">
       <div class="flex gap-x-16 gap-y-3 flex-wrap">
@@ -80,10 +89,14 @@
       <button
         type="submit"
         class="mt-7 bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
-        style="display:flex; justify-content: space-around; align-items:center;"
-        >
-          Next Section
-          <img src="../../assets/next-arrow.png" class="w-3">
+        style="
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+        "
+      >
+        Next Section
+        <img src="../../assets/next-arrow.png" class="w-3" />
       </button>
     </form>
   </section>
