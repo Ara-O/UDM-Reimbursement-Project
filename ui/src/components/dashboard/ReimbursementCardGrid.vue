@@ -69,9 +69,9 @@
       header="History of Request"
       :style="{ width: '25rem' }"
     >
-      <p class="text-sm font-normal my-2">
+      <p v-for="request in props.request.request_history" class="text-sm font-normal my-2">
         {{
-          history_messages || "No reason for denial was given. Please email..."
+          request.date_of_message + " - " + request.request_message
         }}
       </p>
       <button
@@ -148,14 +148,17 @@ async function showHistory() {
   try{
     let res = props.request.request_history
 
-    history_messages[0].value = res[0];
-    history_messages[1].value = res[1];
+    console.log(res[0].request_message)
 
-    console.log(history)
+    history_messages[0] = res[0].date_of_message;
+    history_messages[1] = res[0].request_message;
+
+    console.log(history_messages[0], " - ", history_messages[1])
 
     history_messages_dialog_is_visible.value = true;
   } catch (err){
     toast.clear();
+    console.log(err)
     toast(
       "An unexpected error occured when fetching this request's message. Please try again later",
       {

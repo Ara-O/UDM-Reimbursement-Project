@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { z, ZodError } from "zod";
 import AdditionalReimbursementMessages from "../models/reimbursementMessages.js";
 import ReimbursementTicket from "../models/reimbursement.js";
+import { retrieveDate } from "../utils/retrieveDate.js";
 import sgMail from "@sendgrid/mail";
 
 dotenv.config();
@@ -18,6 +19,7 @@ router.post("/approve-reimbursement", verifyAdminToken, async (req, res) => {
     const faculty = req.body.facultyID;
 
     ticket.reimbursementStatus = "Approved";
+    ticket.request_history.unshift({ date_of_message: `${retrieveDate("MM/DD/YYYY")}`, request_message: `The Request Was Approved` })
 
     // First update the reimbursement request's status
     let resp = await ReimbursementTicket.findByIdAndUpdate(ticket._id, ticket);
@@ -81,6 +83,7 @@ router.post("/deny-reimbursement", verifyAdminToken, async (req, res) => {
     const faculty = req.body.facultyID;
 
     ticket.reimbursementStatus = "Denied";
+    ticket.request_history.unshift({ date_of_message: `${retrieveDate("MM/DD/YYYY")}`, request_message: `The Request Was Denied: ${denial_message}` })
 
     // First update the reimbursement request's status
     let resp = await ReimbursementTicket.findByIdAndUpdate(ticket._id, ticket);

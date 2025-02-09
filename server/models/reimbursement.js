@@ -42,7 +42,7 @@ export const reimbursementSchema = new Schema({
   ],
   request_history: [
     {
-      date_of_request: String,
+      date_of_message: String,
       request_message: String,
     }
   ]

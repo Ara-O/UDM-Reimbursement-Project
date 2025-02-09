@@ -1,5 +1,6 @@
 import { request, Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
+import { retrieveDate } from "../utils/retrieveDate.js";
 import Faculty from "../models/faculty.js";
 import logger from "../logger.js";
 import z, { ZodError } from "zod";
@@ -64,7 +65,7 @@ const reimbursementRequestSchema = z.object({
     request_history: z.array(
       z.object({
         date_of_message: z.string(),
-        message: z.string(),
+        request_message: z.string(),
       }).optional()
     ),
   }),
@@ -83,7 +84,7 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
 
     console.log(requestData.reimbursementTicket.request_history)
 
-    reimbursement.request_history.push({ date_of_message: "02/05/2025", request_message: "The Request Was Saved" })
+    reimbursement.request_history.push({ date_of_message: `${retrieveDate("MM/DD/YYYY")}`, request_message: "The Request Was Saved" })
 
     console.log(requestData.reimbursementTicket.request_history)
 
