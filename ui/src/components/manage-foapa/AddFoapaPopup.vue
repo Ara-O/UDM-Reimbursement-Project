@@ -167,11 +167,15 @@
       </div>
     </div>
     <button
-      class="add-foapa-button w-auto flex gap-3 !px-4 !bg-udmercy-blue"
+      class="add-foapa-button w-auto flex gap-3 !border-udmercy-blue !px-4 !bg-udmercy-blue"
       type="submit"
     >
       <h4 class="font-medium">Add FOAPA</h4>
-      <img src="../../assets/add-icon.png" alt="add-icon" class="add-icon" />
+      <img
+        src="../../assets/add-icon.png"
+        alt="add-icon"
+        class="add-icon !w-3"
+      />
     </button>
   </Form>
 </template>

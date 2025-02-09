@@ -31,6 +31,12 @@
         View All Submitted Requests History
       </p>
       <p class="text-sm underline cursor-pointer">View Feedback</p>
+      <p
+        class="cursor-pointer text-sm underline"
+        @click="user_management_popup_is_visible = true"
+      >
+        User Management
+      </p>
     </div>
     <!-- Pending Requests Section -->
     <section class="mt-10">
@@ -95,10 +101,61 @@
       </div>
     </section>
     <ConfirmDialog></ConfirmDialog>
+
+    <!-- User management dialog -->
+    <Dialog
+      v-model:visible="user_management_popup_is_visible"
+      modal
+      header="User Management"
+    >
+      <p class="text-sm">Search for faculty member</p>
+
+      <InputText
+        placeholder="Enter Faculty Name"
+        class="mt-2 w-96"
+        style="
+          .p-inputtext {
+            padding-left: 20px;
+            height: 45px;
+            font-size: 13px !important;
+          }
+        "
+      />
+
+      <DataTable
+        :value="faculty_list"
+        striped-rows
+        tableStyle="min-width: 50rem"
+        class="mt-5"
+      >
+        <Column field="name" header="Name" sortable></Column>
+        <Column field="email" header="Email" sortable></Column>
+        <Column field="role" header="Role" sortable>
+          <!-- <select name="" id="">
+            <option value="hi">hi</option>
+          </select> -->
+          <template #body="{ data }">
+            <select name="" id="">
+              <option value="" :selected="data.role === 'user'">User</option>
+              <option value="" :selected="data.role === 'faculty'">
+                Faculty
+              </option>
+              <option value="" :selected="data.role === 'admin'">Admin</option>
+            </select>
+          </template>
+        </Column>
+      </DataTable>
+    </Dialog>
   </main>
 </template>
 
 <script setup lang="ts">
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import ColumnGroup from "primevue/columngroup"; // optional
+import Row from "primevue/row";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Select from "primevue/select";
 import Skeleton from "primevue/skeleton";
@@ -135,8 +192,21 @@ const filtered_pending_requests = ref<TicketAndFaculty[]>([]);
 
 const confirm = useConfirm();
 const toast = useToast();
+const user_management_popup_is_visible = ref<boolean>(false);
 populate_submitted_tickets();
 
+const faculty_list = [
+  {
+    name: "Bobby",
+    email: "something",
+    role: "faculty",
+  },
+  {
+    name: "George",
+    email: "something",
+    role: "faculty",
+  },
+];
 // watch(pending_requests, (newValue) => {
 //   filtered_pending_requests.value = newValue
 // }, {
