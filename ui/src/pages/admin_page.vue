@@ -220,6 +220,13 @@ async function populate_submitted_tickets() {
 
   filtered_pending_requests.value = res.data;
 }
+
+async function get_faculty(){
+  let res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/retrieve-all-faculty`)
+
+  
+}
 </script>
 
 <style scoped>

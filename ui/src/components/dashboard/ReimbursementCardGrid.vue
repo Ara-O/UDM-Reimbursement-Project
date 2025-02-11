@@ -148,12 +148,8 @@ async function showHistory() {
   try{
     let res = props.request.request_history
 
-    console.log(res[0].request_message)
-
     history_messages[0] = res[0].date_of_message;
     history_messages[1] = res[0].request_message;
-
-    console.log(history_messages[0], " - ", history_messages[1])
 
     history_messages_dialog_is_visible.value = true;
   } catch (err){

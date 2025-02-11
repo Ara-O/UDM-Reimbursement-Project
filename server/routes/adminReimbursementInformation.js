@@ -154,4 +154,8 @@ router.post("/deny-reimbursement", verifyAdminToken, async (req, res) => {
   }
 });
 
+router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
+  // let facultyInfo 
+})
+
 export default router;
