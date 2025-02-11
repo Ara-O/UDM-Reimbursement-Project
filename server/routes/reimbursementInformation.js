@@ -62,12 +62,16 @@ const reimbursementRequestSchema = z.object({
         })
         .optional()
     ),
-    request_history: z.array(
-      z.object({
-        date_of_message: z.string(),
-        request_message: z.string(),
-      }).optional()
-    ),
+    request_history: z
+      .array(
+        z
+          .object({
+            date_of_message: z.string(),
+            request_message: z.string(),
+          })
+          .optional()
+      )
+      .optional(),
   }),
 });
 
@@ -77,16 +81,19 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
     const userId = req.user.userId;
     const userInfo = await Faculty.findById(userId);
 
-    console.log(req.body)
+    console.log(req.body);
 
     const requestData = reimbursementRequestSchema.parse(req.body);
     const reimbursement = requestData.reimbursementTicket;
 
-    console.log(requestData.reimbursementTicket.request_history)
+    console.log(requestData.reimbursementTicket.request_history);
 
-    reimbursement.request_history.push({ date_of_message: `${retrieveDate("MM/DD/YYYY")}`, request_message: "The Request Was Saved" })
+    reimbursement.request_history.push({
+      date_of_message: `${retrieveDate("MM/DD/YYYY")}`,
+      request_message: "The Request Was Saved",
+    });
 
-    console.log(requestData.reimbursementTicket.request_history)
+    console.log(requestData.reimbursementTicket.request_history);
 
     let reimbursementTicket = new ReimbursementTicket(reimbursement);
 
