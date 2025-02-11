@@ -88,6 +88,8 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
 
     console.log(requestData.reimbursementTicket.request_history);
 
+    reimbursement.request_history = [];
+
     reimbursement.request_history.push({
       date_of_message: `${retrieveDate("MM/DD/YYYY")}`,
       request_message: "The Request Was Saved",
