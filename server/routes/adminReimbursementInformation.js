@@ -17,9 +17,20 @@ router.post("/approve-reimbursement", verifyAdminToken, async (req, res) => {
   try {
     const ticket = req.body.reimbursementTicket;
     const faculty = req.body.facultyID;
+    const approvalMessage = req.body.approvalMessage;
 
     ticket.reimbursementStatus = "Approved";
-    ticket.request_history.unshift({ date_of_message: `${retrieveDate("MM/DD/YYYY")}`, request_message: `The Request Was Approved` })
+
+    let request_message = "The Request Was Approved. ";
+
+    if (approvalMessage.length !== 0) {
+      request_message += "The admin added this feedback: " + approvalMessage;
+    }
+
+    ticket.request_history.unshift({
+      date_of_message: `${retrieveDate("MM/DD/YYYY")}`,
+      request_message: request_message,
+    });
 
     // First update the reimbursement request's status
     let resp = await ReimbursementTicket.findByIdAndUpdate(ticket._id, ticket);
@@ -83,7 +94,10 @@ router.post("/deny-reimbursement", verifyAdminToken, async (req, res) => {
     const faculty = req.body.facultyID;
 
     ticket.reimbursementStatus = "Denied";
-    ticket.request_history.unshift({ date_of_message: `${retrieveDate("MM/DD/YYYY")}`, request_message: `The Request Was Denied: ${denial_message}` })
+    ticket.request_history.unshift({
+      date_of_message: `${retrieveDate("MM/DD/YYYY")}`,
+      request_message: `The Request Was Denied: ${denial_message}`,
+    });
 
     // First update the reimbursement request's status
     let resp = await ReimbursementTicket.findByIdAndUpdate(ticket._id, ticket);
@@ -154,8 +168,71 @@ router.post("/deny-reimbursement", verifyAdminToken, async (req, res) => {
   }
 });
 
+router.post(
+  "/approve-request-with-edits",
+  verifyAdminToken,
+  async (req, res) => {
+    // TODO: Add validation
+    const ticket = req.body.reimbursement_data;
+
+    ticket.reimbursementStatus = "Approved*";
+    ticket.request_history.unshift({
+      date_of_message: `${retrieveDate("MM/DD/YYYY")}`,
+      request_message: `The Request Was Approved with the Following Edits: ${req.body.edit_notes}`,
+    });
+
+    // First update the reimbursement request's status
+    let resp = await ReimbursementTicket.findByIdAndUpdate(ticket._id, ticket);
+
+    if (resp === null) {
+      logger.error(`Reimbursement Ticket ID could not be found`, {
+        api: "/admin/deny-reimbursement",
+      });
+
+      return res.status(400).send({
+        message: "There was an error denying this reimbursement request.",
+      });
+    }
+
+    // let facultyInfo = await Faculty.findById(faculty);
+
+    // if (facultyInfo === null) {
+    //   return res.status(400).send({
+    //     message:
+    //       "This faculty does not exist/their information could not be found. Please verify with the faculty",
+    //   });
+    // }
+
+    // Send an email to the professor telling them they were accepted
+    // TODO: Probably also send it to an admin
+    // await sgMail.send({
+    //   from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+    //   to: facultyInfo.workEmail,
+    //   subject: `Reimbursement Request Approved - ${ticket.reimbursementName}`,
+    //   html: `
+    //   <div style="border: solid 1px #efefef; padding: 20px 0px;">
+    //   <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
+    //   <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
+    //   <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Congratulations! Your reimbursement request - <b>${ticket.reimbursementName}</b> - was approved</h3>
+    //   <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${facultyInfo.firstName} ${facultyInfo.lastName}
+    //         </h5>
+    //   </div>
+    //   </div>
+    //   `,
+    // });
+
+    logger.info(`${ticket._id} was approved with edits`, {
+      api: "/api/approve-reimburseemnt",
+    });
+
+    return res.status(200).send({
+      message: "Reimbursement claim was approved w/ edits sucessfully",
+    });
+  }
+);
+
 router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
-  // let facultyInfo 
-})
+  // let facultyInfo
+});
 
 export default router;

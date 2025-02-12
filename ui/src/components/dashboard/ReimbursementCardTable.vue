@@ -46,7 +46,8 @@
               class="underline cursor-pointer h-[16px]"
               v-if="
                 slotProps.data.reimbursementStatus != 'Submitted' &&
-                slotProps.data.reimbursementStatus != 'Approved'
+                slotProps.data.reimbursementStatus != 'Approved' &&
+                slotProps.data.reimbursementStatus != 'Approved*'
               "
               title="Edit request"
               @click="goToReimbursementPage(slotProps.data._id)"

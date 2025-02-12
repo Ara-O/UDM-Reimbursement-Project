@@ -3,8 +3,7 @@
     class="relative h-48 overflow-auto flex flex-col justify-center gap-2.5 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
   >
     <h3
-      class="font-medium text-base my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer"
-      @click="goToReimbursementPage"
+      class="font-medium text-base my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
     >
       {{ props.request.request.reimbursementName }}
     </h3>
@@ -28,7 +27,8 @@
         </span>
         <span
           class="bg-white px-4 w-12 h-8 cursor-pointer py-2 justify-center flex items-center content-center rounded-full"
-          title="Edit PDF"
+          title="Edit Request"
+          @click="editRequest"
         >
           <img :src="EditIcon" class="w-4" alt="Edit PDF" title="Edit PDF" />
         </span>
@@ -52,6 +52,45 @@
     </span>
   </div>
 
+  <Dialog
+    :dismissable-mask="true"
+    v-model:visible="approvePopupIsVisible"
+    modal
+    :key="props.request.reimbursementName"
+    header="Request Acceptance Confirmation"
+    :style="{ width: '25rem' }"
+  >
+    <h3
+      class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block mb-5"
+    >
+      Are you sure you want to approve this request? If so, if you have any
+      feedback or comments, please add it to the field below:
+    </h3>
+
+    <textarea
+      name="request-denial"
+      placeholder="Message here"
+      class="w-full text-sm px-3 border-gray-300 h-32 leading-7 rounded-md border-solid border py-2 mt-0"
+      v-model="requestApprovalMessage"
+    ></textarea>
+
+    <div class="flex justify-end gap-2 mt-8">
+      <Button
+        type="button"
+        label="Cancel"
+        severity="secondary"
+        @click="approvePopupIsVisible = false"
+      ></Button>
+      <Button
+        type="button"
+        label="Approve Request"
+        class="!bg-udmercy-blue !border-none"
+        @click="approveRequest"
+      ></Button>
+    </div>
+  </Dialog>
+
+  <!-- DENY -->
   <Dialog
     :dismissable-mask="true"
     v-model:visible="denyPopupIsVisible"
@@ -117,41 +156,27 @@ const props = defineProps<{
 const emits = defineEmits(["reload-requests-list"]);
 const denyPopupIsVisible = ref<boolean>(false);
 const requestDenialMessage = ref<string>("");
-
+const approvePopupIsVisible = ref<boolean>(false);
+const requestApprovalMessage = ref<string>("");
 const confirm = useConfirm();
 const toast = useToast();
-
-function goToReimbursementPage() {
-  router.push({
-    path: "/add-reimbursement",
-    query: {
-      reimbursementId: props.request._id,
-    },
-  });
-}
 
 function confirmRequestDenial() {
   denyPopupIsVisible.value = true;
 }
 
-function confirmRequestApproval() {
-  confirm.require({
-    message: "Are you sure you want to approve this reimbursement request?",
-    header: "Confirmation",
-    // icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: "Cancel",
-      severity: "secondary",
-      outlined: true,
+function editRequest() {
+  console.log(props.request.request._id);
+  router.push({
+    path: "/admin/edit-reimbursement",
+    query: {
+      reimbursementId: props.request.request._id,
     },
-    acceptProps: {
-      label: "Yes, I am sure",
-    },
-    accept: () => {
-      approveRequest();
-    },
-    reject: () => {},
   });
+}
+
+function confirmRequestApproval() {
+  approvePopupIsVisible.value = true;
 }
 
 async function denyRequest() {
@@ -177,21 +202,26 @@ async function denyRequest() {
       type: TYPE.SUCCESS,
     });
   } catch (err) {
+    toast("An unexpected error occured. Please try again later", {
+      type: TYPE.ERROR,
+    });
     console.log(err);
   }
 }
 
 async function approveRequest() {
   try {
-    // props.request.request.reimbursementStatus = "Approved";
     await axios.post(
       `${import.meta.env.VITE_API_URL}/admin/approve-reimbursement`,
       {
         reimbursementTicket: props.request.request,
         facultyID: props.request.faculty._id,
+        approvalMessage: requestApprovalMessage.value,
       }
     );
 
+    requestApprovalMessage.value = "";
+    approvePopupIsVisible.value = false;
     emits("reload-requests-list");
 
     toast.clear();
@@ -199,6 +229,9 @@ async function approveRequest() {
       type: TYPE.SUCCESS,
     });
   } catch (err) {
+    toast("An unexpected error occured. Please try again later", {
+      type: TYPE.ERROR,
+    });
     console.log(err);
   }
 }

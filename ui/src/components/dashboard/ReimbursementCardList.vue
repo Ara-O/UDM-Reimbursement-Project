@@ -24,7 +24,8 @@
       <button
         v-if="
           request.reimbursementStatus != 'Submitted' &&
-          request.reimbursementStatus != 'Approved'
+          request.reimbursementStatus != 'Approved' &&
+          request.reimbursementStatus != 'Approved*'
         "
         title="Modify Request"
         class="bg-white cursor-pointer border-none"

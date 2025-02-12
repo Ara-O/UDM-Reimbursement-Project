@@ -33,7 +33,8 @@
           title="Edit Request"
           v-if="
             props.request.reimbursementStatus != 'Submitted' &&
-            props.request.reimbursementStatus != 'Approved'
+            props.request.reimbursementStatus != 'Approved' &&
+            props.request.reimbursementStatus != 'Approved*'
           "
         >
           <img :src="PencilIcon" class="w-4" alt="Pencil Icon" />
@@ -47,21 +48,15 @@
         </span>
       </div>
     </span>
-    <!-- <span
-      @click="showDenialMessage"
-      title="View Reason for Denial"
-      v-if="props.request.reimbursementStatus == 'Denied'"
-      class="bg-white border-udmercy-red border-2 hover:text-lg transition-all border-solid absolute right-5 top-7 h-8 w-12 px-4 cursor-pointer justify-center py-2 flex items-center content-center rounded-full"
-    >
-      ❓
-    </span> -->
+
     <span
       @click="showHistory"
       title="View History of Request"
       v-if="props.request.request_history != null"
-      class="bg-white border-udmercy-red border-2 hover:text-lg transition-all border-solid absolute right-5 top-7 h-8 w-12 px-4 cursor-pointer justify-center py-2 flex items-center content-center rounded-full"
-      >
-      ❓
+      class="bg-white h-8 w-12 hover:text-lg transition-all border-solid absolute right-5 top-5 text-center cursor-pointer justify-center py-2 flex items-center content-center rounded-full"
+    >
+      <!-- <p class="font-medium text-nm text-udmercy-blue">History</p> -->
+      <img :src="TrackIcon" alt="Track Request" class="w-4" />
     </span>
     <Dialog
       v-model:visible="history_messages_dialog_is_visible"
@@ -69,10 +64,11 @@
       header="History of Request"
       :style="{ width: '25rem' }"
     >
-      <p v-for="request in props.request.request_history" class="text-sm font-normal my-2">
-        {{
-          request.date_of_message + " - " + request.request_message
-        }}
+      <p
+        v-for="request in props.request.request_history"
+        class="text-sm font-normal my-2"
+      >
+        {{ request.date_of_message + " - " + request.request_message }}
       </p>
       <button
         type="button"
@@ -95,6 +91,7 @@ import { useRouter } from "vue-router";
 import { ReimbursementTicket } from "../../types/types";
 import { useConfirm } from "primevue/useconfirm";
 import Dialog from "primevue/dialog";
+import TrackIcon from "../../assets/black-history.png";
 import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
 import { ref } from "vue";
@@ -145,16 +142,16 @@ async function duplicateRequest() {
 }
 
 async function showHistory() {
-  try{
-    let res = props.request.request_history
+  try {
+    let res = props.request.request_history;
 
     history_messages[0] = res[0].date_of_message;
     history_messages[1] = res[0].request_message;
 
     history_messages_dialog_is_visible.value = true;
-  } catch (err){
+  } catch (err) {
     toast.clear();
-    console.log(err)
+    console.log(err);
     toast(
       "An unexpected error occured when fetching this request's message. Please try again later",
       {

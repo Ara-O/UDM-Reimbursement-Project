@@ -113,8 +113,8 @@
           class="relative h-36 overflow-auto flex flex-col justify-center gap-2 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
         >
           <h3
-            @click="goToReimbursement(claim._id)"
-            class="font-medium text-base cursor-pointer my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
+            @click="goToReimbursement(claim._id, claim.reimbursementStatus)"
+            class="font-medium text-base cursor-pointer my-0 mt-[-5px] w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
             :title="claim.reimbursementName + ' - ' + claim.reimbursementStatus"
           >
             {{ claim.reimbursementName }} - {{ claim.reimbursementStatus }}
@@ -144,7 +144,9 @@
           <tbody>
             <tr v-for="foapa in foapaHistoryFiltered">
               <td
-                @click="() => goToReimbursement(foapa._id)"
+                @click="
+                  () => goToReimbursement(foapa._id, foapa.reimbursementStatus)
+                "
                 class="cursor-pointer text-sm border-2"
               >
                 {{ foapa.reimbursementName }}
@@ -180,6 +182,7 @@ import axios from "axios";
 import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { formatFoapaDeails } from "../utils/formatFoapaDetails";
+import { TYPE, useToast } from "vue-toastification";
 
 const route = useRoute();
 const router = useRouter();
@@ -275,10 +278,18 @@ function parseAmount(claim) {
 
   return found_claim.cost;
 }
-
-function goToReimbursement(reimbursementId) {
-  router.push({ path: "/add-reimbursement", query: { reimbursementId } });
+const toast = useToast();
+async function goToReimbursement(reimbursementId, status) {
+  if (status === "In Progress" || status === "Denied") {
+    router.push({ path: "/add-reimbursement", query: { reimbursementId } });
+  } else {
+    toast.clear();
+    toast("You can not edit a submitted or approved request", {
+      type: TYPE.ERROR,
+    });
+  }
 }
+
 onMounted(() => {
   if (route.params.id === null) {
     router.push("/dashboard");

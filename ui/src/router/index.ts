@@ -13,6 +13,7 @@ import PreVerificationPage from "../pages/signup_pre_verification_page.vue";
 import FoapaInformationPage from "../pages/specific_foapa_detail_page.vue";
 import ContactUsPage from "../pages/contact_us_page.vue";
 import AdminPage from "../pages/admin_page.vue";
+import AdminEditReimbursement from "../pages/admin_edit_reimbursement_page.vue";
 import axios from "axios";
 
 export default createRouter({
@@ -127,6 +128,38 @@ export default createRouter({
       component: AddReimbursementPage,
       meta: {
         requiresAuth: true,
+      },
+    },
+    {
+      path: "/admin/edit-reimbursement",
+      component: AdminEditReimbursement,
+      meta: {
+        requiresAuth: true,
+      },
+      beforeEnter: async (to, from, next) => {
+        try {
+          // Verify the user's admin status before allowing them to enter (this is called after the main beforeEach)
+          const token = localStorage.getItem("token");
+          let res = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/role`,
+            {
+              params: {
+                token: token,
+              },
+            }
+          );
+
+          const role = res.data.role;
+
+          if (role === "ADMIN") {
+            next();
+          } else {
+            next("/dashboard");
+          }
+        } catch (err) {
+          console.log(err);
+          next("/");
+        }
       },
     },
     {

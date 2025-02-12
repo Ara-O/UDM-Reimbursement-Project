@@ -1,0 +1,261 @@
+<template>
+  <!-- Top section for returning -->
+  <div
+    class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
+    @click="goToDashboard"
+  >
+    <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
+    <h4 class="font-normal text-sm text-gray-600">Return to dashboard</h4>
+  </div>
+  <main class="h-screen block xl:flex mt-40 xl:mt-0 items-center gap-20">
+    <!-- SECTIONS SECTION -->
+    <section class="pl-32 hidden xl:block">
+      <h3 class="text-2xl font-semibold">Section</h3>
+      <article
+        class="shadow h-auto border-black border rounded-md w-[22rem] mt-8"
+      >
+        <div v-for="(section, i) in sections">
+          <div
+            class="h-20 w-100 flex justify-between items-center box-border px-10 hover:bg-[#002d72EE] hover:text-gray-100 cursor-pointer"
+            :class="{
+              'rounded-tl-sm rounded-tr-sm': i == 0,
+              'rounded-bl-sm rounded-br-sm': i == sections.length - 1,
+              'bg-[#002d72EE] text-white': selectedSection == section.section,
+            }"
+            @click="changeSection(section.section)"
+          >
+            <h4 class="font-normal text-sm">{{ section.title }}</h4>
+            <img
+              src="../assets/next-arrow.png"
+              alt="Next arrow"
+              class="hover:contrast-50 w-4 transition-all duration-500"
+              :class="{
+                ' contrast-0': selectedSection != section.section,
+                '': selectedSection == section.section,
+              }"
+            />
+          </div>
+          <hr class="border-solid border-[0.5px] text-gray-200 h-[1] m-0" />
+        </div>
+      </article>
+    </section>
+
+    <!-- INFO SECTION -->
+    <section class="w-auto">
+      <claim-information
+        :claim="currentReimbursement"
+        v-if="selectedSection === 1"
+        @move-to-next-section="moveToNextSection"
+      ></claim-information>
+      <manage-expenses
+        :claim="currentReimbursement"
+        v-if="selectedSection === 2"
+        @move-to-next-section="moveToNextSection"
+        @move-to-previous-section="moveToPreviousSection"
+      ></manage-expenses>
+      <assign-foapa-information
+        :claim="currentReimbursement"
+        v-if="selectedSection === 3"
+        @move-to-next-section="moveToNextSection"
+        @move-to-previous-section="moveToPreviousSection"
+      ></assign-foapa-information>
+      <manage-receipts
+        :claim="currentReimbursement"
+        v-if="selectedSection === 4"
+        @move-to-next-section="moveToNextSection"
+        @move-to-previous-section="moveToPreviousSection"
+      ></manage-receipts>
+      <add-edit-notes
+        v-if="selectedSection === 5"
+        @approve-request-with-edits="approveRequestWithEdits"
+      >
+      </add-edit-notes>
+    </section>
+    <confirmation-popup
+      left-button-text="Discard Changes"
+      right-button-text="Go back"
+      v-if="show_confirm_dialog"
+      :cancel-function="discardChangesAndLeavePage"
+      :continue-function="goBack"
+    >
+      <template #message>
+        You are about to leave this page without saving this reimbursement
+        claim. This will discard your changes. To go back, click 'Go back'. To
+        discard your changes and leave the page, click 'Discard Changes'
+      </template>
+    </confirmation-popup>
+  </main>
+</template>
+
+<script lang="ts" setup>
+import { ref, onMounted, watch } from "vue";
+import axios from "axios";
+import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
+import { ReimbursementTicket } from "../types/types";
+import claimInformation from "../components/add-reimbursement/ClaimInformation.vue";
+import manageExpenses from "../components/add-reimbursement/ManageExpenses.vue";
+import ManageReceipts from "../components/add-reimbursement/ManageReceipts.vue";
+import AssignFoapaInformation from "../components/add-reimbursement/AssignFoapaInformation.vue";
+import parseDate from "../utils/parseDate";
+import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
+import AddEditNotes from "../components/AdminAddEditNotes.vue";
+import { TYPE, useToast } from "vue-toastification";
+
+function goToDashboard() {
+  router.push("/");
+}
+
+const router = useRouter();
+const route = useRoute();
+const toast = useToast();
+
+let show_confirm_dialog = ref<boolean>(false);
+let user_has_unsaved_changes = ref<boolean>(false);
+let claim_is_being_saved = ref<boolean>(false);
+let selectedSection = ref<number>(1);
+
+let sections = ref([
+  {
+    title: "Claim Information",
+    section: 1,
+  },
+  {
+    title: "Expenses",
+    section: 2,
+  },
+  {
+    title: "FOAPA Information",
+    section: 3,
+  },
+  {
+    title: "Receipts",
+    section: 4,
+  },
+  {
+    title: "Add Edit Notes",
+    section: 5,
+  },
+]);
+
+function changeSection(section: number) {
+  selectedSection.value = section;
+}
+
+let currentReimbursement = ref<ReimbursementTicket>({
+  reimbursementName: "",
+  totalCost: 0,
+  reimbursementReason: "",
+  reimbursementStatus: "",
+  reimbursementDate: parseDate(new Date().toISOString()),
+  activities: [],
+  reimbursementReceipts: [],
+  destination: "",
+  paymentRetrievalMethod: "Direct Deposit",
+  UDMPUVoucher: false,
+  guestInformation: [],
+  foapaDetails: [],
+  request_history: [],
+});
+
+function moveToNextSection() {
+  selectedSection.value++;
+  window.scrollTo(0, 0);
+}
+
+function moveToPreviousSection() {
+  selectedSection.value--;
+  window.scrollTo(0, 0);
+}
+
+async function approveRequestWithEdits(edit_notes) {
+  try {
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/admin/approve-request-with-edits`,
+      {
+        edit_notes: edit_notes,
+        reimbursement_data: currentReimbursement.value,
+      }
+    );
+
+    toast.clear();
+    toast("Request approved successfully", {
+      type: TYPE.SUCCESS,
+    });
+
+    router.push("/admin");
+  } catch (err) {
+    toast.clear();
+    toast("There was an error approving this request. Please try again later", {
+      type: TYPE.ERROR,
+    });
+    console.log(err);
+  }
+}
+function startListeningForReimbursementChanges() {
+  watch(currentReimbursement.value, () => {
+    if (claim_is_being_saved.value === false) {
+      user_has_unsaved_changes.value = true;
+    }
+  });
+}
+
+async function userIsUpdatingReimbursement() {
+  let reimbursement = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/retrieve-ticket-information`,
+    {
+      params: {
+        reimbursementId: route.query.reimbursementId,
+      },
+    }
+  );
+
+  currentReimbursement.value = reimbursement.data;
+}
+
+onMounted(async () => {
+  try {
+    if (!route.query.reimbursementId) {
+      router.push("/admin");
+    }
+
+    startListeningForReimbursementChanges();
+
+    let reimbursement = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/retrieve-ticket-information`,
+      {
+        params: {
+          reimbursementId: route.query.reimbursementId,
+        },
+      }
+    );
+
+    currentReimbursement.value = reimbursement.data as ReimbursementTicket;
+
+    console.log(reimbursement);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+function discardChangesAndLeavePage() {
+  user_has_unsaved_changes.value = false;
+  router.push("/dashboard");
+}
+
+function goBack() {
+  show_confirm_dialog.value = false;
+}
+
+onBeforeRouteLeave((to, from, next) => {
+  if (user_has_unsaved_changes.value === true) {
+    show_confirm_dialog.value = true;
+    next(false);
+  } else {
+    next();
+  }
+});
+</script>
+
+<style scoped>
+@import url("../assets/styles/add-reimbursement-page.css");
+</style>
