@@ -453,15 +453,9 @@ const markClaimAsSubmitted = () => {
     },
     accept: async () => {
       try {
-        props.claim.reimbursementStatus = "Submitted";
-        props.claim.request_history.unshift({ date_of_message: "02/05/2025", request_message: `The Request Was Submitted` })
-
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/update-reimbursement`,
-          {
-            reimbursementTicket: props.claim,
-          }
-        );
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/submit-request`, {
+          reimbursementTicket: props.claim,
+        });
 
         toast("Reimbursement claim marked as submitted successfully", {
           type: TYPE.SUCCESS,

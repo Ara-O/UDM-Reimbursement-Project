@@ -6,6 +6,7 @@ import logger from "../logger.js";
 import z, { ZodError } from "zod";
 import ReimbursementTicket from "../models/reimbursement.js";
 import AdditionalReimbursementMessages from "../models/reimbursementMessages.js";
+import DepartmentChairRegistry from "../models/departmentChairRegistry.js";
 const router = Router();
 
 const reimbursementRequestSchema = z.object({
@@ -81,12 +82,10 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
     const userId = req.user.userId;
     const userInfo = await Faculty.findById(userId);
 
-    console.log(req.body);
-
     const requestData = reimbursementRequestSchema.parse(req.body);
     const reimbursement = requestData.reimbursementTicket;
 
-    console.log(requestData.reimbursementTicket.request_history);
+    // console.log(requestData.reimbursementTicket.request_history);
 
     reimbursement.request_history = [];
 
@@ -95,7 +94,7 @@ router.post("/add-reimbursement", verifyToken, async (req, res) => {
       request_message: "The Request Was Saved",
     });
 
-    console.log(requestData.reimbursementTicket.request_history);
+    // console.log(requestData.reimbursementTicket.request_history);
 
     let reimbursementTicket = new ReimbursementTicket(reimbursement);
 
@@ -314,7 +313,6 @@ router.post("/duplicate-request", verifyToken, async (req, res) => {
     faculty.reimbursementTickets.push(duplicatedRequestRes._id);
 
     let fac = await faculty.save();
-    console.log(fac.reimbursementTickets);
 
     logger.log(
       "info",
@@ -427,6 +425,103 @@ router.get("/fetch-request-admin-message", verifyToken, async (req, res) => {
     });
     return res.status(400).send({
       message: "An unexpected error occured when fetching admin messages",
+    });
+  }
+});
+
+//Edit a reimbursement claim: POST /api/submit-reimbursement
+router.post("/submit-request", verifyToken, async (req, res) => {
+  try {
+    // Validate the user's reimbursement data
+    const requestData = reimbursementRequestSchema.parse(req.body);
+    const facultyId = req.user.userId;
+
+    const faculty = await Faculty.findById(facultyId);
+    const reimbursementTicket = requestData.reimbursementTicket;
+
+    reimbursementTicket.reimbursementStatus = "Submitted";
+    reimbursementTicket.request_history.unshift({
+      date_of_message: "02/05/2025",
+      request_message: `The Request Was Submitted`,
+    });
+
+    // Check if the user used Department Spending
+    const foapas_used = reimbursementTicket.foapaDetails;
+    const faculty_foapa = faculty.foapaDetails;
+
+    let dept_foapa_used = false;
+    let dept_foapa = {};
+
+    // Find the original foapa information from the users profile
+    outerloop: for (let i = 0; i < foapas_used.length; i++) {
+      let ticket_foapa = foapas_used[i];
+
+      for (let j = 0; j < faculty_foapa.length; j++) {
+        let faculty_foapa_id = faculty_foapa[j]._id.toHexString();
+        if (ticket_foapa.foapa_id === faculty_foapa_id) {
+          if (faculty_foapa[j].fund === "111000") {
+            dept_foapa_used = true;
+            dept_foapa = faculty_foapa[j];
+            break outerloop;
+          }
+        }
+      }
+    }
+
+    // If department FOAPA was used
+    if (dept_foapa_used) {
+      logger.info(
+        `Faculty has submitted request with their department FOAPA with ORG ${dept_foapa.organization}. Pending department chair matching so it will be sent to Jim/Admin`,
+        {
+          api: "/submit-request",
+        }
+      );
+
+      // const department_chair_registry = await DepartmentChairRegistry.findOne({
+      //   department_code: dept_foapa.organization,
+      // });
+
+      // if (department_chair_registry == null) {
+      //   logger.error(`ORG Code ${dept_foapa.organization} could not be found.`, {
+      //     api: "/submit-request",
+      // });
+
+      // return res.status(500).send({
+      //     message:
+      //       "Faculty with associated ORG number could not be found. Please email this directly to your department chair",
+      // });
+    }
+
+    let resp = await ReimbursementTicket.findByIdAndUpdate(
+      reimbursementTicket._id,
+      reimbursementTicket
+    );
+
+    // If the reimbursement request's id could not be found
+    if (resp === null) {
+      return res.status(400).send({
+        message: "Please save this request before marking it as submited.",
+      });
+    }
+
+    logger.info(
+      `User ${req.user.userId} has successfully submitted reimbursement ${reimbursementTicket._id}`,
+      {
+        api: "/api/update-reimbursement",
+      }
+    );
+
+    return res
+      .status(200)
+      .send({ message: "Reimbursement updated successfully!" });
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/update-reimbursement",
+    });
+
+    return res.status(500).send({
+      message:
+        "An unexpected error occured when updating this reimbursement's claim. Please try again later.",
     });
   }
 });

@@ -27,15 +27,21 @@
 
     <!-- Naviagation Menu -->
     <div class="mt-10 flex gap-6">
-      <p class="text-sm underline cursor-pointer">
+      <!-- <p class="text-sm underline cursor-pointer">
         View All Submitted Requests History
-      </p>
+      </p> -->
       <p class="text-sm underline cursor-pointer">View Feedback</p>
       <p
         class="cursor-pointer text-sm underline"
         @click="user_management_popup_is_visible = true"
       >
         User Management
+      </p>
+      <p
+        class="cursor-pointer text-sm underline"
+        @click="fetch_department_chairs"
+      >
+        Assign Department Chairs
       </p>
     </div>
     <!-- Pending Requests Section -->
@@ -123,7 +129,7 @@
       />
 
       <DataTable
-        :value="faculty_list"
+        :value="dept_chair_codes"
         striped-rows
         tableStyle="min-width: 50rem"
         class="mt-5"
@@ -142,6 +148,38 @@
               </option>
               <option value="" :selected="data.role === 'admin'">Admin</option>
             </select>
+          </template>
+        </Column>
+      </DataTable>
+    </Dialog>
+
+    <!-- Department chair dialog -->
+    <Dialog
+      v-model:visible="department_chair_popup_is_visible"
+      modal
+      header="Assign Department Chairs"
+    >
+      <p class="text-sm">Assign ORG code to department chairs</p>
+
+      <DataTable
+        :value="dept_chair_codes"
+        striped-rows
+        tableStyle="min-width: 50rem"
+        class="mt-5"
+      >
+        <Column field="department_code" header="ORG Code" sortable></Column>
+        <Column
+          field="chair_email"
+          header="Associated Department Chair Email"
+          sortable
+        >
+          <template #body="{ data }">
+            <input type="text" v-model="data.chair_email" />
+          </template>
+        </Column>
+        <Column header="Actions">
+          <template #body="{ data }">
+            <button @click="() => update_department_code(data)">Update</button>
           </template>
         </Column>
       </DataTable>
@@ -193,20 +231,12 @@ const filtered_pending_requests = ref<TicketAndFaculty[]>([]);
 const confirm = useConfirm();
 const toast = useToast();
 const user_management_popup_is_visible = ref<boolean>(false);
+const department_chair_popup_is_visible = ref<boolean>(false);
+
 populate_submitted_tickets();
 
-const faculty_list = [
-  {
-    name: "Bobby",
-    email: "something",
-    role: "faculty",
-  },
-  {
-    name: "George",
-    email: "something",
-    role: "faculty",
-  },
-];
+const dept_chair_codes = ref([]);
+
 // watch(pending_requests, (newValue) => {
 //   filtered_pending_requests.value = newValue
 // }, {
@@ -221,14 +251,43 @@ async function populate_submitted_tickets() {
   filtered_pending_requests.value = res.data;
 }
 
-async function get_faculty(){
+async function get_faculty() {
   let res = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/retrieve-all-faculty`)
+    `${import.meta.env.VITE_API_URL}/api/retrieve-all-faculty`
+  );
+}
 
-  
+async function fetch_department_chairs() {
+  try {
+    let res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/admin/fetch_department_code_mappings`
+    );
+
+    console.log(res.data);
+
+    dept_chair_codes.value = res.data.registry;
+
+    department_chair_popup_is_visible.value = true;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function update_department_code(data) {
+  try {
+    console.log(data);
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/admin/update_department_code`,
+      data
+    );
+  } catch (err) {
+    console.log(err);
+  }
 }
 </script>
 
-<style scoped>
-/* Tailwind CSS styles are applied directly via classes. */
+<style>
+.p-datatable-tbody > tr > td {
+  text-align: center !important;
+}
 </style>

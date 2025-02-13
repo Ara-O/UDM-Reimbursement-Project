@@ -102,7 +102,7 @@ import AddEditNotes from "../components/AdminAddEditNotes.vue";
 import { TYPE, useToast } from "vue-toastification";
 
 function goToDashboard() {
-  router.push("/");
+  router.push("/admin");
 }
 
 const router = useRouter();

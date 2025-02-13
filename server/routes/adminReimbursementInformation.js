@@ -8,6 +8,7 @@ import AdditionalReimbursementMessages from "../models/reimbursementMessages.js"
 import ReimbursementTicket from "../models/reimbursement.js";
 import { retrieveDate } from "../utils/retrieveDate.js";
 import sgMail from "@sendgrid/mail";
+import DepartmentChairRegistry from "../models/departmentChairRegistry.js";
 
 dotenv.config();
 
@@ -235,4 +236,37 @@ router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
   // let facultyInfo
 });
 
+router.post("/update_department_code", verifyAdminToken, async (req, res) => {
+  try {
+    console.log(req.body);
+    const registry = await DepartmentChairRegistry.findOneAndUpdate(
+      {
+        department_code: req.body.department_code,
+      },
+      { chair_email: req.body.chair_email }
+    );
+
+    console.log(registry);
+    res.status(200).send({ message: "Department code updated successfully" });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.get(
+  "/fetch_department_code_mappings",
+  verifyAdminToken,
+  async (req, res) => {
+    try {
+      const registry = await DepartmentChairRegistry.find();
+
+      res.status(200).send({ registry: registry });
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(500)
+        .send({ message: "An unexpected error has occured" });
+    }
+  }
+);
 export default router;
