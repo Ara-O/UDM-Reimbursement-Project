@@ -66,7 +66,7 @@
     >
       <p
         v-for="request in props.request.request_history"
-        class="text-sm font-normal my-2"
+        class="text-sm font-normal my-2 leading-7"
       >
         {{ request.date_of_message + " - " + request.request_message }}
       </p>

@@ -171,6 +171,7 @@ function editRequest() {
     path: "/admin/edit-reimbursement",
     query: {
       reimbursementId: props.request.request._id,
+      facultyId: props.request.faculty._id,
     },
   });
 }

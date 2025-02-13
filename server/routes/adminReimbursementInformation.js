@@ -175,6 +175,9 @@ router.post(
   async (req, res) => {
     // TODO: Add validation
     const ticket = req.body.reimbursement_data;
+    const faculty_id = req.body.faculty_id;
+
+    const faculty = await Faculty.findById(faculty_id);
 
     ticket.reimbursementStatus = "Approved*";
     ticket.request_history.unshift({
@@ -195,32 +198,31 @@ router.post(
       });
     }
 
-    // let facultyInfo = await Faculty.findById(faculty);
+    let facultyInfo = await Faculty.findById(faculty);
 
-    // if (facultyInfo === null) {
-    //   return res.status(400).send({
-    //     message:
-    //       "This faculty does not exist/their information could not be found. Please verify with the faculty",
-    //   });
-    // }
+    if (facultyInfo === null) {
+      return res.status(400).send({
+        message:
+          "This faculty does not exist/their information could not be found. Please verify with the faculty",
+      });
+    }
 
-    // Send an email to the professor telling them they were accepted
-    // TODO: Probably also send it to an admin
-    // await sgMail.send({
-    //   from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
-    //   to: facultyInfo.workEmail,
-    //   subject: `Reimbursement Request Approved - ${ticket.reimbursementName}`,
-    //   html: `
-    //   <div style="border: solid 1px #efefef; padding: 20px 0px;">
-    //   <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
-    //   <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
-    //   <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Congratulations! Your reimbursement request - <b>${ticket.reimbursementName}</b> - was approved</h3>
-    //   <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${facultyInfo.firstName} ${facultyInfo.lastName}
-    //         </h5>
-    //   </div>
-    //   </div>
-    //   `,
-    // });
+    await sgMail.send({
+      from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+      to: faculty.workEmail,
+      subject: `Reimbursement Request Approved With Edits - ${ticket.reimbursementName}`,
+      html: `
+      <div style="border: solid 1px #efefef; padding: 20px 0px;">
+      <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
+      <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
+      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Congratulations! Your reimbursement request - <b>${ticket.reimbursementName}</b> - was approved with the following edits:</h3>
+      <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px"><b>${req.body.edit_notes}</b></h3>
+      <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${facultyInfo.firstName} ${facultyInfo.lastName}
+            </h5>
+      </div>
+      </div>
+      `,
+    });
 
     logger.info(`${ticket._id} was approved with edits`, {
       api: "/api/approve-reimburseemnt",

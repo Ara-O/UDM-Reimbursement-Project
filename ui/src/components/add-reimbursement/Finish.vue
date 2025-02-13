@@ -66,7 +66,7 @@
           @click="markClaimAsSubmitted"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
-          Mark Request as Submitted
+          Submit Request
         </button>
       </div>
       <div class="flex gap-5 items-center">
@@ -408,6 +408,8 @@ async function checkForUDMPU(): Promise<boolean> {
     }
   }
 
+  toast.clear();
+
   if (props.claim.UDMPUVoucher === true && user_has_added_UDMPU === false) {
     toast(
       "Error: You have selected that you will be using a UDMPU Voucher but you have not used your UDMPU FOAPA. Please, either unselect this option, or add the default UDMPU FOAPA",
@@ -421,21 +423,37 @@ async function checkForUDMPU(): Promise<boolean> {
 
   if (props.claim.UDMPUVoucher === false && user_has_added_UDMPU === true) {
     toast(
-      "INFO: You have used your UDMPU FOAPA, but did not specify that you will be using it in the Claim Information section. This option has been automatically selected for you",
+      "Error: You have used your UDMPU FOAPA, but did not specify that you will be using it in the Claim Information section. Please select the UDMPU option in the Claim Information section",
       {
-        type: TYPE.INFO,
+        type: TYPE.ERROR,
       }
     );
 
-    props.claim.UDMPUVoucher = true;
+    return false;
   }
 
   return true;
 }
 
 const confirmSubmission = useConfirm();
-const markClaimAsSubmitted = () => {
+
+const markClaimAsSubmitted = async () => {
+  if (getAllActivitiesAmount() === 0) {
+    toast.clear();
+    toast("You must have at least 1 expense in order to submit this request", {
+      type: TYPE.ERROR,
+    });
+    return;
+  }
+
+  let user_used_udmpu_after_selecting_it = await checkForUDMPU();
+
+  if (user_used_udmpu_after_selecting_it === false) {
+    return;
+  }
+
   createPdf();
+
   confirmSubmission.require({
     message: `Please verify that the generated PDF reflects the desired information before confirming the submission.`,
     // message: `Marking this request as submitted does not submit the request itself. The submission process

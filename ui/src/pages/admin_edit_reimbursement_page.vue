@@ -169,11 +169,12 @@ function moveToPreviousSection() {
 
 async function approveRequestWithEdits(edit_notes) {
   try {
-    let res = await axios.post(
+    await axios.post(
       `${import.meta.env.VITE_API_URL}/admin/approve-request-with-edits`,
       {
         edit_notes: edit_notes,
         reimbursement_data: currentReimbursement.value,
+        faculty_id: route.query.facultyId,
       }
     );
 
@@ -214,7 +215,7 @@ async function userIsUpdatingReimbursement() {
 
 onMounted(async () => {
   try {
-    if (!route.query.reimbursementId) {
+    if (!route.query.reimbursementId || !route.query.facultyId) {
       router.push("/admin");
     }
 
@@ -230,8 +231,6 @@ onMounted(async () => {
     );
 
     currentReimbursement.value = reimbursement.data as ReimbursementTicket;
-
-    console.log(reimbursement);
   } catch (err) {
     console.log(err);
   }

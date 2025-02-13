@@ -12,20 +12,20 @@
     </span>
 
     <div>
-      <p class="max-w-[75%] leading-8">
+      <p class="max-w-[75%] text-sm leading-8">
         Add notes about what areas you edited in order to approve this request.
         This will be shown to the faculty member.
       </p>
       <textarea
         placeholder="Add Notes Here"
         v-model="edit_notes"
-        class="px-4 py-3 rounded-md border-gray-300 border-solid border-2 w-3/4 h-36"
+        class="px-4 py-3 rounded-md border-gray-300 shadow-sm text-sm max-w-[1000px] h-52 border-solid border w-3/4"
       ></textarea>
     </div>
     <Button
       type="button"
       label="Approve Request with Edits"
-      class="!bg-udmercy-blue mt-4 !border-none"
+      class="!bg-udmercy-blue !px-4 !py-3 max-h-[500px] !rounded-full mt-6 !border-none"
       @click="acceptRequestWithEdits"
     ></Button>
   </section>
