@@ -55,24 +55,34 @@
       v-if="props.request.request_history != null"
       class="bg-white h-8 w-12 hover:text-lg transition-all border-solid absolute right-5 top-5 text-center cursor-pointer justify-center py-2 flex items-center content-center rounded-full"
     >
-      <!-- <p class="font-medium text-nm text-udmercy-blue">History</p> -->
       <img :src="TrackIcon" alt="Track Request" class="w-4" />
     </span>
+
     <Dialog
       v-model:visible="history_messages_dialog_is_visible"
       modal
       header="History of Request"
-      :style="{ width: '25rem' }"
+      :style="{ width: '40rem', marginLeft: '10px', marginRight: '10px' }"
     >
-      <p
-        v-for="request in props.request.request_history"
-        class="text-sm font-normal my-2 leading-7"
+      <Timeline
+        :value="history_messages"
+        class="my-5"
+        :pt="{
+          eventContent: 'text-sm leading-7 mt-[-5px] mb-10',
+        }"
       >
-        {{ request.date_of_message + " - " + request.request_message }}
-      </p>
+        <template #opposite="slotProps">
+          <small class="text-surface-500 dark:text-surface-400">{{
+            slotProps.item.date_of_message
+          }}</small>
+        </template>
+        <template #content="slotProps">
+          {{ slotProps.item.request_message }}
+        </template>
+      </Timeline>
       <button
         type="button"
-        class="bg-udmercy-blue mt-4 text-white border-none rounded-md px-3 py-2 cursor-pointer"
+        class="bg-udmercy-blue float-right mt-4 text-white border-none rounded-md px-3 py-2 cursor-pointer"
         @click="history_messages_dialog_is_visible = false"
       >
         Okay
@@ -87,6 +97,7 @@ import DuplicateIcon from "../../assets/duplicate-blue.png";
 import DeleteIcon from "../../assets/trash-icon-white.png";
 import parseDate from "../../utils/parseDateFormatted";
 import ReimbursementStatus from "./ReimbursementStatus.vue";
+import Timeline from "primevue/timeline";
 import { useRouter } from "vue-router";
 import { ReimbursementTicket } from "../../types/types";
 import { useConfirm } from "primevue/useconfirm";
@@ -96,14 +107,49 @@ import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
 import { ref } from "vue";
 
+type History = {
+  _id?: string;
+  date_of_message: string;
+  request_message: string;
+};
+
+const events = ref([
+  {
+    status: "Ordered",
+    date: "15/10/2020 10:30",
+    icon: "pi pi-shopping-cart",
+    color: "#9C27B0",
+  },
+  {
+    status: "Processing",
+    date: "15/10/2020 14:00",
+    icon: "pi pi-cog",
+    color: "#673AB7",
+  },
+  {
+    status: "Shipped",
+    date: "15/10/2020 16:15",
+    icon: "pi pi-shopping-cart",
+    color: "#FF9800",
+  },
+  {
+    status: "Delivered",
+    date: "16/10/2020 10:00",
+    icon: "pi pi-check",
+    color: "#607D8B",
+  },
+]);
+
 const router = useRouter();
 const props = defineProps<{
   request: ReimbursementTicket;
 }>();
+
 const emits = defineEmits([
   "user-wants-to-delete-request",
   "user-duplicated-a-request",
 ]);
+
 const confirm = useConfirm();
 const toast = useToast();
 const history_messages = ref<History[]>([]);
@@ -143,10 +189,7 @@ async function duplicateRequest() {
 
 async function showHistory() {
   try {
-    let res = props.request.request_history;
-
-    history_messages[0] = res[0].date_of_message;
-    history_messages[1] = res[0].request_message;
+    history_messages.value = props.request.request_history;
 
     history_messages_dialog_is_visible.value = true;
   } catch (err) {
@@ -160,29 +203,16 @@ async function showHistory() {
     );
   }
 }
-
-// async function showDenialMessage() {
-//   try {
-//     let res = await axios.get(
-//       `${import.meta.env.VITE_API_URL}/api/fetch-request-admin-message`,
-//       {
-//         params: {
-//           id: props.request._id,
-//         },
-//       }
-//     );
-
-//     reason_for_denial.value = res.data.message;
-
-//     reason_for_denial_dialog_is_visible.value = true;
-//   } catch (err) {
-//     toast.clear();
-//     toast(
-//       "An unexpected error occured when fetching this request's message. Please try again later",
-//       {
-//         type: TYPE.ERROR,
-//       }
-//     );
-//   }
-// }
 </script>
+
+<style>
+.p-timeline-event-opposite {
+  text-align: start !important;
+  width: 125px !important;
+  flex: none !important;
+}
+
+.p-timeline-event-marker::before {
+  background: var(--udmercy-blue) !important;
+}
+</style>

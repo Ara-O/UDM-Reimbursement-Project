@@ -271,7 +271,19 @@ router.post("/duplicate-request", verifyToken, async (req, res) => {
         "An error occured when fetching this request. Please reload and try again"
       );
     }
+    const today = new Date();
+    const formattedDate = `${String(today.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
 
+    request.request_history = [
+      {
+        date_of_message: formattedDate,
+        request_message:
+          "This request was created as a duplicate of another request",
+      },
+    ];
     const newRequest = Object.assign({}, request.toObject());
 
     // Update the request's name and make it new (this generates new _ids)
@@ -440,8 +452,15 @@ router.post("/submit-request", verifyToken, async (req, res) => {
     const reimbursementTicket = requestData.reimbursementTicket;
 
     reimbursementTicket.reimbursementStatus = "Submitted";
+
+    const today = new Date();
+    const formattedDate = `${String(today.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
+
     reimbursementTicket.request_history.unshift({
-      date_of_message: "02/05/2025",
+      date_of_message: formattedDate,
       request_message: `The Request Was Submitted`,
     });
 
