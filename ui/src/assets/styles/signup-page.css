@@ -141,7 +141,7 @@ input {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-20px, -40px);
+  transform: translate(-8px, -40px);
   font-weight: 400;
   font-size: 13px;
 }
@@ -159,7 +159,7 @@ input {
   font-size: 13px;
   display: flex;
   align-items: center;
-  padding-right: 20px;
+  padding-right: 0px;
   position: relative;
   background: #ffffff;
   border: 1px solid #f7f7f7;
@@ -170,7 +170,7 @@ input {
 .work-email-input-field input {
   border: none;
   font-size: 13px;
-  width: 80px;
+  width: 95px;
   padding-left: 20px;
 }
 
