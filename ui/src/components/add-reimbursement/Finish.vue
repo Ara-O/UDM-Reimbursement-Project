@@ -62,12 +62,12 @@
           Email Reimbursement Request
         </button>
 
-        <button
+        <!-- <button
           @click="markClaimAsSubmitted"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
           Submit Request
-        </button>
+        </button> -->
       </div>
       <div class="flex gap-5 items-center">
         <button
