@@ -33,8 +33,8 @@
       <p class="text-sm underline cursor-pointer">View Feedback</p>
       <p
         class="cursor-pointer text-sm underline"
-        @click="user_management_popup_is_visible = true"
-      >
+        @click="get_faculty()"
+        >
         User Management
       </p>
     </div>
@@ -135,16 +135,21 @@
             <option value="hi">hi</option>
           </select> -->
           <template #body="{ data }">
-            <select name="" id="">
-              <option value="" :selected="data.role === 'user'">User</option>
-              <option value="" :selected="data.role === 'faculty'">
+            <select name="" id="" @change="((e)=>{
+                data.role = e.target.value
+                //@ts-ignore
+                changed_role.push(data)
+              })">
+              <option value="USER" :selected="data.role === 'USER'">User</option>
+              <option value="FACULTY" :selected="data.role === 'FACULTY'">
                 Faculty
               </option>
-              <option value="" :selected="data.role === 'admin'">Admin</option>
+              <option value="ADMIN" :selected="data.role === 'ADMIN'">Admin</option>
             </select>
           </template>
         </Column>
       </DataTable>
+      <button @click="save_roles()">Confirm</button>
     </Dialog>
   </main>
 </template>
@@ -195,18 +200,21 @@ const toast = useToast();
 const user_management_popup_is_visible = ref<boolean>(false);
 populate_submitted_tickets();
 
-const faculty_list = [
+let faculty_list = [
   {
     name: "Bobby",
     email: "something",
     role: "faculty",
+    id: 12345
   },
   {
     name: "George",
     email: "something",
     role: "faculty",
+    id: 14235
   },
 ];
+let changed_role = []
 // watch(pending_requests, (newValue) => {
 //   filtered_pending_requests.value = newValue
 // }, {
@@ -222,11 +230,32 @@ async function populate_submitted_tickets() {
 }
 
 async function get_faculty(){
-  let res = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/retrieve-all-faculty`)
+  let faculties = await axios.get(
+    `${import.meta.env.VITE_API_URL}/admin/retrieve-all-faculty`)
 
-  
+  user_management_popup_is_visible.value = true
+
+  let i = 0
+  for (let faculty of faculties.data.faculties){
+    faculty_list[i] = { name: `${faculty.firstName} ${faculty.lastName}`, email: faculty.workEmail, role: faculty.role, id:faculty._id }
+
+    i++
+  }
+  console.log(faculty_list)
+
 }
+
+async function save_roles(){
+  await axios.post(`${import.meta.env.VITE_API_URL}/admin/save-roles`, {
+    faculties: changed_role,
+  });
+  console.log(changed_role)
+}
+
+// function roleChanged(faculty){
+//   //@ts-ignore
+//   changed_role.push(faculty) //pushes the faculty information of what was just changed
+// }
 </script>
 
 <style scoped>

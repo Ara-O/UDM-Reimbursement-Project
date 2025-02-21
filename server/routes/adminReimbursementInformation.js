@@ -155,7 +155,51 @@ router.post("/deny-reimbursement", verifyAdminToken, async (req, res) => {
 });
 
 router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
-  // let facultyInfo 
+  let faculties = await Faculty.find()
+
+  console.log("This is this", faculties)
+
+  if (faculties === null) {
+    logger.error(`No faculty could be found.`, {
+      api: "/admin/retrieve-all-faculty",
+    });
+
+    return res.status(400).send({
+      message: "There was an error retrieving the faculty information.",
+    });
+  }
+
+  return res.status(200).send({ faculties: faculties });
+
+})
+
+router.post("/save-roles", verifyAdminToken, async (req, res) => {
+  try {
+    let faculties = req.body.faculties
+
+    for (let faculty of faculties) {
+      let updated = await Faculty.findByIdAndUpdate(faculty.id, faculty.role)
+
+      console.log("updated", updated)
+    }
+
+    // let facultyInfo = await Faculty.findByIdAndUpdate(
+    //   req.user.id,
+    //   req.body.role
+    // );
+
+    // if (facultyInfo === null) {
+    //   res.status(404).send({
+    //     message: "Unable to update role of faculty.",
+    //   });
+    // } else {
+    //   console.log("updated table");
+    //   res.status(200).send({ message: "Role updated successfully" });
+    // }
+  } catch (error) {
+    console.error(error);
+    res.status(400).send({ message: error.message });
+  }
 })
 
 export default router;
