@@ -89,7 +89,7 @@
         class="absolute bg-black bg-opacity-50 h-screen top-0 left-0 w-screen items-center flex justify-center"
       >
         <div
-          class="bg-white shadow-md border-none h-min max-h-[85vh] px-6 overflow-auto w-[45%] max-w-xl py-3 rounded-md flex flex-col gap-3"
+          class="bg-white shadow-md border-none h-min max-h-[85vh] px-6 overflow-auto md:w-[45%] max-w-xl py-3 rounded-md flex flex-col gap-3"
         >
           <div class="flex justify-between items-center my-3">
             <h3 class="font-semibold text-md my-0">Receipt Preview</h3>

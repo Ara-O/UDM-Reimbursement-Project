@@ -96,7 +96,6 @@ import claimInformation from "../components/add-reimbursement/ClaimInformation.v
 import manageExpenses from "../components/add-reimbursement/ManageExpenses.vue";
 import ManageReceipts from "../components/add-reimbursement/ManageReceipts.vue";
 import AssignFoapaInformation from "../components/add-reimbursement/AssignFoapaInformation.vue";
-import parseDate from "../utils/parseDate";
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import AddEditNotes from "../components/AdminAddEditNotes.vue";
 import { TYPE, useToast } from "vue-toastification";
@@ -146,7 +145,7 @@ let currentReimbursement = ref<ReimbursementTicket>({
   totalCost: 0,
   reimbursementReason: "",
   reimbursementStatus: "",
-  reimbursementDate: parseDate(new Date().toISOString()),
+  reimbursementDate: new Date().toISOString(),
   activities: [],
   reimbursementReceipts: [],
   destination: "",

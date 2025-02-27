@@ -75,7 +75,7 @@ export type FoapaInput = {
 export type History = {
   date_of_message: string;
   request_message: string;
-}
+};
 
 export type FoapaInputWithID = {
   cost: string;

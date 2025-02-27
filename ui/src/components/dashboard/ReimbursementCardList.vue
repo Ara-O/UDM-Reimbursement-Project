@@ -48,13 +48,13 @@
 import PencilIcon from "../../assets/blue-pencil.png";
 import DeleteIcon from "../../assets/trash-icon.png";
 import DuplicateIcon from "../../assets/duplicate-blue.png";
-import parseDate from "../../utils/parseDateFormatted";
 import ReimbursementStatus from "./ReimbursementStatus.vue";
 import { useRouter } from "vue-router";
 import { ReimbursementTicket } from "../../types/types";
 import { useConfirm } from "primevue/useconfirm";
 import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
+import parseDate from "../../utils/parseDate";
 
 const router = useRouter();
 const props = defineProps<{

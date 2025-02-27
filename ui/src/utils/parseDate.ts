@@ -1,30 +1,11 @@
-export default function parseDate(dateString: string) {
-  if (!dateString) {
+// Expects an ISO string (UTC) and converts it to the local time
+// Used because reimbursement time is stored as UTC and then visually
+// displayed in the user's local time
+export default function parseDate(date: string) {
+  if (!date) {
     return "";
   }
-  return dateString.slice(0, 10);
+
+  const local_date = new Date(date); // Convert ISO string to Date object
+  return local_date.toLocaleDateString("en-US");
 }
-
-// export default function parseDate(date: string) {
-//   // If the date is not formatted as an ISO String, it can lead
-//   // to bugs
-//   let format
-//   if (!date.includes("T00:00:00")) {
-//     date += "T00:00:00";
-//   }
-
-//   switch (format) {
-//     case "MM/DD/YYYY":
-//       // Create a Date object from the ISO string
-//       const dateObj = new Date(date);
-
-//       // Format to MM/DD/YYYY
-//       const formattedDate = dateObj.toLocaleDateString("en-US", {
-//         year: "numeric",
-//         month: "2-digit",
-//         day: "2-digit",
-//       });
-
-//       return formattedDate;
-//   }
-// }

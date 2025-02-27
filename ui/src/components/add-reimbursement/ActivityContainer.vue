@@ -19,7 +19,9 @@
       class="overflow-hidden text-ellipsis whitespace-nowrap"
       :title="'' + expense.cost"
     >
-      Date: {{ parseDate(expense.date) }} || Cost: ${{ expense.cost }}
+      Date: {{ convertDateToMMDDYYYY(expense.date) }} || Cost: ${{
+        expense.cost
+      }}
     </h4>
     <div class="activity-options-wrapper">
       <div
@@ -68,27 +70,14 @@ const props = defineProps<{
   expense: Expense;
 }>();
 
-function parseDate(dateString: string) {
-  if (!dateString) {
-    return "";
-  }
-
-  if (!dateString.includes("T00:00:00")) {
-    dateString += "T00:00:00";
-  }
-  let dateParsed = new Date(dateString);
-  const formattedDate = `${String(dateParsed.getUTCMonth() + 1).padStart(
-    2,
-    "0"
-  )}/${String(dateParsed.getUTCDate()).padStart(
-    2,
-    "0"
-  )}/${dateParsed.getUTCFullYear()}`;
-
-  return formattedDate;
-}
-
 defineEmits(["deleteActivity", "editActivity", "duplicateActivity"]);
+
+function convertDateToMMDDYYYY(date: string) {
+  const [year, month, day] = date.split("-"); // Split the string by the hyphen
+
+  // Return the formatted date string
+  return `${month}-${day}-${year}`;
+}
 </script>
 
 <style scoped>

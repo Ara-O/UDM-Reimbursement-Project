@@ -125,9 +125,10 @@ onMounted(() => {
 .td,
 .th,
 .tr {
-  border: solid 1px black;
+  /* TODO: UPDATE THIS */
+  /* border: solid 1px black;
   padding: 8px 14px;
-  font-size: 13.5px;
+  font-size: 13.5px; */
 }
 
 .p-datatable .p-datatable-thead > tr > th {

@@ -34,11 +34,12 @@
           />
         </span>
         <span>
-          <h4 class="font-normal text-sm">Reason for Travel/Expense</h4>
+          <h4 class="font-normal text-sm">Reason for Travel/Expense *</h4>
           <input
             type="text"
             name="reason-or-expense-input"
             placeholder="Reason for Travel/Expense"
+            required
             v-model="props.claim.reimbursementReason"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border pl-5 text-xs border-solid shadow-md"
           />

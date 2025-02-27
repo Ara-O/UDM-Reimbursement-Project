@@ -48,49 +48,76 @@
         Keep track of the reimbursement claims that you have used by this FOAPA
       </p>
 
-      <!-- Search field -->
-      <span class="flex items-center gap-3">
-        <InputText
-          id="over_label"
-          v-model="search_item"
-          class="max-w-[800px] !border-gray-200 w-full"
-          style="
-            .p-inputtext {
-              width: 100%;
-              padding-left: 25px;
-              height: 45px;
-              font-size: 14px !important;
-            }
-          "
-          placeholder="Search through your FOAPA"
-        />
-      </span>
-      <div class="mt-4 flex gap-3 flex-wrap">
-        <Select
-          v-model="view"
-          :options="views"
-          default-value="Grid View"
-          placeholder="Grid View"
-          class="w-full md:w-40"
-        >
-          <template #dropdownicon>
-            <i class="pi pi-th-large" v-if="view === 'Grid View'" />
-            <i class="pi pi-list" v-if="view === 'List View'" />
-          </template>
-        </Select>
-        <Select
-          v-model="sort"
-          :options="sort_options"
-          placeholder="Sort"
-          class="w-full md:w-40"
-        >
-          <template #dropdownicon>
-            <i class="pi pi-sort-alt" />
-          </template>
-        </Select>
-
-        <!-- FILTER -->
-        <div class="mt-3 gap-4 hidden sm:flex"></div>
+      <div class="flex gap-4 items-center">
+        <!-- Search field -->
+        <span class="flex items-center gap-3">
+          <InputText
+            id="over_label"
+            v-model="search_item"
+            class="max-w-[800px] !border-gray-200 w-full"
+            style="
+              .p-inputtext {
+                width: 100%;
+                padding-left: 25px;
+                font-size: 13px !important;
+              }
+            "
+            placeholder="Search through your FOAPA"
+          />
+        </span>
+        <div class="flex gap-3 flex-wrap">
+          <Select
+            v-model="view"
+            :options="views"
+            default-value="Grid View"
+            placeholder="Grid View"
+            class="w-full md:w-40"
+          >
+            <template #dropdownicon>
+              <i class="pi pi-th-large" v-if="view === 'Grid View'" />
+              <i class="pi pi-list" v-if="view === 'List View'" />
+            </template>
+          </Select>
+          <Select
+            v-model="sort"
+            :options="sort_options"
+            placeholder="Sort"
+            class="w-full md:w-40"
+          >
+            <template #dropdownicon>
+              <i class="pi pi-sort-alt" />
+            </template>
+          </Select>
+        </div>
+      </div>
+      <div class="">
+        <p class="text-sm">
+          Filter by date ranges (based on when the reimbursement was last
+          updated/submitted):
+        </p>
+        <div class="flex">
+          <DatePicker
+            v-model="foapa_date_range"
+            selectionMode="range"
+            placeholder="Filter by Date Range"
+            :manualInput="false"
+            :pt="{ root: 'h-9 !w-64' }"
+          />
+          <button
+            type="button"
+            @click="filterByDate"
+            class="bg-udmercy-blue text-white border-none w-20 h-9 ml-3 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
+          >
+            Filter
+          </button>
+          <button
+            type="button"
+            @click="removeFilter"
+            class="bg-udmercy-blue text-white border-none w-32 h-9 ml-3 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
+          >
+            Remove Filter
+          </button>
+        </div>
       </div>
 
       <div class="mb-0">
@@ -183,7 +210,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { formatFoapaDeails } from "../utils/formatFoapaDetails";
 import { TYPE, useToast } from "vue-toastification";
-
+import DatePicker from "primevue/datepicker";
 const route = useRoute();
 const router = useRouter();
 
@@ -200,6 +227,7 @@ let sort = ref<
 >("Sort By: Default");
 
 const views = ["Grid View", "Table View"];
+const foapa_date_range = ref<any[]>([]);
 
 const sort_options = [
   "Cost (ASC)",
@@ -209,7 +237,14 @@ const sort_options = [
   "Sort By: Default",
 ];
 
+const dateRangesFiltering = ref([]);
+const filteringByDateRange = ref(false);
+
 const foapaHistoryFiltered = computed(() => {
+  if (filteringByDateRange.value) {
+    return dateRangesFiltering.value;
+  }
+
   if (Object.keys(foapa_information.value).length == 0) {
     return [];
   }
@@ -259,6 +294,31 @@ const totalAmountUsed = computed(() => {
 
   return totalAmount;
 });
+
+function filterByDate() {
+  if (foapa_date_range.value && foapa_date_range.value.length === 0) return;
+  let foapas = foapa_information.value.claims_used.filter((info) => {
+    return info.reimbursementName
+      .toLowerCase()
+      .includes(search_item.value.toLowerCase());
+  });
+
+  const filteredFoapas = foapas.filter((foapa) => {
+    const reqDate = new Date(foapa.reimbursementDate);
+    return (
+      reqDate >= foapa_date_range.value[0] &&
+      reqDate <= foapa_date_range.value[1]
+    );
+  });
+
+  dateRangesFiltering.value = filteredFoapas;
+  filteringByDateRange.value = true;
+}
+
+function removeFilter() {
+  filteringByDateRange.value = false;
+  foapa_date_range.value = [];
+}
 
 function parseDate(dateString: string) {
   if (!dateString) return;
@@ -313,14 +373,19 @@ onMounted(() => {
 table,
 th,
 td {
-  border: 3px solid black;
+  /* border: 3px solid black;
   border-collapse: collapse;
   padding: 1rem;
-  font-size: 1rem;
+  font-size: 1rem; */
 }
 
 th {
-  background-color: #002d72;
-  color: white;
+  /* background-color: #002d72;
+  color: white; */
+}
+
+.p-datepicker-input {
+  font-size: 12.5px !important;
+  border: solid 0.5px rgb(196, 195, 195) !important;
 }
 </style>

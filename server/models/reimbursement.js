@@ -35,7 +35,7 @@ export const reimbursementSchema = new Schema({
     {
       id: String,
       name: String,
-      date: Date,
+      date: String,
       additionalInformation: String,
       cost: Number,
     },
@@ -44,8 +44,8 @@ export const reimbursementSchema = new Schema({
     {
       date_of_message: String,
       request_message: String,
-    }
-  ]
+    },
+  ],
 });
 
 //reimbursements

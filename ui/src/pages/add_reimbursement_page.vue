@@ -1,5 +1,11 @@
 <template>
   <!-- Top section for returning -->
+  <img
+    :src="HistoryIcon"
+    @click="viewRequestHistory"
+    alt="History"
+    class="absolute right-10 top-11 cursor-pointer w-5"
+  />
   <div
     class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
     @click="goToDashboard"
@@ -92,6 +98,24 @@
       </template>
     </confirmation-popup>
   </main>
+
+  <div class="card flex justify-content-center">
+    <Sidebar
+      v-model:visible="request_history_sidebar_is_visible"
+      header="Request History"
+      position="right"
+    >
+      <div v-for="history in currentReimbursement.request_history">
+        <p class="mb-2 leading-7">{{ history.request_message }}</p>
+        <p class="text-sm mt-0 text-gray-500">{{ history.date_of_message }}</p>
+        <hr class="text-gray-200 h-0.5 bg-gray-200 border-solid" />
+      </div>
+    </Sidebar>
+    <Button
+      icon="pi pi-arrow-right"
+      @click="request_history_sidebar_is_visible = true"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -101,12 +125,12 @@ import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
 import { ReimbursementTicket } from "../types/types";
 import claimInformation from "../components/add-reimbursement/ClaimInformation.vue";
 import manageExpenses from "../components/add-reimbursement/ManageExpenses.vue";
-import GuestInformation from "../components/add-reimbursement/GuestInformation.vue";
 import ManageReceipts from "../components/add-reimbursement/ManageReceipts.vue";
 import Finish from "../components/add-reimbursement/Finish.vue";
 import AssignFoapaInformation from "../components/add-reimbursement/AssignFoapaInformation.vue";
-import parseDate from "../utils/parseDate";
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
+import HistoryIcon from "../assets/black-history.png";
+import Sidebar from "primevue/sidebar";
 
 function goToDashboard() {
   router.push("/");
@@ -119,6 +143,7 @@ let show_confirm_dialog = ref<boolean>(false);
 let user_has_unsaved_changes = ref<boolean>(false);
 let claim_is_being_saved = ref<boolean>(false);
 let selectedSection = ref<number>(1);
+const request_history_sidebar_is_visible = ref<boolean>(false);
 
 let sections = ref([
   {
@@ -156,7 +181,7 @@ let currentReimbursement = ref<ReimbursementTicket>({
   totalCost: 0,
   reimbursementReason: "",
   reimbursementStatus: "",
-  reimbursementDate: parseDate(new Date().toISOString()),
+  reimbursementDate: new Date().toISOString(),
   activities: [],
   reimbursementReceipts: [],
   destination: "",
@@ -244,6 +269,11 @@ function discardChangesAndLeavePage() {
 
 function goBack() {
   show_confirm_dialog.value = false;
+}
+
+function viewRequestHistory() {
+  request_history_sidebar_is_visible.value = true;
+  console.log(currentReimbursement.value.request_history);
 }
 
 onBeforeRouteLeave((to, from, next) => {

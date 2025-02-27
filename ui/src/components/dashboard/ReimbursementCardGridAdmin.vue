@@ -136,16 +136,13 @@ import DenyIcon from "../../assets/deny-icon.png";
 import Button from "primevue/button";
 import ViewIcon from "../../assets/eye-view-blue.png";
 import ApproveIcon from "../../assets/approve-icon.png";
-import InputText from "primevue/inputtext";
+import parseDate from "../../utils/parseDate";
 import EditIcon from "../../assets/blue-pencil.png";
-import parseDate from "../../utils/parseDateFormatted";
-import ReimbursementStatus from "./ReimbursementStatus.vue";
 import { useRouter } from "vue-router";
-import { ReimbursementTicket, TicketAndFaculty } from "../../types/types";
+import { TicketAndFaculty } from "../../types/types";
 import { useConfirm } from "primevue/useconfirm";
 import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
-import ConfirmDialog from "primevue/confirmdialog";
 import { onMounted, ref } from "vue";
 
 const router = useRouter();

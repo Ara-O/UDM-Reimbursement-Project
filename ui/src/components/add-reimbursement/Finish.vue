@@ -206,7 +206,6 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import parseDate from "../../utils/parseDate";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { ReimbursementTicket } from "../../types/types";
 import ConfirmDialog from "primevue/confirmdialog";
@@ -575,7 +574,7 @@ async function createPdf() {
 
 async function updateReimbursement() {
   props.claim.totalCost = getAllActivitiesAmount();
-  props.claim.reimbursementDate = parseDate(new Date().toISOString());
+  props.claim.reimbursementDate = new Date().toISOString();
 
   // console.log(props.claim);
   await axios.post(`${import.meta.env.VITE_API_URL}/api/update-reimbursement`, {
@@ -583,16 +582,18 @@ async function updateReimbursement() {
   });
 
   toast.clear();
+
   toast("Reimbursement claim updated successfully.", {
     type: TYPE.SUCCESS,
   });
+
   router.push("/dashboard");
 }
 
 async function addReimbursement() {
   try {
     props.claim.totalCost = getAllActivitiesAmount();
-    props.claim.reimbursementDate = parseDate(new Date().toISOString());
+    props.claim.reimbursementDate = new Date().toISOString();
 
     await axios.post(`${import.meta.env.VITE_API_URL}/api/add-reimbursement`, {
       reimbursementTicket: props.claim,
@@ -601,6 +602,7 @@ async function addReimbursement() {
     toast("Reimbursement claim saved successfully.", {
       type: TYPE.SUCCESS,
     });
+
     router.push("/dashboard");
   } catch (error) {
     toast(
@@ -656,6 +658,8 @@ onMounted(() => {
   if (route.query.reimbursementId) {
     userIsEditingReimbursement.value = true;
   }
+
+  console.log();
 });
 </script>
 

@@ -72,7 +72,6 @@
 import PencilIcon from "../../assets/blue-pencil.png";
 import DeleteIcon from "../../assets/red-delete-icon.png";
 import DuplicateIcon from "../../assets/duplicate-blue.png";
-import parseDate from "../../utils/parseDateFormatted";
 import ReimbursementStatus from "./ReimbursementStatus.vue";
 import { useRouter } from "vue-router";
 import { ReimbursementTicket } from "../../types/types";
@@ -81,6 +80,7 @@ import { TYPE, useToast } from "vue-toastification";
 import Column from "primevue/column";
 import DataTable from "primevue/datatable";
 import axios from "axios";
+import parseDate from "../../utils/parseDate";
 
 const router = useRouter();
 const props = defineProps<{

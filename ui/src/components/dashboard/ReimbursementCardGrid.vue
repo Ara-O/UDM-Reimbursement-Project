@@ -95,7 +95,6 @@
 import PencilIcon from "../../assets/blue-pencil.png";
 import DuplicateIcon from "../../assets/duplicate-blue.png";
 import DeleteIcon from "../../assets/trash-icon-white.png";
-import parseDate from "../../utils/parseDateFormatted";
 import ReimbursementStatus from "./ReimbursementStatus.vue";
 import Timeline from "primevue/timeline";
 import { useRouter } from "vue-router";
@@ -106,6 +105,7 @@ import TrackIcon from "../../assets/black-history.png";
 import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
 import { ref } from "vue";
+import parseDate from "../../utils/parseDate";
 
 type History = {
   _id?: string;
