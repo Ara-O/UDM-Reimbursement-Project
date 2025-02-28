@@ -114,8 +114,14 @@
     <Button
       icon="pi pi-arrow-right"
       @click="request_history_sidebar_is_visible = true"
-    />
+    ></Button>
   </div>
+  <p
+    class="absolute bottom-3 text-sm right-10 text-gray-500"
+    v-if="autosave_label"
+  >
+    Autosaved...
+  </p>
 </template>
 
 <script lang="ts" setup>
@@ -131,6 +137,7 @@ import AssignFoapaInformation from "../components/add-reimbursement/AssignFoapaI
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import HistoryIcon from "../assets/black-history.png";
 import Sidebar from "primevue/sidebar";
+import { debounce } from "lodash";
 
 function goToDashboard() {
   router.push("/");
@@ -228,6 +235,54 @@ async function userIsUpdatingReimbursement() {
 
   currentReimbursement.value = reimbursement.data;
 }
+
+const debounceAutoSave = debounce(autosaveData, 10000);
+
+function getAllActivitiesAmount(): number {
+  let sum: number = 0;
+  currentReimbursement.value.activities.forEach((activity) => {
+    sum += Number(activity.cost);
+  });
+  return sum;
+}
+
+const autosave_label = ref<boolean>(false);
+async function autosaveData() {
+  console.log("Autosaved");
+  await axios.post(`${import.meta.env.VITE_API_URL}/api/update-reimbursement`, {
+    reimbursementTicket: currentReimbursement.value,
+  });
+
+  autosave_label.value = true;
+
+  setTimeout(() => {
+    autosave_label.value = false;
+  }, 3000);
+}
+
+let initialLoad = true;
+
+watch(
+  currentReimbursement,
+  (news, old) => {
+    if (initialLoad) {
+      initialLoad = false;
+      return;
+    }
+
+    //If user is updating a request, add autosave
+    // mainly doing this because adding and updating call different apis, and adding a new one
+    // would require the title and yeah dont wanna rework the adding/updating to a way that allows
+    // autosave on both just yet
+    if (route.query.reimbursementId) {
+      debounceAutoSave();
+    }
+  },
+  {
+    deep: true,
+    immediate: false,
+  }
+);
 
 onMounted(async () => {
   try {

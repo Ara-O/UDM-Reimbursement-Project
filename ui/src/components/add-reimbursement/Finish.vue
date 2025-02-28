@@ -573,10 +573,6 @@ async function createPdf() {
 }
 
 async function updateReimbursement() {
-  props.claim.totalCost = getAllActivitiesAmount();
-  props.claim.reimbursementDate = new Date().toISOString();
-
-  // console.log(props.claim);
   await axios.post(`${import.meta.env.VITE_API_URL}/api/update-reimbursement`, {
     reimbursementTicket: props.claim,
   });

@@ -260,6 +260,14 @@ function addFoapa() {
     return;
   }
 
+  if (String(num) === "0") {
+    toast.clear();
+    toast("Error: Assigned quantity must be higher than $0", {
+      type: TYPE.ERROR,
+    });
+    return;
+  }
+
   let total_expense_cost = props.claim.activities.reduce((prev, curr) => {
     return prev + Number(curr.cost) * 100;
   }, 0);
