@@ -33,7 +33,7 @@
       <p class="text-sm underline cursor-pointer">View Feedback</p>
       <p
         class="cursor-pointer text-sm underline"
-        @click="user_management_popup_is_visible = true"
+        @click="goToUserManagementPage"
       >
         User Management
       </p>
@@ -211,6 +211,7 @@ import axios from "axios";
 import SummarySection from "../components/admin/SummarySection.vue";
 import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import ConfirmDialog from "primevue/confirmdialog";
+import { useRouter } from "vue-router";
 const search_field = ref<string>("");
 const views = ["Grid View", "Table View", "List View"];
 const sort_options = [
@@ -236,12 +237,11 @@ const department_chair_popup_is_visible = ref<boolean>(false);
 populate_submitted_tickets();
 
 const dept_chair_codes = ref([]);
+const router = useRouter();
 
-// watch(pending_requests, (newValue) => {
-//   filtered_pending_requests.value = newValue
-// }, {
-//   immediate: true
-// }) I really just be testing someting
+function goToUserManagementPage() {
+  router.push("/admin/user-management");
+}
 
 async function populate_submitted_tickets() {
   let res = await axios.get(

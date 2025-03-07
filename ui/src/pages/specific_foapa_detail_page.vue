@@ -35,9 +35,31 @@
           </p>
         </div>
         <div
+          class="border box-border px-5 py-2 border-solid border-gray-200 max-w-xl w-72 mt-5"
+        >
+          <p class="text-sm leading-7 font-medium">
+            Total Spending from FOAPA in Submitted Requests
+          </p>
+          <p class="font-semibold text-md">
+            ${{ totalAmountFromFoapaInSubmittedRequests }}
+          </p>
+        </div>
+        <div
           class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
         >
-          <p class="text-sm font-medium">Total Amount Used from FOAPA</p>
+          <p class="text-sm font-medium leading-7">
+            Total Spending from FOAPA in In-Progress Requests
+          </p>
+          <p class="font-semibold text-md">
+            ${{ totalAmountFromFoapaInInProgressRequests }}
+          </p>
+        </div>
+        <div
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+        >
+          <p class="text-sm font-medium leading-7">
+            Total FOAPA Spending combined from both categories
+          </p>
           <p class="font-semibold text-md">${{ totalAmountUsed }}</p>
         </div>
       </article>
@@ -137,7 +159,7 @@
       >
         <div
           v-for="claim in foapaHistoryFiltered"
-          class="relative h-36 overflow-auto flex flex-col justify-center gap-2 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
+          class="relative h-44 overflow-auto flex flex-col justify-center gap-2 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
         >
           <h3
             @click="goToReimbursement(claim._id, claim.reimbursementStatus)"
@@ -150,6 +172,9 @@
           <h5 class="my-0 font-normal">
             FOAPA usage: ${{ parseAmount(claim) }}
           </h5>
+          <p class="text-sm my-0">
+            Date: {{ parseUTCDate(claim.reimbursementDate) }}
+          </p>
         </div>
       </div>
 
@@ -159,9 +184,9 @@
         class="mt-5"
         v-if="view === 'Table View' && foapaHistoryFiltered.length !== 0"
       >
-        <table class="table border-1">
+        <table class="table border-1 table-style">
           <thead>
-            <tr>
+            <tr class="table-style">
               <th class="font-medium border-2 text-sm">Title</th>
               <th class="font-medium border-2 text-sm">Cost</th>
               <th class="font-medium border-2 text-sm">Status</th>
@@ -174,15 +199,15 @@
                 @click="
                   () => goToReimbursement(foapa._id, foapa.reimbursementStatus)
                 "
-                class="cursor-pointer text-sm border-2"
+                class="cursor-pointer !text-nm border-2"
               >
                 {{ foapa.reimbursementName }}
               </td>
-              <td class="text-sm border-2">${{ foapa.totalCost }}</td>
-              <td class="text-sm border-2">
+              <td class="!text-nm border-2">${{ foapa.totalCost }}</td>
+              <td class="!text-nm border-2">
                 {{ foapa.reimbursementStatus }}
               </td>
-              <td class="text-sm border-2">
+              <td class="!text-nm border-2">
                 {{ parseDate(foapa.reimbursementDate) }}
               </td>
             </tr>
@@ -211,6 +236,7 @@ import { useRoute, useRouter } from "vue-router";
 import { formatFoapaDeails } from "../utils/formatFoapaDetails";
 import { TYPE, useToast } from "vue-toastification";
 import DatePicker from "primevue/datepicker";
+import parseUTCDate from "../utils/parseDate";
 const route = useRoute();
 const router = useRouter();
 
@@ -278,6 +304,38 @@ const foapaHistoryFiltered = computed(() => {
   return foapas;
 });
 
+const totalAmountFromFoapaInSubmittedRequests = computed(() => {
+  let totalAmount = 0;
+
+  foapa_information.value.claims_used.forEach((claim) => {
+    claim.foapaDetails.forEach((foapa) => {
+      if (claim.reimbursementStatus === "Submitted") {
+        if (foapa.foapa_id === route.params.id) {
+          totalAmount += foapa.cost * 100;
+        }
+      }
+    });
+  });
+
+  return totalAmount / 100;
+});
+
+const totalAmountFromFoapaInInProgressRequests = computed(() => {
+  let totalAmount = 0;
+
+  foapa_information.value.claims_used.forEach((claim) => {
+    claim.foapaDetails.forEach((foapa) => {
+      if (claim.reimbursementStatus === "In Progress") {
+        if (foapa.foapa_id === route.params.id) {
+          totalAmount += foapa.cost * 100;
+        }
+      }
+    });
+  });
+
+  return totalAmount / 100;
+});
+
 const totalAmountUsed = computed(() => {
   let totalAmount = 0;
 
@@ -286,13 +344,14 @@ const totalAmountUsed = computed(() => {
   //and add its cost - the amount spent from it to the totalAmount
   foapa_information.value.claims_used.forEach((claim) => {
     claim.foapaDetails.forEach((foapa) => {
+      console.log(claim);
       if (foapa.foapa_id === route.params.id) {
-        totalAmount += foapa.cost;
+        totalAmount += foapa.cost * 100;
       }
     });
   });
 
-  return totalAmount;
+  return totalAmount / 100;
 });
 
 function filterByDate() {
@@ -370,18 +429,22 @@ onMounted(() => {
 });
 </script>
 <style>
-table,
-th,
-td {
-  /* border: 3px solid black;
+.table-style table,
+.table-style th,
+.table-style td {
+  border: 1px solid rgb(113, 113, 113);
   border-collapse: collapse;
   padding: 1rem;
-  font-size: 1rem; */
+  font-size: 1rem;
 }
 
-th {
-  /* background-color: #002d72;
-  color: white; */
+.table-style th {
+  background-color: #002d72;
+  color: white;
+}
+
+.table {
+  border-collapse: collapse;
 }
 
 .p-datepicker-input {

@@ -172,6 +172,15 @@ router.post("/update-reimbursement", verifyToken, async (req, res) => {
 
     const reimbursementTicket = requestData.reimbursementTicket;
 
+    let sum = 0;
+
+    reimbursementTicket.activities.forEach((activity) => {
+      sum += Number(activity.cost);
+    });
+
+    reimbursementTicket.totalCost = sum;
+    reimbursementTicket.reimbursementDate = new Date().toISOString();
+
     // Look for the reimbursement with the same id and update it with the user
     // inputted updated reimbursement request
     let resp = await ReimbursementTicket.findByIdAndUpdate(

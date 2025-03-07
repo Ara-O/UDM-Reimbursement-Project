@@ -15,6 +15,7 @@ import ContactUsPage from "../pages/contact_us_page.vue";
 import AdminPage from "../pages/admin_page.vue";
 import AdminEditReimbursement from "../pages/admin_edit_reimbursement_page.vue";
 import axios from "axios";
+import AdminUserManagement from "../pages/admin_user_management.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -63,6 +64,38 @@ export default createRouter({
           next("/dashboard");
         } else {
           next();
+        }
+      },
+    },
+    {
+      path: "/admin/user-management",
+      component: AdminUserManagement,
+      meta: {
+        requiresAuth: true,
+      },
+      beforeEnter: async (to, from, next) => {
+        try {
+          // Verify the user's admin status before allowing them to enter (this is called after the main beforeEach)
+          const token = localStorage.getItem("token");
+          let res = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/role`,
+            {
+              params: {
+                token: token,
+              },
+            }
+          );
+
+          const role = res.data.role;
+
+          if (role === "ADMIN") {
+            next();
+          } else {
+            next("/dashboard");
+          }
+        } catch (err) {
+          console.log(err);
+          next("/");
         }
       },
     },

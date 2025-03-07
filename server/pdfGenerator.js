@@ -712,7 +712,12 @@ export default function createPdfDefinition(
               {
                 text: [
                   "A. Total Actual Expenses $",
-                  { text: `${expenseTotal}`, decoration: "underline" },
+                  {
+                    text: String(expenseTotal).padStart(
+                      21 - String(expenseTotal).length
+                    ),
+                    decoration: "underline",
+                  },
                 ],
                 border: [false, false, false, false],
                 bold: false,
@@ -720,21 +725,39 @@ export default function createPdfDefinition(
             ],
             [
               {
-                text: "B. Less advance __________",
+                text: [
+                  "B. Less Advance               ",
+                  {
+                    text: "".padStart(21),
+                    decoration: "underline",
+                  },
+                ],
                 border: [false, false, false, false],
                 bold: false,
               },
             ],
             [
               {
-                text: "C. Due Employee (A > B) _N/A_______",
+                text: [
+                  "C. Due Employee (A > B)  ",
+                  {
+                    text: "N/A".padStart(10).padEnd(18),
+                    decoration: "underline",
+                  },
+                ],
                 border: [false, false, false, false],
                 bold: false,
               },
             ],
             [
               {
-                text: "D. Due UDM (B > A) _N/A__________",
+                text: [
+                  "D. Due UDM (B > A)         ",
+                  {
+                    text: "N/A".padStart(11).padEnd(19),
+                    decoration: "underline",
+                  },
+                ],
                 border: [false, false, false, false],
                 bold: false,
               },

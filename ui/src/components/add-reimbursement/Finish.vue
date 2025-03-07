@@ -188,14 +188,14 @@
       </p>
       <button
         type="button"
-        class="bg-udmercy-blue mt-4 text-white border-none rounded-md px-3 py-2 cursor-pointer"
+        class="bg-udmercy-blue mt-4 w-20 text-white border-none rounded-md px-3 py-2 cursor-pointer"
         @click="dontSubmit"
       >
         No
       </button>
       <button
         type="button"
-        class="bg-udmercy-blue mt-4 ml-4 text-white border-none rounded-md px-3 py-2 cursor-pointer"
+        class="bg-udmercy-blue mt-4 ml-4 text-white w-20 border-none rounded-md px-3 py-2 cursor-pointer"
         @click="markClaimAsSubmitted"
       >
         Submit
