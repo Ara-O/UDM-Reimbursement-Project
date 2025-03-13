@@ -125,19 +125,16 @@ const faculty_member_list = ref<Faculties[]>([]);
 
 
 async function get_faculty() {
-  faculty_member_list.value = []
-  
   let res = await axios.get(
     `${import.meta.env.VITE_API_URL}/admin/retrieve-all-faculty`
   );
 
-  for( let faculty of res.data){
-    
-
-    faculty_member_list.value.push({id: faculty._id, name:faculty.firstName + " " + faculty.lastName, email: faculty.workEmail, role: faculty.role})
-
-  }
-
+  faculty_member_list.value = res.data.map((faculty: any) => ({
+    id: faculty._id,
+    name: faculty.firstName + " " + faculty.lastName,
+    email: faculty.workEmail,
+    role: faculty.role,
+  }));
 }
 
 async function save_role(faculty){
