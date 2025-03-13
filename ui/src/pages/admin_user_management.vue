@@ -68,13 +68,23 @@
         <option value="hi">hi</option>
           </select> -->
         <template #body="{ data }">
-          <select name="" id="">
-            <option value="" :selected="data.role === 'user'">User</option>
-            <option value="" :selected="data.role === 'faculty'">
-              Faculty
-            </option>
-            <option value="" :selected="data.role === 'admin'">Admin</option>
+          <select v-model="data.role">
+            <option value="USER">User</option>
+            <option value="FACULTY">Faculty</option>
+            <option value="ADMIN">Admin</option>
           </select>
+          <span
+            class="underline cursor-pointer h-[16px]"
+            @click="save_role(data)"
+            title="Save Role"
+            ><img src="../assets/save.png" alt="Save Icon" class="w-5 ms-2 me-2"/></span>
+          <span
+          class="underline cursor-pointer h-[16px]"
+          @click="delete_faculty(data)"
+          title="Delete request"
+          >
+          <img src="../assets/trash-icon.png" alt="Delete Icon" class="w-4 ms-2 "
+          /></span>
         </template>
       </Column>
     </DataTable>
@@ -87,7 +97,8 @@ import Column from "primevue/column";
 import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import InputText from "primevue/inputtext";
 import Select from "primevue/select";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from "axios";
 
 const search_field = ref<string>("");
 const views = ["Grid View", "Table View", "List View"];
@@ -103,12 +114,56 @@ const view = ref<string>("Grid View");
 const filter = ref<string>("");
 const sort = ref<string>("");
 
-const faculty_member_list = ref([
-  {
-    name: "Faculty 1",
-    email: "faculty1@gmail.com",
-    code: "0301",
-    role: "admin",
-  },
-]);
+
+interface Faculties {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+const faculty_member_list = ref<Faculties[]>([]);
+
+
+async function get_faculty() {
+  faculty_member_list.value = []
+  
+  let res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/admin/retrieve-all-faculty`
+  );
+
+  for( let faculty of res.data){
+    
+
+    faculty_member_list.value.push({id: faculty._id, name:faculty.firstName + " " + faculty.lastName, email: faculty.workEmail, role: faculty.role})
+
+  }
+
+}
+
+async function save_role(faculty){
+  try{
+    console.log("Faculty",faculty)
+    let res = await axios.post(`${import.meta.env.VITE_API_URL}/admin/save-role`, faculty)
+    console.log(res, "Role Saved")
+  }
+  catch(err){
+    console.log(err)
+  }
+}
+
+async function delete_faculty(faculty){
+  try{
+    let res = await axios.post(`${import.meta.env.VITE_API_URL}/admin/delete-faculty`, faculty)
+    console.log(res, "Deleted")
+
+    get_faculty()
+  }
+  catch (err) {
+    console.log(err);
+  }
+}
+
+onMounted(() =>{
+  get_faculty()
+})
 </script>

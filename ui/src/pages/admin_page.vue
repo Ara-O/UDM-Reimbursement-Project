@@ -129,7 +129,7 @@
       />
 
       <DataTable
-        :value="dept_chair_codes"
+        :value="faculties"
         striped-rows
         tableStyle="min-width: 50rem"
         class="mt-5"
@@ -237,10 +237,21 @@ const department_chair_popup_is_visible = ref<boolean>(false);
 populate_submitted_tickets();
 
 const dept_chair_codes = ref([]);
+
+interface Faculties {
+  name: string;
+  email: string;
+  role: string;
+}
+const faculties = ref<Faculties[]>([]);
+
+
 const router = useRouter();
 
 function goToUserManagementPage() {
   router.push("/admin/user-management");
+  console.log("HELLOOOOO")
+  get_faculty();
 }
 
 async function populate_submitted_tickets() {
@@ -253,8 +264,18 @@ async function populate_submitted_tickets() {
 
 async function get_faculty() {
   let res = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/retrieve-all-faculty`
+    `${import.meta.env.VITE_API_URL}/admin/retrieve-all-faculty`
   );
+
+  for( let faculty of res.data){
+    console.log(faculty)
+
+    faculties.value.push({name: faculty.firstName + " " + faculty.lastName, email: faculty.workEmail, role: faculty.role})
+
+  }
+
+  console.log(faculties.value)
+
 }
 
 async function fetch_department_chairs() {
