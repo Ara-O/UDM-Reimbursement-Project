@@ -151,7 +151,7 @@
 
       <!-- GRID VIEW -->
       <div
-        class="flex gap-3 mt-3"
+        class="flex gap-3 mt-3 max-w-vw overflow-auto flex-wrap"
         v-if="
           Object.keys(foapa_information.claims_used).length !== 0 &&
           view === 'Grid View'

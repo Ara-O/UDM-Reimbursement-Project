@@ -198,7 +198,7 @@ import InputText from "primevue/inputtext";
 import Select from "primevue/select";
 import Skeleton from "primevue/skeleton";
 import NotificationIcon from "../assets/notification-icon.png";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import {
   ReimbursementTicket,
   TicketAndFaculty,
@@ -227,8 +227,6 @@ const filter = ref<string>("");
 const sort = ref<string>("");
 const pending_requests = ref<ReimbursementTicket[]>([]);
 
-const filtered_pending_requests = ref<TicketAndFaculty[]>([]);
-
 const confirm = useConfirm();
 const toast = useToast();
 const user_management_popup_is_visible = ref<boolean>(false);
@@ -243,12 +241,27 @@ function goToUserManagementPage() {
   router.push("/admin/user-management");
 }
 
+const filtered_pending_requests = computed(() => {
+  if (search_field.value.trim() !== "") {
+    const filtered = pending_requests.value.filter((request) =>
+      // @ts-ignore
+      request.request.reimbursementName
+        .toLowerCase()
+        .includes(search_field.value.toLowerCase())
+    );
+
+    return filtered;
+  }
+
+  return pending_requests.value;
+}) as any;
+
 async function populate_submitted_tickets() {
   let res = await axios.get(
     `${import.meta.env.VITE_API_URL}/api/retrieve-submitted-requests`
   );
 
-  filtered_pending_requests.value = res.data;
+  pending_requests.value = res.data;
 }
 
 async function get_faculty() {
