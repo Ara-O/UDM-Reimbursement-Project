@@ -234,10 +234,6 @@ router.post(
   }
 );
 
-router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
-  // let facultyInfo
-});
-
 router.post("/update_department_code", verifyAdminToken, async (req, res) => {
   try {
     console.log(req.body);
@@ -254,6 +250,51 @@ router.post("/update_department_code", verifyAdminToken, async (req, res) => {
     console.log(err);
   }
 });
+
+router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
+  try {
+    const faculties = await Faculty.find({}).select(
+      "_id firstName lastName department workEmail role "
+    );
+
+    res.status(200).send(faculties);
+  } catch (err) {
+    console.log(err);
+    res.send(err);
+  }
+});
+
+router.post("/save-role", verifyAdminToken, async (req, res) => {
+  try {
+    const newRole = await Faculty.findOneAndUpdate(
+      {
+        _id: req.body.id
+      },
+      { role: req.body.role }
+    );
+
+    res.send(200)
+    console.log("Saved", newRole)
+  }
+  catch (err) {
+    console.log(err)
+  }
+})
+
+router.post("/delete-faculty", verifyAdminToken, async (req, res) => {
+  try {
+    const deletedFaculty = await Faculty.findOneAndDelete(
+      {
+        _id: req.body.id
+      }
+    )
+    res.send(200)
+    console.log("Deleted", deletedFaculty)
+  }
+  catch (err) {
+    console.log(err)
+  }
+})
 
 router.get(
   "/fetch_department_code_mappings",
