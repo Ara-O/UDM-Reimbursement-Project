@@ -45,6 +45,16 @@
           </p>
         </div>
         <div
+          class="border box-border px-5 py-2 border-solid border-gray-200 max-w-xl w-72 mt-5"
+        >
+          <p class="text-sm leading-7 font-medium">
+            Total Spending from FOAPA in Approved Requests
+          </p>
+          <p class="font-semibold text-md">
+            ${{ totalAmountFromFoapaInApprovedRequests }}
+          </p>
+        </div>
+        <div
           class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
         >
           <p class="text-sm font-medium leading-7">
@@ -58,7 +68,7 @@
           class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
         >
           <p class="text-sm font-medium leading-7">
-            Total FOAPA Spending combined from both categories
+            Total FOAPA Spending combined from all categories
           </p>
           <p class="font-semibold text-md">${{ totalAmountUsed }}</p>
         </div>
@@ -310,6 +320,25 @@ const totalAmountFromFoapaInSubmittedRequests = computed(() => {
   foapa_information.value.claims_used.forEach((claim) => {
     claim.foapaDetails.forEach((foapa) => {
       if (claim.reimbursementStatus === "Submitted") {
+        if (foapa.foapa_id === route.params.id) {
+          totalAmount += foapa.cost * 100;
+        }
+      }
+    });
+  });
+
+  return totalAmount / 100;
+});
+
+const totalAmountFromFoapaInApprovedRequests = computed(() => {
+  let totalAmount = 0;
+
+  foapa_information.value.claims_used.forEach((claim) => {
+    claim.foapaDetails.forEach((foapa) => {
+      if (
+        claim.reimbursementStatus === "Approved" ||
+        claim.reimbursementStatus === "Approved*"
+      ) {
         if (foapa.foapa_id === route.params.id) {
           totalAmount += foapa.cost * 100;
         }

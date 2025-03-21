@@ -1,11 +1,12 @@
 <template>
   <!-- Top section for returning -->
-  <img
-    :src="HistoryIcon"
+  <span
+    class="absolute right-10 top-11 flex cursor-pointer items-center gap-4"
     @click="viewRequestHistory"
-    alt="History"
-    class="absolute right-10 top-11 cursor-pointer w-5"
-  />
+  >
+    <img :src="HistoryIcon" alt="History" class="w-5" />
+    <p class="text-udmercy-blue underline">Request History</p>
+  </span>
   <div
     class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
     @click="goToDashboard"
