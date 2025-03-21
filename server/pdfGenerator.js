@@ -622,6 +622,9 @@ export default function createPdfDefinition(
         (foap) => foap._id.toHexString() === foapa.foapa_id
       );
 
+      console.log(facultyData.foapaDetails);
+
+      console.log(val);
       let details = formatFoapaDetails(val);
 
       let foapaArray = details.split("-");

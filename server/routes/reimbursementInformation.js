@@ -554,4 +554,57 @@ router.post("/submit-request", verifyToken, async (req, res) => {
   }
 });
 
+router.post("/check-reimbursement-approval-status", async (req, res) => {
+  try {
+    logger.info(`Reimbursement status is being checked for: ${req.body.id}`, {
+      api: "/api/check-reimbursement-approval-status",
+    });
+    let reimbursement = await ReimbursementTicket.findById(req.body.id);
+
+    if (
+      !reimbursement?.has_been_forwarded_for_approval ||
+      reimbursement.has_been_forwarded_for_approval === false
+    ) {
+      return res.status(200).send({ needs_approval: false });
+    }
+    return res.status(200).send({ needs_approval: true });
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/check-reimbursement-approval-status",
+    });
+    return res.status(500).send({
+      message: "An unexpected error occured.",
+    });
+  }
+});
+
+router.post("/review-reimbursement-request", async (req, res) => {
+  try {
+    logger.info(
+      `Reimbursement ${req.body.reimbursement_id} is being approved by ${req.body.name}`,
+      {
+        api: "/api/check-reimbursement-approval-status",
+      }
+    );
+
+    let reimbursement = await ReimbursementTicket.findById(
+      req.body.reimbursement_id
+    );
+
+    reimbursement.has_been_forwarded_for_approval = false;
+    reimbursement.approval_status = req.body.status;
+    reimbursement.additional_approval_information = req.body.message;
+
+    await reimbursement.save();
+    return res.status(200).send({ message: "This request has been approved" });
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/check-reimbursement-approval-status",
+    });
+    return res.status(500).send({
+      message: "An unexpected error occured.",
+    });
+  }
+});
+
 export default router;

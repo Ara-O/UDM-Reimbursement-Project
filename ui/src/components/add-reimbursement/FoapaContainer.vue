@@ -1,19 +1,40 @@
 <template>
   <div class="foapa relative" v-if="foapa">
-    <h3 class="overflow-hidden text-ellipsis whitespace-nowrap" :title="assignFoapaNumber(foapa.foapa_id)">
+    <h3
+      class="overflow-hidden text-ellipsis whitespace-nowrap"
+      :title="assignFoapaNumber(foapa.foapa_id)"
+    >
       {{ assignFoapaName(foapa.foapa_id) }} -
       {{ assignFoapaNumber(foapa.foapa_id) }}
     </h3>
-    <h4 class="overflow-hidden text-ellipsis !text-[14px] whitespace-nowrap" :title="'' + foapa.cost">
+    <h4
+      class="overflow-hidden text-ellipsis !text-[14px] whitespace-nowrap"
+      :title="'' + foapa.cost"
+    >
       Cost: ${{ foapa.cost }}
     </h4>
-    <div title="Delete FOAPA" class="activity-option absolute right-10 bottom-5"
-      @click="() => $emit('deleteFoapa', foapa.foapa_id)">
-      <img src="../../assets/trash-icon-white.png" alt="Trash icon" class="trash-icon w-3" />
+    <div
+      title="Delete FOAPA"
+      class="activity-option absolute right-10 bottom-5"
+      @click="() => $emit('deleteFoapa', foapa.foapa_id)"
+    >
+      <img
+        src="../../assets/trash-icon-white.png"
+        alt="Trash icon"
+        class="trash-icon w-3"
+      />
     </div>
-    <div title="Edit FOAPA" class="activity-option absolute right-24 bottom-5"
-      @click="() => $emit('editFoapa', foapa.foapa_id)" style="background-color: white">
-      <img src="../../assets/blue-pencil.png" alt="Edit Foapa" class="trash-icon w-4" />
+    <div
+      title="Edit FOAPA"
+      class="activity-option absolute right-24 bottom-5"
+      @click="() => $emit('editFoapa', foapa.foapa_id)"
+      style="background-color: white"
+    >
+      <img
+        src="../../assets/blue-pencil.png"
+        alt="Edit Foapa"
+        class="trash-icon w-4"
+      />
     </div>
   </div>
 </template>
@@ -48,6 +69,8 @@ const assignFoapaName = (event) => {
 };
 
 const assignFoapaNumber = (event) => {
+  console.log(event);
+  console.log(props.filteredUserFoapas);
   const selectedFoapaId = event;
   // console.log(event);
   //returns the name

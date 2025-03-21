@@ -16,6 +16,7 @@ import AdminPage from "../pages/admin_page.vue";
 import AdminEditReimbursement from "../pages/admin_edit_reimbursement_page.vue";
 import axios from "axios";
 import AdminUserManagement from "../pages/admin_user_management.vue";
+import Review_request_page from "../pages/review_request_page.vue";
 
 export default createRouter({
   history: createWebHistory(),
@@ -98,6 +99,10 @@ export default createRouter({
           next("/");
         }
       },
+    },
+    {
+      path: "/review-request/:id",
+      component: Review_request_page,
     },
     {
       path: "/verify-account",

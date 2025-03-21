@@ -1,9 +1,23 @@
 <template>
   <div
-    class="relative h-48 overflow-auto flex flex-col justify-center gap-2.5 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
+    class="relative h-44 overflow-auto flex flex-col justify-center gap-2.5 text-white box-border px-6 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
   >
+    <div>
+      <!-- v-if="props.request.request.approval_status" -->
+      <p
+        class="absolute bg-white top-0 right-3 cursor-pointer rounded-md font-medium text-[13px] w-24 flex items-center justify-center text-center h-7"
+        :class="{ 'text-udmercy-blue': true }"
+        @click="showReviewerMessage"
+      >
+        {{
+          props.request.request.approval_status
+            ? props.request.request.approval_status
+            : "Waiting"
+        }}
+      </p>
+    </div>
     <h3
-      class="font-medium text-base my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
+      class="font-medium text-base my-0 w-fit max-w-64 mt-[-10px] overflow-hidden whitespace-nowrap text-ellipsis"
     >
       {{ props.request.request.reimbursementName }}
     </h3>
@@ -31,6 +45,18 @@
           @click="editRequest"
         >
           <img :src="EditIcon" class="w-4" alt="Edit PDF" title="Edit PDF" />
+        </span>
+        <span
+          class="bg-white px-4 w-12 h-8 cursor-pointer py-2 justify-center flex items-center content-center rounded-full"
+          title="Forward Request"
+          @click="forwardRequestDialogIsVisible = true"
+        >
+          <img
+            :src="ForwardIcon"
+            class="w-4 mt-[-2px]"
+            alt="Edit PDF"
+            title="Edit PDF"
+          />
         </span>
         <div class="absolute bottom-[1.95rem] flex flex-col gap-3 right-5">
           <span
@@ -128,6 +154,71 @@
       ></Button>
     </div>
   </Dialog>
+
+  <!-- Forward Request Dialog -->
+  <Dialog
+    :dismissable-mask="true"
+    v-model:visible="forwardRequestDialogIsVisible"
+    modal
+    header="Forward Request"
+    :style="{ width: '25rem' }"
+  >
+    <h3
+      class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block mb-5"
+    >
+      Please enter the email of the person who you would like to forward this
+      request to
+    </h3>
+
+    <input
+      type="text"
+      v-model="forwardRequestTo"
+      class="border-gray-300 px-4 border border-solid h-9 rounded-md"
+      placeholder="Enter Email"
+    />
+
+    <div class="flex justify-end gap-2 mt-8">
+      <Button
+        type="button"
+        label="Cancel"
+        severity="secondary"
+        @click="forwardRequestDialogIsVisible = false"
+      ></Button>
+      <Button
+        type="button"
+        label="Forward Request"
+        class="!bg-udmercy-blue !border-none"
+        @click="forwardRequest"
+      ></Button>
+    </div>
+  </Dialog>
+
+  <!-- Reviewer Message -->
+  <Dialog
+    :dismissable-mask="true"
+    v-model:visible="reviewerMessageIsVisible"
+    modal
+    header="Reviewer Message"
+    :style="{ width: '25rem' }"
+  >
+    <h3
+      class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block mb-5"
+    >
+      {{
+        props.request.request.additional_approval_information ||
+        "No additional messagess was added"
+      }}
+    </h3>
+
+    <div class="flex justify-end gap-2 mt-8">
+      <Button
+        type="button"
+        label="Cancel"
+        severity="secondary"
+        @click="reviewerMessageIsVisible = false"
+      ></Button>
+    </div>
+  </Dialog>
 </template>
 
 <script lang="ts" setup>
@@ -143,7 +234,8 @@ import { TicketAndFaculty } from "../../types/types";
 import { useConfirm } from "primevue/useconfirm";
 import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
+import ForwardIcon from "../../assets/forward-icon.png";
 
 const router = useRouter();
 const props = defineProps<{
@@ -154,12 +246,40 @@ const emits = defineEmits(["reload-requests-list"]);
 const denyPopupIsVisible = ref<boolean>(false);
 const requestDenialMessage = ref<string>("");
 const approvePopupIsVisible = ref<boolean>(false);
+const forwardRequestDialogIsVisible = ref<boolean>(false);
 const requestApprovalMessage = ref<string>("");
+const reviewerMessageIsVisible = ref<boolean>(false);
+const forwardRequestTo = ref<string>("oladipea@udmercy.edu");
 const confirm = useConfirm();
 const toast = useToast();
 
 function confirmRequestDenial() {
   denyPopupIsVisible.value = true;
+}
+
+function showReviewerMessage() {
+  reviewerMessageIsVisible.value = true;
+}
+
+async function forwardRequest() {
+  try {
+    toast.clear();
+    toast("Forwarding request...", {
+      type: TYPE.INFO,
+    });
+
+    await axios.post(`${import.meta.env.VITE_API_URL}/admin/forward-request`, {
+      to: forwardRequestTo.value,
+      reimbursementData: props.request.request,
+      faculty: props.request.faculty,
+    });
+
+    toast.clear();
+    toast("Request successfully forwarded...", {
+      type: TYPE.INFO,
+    });
+    forwardRequestDialogIsVisible.value = false;
+  } catch (err) {}
 }
 
 function editRequest() {
