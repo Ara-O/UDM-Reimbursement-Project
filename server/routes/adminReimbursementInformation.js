@@ -301,6 +301,22 @@ router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
   }
 });
 
+router.get("/retrieve-faculty-by-tag", verifyAdminToken, async (req, res) => {
+  try {
+
+    console.log(req.body.tag)
+    const faculties = await Faculty.find({ tag: req.query.tag }).select(
+      "_id firstName lastName workEmail tag"
+    );
+
+    console.log("FACULTIES FROM TAG", faculties)
+    res.status(200).send(faculties);
+  } catch (err) {
+    console.log(err);
+    res.send(err);
+  }
+})
+
 router.get("/retrieve-faculty-tags", verifyAdminToken, async (req, res) => {
   try {
     const tags = await FacultyTagsList.find({})
@@ -314,33 +330,34 @@ router.get("/retrieve-faculty-tags", verifyAdminToken, async (req, res) => {
 
 router.post("/save-role-and-tag", verifyAdminToken, async (req, res) => {
   try {
-    const newRole = await Faculty.findOneAndUpdate(
-      {
-        _id: req.body.id,
-      },
-      { role: req.body.role, tag: req.body.tag }
+    // Update Faculty role and tag
+    const updatedFaculty = await Faculty.findOneAndUpdate(
+      { _id: req.body.id },
+      { role: req.body.role, tag: req.body.tag },
+      { new: true } // Ensures that the updated document is returned
     );
 
+    if (!updatedFaculty) {
+      return res.status(404).json({ message: "Faculty not found." });
+    }
+
+    // Check if the tag exists in the FacultyTagsList collection
     const tagExists = await FacultyTagsList.findOne({ tag: req.body.tag });
 
     if (!tagExists) {
       // If the tag doesn't exist, create a new one
       const newTag = await FacultyTagsList.create({ tag: req.body.tag });
 
-      res.status(201).json(newTag);  // Respond with the created tag
-    } else {
-      // If the tag exists, return a response indicating it's already in the collection
-      res.status(400).json({ message: "Tag already exists." });
+      // Respond with the created tag
+      return res.status(201).json({ message: "Role and Tag updated successfully.", tag: newTag });
     }
-
-
-    res.send(200)
-    console.log("Saved", newRole, newTag)
+  } catch (err) {
+    console.log(err);
+    // Handle any errors
+    return res.status(500).json({ message: "An error occurred while updating the role and tag." });
   }
-  catch (err) {
-    console.log(err)
-  }
-})
+});
+
 
 function generatePdf(docDefinition, callback) {
   try {

@@ -165,21 +165,45 @@
     v-model:visible="forwardRequestDialogIsVisible"
     modal
     header="Forward Request"
-    :style="{ width: '25rem' }"
+    :style="{ width: '50rem' }"
   >
     <h3
       class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block mb-5"
     >
-      Please enter the email of the person who you would like to forward this
-      request to
+      Please enter the tag of the person you would like to forward this to.
     </h3>
+
+    <AutoComplete
+      placeholder="Enter Tag"
+      dropdown
+      v-model="selectedTag"
+      empty-search-message="No Existing Tags"
+      style="height: 30px"
+      class="border-sm shadow-sm sm:!w-80 !w-full rounded-md !h-10 border !border-gray-100"
+      :suggestions="tags"
+      @complete="onComplete"
+      />
 
     <input
       type="text"
       v-model="forwardRequestTo"
-      class="border-gray-300 px-4 border border-solid h-9 rounded-md"
+      class="border-gray-300 shadow-sm sm:!w-80 !w-full rounded-md !h-10 px-4 border mt-4 ms-4"
+
       placeholder="Enter Email"
+      v-if="!multFacultyFoundByTags"
     />
+
+    <select
+      class="border-gray-300 shadow-sm sm:!w-80 !w-full rounded-md !h-10 px-4 border mt-4 ms-4"
+      v-if="multFacultyFoundByTags"
+      v-model="selectedFaculty"
+      >
+        <option v-for="faculty in FacultyFoundByTags" :key="faculty.id" :value="faculty.name">
+            {{ faculty.name }}
+        </option>
+    </select>
+
+    <p>Forwarding request to {{ forwardName }}</p>
 
     <div class="flex justify-end gap-2 mt-8">
       <Button
@@ -233,12 +257,13 @@ import ViewIcon from "../../assets/eye-view-blue.png";
 import ApproveIcon from "../../assets/approve-icon.png";
 import parseDate from "../../utils/parseDate";
 import EditIcon from "../../assets/blue-pencil.png";
+import AutoComplete from "primevue/autocomplete";
 import { useRouter } from "vue-router";
 import { TicketAndFaculty } from "../../types/types";
 import { useConfirm } from "primevue/useconfirm";
 import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import ForwardIcon from "../../assets/forward-icon.png";
 
 const router = useRouter();
@@ -254,8 +279,54 @@ const forwardRequestDialogIsVisible = ref<boolean>(false);
 const requestApprovalMessage = ref<string>("");
 const reviewerMessageIsVisible = ref<boolean>(false);
 const forwardRequestTo = ref<string>("oladipea@udmercy.edu");
+const forwardName = ref<string>("");
 const confirm = useConfirm();
 const toast = useToast();
+const tags = ref<string[]>([])
+const originalTags = ref<string[]>([])
+const selectedTag = ref<string>("")
+const multFacultyFoundByTags = ref<boolean>(false)
+const FacultyFoundByTags = ref<Faculties[]>([])
+const selectedFaculty = ref<string>("")
+
+interface Faculties {
+  id: string;
+  name: string;
+  email: string;
+  tag: string;
+}
+
+watch(selectedTag, (newTag) => {
+  if (originalTags.value.includes(newTag)) {
+    // Call the function when a tag is selected
+    console.log("Calling UpdateEMailbyTag")
+    updateEmailByTag(newTag);
+  }
+});
+
+watch(selectedFaculty, (selFaculty) => {
+  // Filter FacultyFoundByTags to find the selected faculty
+  const selectedFacultyData = FacultyFoundByTags.value.filter(
+    (faculty) => faculty.name === selFaculty
+  );
+
+  if (selectedFacultyData.length === 1) {
+    // Only one faculty found
+    forwardRequestTo.value = selectedFacultyData[0].email;
+    forwardName.value = selectedFacultyData[0].name;
+
+    // Set multFacultyFoundByTags to false as only one faculty is selected
+    multFacultyFoundByTags.value = false;
+  } else if (selectedFacultyData.length > 1) {
+    // Multiple faculties found, so set multFacultyFoundByTags to true
+    multFacultyFoundByTags.value = true;
+  } else {
+    // No faculty found, reset the forward request details
+    forwardRequestTo.value = '';
+    forwardName.value = '';
+    multFacultyFoundByTags.value = false;
+  }
+});
 
 function confirmRequestDenial() {
   denyPopupIsVisible.value = true;
@@ -286,6 +357,46 @@ async function forwardRequest() {
   } catch (err) {}
 }
 
+async function updateEmailByTag(tag){
+  try{
+    let faculties = await axios.get(
+      `${import.meta.env.VITE_API_URL}/admin/retrieve-faculty-by-tag`,
+      {
+        params: {tag: tag}
+      }
+    );
+
+    FacultyFoundByTags.value = faculties.data.map((faculty: any) => ({
+      id: faculty._id,
+      name: faculty.firstName + " " + faculty.lastName,
+      email: faculty.workEmail,
+      tag: faculty.tag,
+    }));
+
+    if(FacultyFoundByTags.value.length == 1){
+      forwardRequestTo.value = FacultyFoundByTags.value[0].email
+      forwardName.value = FacultyFoundByTags.value[0].name
+
+      console.log("FORWARD NAME", forwardName)
+    }
+    else if(FacultyFoundByTags.value.length == 0){
+      forwardRequestTo.value = ""
+      forwardName.value = ""
+    }
+    else{
+      multFacultyFoundByTags.value = true
+    }
+
+    console.log(faculties,forwardRequestTo)
+
+  } catch (err) {
+    toast("An unexpected error occured. Please try again later", {
+      type: TYPE.ERROR,
+    });
+    console.log(err);
+  }
+}
+
 function editRequest() {
   console.log(props.request.request._id);
   router.push({
@@ -295,6 +406,33 @@ function editRequest() {
       facultyId: props.request.faculty._id,
     },
   });
+}
+
+function onComplete(event) {
+  const query = event.query.toLowerCase();
+
+  console.log("query", query)
+
+  if (!event.query.trim().length) {
+    tags.value = [...originalTags.value]; // Assuming originalTags holds the original unfiltered list of tags
+  } else {
+    tags.value = originalTags.value.filter((tag) => {
+      return tag.toLowerCase().includes(query);
+    });
+  }
+}
+
+async function get_tags(){
+  let res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/admin/retrieve-faculty-tags`
+  );
+
+  if (res.data.length !== 0) {
+    originalTags.value = res.data.map((tag: any) => tag.tag);  // Populate tags array
+  } else {
+    originalTags.value = ["No Tags Exist"];  // Fallback value if no tags are found
+  }
+
 }
 
 function confirmRequestApproval() {
@@ -411,4 +549,8 @@ async function viewPDF() {
     );
   }
 }
+
+onMounted(() =>{
+  get_tags()
+})
 </script>
