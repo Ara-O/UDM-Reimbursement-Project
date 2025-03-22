@@ -73,17 +73,35 @@
             <option value="FACULTY">Faculty</option>
             <option value="ADMIN">Admin</option>
           </select>
+        </template>
+      </Column>
+      <Column field="tag" header="Tag" sortable>
+        <template #body="{ data }">
+          <AutoComplete
+              placeholder="Enter Tag"
+              dropdown
+              v-model="data.tag"
+                empty-search-message="No Existing Tags"
+              style="height: 30px"
+              class="border-sm shadow-sm sm:!w-80 !w-full rounded-md !h-10 border !border-gray-100"
+              :suggestions="tags"
+              @complete="onComplete"
+              />
+        </template>
+      </Column>
+      <Column header="Save/Delete">
+        <template #body="{ data }">
           <span
+              class="underline cursor-pointer h-[16px]"
+              @click="save_role_and_tag(data)"
+              title="Save Role"
+              ><img src="../assets/save.png" alt="Save Icon" class="w-5 ms-2 me-2"/></span>
+            <span
             class="underline cursor-pointer h-[16px]"
-            @click="save_role(data)"
-            title="Save Role"
-            ><img src="../assets/save.png" alt="Save Icon" class="w-5 ms-2 me-2"/></span>
-          <span
-          class="underline cursor-pointer h-[16px]"
-          @click="delete_faculty(data)"
-          title="Delete request"
-          >
-          <img src="../assets/trash-icon.png" alt="Delete Icon" class="w-4 ms-2 "
+            @click="delete_faculty(data)"
+            title="Delete request"
+            >
+            <img src="../assets/trash-icon.png" alt="Delete Icon" class="w-4 ms-2 "
           /></span>
         </template>
       </Column>
@@ -99,6 +117,7 @@ import InputText from "primevue/inputtext";
 import Select from "primevue/select";
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import AutoComplete from "primevue/autocomplete";
 
 const search_field = ref<string>("");
 const views = ["Grid View", "Table View", "List View"];
@@ -113,13 +132,31 @@ const filter_options = ["In Progress", "Submitted"];
 const view = ref<string>("Grid View");
 const filter = ref<string>("");
 const sort = ref<string>("");
+const tags = ref<string[]>([])
+const originalTags = ref<string[]>([])
 
+
+
+function onComplete(event) {
+  const query = event.query.toLowerCase();
+
+  console.log("query", query)
+
+  if (!event.query.trim().length) {
+    tags.value = [...originalTags.value]; // Assuming originalTags holds the original unfiltered list of tags
+  } else {
+    tags.value = originalTags.value.filter((tag) => {
+      return tag.toLowerCase().includes(query);
+    });
+  }
+}
 
 interface Faculties {
   id: string;
   name: string;
   email: string;
   role: string;
+  tag: string;
 }
 const faculty_member_list = ref<Faculties[]>([]);
 
@@ -134,13 +171,27 @@ async function get_faculty() {
     name: faculty.firstName + " " + faculty.lastName,
     email: faculty.workEmail,
     role: faculty.role,
+    tag: faculty.tag,
   }));
 }
 
-async function save_role(faculty){
+async function get_tags(){
+  let res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/admin/retrieve-faculty-tags`
+  );
+
+  if (res.data.length !== 0) {
+    originalTags.value = res.data.map((tag: any) => tag.tag);  // Populate tags array
+  } else {
+    originalTags.value = ["No Tags Exist"];  // Fallback value if no tags are found
+  }
+
+}
+
+async function save_role_and_tag(faculty){
   try{
     console.log("Faculty",faculty)
-    let res = await axios.post(`${import.meta.env.VITE_API_URL}/admin/save-role`, faculty)
+    let res = await axios.post(`${import.meta.env.VITE_API_URL}/admin/save-role-and-tag`, faculty)
     console.log(res, "Role Saved")
   }
   catch(err){
@@ -162,5 +213,7 @@ async function delete_faculty(faculty){
 
 onMounted(() =>{
   get_faculty()
+  get_tags()
 })
 </script>
+

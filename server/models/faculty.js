@@ -17,6 +17,7 @@ const facultySchema = new Schema({
     type: String,
     default: "FACULTY",
   },
+  tag: String,
   country: String,
   foapaDetails: [
     {

@@ -9,6 +9,7 @@ import ReimbursementTicket from "../models/reimbursement.js";
 import { retrieveDate } from "../utils/retrieveDate.js";
 import sgMail from "@sendgrid/mail";
 import DepartmentChairRegistry from "../models/departmentChairRegistry.js";
+import FacultyTagsList from "../models/facultyTagsList.js";
 
 dotenv.config();
 
@@ -254,7 +255,7 @@ router.post("/update_department_code", verifyAdminToken, async (req, res) => {
 router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
   try {
     const faculties = await Faculty.find({}).select(
-      "_id firstName lastName department workEmail role "
+      "_id firstName lastName department workEmail role tag"
     );
 
     res.status(200).send(faculties);
@@ -264,17 +265,41 @@ router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
   }
 });
 
-router.post("/save-role", verifyAdminToken, async (req, res) => {
+router.get("/retrieve-faculty-tags", verifyAdminToken, async (req, res) => {
+  try {
+    const tags = await FacultyTagsList.find({})
+
+    res.status(200).send(tags)
+  } catch (err) {
+    console.log("Retrieving Faculty Tags Error: ", err);
+    res.send(err)
+  }
+})
+
+router.post("/save-role-and-tag", verifyAdminToken, async (req, res) => {
   try {
     const newRole = await Faculty.findOneAndUpdate(
       {
         _id: req.body.id
       },
-      { role: req.body.role }
+      { role: req.body.role, tag: req.body.tag }
     );
 
+    const tagExists = await FacultyTagsList.findOne({ tag: req.body.tag });
+
+    if (!tagExists) {
+      // If the tag doesn't exist, create a new one
+      const newTag = await FacultyTagsList.create({ tag: req.body.tag });
+
+      res.status(201).json(newTag);  // Respond with the created tag
+    } else {
+      // If the tag exists, return a response indicating it's already in the collection
+      res.status(400).json({ message: "Tag already exists." });
+    }
+
+
     res.send(200)
-    console.log("Saved", newRole)
+    console.log("Saved", newRole, newTag)
   }
   catch (err) {
     console.log(err)

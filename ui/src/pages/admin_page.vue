@@ -159,7 +159,7 @@
       modal
       header="Assign Department Chairs"
     >
-      <p class="text-sm">Assign ORG code to department chairs</p>
+      <p class="text-sm">Assign Tags to Faculty</p>
 
       <DataTable
         :value="dept_chair_codes"
@@ -240,6 +240,7 @@ interface Faculties {
   name: string;
   email: string;
   role: string;
+  tag: string;
 }
 const faculties = ref<Faculties[]>([]);
 
@@ -283,7 +284,7 @@ async function get_faculty() {
   for( let faculty of res.data){
     console.log(faculty)
 
-    faculties.value.push({name: faculty.firstName + " " + faculty.lastName, email: faculty.workEmail, role: faculty.role})
+    faculties.value.push({name: faculty.firstName + " " + faculty.lastName, email: faculty.workEmail, role: faculty.role, tag: "A Legit Chair"})
 
   }
 
