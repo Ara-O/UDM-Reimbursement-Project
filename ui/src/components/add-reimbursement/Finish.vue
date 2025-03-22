@@ -384,56 +384,6 @@ async function download() {
       });
     });
 }
-
-async function checkForUDMPU(): Promise<boolean> {
-  let users_foapa_details = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
-  );
-
-  let user_has_added_UDMPU = false;
-  // Loop through the users foapa details
-  for (let i = 0; i < props.claim.foapaDetails.length; i++) {
-    // For each foapa, get its ID
-    let id = props.claim.foapaDetails[i].foapa_id;
-
-    // Finds its corresponding doapa detail
-    let foapaDetail = users_foapa_details.data.find(
-      (foapa) => id === foapa._id
-    );
-
-    if (foapaDetail.isUDMPU) {
-      user_has_added_UDMPU = true;
-      break;
-    }
-  }
-
-  toast.clear();
-
-  if (props.claim.UDMPUVoucher === true && user_has_added_UDMPU === false) {
-    toast(
-      "Error: You have selected that you will be using a UDMPU Voucher but you have not used your UDMPU FOAPA. Please, either unselect this option, or add the default UDMPU FOAPA",
-      {
-        type: TYPE.ERROR,
-      }
-    );
-
-    return false;
-  }
-
-  if (props.claim.UDMPUVoucher === false && user_has_added_UDMPU === true) {
-    toast(
-      "Error: You have used your UDMPU FOAPA, but did not specify that you will be using it in the Claim Information section. Please select the UDMPU option in the Claim Information section",
-      {
-        type: TYPE.ERROR,
-      }
-    );
-
-    return false;
-  }
-
-  return true;
-}
-
 const confirmSubmission = useConfirm();
 
 const markClaimAsSubmitted = async () => {
@@ -442,12 +392,6 @@ const markClaimAsSubmitted = async () => {
     toast("You must have at least 1 expense in order to submit this request", {
       type: TYPE.ERROR,
     });
-    return;
-  }
-
-  let user_used_udmpu_after_selecting_it = await checkForUDMPU();
-
-  if (user_used_udmpu_after_selecting_it === false) {
     return;
   }
 

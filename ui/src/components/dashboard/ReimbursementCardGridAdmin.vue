@@ -8,6 +8,10 @@
         class="absolute bg-white top-0 right-3 cursor-pointer rounded-md font-medium text-[13px] w-24 flex items-center justify-center text-center h-7"
         :class="{ 'text-udmercy-blue': true }"
         @click="showReviewerMessage"
+        v-if="
+          props.request.request.needs_approval ||
+          props.request.request.approval_status !== ''
+        "
       >
         {{
           props.request.request.approval_status

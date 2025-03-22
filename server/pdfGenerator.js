@@ -534,7 +534,10 @@ export default function createPdfDefinition(
     }
   });
 
+  console.log(expenses);
+
   for (const foapa in foapaDetails) {
+    console.log(foapa);
     let subFoapaArray = [];
     subFoapaArray = foapa.split("-");
 
@@ -618,11 +621,19 @@ export default function createPdfDefinition(
     for (let i = 0; i < reimbursementData.foapaDetails.length; i++) {
       let foapa = reimbursementData.foapaDetails[i];
 
-      let val = facultyData.foapaDetails.find(
-        (foap) => foap._id.toHexString() === foapa.foapa_id
-      );
+      // console.log(foapa);
+      // let val = facultyData.foapaDetails.find(
+      //   (foap) => foap.foapaName === foapa.foapaName
+      // );
 
-      console.log(facultyData.foapaDetails);
+      // console.log(val);
+
+      // if (val === undefined) {
+      //   break;
+      // }
+
+      let val = foapa;
+      // console.log(facultyData.foapaDetails);
 
       console.log(val);
       let details = formatFoapaDetails(val);

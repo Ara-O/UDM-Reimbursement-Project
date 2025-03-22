@@ -768,30 +768,6 @@ function removeFoapaHelp() {
 async function triggerFoapaEditMode(foapa: FoapaStuff) {
   try {
     foapa_to_edit.value = foapa;
-    //Check if FOAPA is being used in other reimbursements
-    let res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/check-foapa-usage`,
-      {
-        params: {
-          //@ts-ignore
-          foapa_id: foapa._id,
-        },
-      }
-    );
-
-    if (res.data.length > 0) {
-      // Scroll up
-      window.scrollTo(0, 0);
-
-      edit_clashes.value = res.data;
-      show_edit_clashes_dialogue.value = true;
-      //@ts-ignore
-      document.querySelector(".add_foapa_main")?.scrollIntoView();
-
-      //@ts-ignore
-      document.querySelector("body").style.overflow = "hidden";
-      return;
-    }
 
     //@ts-ignore
     edited_foapas_id.value = foapa._id;
@@ -968,23 +944,23 @@ async function addFoapa(values, { resetForm, setFieldError }) {
 async function showDeleteFoapaDialogue(foapa_id) {
   try {
     // Check to see which pending reimbursements are using this FOAPA
-    let res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/check-foapa-usage`,
-      {
-        params: {
-          //@ts-ignore
-          foapa_id: foapa_id,
-        },
-      }
-    );
+    // let res = await axios.get(
+    //   `${import.meta.env.VITE_API_URL}/api/check-foapa-usage`,
+    //   {
+    //     params: {
+    //       //@ts-ignore
+    //       foapa_id: foapa_id,
+    //     },
+    //   }
+    // );
 
-    if (res.data.length > 0) {
-      // A pending reimbursement is using this FOAPA
-      delete_clashes.value = res.data;
-      show_delete_foapa_clash_dialogue.value = true;
-      foapa_to_delete.value = foapa_id;
-      return;
-    }
+    // if (res.data.length > 0) {
+    //   // A pending reimbursement is using this FOAPA
+    //   delete_clashes.value = res.data;
+    //   show_delete_foapa_clash_dialogue.value = true;
+    //   foapa_to_delete.value = foapa_id;
+    //   return;
+    // }
 
     window.scrollTo(0, 0);
     show_delete_foapa_dialogue.value = true;

@@ -18,13 +18,13 @@
           <select
             name="foapa"
             id="foapa"
-            v-model="assignedFoapa.foapa_id"
+            v-model="assignedFoapa"
             class="border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
           >
-            <option disabled selected value="">Select FOAPA</option>
-            <option :value="foapa._id" v-for="foapa in userFoapas">
-              {{ foapa.foapaName }} - {{ formatFoapaDeails(foapa) }}
+            <option disabled selected :value="null">Select FOAPA</option>
+            <option :value="foapa" v-for="foapa in userFoapas">
+              {{ formatFoapaDeails(foapa) }} - {{ foapa.foapaName }}
             </option>
             <option value="Add a New FOAPA">Add a New FOAPA</option>
           </select>
@@ -36,7 +36,7 @@
             type="text"
             name="quantity-assigned"
             placeholder="Desired Amount"
-            v-model="assignedFoapa.cost"
+            v-model="assignedFoapaCost"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
             style="padding-left: 2rem"
@@ -81,7 +81,6 @@
          can use that to match foapa names, etc -->
           <foapa-container
             v-for="foapa in props.claim.foapaDetails"
-            :filtered-user-foapas="userFoapas"
             :foapa="foapa"
             @delete-foapa="deleteFOAPA"
             @edit-foapa="editFOAPA"
@@ -156,37 +155,31 @@ import CancelIcon from "../../assets/cross-icon.svg";
 import FoapaContainer from "./FoapaContainer.vue";
 import { ref, onMounted, watch } from "vue";
 import ManageFoapaDetails from "../manage-foapa/AddFoapaPopup.vue";
-import {
-  ReimbursementTicket,
-  FoapaStuff,
-  FoapaInputWithID,
-} from "../../types/types";
+import { ReimbursementTicket, FoapaStuff } from "../../types/types";
 import BalanceContainer from "./BalanceContainer.vue";
 import { TYPE, useToast } from "vue-toastification";
 import { computed } from "@vue/reactivity";
 import { formatFoapaDeails } from "../../utils/formatFoapaDetails";
+type FoapaDetails = FoapaStuff & { _id: string };
 
 let props = defineProps<{
   claim: ReimbursementTicket;
-  faculty_id: string;
 }>();
 
-let assignedFoapa = ref<FoapaInputWithID>({
-  cost: "",
-  foapa_id: "",
-});
+let assignedFoapa = ref<any>(null);
+let assignedFoapaCost = ref<string>("");
 
-type FoapaDetails = FoapaStuff & { _id: string };
 let userFoapas = ref<FoapaDetails[]>([]);
 let foapaDetailsToAdd = ref<FoapaStuff[]>([]);
 let foapaPopupIsVisible = ref<boolean>(false);
 let triggerAssignedFoapaEditMode = ref<boolean>(false);
 
 const emits = defineEmits(["move-to-next-section", "move-to-previous-section"]);
+
 const toast = useToast();
 
 watch(
-  () => assignedFoapa.value.foapa_id,
+  () => assignedFoapa.value,
   (newVal, oldVal) => {
     if (newVal == "Add a New FOAPA") showFoapaPopup();
   }
@@ -206,34 +199,34 @@ function showFoapaPopup() {
 
 function closeFoapaPopup() {
   foapaPopupIsVisible.value = false;
-  assignedFoapa.value = {
-    cost: "",
-    foapa_id: "",
-  };
+  assignedFoapa.value = null;
+  assignedFoapaCost.value = "";
+
   retrieveFoapaDetails();
+
   //@ts-ignore
   document.querySelector("body").style.overflow = "auto";
 }
 
-function editFOAPA(foapa_id) {
+function editFOAPA(foapa_to_edit_id) {
+  console.log(foapa_to_edit_id);
   triggerAssignedFoapaEditMode.value = true;
 
-  props.claim.foapaDetails.forEach((foapa) => {
-    if (foapa.foapa_id === foapa_id) {
-      assignedFoapa.value.foapa_id = foapa_id;
-      assignedFoapa.value.cost = foapa.cost;
+  props.claim.foapaDetails.forEach((foapa: any) => {
+    if (foapa._id === foapa_to_edit_id) {
+      console.log(foapa);
+      assignedFoapa.value =
+        userFoapas.value.find((f) => f._id === foapa._id) || foapa;
+      assignedFoapaCost.value = foapa.cost;
     }
   });
 
-  deleteFOAPA(foapa_id);
+  deleteFOAPA(foapa_to_edit_id);
 }
 
 function moveToNextSection() {
   console.log(assignedFoapa.value.cost);
-  if (
-    assignedFoapa.value.foapa_id !== "" ||
-    (assignedFoapa.value.cost !== "0" && assignedFoapa.value.cost !== "")
-  ) {
+  if (assignedFoapaCost.value !== "0" && assignedFoapaCost.value !== "") {
     let moveon = confirm(
       "Warning: You are moving to next section without adding your currently inputted FOAPA. Click 'OK' to discard the inputted FOAPA and move to the next section, or click 'Cancel' to return"
     );
@@ -248,9 +241,9 @@ function moveToNextSection() {
 }
 
 function addFoapa() {
-  const num = assignedFoapa.value.cost;
+  const cost_value = assignedFoapaCost.value;
 
-  const isValidNumber = /^[0-9]*\.?[0-9]+$/.test(String(num));
+  const isValidNumber = /^[0-9]*\.?[0-9]+$/.test(String(cost_value));
 
   // Validate the type of the cost field
   if (!isValidNumber) {
@@ -261,7 +254,7 @@ function addFoapa() {
     return;
   }
 
-  if (String(num) === "0") {
+  if (String(cost_value) === "0") {
     toast.clear();
     toast("Error: Assigned quantity must be higher than $0", {
       type: TYPE.ERROR,
@@ -280,10 +273,7 @@ function addFoapa() {
   total_expense_cost = total_expense_cost / 100;
   total_foapa_cost = total_foapa_cost / 100;
 
-  if (
-    total_foapa_cost + Number(assignedFoapa.value.cost) >
-    total_expense_cost
-  ) {
+  if (total_foapa_cost + Number(assignedFoapaCost.value) > total_expense_cost) {
     toast.clear();
 
     toast(
@@ -295,13 +285,15 @@ function addFoapa() {
     return;
   }
 
+  assignedFoapa.value.cost = cost_value;
+
   // Check if FOAPA was already added
   let foapaWasAlreadyAdded = false;
   for (let i = 0; i < props.claim.foapaDetails.length; i++) {
     // If a FOAPA was fonud, add the cost in the quantity field to that existing FOAPA
-    if (props.claim.foapaDetails[i].foapa_id === assignedFoapa.value.foapa_id) {
+    if (props.claim.foapaDetails[i]._id === assignedFoapa.value._id) {
       let currentFoapaCost = Number(props.claim.foapaDetails[i].cost) * 100;
-      let newFoapaCost = Number(assignedFoapa.value.cost) * 100;
+      let newFoapaCost = Number(assignedFoapaCost.value) * 100;
 
       let totalPrice = currentFoapaCost + newFoapaCost;
 
@@ -318,12 +310,9 @@ function addFoapa() {
     );
   }
 
-  assignedFoapa.value = {
-    cost: "",
-    foapa_id: "",
-  };
+  assignedFoapa.value = null;
 
-  assignedFoapa.value.cost =
+  assignedFoapaCost.value =
     calculateBalance.value > 0 ? "" + calculateBalance.value : "0";
 
   if (triggerAssignedFoapaEditMode.value) {
@@ -333,16 +322,9 @@ function addFoapa() {
 
 function retrieveFoapaDetails() {
   axios
-    .get(
-      `${import.meta.env.VITE_API_URL}/admin/retrieve-faculty-foapa-details`,
-      {
-        params: {
-          id: props.faculty_id,
-        },
-      }
-    )
+    .get(`${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`)
     .then((res) => {
-      userFoapas.value = res.data.foapa;
+      userFoapas.value = res.data;
     })
     .catch((err) => {
       toast.clear();
@@ -381,14 +363,14 @@ const calculateBalance = computed(() => {
 });
 
 onMounted(() => {
-  assignedFoapa.value.cost =
+  assignedFoapaCost.value =
     calculateBalance.value > 0 ? "" + calculateBalance.value : "0";
   retrieveFoapaDetails();
 });
 
 function deleteFOAPA(id: string) {
   props.claim.foapaDetails = props.claim.foapaDetails.filter(
-    (foapa) => foapa.foapa_id !== id
+    (foapa) => foapa._id !== id
   );
 
   if (triggerAssignedFoapaEditMode.value === false) {
