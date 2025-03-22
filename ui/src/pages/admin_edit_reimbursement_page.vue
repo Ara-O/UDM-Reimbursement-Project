@@ -53,12 +53,13 @@
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
       ></manage-expenses>
-      <assign-foapa-information
+      <assign-foapa-information-admin
         :claim="currentReimbursement"
+        :faculty_id="String(route.query.facultyId)"
         v-if="selectedSection === 3"
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
-      ></assign-foapa-information>
+      ></assign-foapa-information-admin>
       <manage-receipts
         :claim="currentReimbursement"
         v-if="selectedSection === 4"
@@ -67,7 +68,10 @@
       ></manage-receipts>
       <add-edit-notes
         v-if="selectedSection === 5"
+        :old-reimbursement="currentReimbursement"
+        :new-reimbursement="oldReimbursement"
         @approve-request-with-edits="approveRequestWithEdits"
+        @save-request-with-edits="saveRequestWithEdits"
       >
       </add-edit-notes>
     </section>
@@ -95,7 +99,7 @@ import { ReimbursementTicket } from "../types/types";
 import claimInformation from "../components/add-reimbursement/ClaimInformation.vue";
 import manageExpenses from "../components/add-reimbursement/ManageExpenses.vue";
 import ManageReceipts from "../components/add-reimbursement/ManageReceipts.vue";
-import AssignFoapaInformation from "../components/add-reimbursement/AssignFoapaInformation.vue";
+import AssignFoapaInformationAdmin from "../components/add-reimbursement/AssignFoapaInformationAdmin.vue";
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import AddEditNotes from "../components/AdminAddEditNotes.vue";
 import { TYPE, useToast } from "vue-toastification";
@@ -136,9 +140,37 @@ let sections = ref([
   },
 ]);
 
+async function saveRequestWithEdits(edit_notes) {
+  try {
+    await axios.post(
+      `${import.meta.env.VITE_API_URL}/admin/save-request-with-edits`,
+      {
+        edit_notes: edit_notes,
+        reimbursement_data: currentReimbursement.value,
+        faculty_id: route.query.facultyId,
+      }
+    );
+
+    toast.clear();
+    toast("Request saved successfully", {
+      type: TYPE.SUCCESS,
+    });
+
+    router.push("/admin");
+  } catch (err) {
+    toast.clear();
+    toast("There was an error approving this request. Please try again later", {
+      type: TYPE.ERROR,
+    });
+    console.log(err);
+  }
+}
+
 function changeSection(section: number) {
   selectedSection.value = section;
 }
+
+let oldReimbursement = ref<ReimbursementTicket>();
 
 let currentReimbursement = ref<ReimbursementTicket>({
   reimbursementName: "",
@@ -191,6 +223,7 @@ async function approveRequestWithEdits(edit_notes) {
     console.log(err);
   }
 }
+
 function startListeningForReimbursementChanges() {
   watch(currentReimbursement.value, () => {
     if (claim_is_being_saved.value === false) {
@@ -230,6 +263,7 @@ onMounted(async () => {
     );
 
     currentReimbursement.value = reimbursement.data as ReimbursementTicket;
+    oldReimbursement.value = Object.assign({}, currentReimbursement.value);
   } catch (err) {
     console.log(err);
   }

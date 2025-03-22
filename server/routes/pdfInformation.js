@@ -146,15 +146,7 @@ const reimbursementRequestSchema = z.object({
         })
         .optional()
     ),
-    foapaDetails: z.array(
-      z
-        .object({
-          _id: z.string().optional(),
-          cost: z.union([z.number(), z.string()]),
-          foapa_id: z.string(),
-        })
-        .optional()
-    ),
+    foapaDetails: z.any(),
   }),
 });
 

@@ -5,6 +5,7 @@ import z, { ZodError } from "zod";
 import { Router } from "express";
 import { verifyToken } from "../middleware/auth.js";
 import FoapaRegistry from "../models/foapaRegistry.js";
+import { faC } from "@fortawesome/free-solid-svg-icons";
 
 // For retrieving a list of all the user's FOAPAs: GET /retrieve-foapa-details
 router.get("/retrieve-foapa-details", verifyToken, async (req, res) => {
@@ -163,25 +164,25 @@ router.post("/edit-foapa-detail", verifyToken, async (req, res) => {
 
     let foapa = requestData.foapaDetail;
 
-    faculty.foapaDetails.find((f) => {
-      if (
-        f.foapaName === foapa.foapaName &&
-        f.description === foapa.description &&
-        f.fund === foapa.fund &&
-        f.organization === foapa.organization &&
-        f.program === foapa.program &&
-        f.activity === foapa.activity &&
-        f.isUDMPU === foapa.isUDMPU
-      ) {
-        duplicate_foapa = true;
-      }
-    });
+    // faculty.foapaDetails.find((f) => {
+    //   if (
+    //     f.foapaName === foapa.foapaName &&
+    //     f.description === foapa.description &&
+    //     f.fund === foapa.fund &&
+    //     f.organization === foapa.organization &&
+    //     f.program === foapa.program &&
+    //     f.activity === foapa.activity &&
+    //     f.isUDMPU === foapa.isUDMPU
+    //   ) {
+    //     duplicate_foapa = true;
+    //   }
+    // });
 
-    if (duplicate_foapa) {
-      return res.status(409).send({
-        message: "There already exists a FOAPA with this information",
-      });
-    }
+    // if (duplicate_foapa) {
+    //   return res.status(409).send({
+    //     message: "There already exists a FOAPA with this information",
+    //   });
+    // }
 
     //Finds the faculty FOAPA that matches the foapa the user wants to edit
     let foapa_to_edit_index = faculty.foapaDetails.findIndex(
@@ -303,8 +304,10 @@ router.get("/retrieve-foapa-detail", verifyToken, async (req, res) => {
       //Loop through all the foapas used in the claim
       for (let j = 0; j < foapasUsedInThisClaim.length; j++) {
         //The foapa matches the foapa we want to check
+        console.log(foapasUsedInThisClaim[j]);
         if (
-          foapasUsedInThisClaim[j].foapa_id.toHexString() === req.query.foapa_id
+          foapasUsedInThisClaim[j].foapaName ===
+          faculty.foapaDetails[index].foapaName
         ) {
           dataToSend.claims_used.push(faculty.reimbursementTickets[i]);
         }
@@ -339,81 +342,6 @@ router.get("/retrieve-foapa-registry", verifyToken, async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       message: "An unexpected error occured when retrieving the FOAPA regisery",
-    });
-  }
-});
-
-// Checks the clashes when the user wants to delete or edit a FOAPA: POST /check-foapa-usage
-router.get("/check-foapa-usage", verifyToken, async (req, res) => {
-  try {
-    const foapaId = req.query.foapa_id;
-    const userId = req.user.userId;
-
-    const faculty = await Faculty.findById(userId).populate(
-      "reimbursementTickets"
-    );
-
-    // Find the FOAPA we want to check's index in the facultys FOAPA array
-    let index = faculty.foapaDetails.findIndex(
-      (foapa) => foapa._id.toHexString() === foapaId
-    );
-
-    // If the FOAPA was not found in the faculty's FOAPA list
-    if (index === -1) {
-      throw new Error("There was an error finding this FOAPA's information");
-    }
-
-    let foapaToCheck = faculty.foapaDetails[index];
-
-    // Stores all the reimbursement requests that the FOAPA is being used for
-    let reimbursementClashes = [];
-
-    //Looping through all the faculty's reimbursement tickets
-    for (let i = 0; i < faculty.reimbursementTickets.length; i++) {
-      //Skip submitted tickets as they no longer matter
-      if (
-        faculty.reimbursementTickets[i].reimbursementStatus !== "In Progress"
-      ) {
-        continue;
-      }
-
-      //Get the foapa details from the ticket
-      const foapasUsedInThisClaim =
-        faculty.reimbursementTickets[i].foapaDetails;
-
-      //Loop through all the foapas used in the claim
-      for (let j = 0; j < foapasUsedInThisClaim.length; j++) {
-        //The foapa matches the foapa we want to check
-        if (
-          foapasUsedInThisClaim[j].foapa_id.toHexString() ===
-          foapaToCheck._id.toHexString()
-        ) {
-          // If the foapa we are checking matches with the foapa number used in this reimbursement
-          //and isnt already added
-          reimbursementClashes.push(faculty.reimbursementTickets[i]);
-        }
-      }
-    }
-
-    let clashes = reimbursementClashes.map((claim) => {
-      return {
-        name: claim.reimbursementName,
-        reimbursement_id: claim._id,
-      };
-    });
-
-    //Removing duplicates
-    clashes = [...new Set(clashes)];
-
-    return res.status(200).send(clashes);
-  } catch (err) {
-    logger.error(err, {
-      api: "/api/check-foapa-usage",
-    });
-
-    return res.status(500).send({
-      message:
-        "An unexpected error occured when verifying this FOAPA's usage. Please try again later.",
     });
   }
 });

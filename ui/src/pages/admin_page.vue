@@ -137,9 +137,6 @@
         <Column field="name" header="Name" sortable></Column>
         <Column field="email" header="Email" sortable></Column>
         <Column field="role" header="Role" sortable>
-          <!-- <select name="" id="">
-            <option value="hi">hi</option>
-          </select> -->
           <template #body="{ data }">
             <select name="" id="">
               <option value="" :selected="data.role === 'user'">User</option>
@@ -244,12 +241,10 @@ interface Faculties {
 }
 const faculties = ref<Faculties[]>([]);
 
-
 const router = useRouter();
 
 function goToUserManagementPage() {
   router.push("/admin/user-management");
-  console.log("HELLOOOOO")
   get_faculty();
 }
 
@@ -281,15 +276,19 @@ async function get_faculty() {
     `${import.meta.env.VITE_API_URL}/admin/retrieve-all-faculty`
   );
 
-  for( let faculty of res.data){
-    console.log(faculty)
+  for (let faculty of res.data) {
+    console.log(faculty);
 
-    faculties.value.push({name: faculty.firstName + " " + faculty.lastName, email: faculty.workEmail, role: faculty.role, tag: "A Legit Chair"})
+    faculties.value.push({
+      name: faculty.firstName + " " + faculty.lastName, 
+      email: faculty.workEmail, 
+      role: faculty.role,
+      tag: faculty.tag 
+  })
 
   }
 
-  console.log(faculties.value)
-
+  console.log(faculties.value);
 }
 
 async function fetch_department_chairs() {

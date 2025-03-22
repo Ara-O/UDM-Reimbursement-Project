@@ -320,7 +320,11 @@ const totalAmountFromFoapaInSubmittedRequests = computed(() => {
   foapa_information.value.claims_used.forEach((claim) => {
     claim.foapaDetails.forEach((foapa) => {
       if (claim.reimbursementStatus === "Submitted") {
-        if (foapa.foapa_id === route.params.id) {
+        if (
+          foapa.foapaName ===
+            foapa_information.value.foapa_information.foapaName &&
+          foapa.cost
+        ) {
           totalAmount += foapa.cost * 100;
         }
       }
@@ -339,7 +343,11 @@ const totalAmountFromFoapaInApprovedRequests = computed(() => {
         claim.reimbursementStatus === "Approved" ||
         claim.reimbursementStatus === "Approved*"
       ) {
-        if (foapa.foapa_id === route.params.id) {
+        if (
+          foapa.foapaName ===
+            foapa_information.value.foapa_information.foapaName &&
+          foapa.cost
+        ) {
           totalAmount += foapa.cost * 100;
         }
       }
@@ -355,7 +363,11 @@ const totalAmountFromFoapaInInProgressRequests = computed(() => {
   foapa_information.value.claims_used.forEach((claim) => {
     claim.foapaDetails.forEach((foapa) => {
       if (claim.reimbursementStatus === "In Progress") {
-        if (foapa.foapa_id === route.params.id) {
+        if (
+          foapa.foapaName ===
+            foapa_information.value.foapa_information.foapaName &&
+          foapa.cost
+        ) {
           totalAmount += foapa.cost * 100;
         }
       }
@@ -373,8 +385,12 @@ const totalAmountUsed = computed(() => {
   //and add its cost - the amount spent from it to the totalAmount
   foapa_information.value.claims_used.forEach((claim) => {
     claim.foapaDetails.forEach((foapa) => {
-      console.log(claim);
-      if (foapa.foapa_id === route.params.id) {
+      if (
+        foapa.foapaName ===
+          foapa_information.value.foapa_information.foapaName &&
+        foapa.cost
+      ) {
+        console.log(foapa.cost, foapa);
         totalAmount += foapa.cost * 100;
       }
     });
@@ -420,9 +436,11 @@ function parseDate(dateString: string) {
 }
 
 function parseAmount(claim) {
-  const found_claim = claim.foapaDetails.find(
-    (foapa) => foapa.foapa_id === route.params.id
-  );
+  const found_claim = claim.foapaDetails.find((foapa) => {
+    return (
+      foapa.foapaName === foapa_information.value.foapa_information.foapaName
+    );
+  });
 
   return found_claim.cost;
 }

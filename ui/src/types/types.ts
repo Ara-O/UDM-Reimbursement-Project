@@ -67,19 +67,9 @@ export type FoapaNumbers = {
   // initialAmount: number | "N/A";
 };
 
-export type FoapaInput = {
-  foapa_id: string;
-  cost: string;
-};
-
 export type History = {
   date_of_message: string;
   request_message: string;
-};
-
-export type FoapaInputWithID = {
-  cost: string;
-  foapa_id: string;
 };
 
 export type GuestInfo = {
@@ -109,7 +99,7 @@ export type ReimbursementTicket = {
   reimbursementStatus: string;
   reimbursementDate: string;
   activities: Expense[];
-  foapaDetails: FoapaInput[];
+  foapaDetails: FoapaStuff[];
   request_history: History[];
 };
 export type TicketAndFaculty = {
@@ -133,7 +123,7 @@ export type TicketAndFaculty = {
   reimbursementStatus: string;
   reimbursementDate: string;
   activities: Expense[];
-  foapaDetails: FoapaInput[];
+  foapaDetails: FoapaStuff[];
   request_history: History[];
 };
 
@@ -158,4 +148,5 @@ export type FoapaStuff = {
   createdAt?: Date;
   updatedAt?: Date;
   description: string;
+  cost?: string; //For add foapa page
 };

@@ -18,8 +18,26 @@ export const reimbursementSchema = new Schema({
   ],
   foapaDetails: [
     {
-      cost: Number,
-      foapa_id: mongoose.Schema.Types.ObjectId,
+      fund: String,
+      organization: String,
+      account: String,
+      program: String,
+      activity: String,
+      foapaName: String,
+      cost: String,
+      isUDMPU: {
+        type: Boolean,
+        default: false,
+      },
+      description: String,
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+      updatedAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
   ],
   reimbursementStatus: String,
@@ -46,6 +64,15 @@ export const reimbursementSchema = new Schema({
       request_message: String,
     },
   ],
+  has_been_forwarded_for_approval: {
+    type: Boolean,
+    default: false,
+  },
+  approval_status: {
+    type: String,
+    default: "",
+  },
+  additional_approval_information: String,
 });
 
 //reimbursements

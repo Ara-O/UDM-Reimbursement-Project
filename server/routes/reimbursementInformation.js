@@ -57,9 +57,17 @@ const reimbursementRequestSchema = z.object({
     foapaDetails: z.array(
       z
         .object({
-          _id: z.string().optional(),
-          cost: z.union([z.number(), z.string()]),
-          foapa_id: z.string(),
+          fund: z.string(),
+          organization: z.string(),
+          account: z.string(),
+          program: z.string(),
+          activity: z.string(),
+          foapaName: z.string(),
+          isUDMPU: z.boolean(),
+          cost: z.string().optional(),
+          description: z.string(),
+          createdAt: z.any(),
+          updatedAt: z.any(),
         })
         .optional()
     ),
@@ -181,6 +189,7 @@ router.post("/update-reimbursement", verifyToken, async (req, res) => {
     reimbursementTicket.totalCost = sum;
     reimbursementTicket.reimbursementDate = new Date().toISOString();
 
+    console.log(reimbursementTicket);
     // Look for the reimbursement with the same id and update it with the user
     // inputted updated reimbursement request
     let resp = await ReimbursementTicket.findByIdAndUpdate(
@@ -473,53 +482,6 @@ router.post("/submit-request", verifyToken, async (req, res) => {
       request_message: `The Request Was Submitted`,
     });
 
-    // Check if the user used Department Spending
-    const foapas_used = reimbursementTicket.foapaDetails;
-    const faculty_foapa = faculty.foapaDetails;
-
-    let dept_foapa_used = false;
-    let dept_foapa = {};
-
-    // Find the original foapa information from the users profile
-    outerloop: for (let i = 0; i < foapas_used.length; i++) {
-      let ticket_foapa = foapas_used[i];
-
-      for (let j = 0; j < faculty_foapa.length; j++) {
-        let faculty_foapa_id = faculty_foapa[j]._id.toHexString();
-        if (ticket_foapa.foapa_id === faculty_foapa_id) {
-          if (faculty_foapa[j].fund === "111000") {
-            dept_foapa_used = true;
-            dept_foapa = faculty_foapa[j];
-            break outerloop;
-          }
-        }
-      }
-    }
-
-    // If department FOAPA was used
-    if (dept_foapa_used) {
-      logger.info(
-        `Faculty has submitted request with their department FOAPA with ORG ${dept_foapa.organization}. Pending department chair matching so it will be sent to Jim/Admin`,
-        {
-          api: "/submit-request",
-        }
-      );
-
-      // const department_chair_registry = await DepartmentChairRegistry.findOne({
-      //   department_code: dept_foapa.organization,
-      // });
-
-      // if (department_chair_registry == null) {
-      //   logger.error(`ORG Code ${dept_foapa.organization} could not be found.`, {
-      //     api: "/submit-request",
-      // });
-
-      // return res.status(500).send({
-      //     message:
-      //       "Faculty with associated ORG number could not be found. Please email this directly to your department chair",
-      // });
-    }
-
     let resp = await ReimbursementTicket.findByIdAndUpdate(
       reimbursementTicket._id,
       reimbursementTicket
@@ -550,6 +512,59 @@ router.post("/submit-request", verifyToken, async (req, res) => {
     return res.status(500).send({
       message:
         "An unexpected error occured when updating this reimbursement's claim. Please try again later.",
+    });
+  }
+});
+
+router.post("/check-reimbursement-approval-status", async (req, res) => {
+  try {
+    logger.info(`Reimbursement status is being checked for: ${req.body.id}`, {
+      api: "/api/check-reimbursement-approval-status",
+    });
+    let reimbursement = await ReimbursementTicket.findById(req.body.id);
+
+    if (
+      !reimbursement?.has_been_forwarded_for_approval ||
+      reimbursement.has_been_forwarded_for_approval === false
+    ) {
+      return res.status(200).send({ needs_approval: false });
+    }
+    return res.status(200).send({ needs_approval: true });
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/check-reimbursement-approval-status",
+    });
+    return res.status(500).send({
+      message: "An unexpected error occured.",
+    });
+  }
+});
+
+router.post("/review-reimbursement-request", async (req, res) => {
+  try {
+    logger.info(
+      `Reimbursement ${req.body.reimbursement_id} is being approved by ${req.body.name}`,
+      {
+        api: "/api/check-reimbursement-approval-status",
+      }
+    );
+
+    let reimbursement = await ReimbursementTicket.findById(
+      req.body.reimbursement_id
+    );
+
+    reimbursement.has_been_forwarded_for_approval = false;
+    reimbursement.approval_status = req.body.status;
+    reimbursement.additional_approval_information = req.body.message;
+
+    await reimbursement.save();
+    return res.status(200).send({ message: "This request has been approved" });
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/check-reimbursement-approval-status",
+    });
+    return res.status(500).send({
+      message: "An unexpected error occured.",
     });
   }
 });

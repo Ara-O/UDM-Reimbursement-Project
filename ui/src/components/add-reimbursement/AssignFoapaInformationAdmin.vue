@@ -215,7 +215,8 @@ function editFOAPA(foapa_to_edit_id) {
   props.claim.foapaDetails.forEach((foapa: any) => {
     if (foapa._id === foapa_to_edit_id) {
       console.log(foapa);
-      assignedFoapa.value = foapa;
+      assignedFoapa.value =
+        userFoapas.value.find((f) => f._id === foapa._id) || foapa;
       assignedFoapaCost.value = foapa.cost;
     }
   });
@@ -224,7 +225,7 @@ function editFOAPA(foapa_to_edit_id) {
 }
 
 function moveToNextSection() {
-  // console.log(assignedFoapa.value.cost);
+  console.log(assignedFoapa.value.cost);
   if (assignedFoapaCost.value !== "0" && assignedFoapaCost.value !== "") {
     let moveon = confirm(
       "Warning: You are moving to next section without adding your currently inputted FOAPA. Click 'OK' to discard the inputted FOAPA and move to the next section, or click 'Cancel' to return"
@@ -323,9 +324,6 @@ function retrieveFoapaDetails() {
   axios
     .get(`${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`)
     .then((res) => {
-      res.data.forEach((foap) => {
-        userFoapas.value.push(foap);
-      });
       userFoapas.value = res.data;
     })
     .catch((err) => {
@@ -375,10 +373,7 @@ function deleteFOAPA(id: string) {
     (foapa) => foapa._id !== id
   );
 
-  if (
-    triggerAssignedFoapaEditMode.value === false &&
-    assignedFoapa.value !== null
-  ) {
+  if (triggerAssignedFoapaEditMode.value === false) {
     assignedFoapa.value.cost =
       calculateBalance.value > 0 ? "" + calculateBalance.value : "0";
   }

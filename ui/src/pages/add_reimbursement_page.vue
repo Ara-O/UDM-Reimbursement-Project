@@ -237,7 +237,7 @@ async function userIsUpdatingReimbursement() {
   currentReimbursement.value = reimbursement.data;
 }
 
-const debounceAutoSave = debounce(autosaveData, 10000);
+// const debounceAutoSave = debounce(autosaveData, 10000);
 
 function getAllActivitiesAmount(): number {
   let sum: number = 0;
@@ -276,7 +276,7 @@ watch(
     // would require the title and yeah dont wanna rework the adding/updating to a way that allows
     // autosave on both just yet
     if (route.query.reimbursementId) {
-      debounceAutoSave();
+      // debounceAutoSave();
     }
   },
   {
