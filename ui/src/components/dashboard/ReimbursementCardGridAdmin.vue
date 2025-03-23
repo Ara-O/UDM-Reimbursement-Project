@@ -168,7 +168,7 @@
     :style="{ width: '50rem' }"
   >
     <h3
-      class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block mb-5"
+      class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block !mb-0"
     >
       Please enter the tag of the person you would like to forward this to.
     </h3>
@@ -178,32 +178,35 @@
       dropdown
       v-model="selectedTag"
       empty-search-message="No Existing Tags"
-      style="height: 30px"
-      class="border-sm shadow-sm sm:!w-80 !w-full rounded-md !h-10 border !border-gray-100"
+      style="height: 30px; box-shadow: none !important"
+      class="border-sm !shadow-none sm:!w-80 !w-full rounded-md mt-4 !h-10 border !border-gray-200"
       :suggestions="tags"
       @complete="onComplete"
-      />
+    />
 
     <input
       type="text"
       v-model="forwardRequestTo"
-      class="border-gray-300 shadow-sm sm:!w-80 !w-full rounded-md !h-10 px-4 border mt-4 ms-4"
-
+      class="border-gray-200 shadow-sm border-solid sm:!w-80 !w-full rounded-md !h-10 px-4 mt-4 border ms-4"
       placeholder="Enter Email"
       v-if="!multFacultyFoundByTags"
     />
 
     <select
-      class="border-gray-300 shadow-sm sm:!w-80 !w-full rounded-md !h-10 px-4 border mt-4 ms-4"
+      class="border-gray-300 shadow-sm sm:!w-80 !w-full rounded-md !h-10 px-4 mt-4 border ms-4"
       v-if="multFacultyFoundByTags"
       v-model="selectedFaculty"
+    >
+      <option
+        v-for="faculty in FacultyFoundByTags"
+        :key="faculty.id"
+        :value="faculty.name"
       >
-        <option v-for="faculty in FacultyFoundByTags" :key="faculty.id" :value="faculty.name">
-            {{ faculty.name }}
-        </option>
+        {{ faculty.name }}
+      </option>
     </select>
 
-    <p>Forwarding request to {{ forwardName }}</p>
+    <p class="text-sm">Forwarding request to: {{ forwardName }}</p>
 
     <div class="flex justify-end gap-2 mt-8">
       <Button
@@ -282,12 +285,12 @@ const forwardRequestTo = ref<string>("oladipea@udmercy.edu");
 const forwardName = ref<string>("");
 const confirm = useConfirm();
 const toast = useToast();
-const tags = ref<string[]>([])
-const originalTags = ref<string[]>([])
-const selectedTag = ref<string>("")
-const multFacultyFoundByTags = ref<boolean>(false)
-const FacultyFoundByTags = ref<Faculties[]>([])
-const selectedFaculty = ref<string>("")
+const tags = ref<string[]>([]);
+const originalTags = ref<string[]>([]);
+const selectedTag = ref<string>("");
+const multFacultyFoundByTags = ref<boolean>(false);
+const FacultyFoundByTags = ref<Faculties[]>([]);
+const selectedFaculty = ref<string>("");
 
 interface Faculties {
   id: string;
@@ -299,7 +302,7 @@ interface Faculties {
 watch(selectedTag, (newTag) => {
   if (originalTags.value.includes(newTag)) {
     // Call the function when a tag is selected
-    console.log("Calling UpdateEMailbyTag")
+    console.log("Calling UpdateEMailbyTag");
     updateEmailByTag(newTag);
   }
 });
@@ -322,8 +325,8 @@ watch(selectedFaculty, (selFaculty) => {
     multFacultyFoundByTags.value = true;
   } else {
     // No faculty found, reset the forward request details
-    forwardRequestTo.value = '';
-    forwardName.value = '';
+    forwardRequestTo.value = "";
+    forwardName.value = "";
     multFacultyFoundByTags.value = false;
   }
 });
@@ -357,12 +360,12 @@ async function forwardRequest() {
   } catch (err) {}
 }
 
-async function updateEmailByTag(tag){
-  try{
+async function updateEmailByTag(tag) {
+  try {
     let faculties = await axios.get(
       `${import.meta.env.VITE_API_URL}/admin/retrieve-faculty-by-tag`,
       {
-        params: {tag: tag}
+        params: { tag: tag },
       }
     );
 
@@ -373,22 +376,19 @@ async function updateEmailByTag(tag){
       tag: faculty.tag,
     }));
 
-    if(FacultyFoundByTags.value.length == 1){
-      forwardRequestTo.value = FacultyFoundByTags.value[0].email
-      forwardName.value = FacultyFoundByTags.value[0].name
+    if (FacultyFoundByTags.value.length == 1) {
+      forwardRequestTo.value = FacultyFoundByTags.value[0].email;
+      forwardName.value = FacultyFoundByTags.value[0].name;
 
-      console.log("FORWARD NAME", forwardName)
-    }
-    else if(FacultyFoundByTags.value.length == 0){
-      forwardRequestTo.value = ""
-      forwardName.value = ""
-    }
-    else{
-      multFacultyFoundByTags.value = true
+      console.log("FORWARD NAME", forwardName);
+    } else if (FacultyFoundByTags.value.length == 0) {
+      forwardRequestTo.value = "";
+      forwardName.value = "";
+    } else {
+      multFacultyFoundByTags.value = true;
     }
 
-    console.log(faculties,forwardRequestTo)
-
+    console.log(faculties, forwardRequestTo);
   } catch (err) {
     toast("An unexpected error occured. Please try again later", {
       type: TYPE.ERROR,
@@ -411,7 +411,7 @@ function editRequest() {
 function onComplete(event) {
   const query = event.query.toLowerCase();
 
-  console.log("query", query)
+  console.log("query", query);
 
   if (!event.query.trim().length) {
     tags.value = [...originalTags.value]; // Assuming originalTags holds the original unfiltered list of tags
@@ -422,17 +422,16 @@ function onComplete(event) {
   }
 }
 
-async function get_tags(){
+async function get_tags() {
   let res = await axios.get(
     `${import.meta.env.VITE_API_URL}/admin/retrieve-faculty-tags`
   );
 
   if (res.data.length !== 0) {
-    originalTags.value = res.data.map((tag: any) => tag.tag);  // Populate tags array
+    originalTags.value = res.data.map((tag: any) => tag.tag); // Populate tags array
   } else {
-    originalTags.value = ["No Tags Exist"];  // Fallback value if no tags are found
+    originalTags.value = ["No Tags Exist"]; // Fallback value if no tags are found
   }
-
 }
 
 function confirmRequestApproval() {
@@ -550,7 +549,7 @@ async function viewPDF() {
   }
 }
 
-onMounted(() =>{
-  get_tags()
-})
+onMounted(() => {
+  get_tags();
+});
 </script>
