@@ -1,57 +1,33 @@
 <template>
   <main class="px-10 mt-10">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="font-medium text-xl">User Management</h1>
-        <div class="flex gap-3 items-center">
+    <router-link
+      to="/admin"
+      class="text-gray-500 hover:underline no-underline text-sm"
+    >
+      <span class="flex items-center gap-4">
+        <img :src="BackArrow" alt="Back arrow" class="w-3" />
+        <p>Return to Admin Dashboard</p>
+      </span>
+    </router-link>
+    <div class="flex items-center gap-10 justify-between">
+      <div class="w-full">
+        <h1 class="font-semibold text-xl">User Management</h1>
+        <div class="flex gap-3 w-full items-center mt-3 relative">
           <InputText
             placeholder="Enter Faculty Name"
-            class="w-[30rem]"
-            style="
-              .p-inputtext {
-                padding-left: 20px;
-                height: 35px;
-                font-size: 13px !important;
-              }
-            "
+            class="w-full !border-gray-200 !h-12 !pl-5 !text-sm"
+            style=""
           />
-          <Select
-            v-model="view"
-            :options="views"
-            default-value="Grid View"
-            placeholder="Grid View"
-            class="w-full md:w-40"
-          >
-            <template #dropdownicon>
-              <i class="pi pi-th-large" v-if="view === 'Grid View'" />
-              <i class="pi pi-list" v-if="view === 'List View'" />
-              <i class="pi pi-table" v-if="view === 'Table View'" />
-            </template>
-          </Select>
-          <Select
-            v-model="filter"
-            :options="filter_options"
-            placeholder="Filter"
-            class="w-full md:w-40"
-          >
-            <template #dropdownicon>
-              <i class="pi pi-filter" />
-            </template> </Select
-          ><Select
-            v-model="sort"
-            :options="sort_options"
-            placeholder="Sort"
-            class="w-full md:w-40"
-          >
-            <template #dropdownicon>
-              <i class="pi pi-sort-alt" />
-            </template>
-          </Select>
+          <img
+            :src="SearchIcon"
+            alt="Search icon"
+            class="invert opacity-20 w-7 absolute right-4"
+          />
         </div>
       </div>
       <img
         :src="DetroitMercyLogo"
-        class="w-20 object-contain"
+        class="w-28 object-contain"
         alt="Detroit Mercy Logo"
       />
     </div>
@@ -64,11 +40,8 @@
       <Column field="name" header="Name" sortable></Column>
       <Column field="email" header="Email" sortable></Column>
       <Column field="role" header="Role" sortable>
-        <!-- <select name="" id="">
-        <option value="hi">hi</option>
-          </select> -->
         <template #body="{ data }">
-          <select v-model="data.role">
+          <select v-model="data.role" class="bg-transparent border-none">
             <option value="USER">User</option>
             <option value="FACULTY">Faculty</option>
             <option value="ADMIN">Admin</option>
@@ -78,47 +51,86 @@
       <Column field="tag" header="Tag" sortable>
         <template #body="{ data }">
           <AutoComplete
-              placeholder="Enter Tag"
-              dropdown
-              v-model="data.tag"
-                empty-search-message="No Existing Tags"
-              style="height: 30px"
-              class="border-sm shadow-sm sm:!w-80 !w-full rounded-md !h-10 border !border-gray-100"
-              :suggestions="tags"
-              @complete="onComplete"
-              />
+            placeholder="Enter Tag"
+            dropdown
+            v-model="data.tag"
+            empty-search-message="No Existing Tags"
+            style="height: 30px; box-shadow: none !important"
+            class="sm:!w-80 !w-full rounded-md !h-10 border !border-gray-100"
+            :suggestions="tags"
+            @complete="onComplete"
+          />
         </template>
       </Column>
       <Column header="Save/Delete">
         <template #body="{ data }">
           <span
-              class="underline cursor-pointer h-[16px]"
-              @click="save_role_and_tag(data)"
-              title="Save Role"
-              ><img src="../assets/save.png" alt="Save Icon" class="w-5 ms-2 me-2"/></span>
-            <span
+            class="underline cursor-pointer h-[16px]"
+            @click="showUpdateConfirmPopup(data)"
+            title="Save Role"
+            ><img :src="SaveIcon2" alt="Save Icon" class="w-4 ms-2 me-2"
+          /></span>
+          <span
             class="underline cursor-pointer h-[16px]"
             @click="delete_faculty(data)"
             title="Delete request"
-            >
-            <img src="../assets/trash-icon.png" alt="Delete Icon" class="w-4 ms-2 "
+          >
+            <img
+              src="../assets/trash-icon.png"
+              alt="Delete Icon"
+              class="w-4 ml-4"
           /></span>
         </template>
       </Column>
     </DataTable>
   </main>
+
+  <Dialog
+    :dismissable-mask="true"
+    v-model:visible="confirmUserSavingPopupIsVisible"
+    modal
+    header="Account Update Verification"
+    :style="{ width: '25rem' }"
+  >
+    <h3
+      class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block mb-5"
+    >
+      Are you sure you want to change this user's account information?
+    </h3>
+    <div class="flex">
+      <Button
+        type="button"
+        label="No, Cancel"
+        severity="secondary"
+        @click="cancelConfirmPopup"
+      ></Button>
+      <Button
+        type="button"
+        label="Yes, I am sure"
+        @click="save_role_and_tag"
+        class="!bg-udmercy-blue ml-4 !border-none"
+      ></Button>
+    </div>
+  </Dialog>
 </template>
 
 <script lang="ts" setup>
 import DataTable from "primevue/datatable";
+import SaveIcon2 from "../assets/save-icon-2.png";
 import Column from "primevue/column";
+import Dialog from "primevue/dialog";
+import SearchIcon from "../assets/search-icon.png";
 import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import InputText from "primevue/inputtext";
 import Select from "primevue/select";
 import { ref, onMounted } from "vue";
+import BackArrow from "../assets/left-arrow.png";
+import Button from "primevue/button";
 import axios from "axios";
 import AutoComplete from "primevue/autocomplete";
+import { TYPE, useToast } from "vue-toastification";
 
+const confirmUserSavingPopupIsVisible = ref<boolean>(false);
 const search_field = ref<string>("");
 const views = ["Grid View", "Table View", "List View"];
 const sort_options = [
@@ -132,15 +144,23 @@ const filter_options = ["In Progress", "Submitted"];
 const view = ref<string>("Grid View");
 const filter = ref<string>("");
 const sort = ref<string>("");
-const tags = ref<string[]>([])
-const originalTags = ref<string[]>([])
+const tags = ref<string[]>([]);
+const originalTags = ref<string[]>([]);
+const accountBeingUpdated = ref<any>({});
 
+function showUpdateConfirmPopup(data) {
+  accountBeingUpdated.value = data;
+  confirmUserSavingPopupIsVisible.value = true;
+}
 
-
+function cancelConfirmPopup() {
+  confirmUserSavingPopupIsVisible.value = false;
+  accountBeingUpdated.value = false;
+}
 function onComplete(event) {
   const query = event.query.toLowerCase();
 
-  console.log("query", query)
+  console.log("query", query);
 
   if (!event.query.trim().length) {
     tags.value = [...originalTags.value]; // Assuming originalTags holds the original unfiltered list of tags
@@ -160,7 +180,6 @@ interface Faculties {
 }
 const faculty_member_list = ref<Faculties[]>([]);
 
-
 async function get_faculty() {
   let res = await axios.get(
     `${import.meta.env.VITE_API_URL}/admin/retrieve-all-faculty`
@@ -175,45 +194,57 @@ async function get_faculty() {
   }));
 }
 
-async function get_tags(){
+async function get_tags() {
   let res = await axios.get(
     `${import.meta.env.VITE_API_URL}/admin/retrieve-faculty-tags`
   );
 
   if (res.data.length !== 0) {
-    originalTags.value = res.data.map((tag: any) => tag.tag);  // Populate tags array
+    originalTags.value = res.data.map((tag: any) => tag.tag); // Populate tags array
   } else {
-    originalTags.value = ["No Tags Exist"];  // Fallback value if no tags are found
-  }
-
-}
-
-async function save_role_and_tag(faculty){
-  try{
-    console.log("Faculty",faculty)
-    let res = await axios.post(`${import.meta.env.VITE_API_URL}/admin/save-role-and-tag`, faculty)
-    console.log(res, "Role Saved")
-  }
-  catch(err){
-    console.log(err)
+    originalTags.value = ["No Tags Exist"]; // Fallback value if no tags are found
   }
 }
 
-async function delete_faculty(faculty){
-  try{
-    let res = await axios.post(`${import.meta.env.VITE_API_URL}/admin/delete-faculty`, faculty)
-    console.log(res, "Deleted")
+const toast = useToast();
 
-    get_faculty()
+async function save_role_and_tag() {
+  const faculty = accountBeingUpdated.value;
+  try {
+    console.log("Faculty", faculty);
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/admin/save-role-and-tag`,
+      faculty
+    );
+
+    toast("User account information saved", {
+      type: TYPE.INFO,
+    });
+    console.log(res, "Role Saved");
+  } catch (err) {
+    console.log(err);
+  } finally {
+    accountBeingUpdated.value = {};
+    confirmUserSavingPopupIsVisible.value = false;
   }
-  catch (err) {
+}
+
+async function delete_faculty(faculty) {
+  try {
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/admin/delete-faculty`,
+      faculty
+    );
+    console.log(res, "Deleted");
+
+    get_faculty();
+  } catch (err) {
     console.log(err);
   }
 }
 
-onMounted(() =>{
-  get_faculty()
-  get_tags()
-})
+onMounted(() => {
+  get_faculty();
+  get_tags();
+});
 </script>
-

@@ -30,19 +30,21 @@
       <!-- <p class="text-sm underline cursor-pointer">
         View All Submitted Requests History
       </p> -->
-      <p class="text-sm underline cursor-pointer">View Feedback</p>
+      <router-link to="/" class="text-sm underline text-black cursor-pointer"
+        ><p>Return to Dashboard</p></router-link
+      >
       <p
         class="cursor-pointer text-sm underline"
         @click="goToUserManagementPage"
       >
         User Management
       </p>
-      <p
+      <!-- <p
         class="cursor-pointer text-sm underline"
         @click="fetch_department_chairs"
       >
         Assign Department Chairs
-      </p>
+      </p> -->
     </div>
     <!-- Pending Requests Section -->
     <section class="mt-10">
@@ -280,12 +282,11 @@ async function get_faculty() {
     console.log(faculty);
 
     faculties.value.push({
-      name: faculty.firstName + " " + faculty.lastName, 
-      email: faculty.workEmail, 
+      name: faculty.firstName + " " + faculty.lastName,
+      email: faculty.workEmail,
       role: faculty.role,
-      tag: faculty.tag 
-  })
-
+      tag: faculty.tag,
+    });
   }
 
   console.log(faculties.value);

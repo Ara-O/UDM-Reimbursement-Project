@@ -12,7 +12,7 @@ import sgMail from "@sendgrid/mail";
 import DepartmentChairRegistry from "../models/departmentChairRegistry.js";
 import https from "https";
 import Pdfmake from "pdfmake";
-import FacultyTagsList from "../models/facultyTagsList.js"
+import FacultyTagsList from "../models/facultyTagsList.js";
 
 dotenv.config();
 
@@ -303,30 +303,29 @@ router.get("/retrieve-all-faculty", verifyAdminToken, async (req, res) => {
 
 router.get("/retrieve-faculty-by-tag", verifyAdminToken, async (req, res) => {
   try {
-
-    console.log(req.body.tag)
+    console.log(req.body.tag);
     const faculties = await Faculty.find({ tag: req.query.tag }).select(
       "_id firstName lastName workEmail tag"
     );
 
-    console.log("FACULTIES FROM TAG", faculties)
+    console.log("FACULTIES FROM TAG", faculties);
     res.status(200).send(faculties);
   } catch (err) {
     console.log(err);
     res.send(err);
   }
-})
+});
 
 router.get("/retrieve-faculty-tags", verifyAdminToken, async (req, res) => {
   try {
-    const tags = await FacultyTagsList.find({})
+    const tags = await FacultyTagsList.find({});
 
-    res.status(200).send(tags)
+    res.status(200).send(tags);
   } catch (err) {
     console.log("Retrieving Faculty Tags Error: ", err);
-    res.send(err)
+    res.send(err);
   }
-})
+});
 
 router.post("/save-role-and-tag", verifyAdminToken, async (req, res) => {
   try {
@@ -349,15 +348,22 @@ router.post("/save-role-and-tag", verifyAdminToken, async (req, res) => {
       const newTag = await FacultyTagsList.create({ tag: req.body.tag });
 
       // Respond with the created tag
-      return res.status(201).json({ message: "Role and Tag updated successfully.", tag: newTag });
+      return res
+        .status(201)
+        .json({ message: "Role and Tag updated successfully.", tag: newTag });
     }
+
+    return res
+      .status(200)
+      .send({ message: "Role and Tag updated successfuly" });
   } catch (err) {
     console.log(err);
     // Handle any errors
-    return res.status(500).json({ message: "An error occurred while updating the role and tag." });
+    return res
+      .status(500)
+      .json({ message: "An error occurred while updating the role and tag." });
   }
 });
-
 
 function generatePdf(docDefinition, callback) {
   try {
