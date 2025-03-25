@@ -112,10 +112,6 @@
         <hr class="text-gray-200 h-0.5 bg-gray-200 border-solid" />
       </div>
     </Sidebar>
-    <Button
-      icon="pi pi-arrow-right"
-      @click="request_history_sidebar_is_visible = true"
-    ></Button>
   </div>
   <p
     class="absolute bottom-3 text-sm right-10 text-gray-500"

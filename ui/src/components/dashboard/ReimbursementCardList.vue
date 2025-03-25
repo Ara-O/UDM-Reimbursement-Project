@@ -33,6 +33,17 @@
       >
         <img :src="PencilIcon" alt="Pencil icon" class="w-4" />
       </button>
+      <span
+        v-if="
+          props.request.reimbursementStatus === 'Submitted' ||
+          props.request.reimbursementStatus === 'Approved'
+        "
+        class="bg-white h-8 justify-center cursor-pointer py-2 flex items-center content-center rounded-full"
+        @click="viewPdf"
+        title="View"
+      >
+        <img :src="EyeIcon" class="w-4" alt="Eye Icon" />
+      </span>
       <button
         title="Delete Request"
         class="bg-white cursor-pointer border-none"
@@ -55,7 +66,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
 import parseDate from "../../utils/parseDate";
-
+import EyeIcon from "../../assets/eye-view-blue.png";
 const router = useRouter();
 const props = defineProps<{
   request: ReimbursementTicket;
@@ -74,6 +85,60 @@ function goToReimbursementPage() {
       reimbursementId: props.request._id,
     },
   });
+}
+
+function downloadPDF(pdfData: string) {
+  const linkSource = pdfData;
+  let iframe =
+    "<iframe width='100%' height='100%' src='" + linkSource + "'></iframe>";
+  let x = window.open();
+  if (x != null) {
+    x.document.open();
+    x.document.write(iframe);
+    x.document.close();
+
+    // Remove padding from the iframe content
+    x.document.querySelector("style") ||
+      x.document.head.appendChild(x.document.createElement("style"));
+    // @ts-ignore
+    x.document.querySelector("style").textContent += `
+  body, iframe {
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+  }
+`;
+  }
+}
+
+async function viewPdf() {
+  try {
+    toast.clear();
+    toast("Loading... Please wait...", {
+      type: TYPE.INFO,
+    });
+
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/generate-pdf`,
+      {
+        reimbursementTicket: props.request,
+      }
+    );
+
+    downloadPDF(res.data);
+
+    toast.clear();
+  } catch (err: any) {
+    console.log(err);
+    toast.clear();
+    toast(
+      err?.response?.data?.message ||
+        "There was an error previewing this PDF. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+  }
 }
 
 function deleteRequest() {

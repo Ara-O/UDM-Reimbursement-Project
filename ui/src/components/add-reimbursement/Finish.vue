@@ -62,12 +62,12 @@
           Email Reimbursement Request
         </button>
 
-        <!-- <button
+        <button
           @click="markClaimAsSubmitted"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
           Submit Request
-        </button> -->
+        </button>
       </div>
       <div class="flex gap-5 items-center">
         <button
@@ -75,7 +75,7 @@
           @click="moveToPreviousSection"
           class="bg-udmercy-blue mt-8 text-white border-none w-64 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-4"
         >
-          <img src="../../assets/prev-arrow.png" class="w-3" />
+          <img src="../../assets/next-arrow.png" class="w-3 rotate-180" />
           Previous Section
         </button>
       </div>

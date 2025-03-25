@@ -364,7 +364,7 @@ function addFoapa(values, { resetForm }) {
     })
     .then(() => {
       resetForm();
-      emits("foapa-added");
+      emits("foapa-added", addedFoapa);
       toast("Successfully saved FOAPA information", {
         type: TYPE.SUCCESS,
       });

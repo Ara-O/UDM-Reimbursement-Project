@@ -72,7 +72,7 @@
           /></span>
           <span
             class="underline cursor-pointer h-[16px]"
-            @click="delete_faculty(data)"
+            @click="showDeleteConfirmPopup(data)"
             title="Delete request"
           >
             <img
@@ -112,6 +112,34 @@
       ></Button>
     </div>
   </Dialog>
+
+  <Dialog
+    :dismissable-mask="true"
+    v-model:visible="confirmUserDeletePopupIsVisible"
+    modal
+    header="Account Update Verification"
+    :style="{ width: '25rem' }"
+  >
+    <h3
+      class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block mb-5"
+    >
+      Are you sure you want to delete this user's account?
+    </h3>
+    <div class="flex">
+      <Button
+        type="button"
+        label="No, Cancel"
+        severity="secondary"
+        @click="cancelConfirmPopup"
+      ></Button>
+      <Button
+        type="button"
+        label="Yes, I am sure"
+        @click="delete_faculty"
+        class="!bg-udmercy-blue ml-4 !border-none"
+      ></Button>
+    </div>
+  </Dialog>
 </template>
 
 <script lang="ts" setup>
@@ -147,20 +175,26 @@ const sort = ref<string>("");
 const tags = ref<string[]>([]);
 const originalTags = ref<string[]>([]);
 const accountBeingUpdated = ref<any>({});
+const confirmUserDeletePopupIsVisible = ref<boolean>(false);
 
 function showUpdateConfirmPopup(data) {
   accountBeingUpdated.value = data;
   confirmUserSavingPopupIsVisible.value = true;
 }
 
-function cancelConfirmPopup() {
-  confirmUserSavingPopupIsVisible.value = false;
-  accountBeingUpdated.value = false;
+function showDeleteConfirmPopup(data) {
+  accountBeingUpdated.value = data;
+  confirmUserDeletePopupIsVisible.value = true;
 }
+
+function cancelConfirmPopup() {
+  confirmUserDeletePopupIsVisible.value = false;
+  confirmUserSavingPopupIsVisible.value = false;
+  accountBeingUpdated.value = {};
+}
+
 function onComplete(event) {
   const query = event.query.toLowerCase();
-
-  console.log("query", query);
 
   if (!event.query.trim().length) {
     tags.value = [...originalTags.value]; // Assuming originalTags holds the original unfiltered list of tags
@@ -222,6 +256,9 @@ async function save_role_and_tag() {
     });
     console.log(res, "Role Saved");
   } catch (err) {
+    toast("An unexpected error occured when updating this user", {
+      type: TYPE.ERROR,
+    });
     console.log(err);
   } finally {
     accountBeingUpdated.value = {};
@@ -229,8 +266,10 @@ async function save_role_and_tag() {
   }
 }
 
-async function delete_faculty(faculty) {
+async function delete_faculty() {
   try {
+    const faculty = accountBeingUpdated.value;
+
     let res = await axios.post(
       `${import.meta.env.VITE_API_URL}/admin/delete-faculty`,
       faculty
@@ -239,7 +278,13 @@ async function delete_faculty(faculty) {
 
     get_faculty();
   } catch (err) {
+    toast("An unexpected error occured when deleting this user", {
+      type: TYPE.ERROR,
+    });
     console.log(err);
+  } finally {
+    accountBeingUpdated.value = {};
+    confirmUserSavingPopupIsVisible.value = false;
   }
 }
 

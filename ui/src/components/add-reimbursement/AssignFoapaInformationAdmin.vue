@@ -22,7 +22,7 @@
             class="border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
           >
-            <option disabled selected :value="null">Select FOAPA</option>
+            <option disabled selected :value="{}">Select FOAPA</option>
             <option :value="foapa" v-for="foapa in userFoapas">
               {{ formatFoapaDeails(foapa) }} - {{ foapa.foapaName }}
             </option>
@@ -73,10 +73,7 @@
             </h5>
           </div>
         </div>
-        <div
-          class="flex gap-3 flex-col max-h-80 overflow-auto"
-          v-if="userFoapas.length !== 0"
-        >
+        <div class="flex gap-3 flex-col max-h-80 overflow-auto">
           <!-- Wait till the user's foapa have been loaded in, so that this component
          can use that to match foapa names, etc -->
           <foapa-container
@@ -134,7 +131,7 @@
         @click="moveToPreviousSection"
         class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
       >
-        <img src="../../assets/prev-arrow.png" class="w-3" />
+        <img src="../../assets/next-arrow.png" class="w-3 rotate-180" />
         Previous Section
       </button>
       <button
@@ -166,7 +163,7 @@ let props = defineProps<{
   claim: ReimbursementTicket;
 }>();
 
-let assignedFoapa = ref<any>(null);
+let assignedFoapa = ref<any>({});
 let assignedFoapaCost = ref<string>("");
 
 let userFoapas = ref<FoapaDetails[]>([]);
@@ -197,12 +194,13 @@ function showFoapaPopup() {
   document.querySelector("body").style.overflow = "hidden";
 }
 
-function closeFoapaPopup() {
+function closeFoapaPopup(foapa) {
   foapaPopupIsVisible.value = false;
-  assignedFoapa.value = null;
+  assignedFoapa.value = foapa;
   assignedFoapaCost.value = "";
 
-  retrieveFoapaDetails();
+  userFoapas.value.push(foapa);
+  // retrieveFoapaDetails();
 
   //@ts-ignore
   document.querySelector("body").style.overflow = "auto";
@@ -217,6 +215,7 @@ function editFOAPA(foapa_to_edit_id) {
       console.log(foapa);
       assignedFoapa.value =
         userFoapas.value.find((f) => f._id === foapa._id) || foapa;
+      console.log(assignedFoapa.value);
       assignedFoapaCost.value = foapa.cost;
     }
   });
@@ -310,7 +309,7 @@ function addFoapa() {
     );
   }
 
-  assignedFoapa.value = null;
+  assignedFoapa.value = {};
 
   assignedFoapaCost.value =
     calculateBalance.value > 0 ? "" + calculateBalance.value : "0";
@@ -321,18 +320,7 @@ function addFoapa() {
 }
 
 function retrieveFoapaDetails() {
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`)
-    .then((res) => {
-      userFoapas.value = res.data;
-    })
-    .catch((err) => {
-      toast.clear();
-      toast("There was an error fetching FOAPA details", {
-        type: TYPE.ERROR,
-      });
-      console.log(err);
-    });
+  userFoapas.value = [...props.claim.foapaDetails] as any;
 }
 
 const calculateTotalExpenseCost = computed(() => {
@@ -363,6 +351,7 @@ const calculateBalance = computed(() => {
 });
 
 onMounted(() => {
+  console.log(props.claim.foapaDetails);
   assignedFoapaCost.value =
     calculateBalance.value > 0 ? "" + calculateBalance.value : "0";
   retrieveFoapaDetails();

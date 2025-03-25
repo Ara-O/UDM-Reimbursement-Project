@@ -21,6 +21,17 @@
       ></reimbursement-status>
       <div class="flex gap-4">
         <span
+          v-if="
+            props.request.reimbursementStatus === 'Submitted' ||
+            props.request.reimbursementStatus === 'Approved'
+          "
+          class="bg-white px-4 h-8 w-12 justify-center cursor-pointer py-2 flex items-center content-center rounded-full"
+          @click="viewPdf"
+          title="View"
+        >
+          <img :src="EyeIcon" class="w-4" alt="Eye Icon" />
+        </span>
+        <span
           class="bg-white px-4 h-8 w-12 justify-center cursor-pointer py-2 flex items-center content-center rounded-full"
           @click="duplicateRequest"
           title="Duplicate Request"
@@ -92,6 +103,7 @@
 </template>
 
 <script lang="ts" setup>
+import EyeIcon from "../../assets/eye-view-blue.png";
 import PencilIcon from "../../assets/blue-pencil.png";
 import DuplicateIcon from "../../assets/duplicate-blue.png";
 import DeleteIcon from "../../assets/trash-icon-white.png";
@@ -112,33 +124,6 @@ type History = {
   date_of_message: string;
   request_message: string;
 };
-
-const events = ref([
-  {
-    status: "Ordered",
-    date: "15/10/2020 10:30",
-    icon: "pi pi-shopping-cart",
-    color: "#9C27B0",
-  },
-  {
-    status: "Processing",
-    date: "15/10/2020 14:00",
-    icon: "pi pi-cog",
-    color: "#673AB7",
-  },
-  {
-    status: "Shipped",
-    date: "15/10/2020 16:15",
-    icon: "pi pi-shopping-cart",
-    color: "#FF9800",
-  },
-  {
-    status: "Delivered",
-    date: "16/10/2020 10:00",
-    icon: "pi pi-check",
-    color: "#607D8B",
-  },
-]);
 
 const router = useRouter();
 const props = defineProps<{
@@ -180,6 +165,60 @@ async function duplicateRequest() {
         error?.response?.data?.message ||
         "There was an unexpected error. Please try again later"
       }`,
+      {
+        type: TYPE.ERROR,
+      }
+    );
+  }
+}
+
+function downloadPDF(pdfData: string) {
+  const linkSource = pdfData;
+  let iframe =
+    "<iframe width='100%' height='100%' src='" + linkSource + "'></iframe>";
+  let x = window.open();
+  if (x != null) {
+    x.document.open();
+    x.document.write(iframe);
+    x.document.close();
+
+    // Remove padding from the iframe content
+    x.document.querySelector("style") ||
+      x.document.head.appendChild(x.document.createElement("style"));
+    // @ts-ignore
+    x.document.querySelector("style").textContent += `
+  body, iframe {
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+  }
+`;
+  }
+}
+
+async function viewPdf() {
+  try {
+    toast.clear();
+    toast("Loading... Please wait...", {
+      type: TYPE.INFO,
+    });
+
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/generate-pdf`,
+      {
+        reimbursementTicket: props.request,
+      }
+    );
+
+    downloadPDF(res.data);
+
+    toast.clear();
+  } catch (err: any) {
+    console.log(err);
+    toast.clear();
+    toast(
+      err?.response?.data?.message ||
+        "There was an error previewing this PDF. Please try again later",
       {
         type: TYPE.ERROR,
       }

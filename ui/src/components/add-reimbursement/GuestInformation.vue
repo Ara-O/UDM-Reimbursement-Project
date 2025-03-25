@@ -1,11 +1,15 @@
 <template>
-  <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0">
+  <section
+    class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0"
+  >
     <span class="flex items-center gap-6 mb-2">
       <h2 class="font-semibold my-0 text-[27px]">Guest Information</h2>
       <p style="font-size: small">(optional)</p>
       <img src="../../assets/edit-icon.png" alt="Edit icon" class="w-7" />
     </span>
-    <h4 class="font-normal leading-7 w-auto max-w-[600px] text-sm text-gray-600">
+    <h4
+      class="font-normal leading-7 w-auto max-w-[600px] text-sm text-gray-600"
+    >
       Optional: This is for filling out the portion of the reimbursement related
       to getting reimbursed for guests
     </h4>
@@ -13,53 +17,85 @@
       <div class="flex gap-x-14 gap-y-3 max-w-[1000px] w-auto flex-wrap">
         <span>
           <h4 class="font-normal text-sm">Employee's First Name</h4>
-          <input type="text" name="employer-first-name" v-model="employeeFirstName" placeholder="First Name"
+          <input
+            type="text"
+            name="employer-first-name"
+            v-model="employeeFirstName"
+            placeholder="First Name"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required />
+            required
+          />
         </span>
         <span>
           <h4 class="font-normal text-sm">Employee's Last Name</h4>
-          <input type="text" name="employer-last-name" v-model="employeeLastName" placeholder="Last Name"
+          <input
+            type="text"
+            name="employer-last-name"
+            v-model="employeeLastName"
+            placeholder="Last Name"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required />
+            required
+          />
         </span>
         <span>
           <h4 class="font-normal text-sm">Guest's First Name</h4>
-          <input type="text" v-model="guestFirstName" name="guest-first-name" placeholder="First Name"
+          <input
+            type="text"
+            v-model="guestFirstName"
+            name="guest-first-name"
+            placeholder="First Name"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required />
+            required
+          />
         </span>
         <span>
           <h4 class="font-normal text-sm">Guest's Last Name</h4>
-          <input type="text" v-model="guestLastName" name="guest-last-name" placeholder="Last Name"
+          <input
+            type="text"
+            v-model="guestLastName"
+            name="guest-last-name"
+            placeholder="Last Name"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required />
+            required
+          />
         </span>
         <span>
           <h4 class="font-normal text-sm">Association</h4>
-          <input type="text" v-model="association" name="association" placeholder="Association"
+          <input
+            type="text"
+            v-model="association"
+            name="association"
+            placeholder="Association"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
-            required />
+            required
+          />
         </span>
       </div>
 
       <div class="flex gap-8">
-        <button type="submit"
-          class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs">
+        <button
+          type="submit"
+          class="bg-udmercy-blue mt-10 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+        >
           Add Information
         </button>
-
       </div>
       <div class="flex gap-8 items-center">
-        <button type="button" @click="emits('move-to-previous-section')"
-          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3">
-          <img src="../../assets/prev-arrow.png" class="w-3">
+        <button
+          type="button"
+          @click="emits('move-to-previous-section')"
+          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
+        >
+          <img src="../../assets/next-arrow.png" class="w-3 rotate-180" />
           Previous Section
         </button>
-        <button type="button" @click="emits('move-to-next-section')"
-          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5">
+        <button
+          type="button"
+          @click="emits('move-to-next-section')"
+          class="bg-udmercy-blue mt-6 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs flex justify-center items-center gap-5"
+        >
           Next Section
-          <img src="../../assets/next-arrow.png" class="w-3">
+          <img src="../../assets/next-arrow.png" class="w-3" />
         </button>
       </div>
     </form>
@@ -82,8 +118,12 @@
             alt="Edit icon"
             class="w-3 cursor-pointer"
           /> -->
-            <img src="../../assets/trash-icon.png" alt="Delete icon" @click="deleteGuest(guest)"
-              class="w-3 cursor-pointer" />
+            <img
+              src="../../assets/trash-icon.png"
+              alt="Delete icon"
+              @click="deleteGuest(guest)"
+              class="w-3 cursor-pointer"
+            />
           </td>
         </tr>
       </tbody>
@@ -130,7 +170,7 @@ function addGuestInformation() {
     guestLastName.value =
     guestFirstName.value =
     association.value =
-    "";
+      "";
 }
 
 function moveToPreviousSection() {

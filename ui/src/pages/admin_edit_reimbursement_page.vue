@@ -7,6 +7,13 @@
     <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
     <h4 class="font-normal text-sm text-gray-600">Return to dashboard</h4>
   </div>
+  <span
+    class="absolute right-10 top-11 flex cursor-pointer items-center gap-4"
+    @click="request_history_sidebar_is_visible = true"
+  >
+    <img :src="HistoryIcon" alt="History" class="w-5" />
+    <p class="text-udmercy-blue underline">Request History</p>
+  </span>
   <main class="h-screen block xl:flex mt-40 xl:mt-0 items-center gap-20">
     <!-- SECTIONS SECTION -->
     <section class="pl-32 hidden xl:block">
@@ -88,6 +95,21 @@
         discard your changes and leave the page, click 'Discard Changes'
       </template>
     </confirmation-popup>
+    <div class="card flex justify-content-center">
+      <Sidebar
+        v-model:visible="request_history_sidebar_is_visible"
+        header="Request History"
+        position="right"
+      >
+        <div v-for="history in currentReimbursement.request_history">
+          <p class="mb-2 leading-7">{{ history.request_message }}</p>
+          <p class="text-sm mt-0 text-gray-500">
+            {{ history.date_of_message }}
+          </p>
+          <hr class="text-gray-200 h-0.5 bg-gray-200 border-solid" />
+        </div>
+      </Sidebar>
+    </div>
   </main>
 </template>
 
@@ -103,7 +125,9 @@ import AssignFoapaInformationAdmin from "../components/add-reimbursement/AssignF
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import AddEditNotes from "../components/AdminAddEditNotes.vue";
 import { TYPE, useToast } from "vue-toastification";
-
+import Button from "primevue/button";
+import HistoryIcon from "../assets/black-history.png";
+import Sidebar from "primevue/sidebar";
 function goToDashboard() {
   router.push("/admin");
 }
@@ -116,7 +140,7 @@ let show_confirm_dialog = ref<boolean>(false);
 let user_has_unsaved_changes = ref<boolean>(false);
 let claim_is_being_saved = ref<boolean>(false);
 let selectedSection = ref<number>(1);
-
+let request_history_sidebar_is_visible = ref<boolean>(false);
 let sections = ref([
   {
     title: "Claim Information",

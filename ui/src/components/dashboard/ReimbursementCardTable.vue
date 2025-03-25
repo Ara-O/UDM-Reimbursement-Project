@@ -55,6 +55,17 @@
               <img :src="PencilIcon" alt="Pencil icon" class="w-4"
             /></span>
             <span
+              v-if="
+                slotProps.data.reimbursementStatus === 'Submitted' ||
+                slotProps.data.reimbursementStatus === 'Approved'
+              "
+              class="bg-white h-8 justify-center cursor-pointer py-2 flex items-center content-center rounded-full"
+              @click="() => viewPdf(slotProps.data)"
+              title="View"
+            >
+              <img :src="EyeIcon" class="w-4" alt="Eye Icon" />
+            </span>
+            <span
               class="underline cursor-pointer h-[16px]"
               @click="deleteRequest(slotProps.data._id)"
               title="Delete request"
@@ -69,6 +80,7 @@
 </template>
 
 <script lang="ts" setup>
+import EyeIcon from "../../assets/eye-view-blue.png";
 import PencilIcon from "../../assets/blue-pencil.png";
 import DeleteIcon from "../../assets/red-delete-icon.png";
 import DuplicateIcon from "../../assets/duplicate-blue.png";
@@ -92,6 +104,60 @@ const emits = defineEmits([
 ]);
 const confirm = useConfirm();
 const toast = useToast();
+
+function downloadPDF(pdfData: string) {
+  const linkSource = pdfData;
+  let iframe =
+    "<iframe width='100%' height='100%' src='" + linkSource + "'></iframe>";
+  let x = window.open();
+  if (x != null) {
+    x.document.open();
+    x.document.write(iframe);
+    x.document.close();
+
+    // Remove padding from the iframe content
+    x.document.querySelector("style") ||
+      x.document.head.appendChild(x.document.createElement("style"));
+    // @ts-ignore
+    x.document.querySelector("style").textContent += `
+  body, iframe {
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+  }
+`;
+  }
+}
+
+async function viewPdf(req) {
+  try {
+    toast.clear();
+    toast("Loading... Please wait...", {
+      type: TYPE.INFO,
+    });
+
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/generate-pdf`,
+      {
+        reimbursementTicket: req,
+      }
+    );
+
+    downloadPDF(res.data);
+
+    toast.clear();
+  } catch (err: any) {
+    console.log(err);
+    toast.clear();
+    toast(
+      err?.response?.data?.message ||
+        "There was an error previewing this PDF. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+  }
+}
 
 function goToReimbursementPage(id) {
   router.push({

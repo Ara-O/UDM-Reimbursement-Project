@@ -182,7 +182,7 @@ async function loginUser() {
     toast.clear();
     toast(
       err?.response?.data?.message ||
-        "There was an issue logging you in. Pease try again later.",
+        "There was an issue logging you in. Please try again later.",
       {
         type: TYPE.ERROR,
       }

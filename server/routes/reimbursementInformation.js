@@ -470,7 +470,8 @@ router.post("/submit-request", verifyToken, async (req, res) => {
     const reimbursementTicket = requestData.reimbursementTicket;
 
     reimbursementTicket.reimbursementStatus = "Submitted";
-
+    reimbursementTicket.has_been_forwarded_for_approval = false;
+    reimbursementTicket.approval_status = "";
     const today = new Date();
     const formattedDate = `${String(today.getMonth() + 1).padStart(
       2,
