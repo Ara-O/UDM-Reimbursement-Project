@@ -27,7 +27,7 @@
       <h2 class="text-xl font-semibold mt-10 underline">FOAPA Statistics</h2>
       <article class="flex gap-4 flex-wrap">
         <div
-          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-56 mt-5"
         >
           <p class="text-sm font-medium">Total Requests Funded</p>
           <p class="font-semibold text-md">
@@ -35,40 +35,40 @@
           </p>
         </div>
         <div
-          class="border box-border px-5 py-2 border-solid border-gray-200 max-w-xl w-72 mt-5"
+          class="border box-border px-5 py-1 h-36 border-solid border-gray-200 max-w-lg w-56 mt-5"
         >
           <p class="text-sm leading-7 font-medium">
-            Total Spending from FOAPA in Submitted Requests
+            Spending from Submitted Requests
           </p>
           <p class="font-semibold text-md">
             ${{ totalAmountFromFoapaInSubmittedRequests }}
           </p>
         </div>
         <div
-          class="border box-border px-5 py-2 border-solid border-gray-200 max-w-xl w-72 mt-5"
+          class="border box-border px-5 py-1 h-36 border-solid border-gray-200 max-w-xl w-56 mt-5"
         >
           <p class="text-sm leading-7 font-medium">
-            Total Spending from FOAPA in Approved Requests
+            Spending from Approved Requests
           </p>
           <p class="font-semibold text-md">
             ${{ totalAmountFromFoapaInApprovedRequests }}
           </p>
         </div>
         <div
-          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+          class="border box-border px-5 py-1 h-36 border-solid border-gray-200 max-w-xl w-56 mt-5"
         >
           <p class="text-sm font-medium leading-7">
-            Total Spending from FOAPA in In-Progress Requests
+            Spending from In-Progress Requests
           </p>
           <p class="font-semibold text-md">
             ${{ totalAmountFromFoapaInInProgressRequests }}
           </p>
         </div>
         <div
-          class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-72 mt-5"
+          class="border box-border px-5 py-1 h-36 border-solid border-gray-200 max-w-xl w-56 mt-5"
         >
           <p class="text-sm font-medium leading-7">
-            Total FOAPA Spending combined from all categories
+            Spending combined from all categories
           </p>
           <p class="font-semibold text-md">${{ totalAmountUsed }}</p>
         </div>

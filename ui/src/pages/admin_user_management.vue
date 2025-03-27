@@ -176,6 +176,7 @@ const tags = ref<string[]>([]);
 const originalTags = ref<string[]>([]);
 const accountBeingUpdated = ref<any>({});
 const confirmUserDeletePopupIsVisible = ref<boolean>(false);
+const user_email = ref<string>("");
 
 function showUpdateConfirmPopup(data) {
   accountBeingUpdated.value = data;
@@ -183,6 +184,13 @@ function showUpdateConfirmPopup(data) {
 }
 
 function showDeleteConfirmPopup(data) {
+  if (data.email === user_email.value) {
+    toast("Please don can't delete your own account!!", {
+      type: TYPE.ERROR,
+    });
+
+    return;
+  }
   accountBeingUpdated.value = data;
   confirmUserDeletePopupIsVisible.value = true;
 }
@@ -288,7 +296,14 @@ async function delete_faculty() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  let res = await axios
+    .get(`${import.meta.env.VITE_API_URL}/api/retrieve-account-information`)
+    .then((response) => {
+      user_email.value = response.data.workEmail;
+      console.log(response);
+    });
+
   get_faculty();
   get_tags();
 });

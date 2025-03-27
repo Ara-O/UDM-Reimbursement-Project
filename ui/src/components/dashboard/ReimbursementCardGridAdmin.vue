@@ -193,7 +193,7 @@
     />
 
     <select
-      class="border-gray-300 shadow-sm sm:!w-80 !w-full rounded-md !h-10 px-4 mt-4 border ms-4"
+      class="border-gray-200 bg-white border-solid shadow-sm sm:!w-80 !w-full rounded-md !h-10 px-4 mt-4 border ms-4"
       v-if="multFacultyFoundByTags"
       v-model="selectedFaculty"
     >
@@ -206,8 +206,26 @@
       </option>
     </select>
 
-    <p class="text-sm">Forwarding request to: {{ forwardName }}</p>
+    <p class="text-sm">or</p>
+    <p class="text-sm">Forward to any email:</p>
+    <input
+      type="text"
+      v-model="forwardRequestToAnyEmail"
+      class="border-gray-200 shadow-sm border-solid sm:!w-80 !w-full rounded-md !h-10 px-4 mt-1 border"
+      placeholder="Enter Email"
+    />
+    <Button
+      type="button"
+      label="Select"
+      class="!bg-udmercy-blue ml-4 !border-none"
+      @click="selectAsFacultyToForward"
+    ></Button>
 
+    <div class="border border-solid border-gray-200 my-5 rounded-full"></div>
+    <p class="text-sm">
+      Forwarding request to: {{ forwardRequestTo }}
+      {{ forwardName ? "(" + forwardName + ")" : "" }}
+    </p>
     <div class="flex justify-end gap-2 mt-8">
       <Button
         type="button"
@@ -281,7 +299,7 @@ const approvePopupIsVisible = ref<boolean>(false);
 const forwardRequestDialogIsVisible = ref<boolean>(false);
 const requestApprovalMessage = ref<string>("");
 const reviewerMessageIsVisible = ref<boolean>(false);
-const forwardRequestTo = ref<string>("oladipea@udmercy.edu");
+const forwardRequestTo = ref<string>("");
 const forwardName = ref<string>("");
 const confirm = useConfirm();
 const toast = useToast();
@@ -291,7 +309,7 @@ const selectedTag = ref<string>("");
 const multFacultyFoundByTags = ref<boolean>(false);
 const FacultyFoundByTags = ref<Faculties[]>([]);
 const selectedFaculty = ref<string>("");
-
+const forwardRequestToAnyEmail = ref<string>("");
 interface Faculties {
   id: string;
   name: string;
@@ -339,6 +357,11 @@ function showReviewerMessage() {
   reviewerMessageIsVisible.value = true;
 }
 
+function selectAsFacultyToForward() {
+  forwardRequestTo.value = "";
+  selectedTag.value = "";
+  forwardRequestTo.value = forwardRequestToAnyEmail.value;
+}
 async function forwardRequest() {
   try {
     toast.clear();
