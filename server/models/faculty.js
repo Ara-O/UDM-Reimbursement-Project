@@ -45,6 +45,9 @@ const facultySchema = new Schema({
   reimbursementTickets: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Reimbursement" },
   ],
+  archivedReimbursementTickets: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Reimbursement" },
+  ],
 });
 
 const Faculty = mongoose.model("Faculty", facultySchema);

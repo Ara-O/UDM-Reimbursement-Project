@@ -199,7 +199,7 @@ function closeFoapaPopup(foapa) {
   assignedFoapa.value = foapa;
   assignedFoapaCost.value = "";
 
-  userFoapas.value.push(foapa);
+  // userFoapas.value.push(foapa);
   // retrieveFoapaDetails();
 
   //@ts-ignore

@@ -90,21 +90,59 @@
         </Select>
       </div>
 
-      <!-- Cards Section -->
-      <div class="flex mt-6">
+      <div>
+        <p
+          class="text-sm underline text-gray-600 cursor-pointer"
+          @click="showApprovedPendingRequest"
+        >
+          {{
+            viewingRequestsPendingApproval === true
+              ? "View Non-Pending Requests"
+              : "View Requests Pending Approval"
+          }}
+        </p>
+      </div>
+
+      <!-- PENDING APPROVAL REQUESTS -->
+      <div class="flex mt-6" v-if="viewingRequestsPendingApproval">
         <div>
-          <!-- GRID VIEW -->
-          <div class="flex gap-3 flex-wrap">
-            <reimbursement-card-grid-admin
-              v-for="request in filtered_pending_requests"
-              v-if="filtered_pending_requests.length !== 0"
-              :request="request"
-              @reload-requests-list="populate_submitted_tickets"
-            ></reimbursement-card-grid-admin>
-            <h3 v-else class="text-sm mt-0 text-gray-400 font-medium">
-              No pending requests
-            </h3>
+          <!-- VIEWING ONLY THOSE THAT HAS BEEN FORWARDED FOR APPROVAL -->
+          <div
+            class="flex gap-3 flex-wrap"
+            v-if="filtered_pending_requests.length !== 0"
+          >
+            <template v-for="request in filtered_pending_requests">
+              <reimbursement-card-grid-admin
+                v-if="request.request.has_been_forwarded_for_approval"
+                :request="request"
+                @reload-requests-list="populate_submitted_tickets"
+              ></reimbursement-card-grid-admin>
+            </template>
           </div>
+          <h3 v-else class="text-sm mt-0 text-gray-400 font-medium">
+            No pending requests
+          </h3>
+        </div>
+      </div>
+      <!-- Cards Section -->
+      <div class="flex mt-6" v-else>
+        <div>
+          <!-- VIEWING ONLY THOSE THAT HAVE NOT BEEN FORWARDED FOR APPROVAL -->
+          <div
+            class="flex gap-3 flex-wrap"
+            v-if="filtered_pending_requests.length !== 0"
+          >
+            <template v-for="request in filtered_pending_requests">
+              <reimbursement-card-grid-admin
+                v-if="!request.request.has_been_forwarded_for_approval"
+                :request="request"
+                @reload-requests-list="populate_submitted_tickets"
+              ></reimbursement-card-grid-admin>
+            </template>
+          </div>
+          <h3 v-else class="text-sm mt-0 text-gray-400 font-medium">
+            No pending requests
+          </h3>
         </div>
       </div>
     </section>
@@ -212,7 +250,7 @@ import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useRouter } from "vue-router";
 const search_field = ref<string>("");
-const views = ["Grid View", "Table View", "List View"];
+const views = ["Grid View"];
 const sort_options = [
   "Name (Ascending)",
   "Name (Descending)",
@@ -225,7 +263,7 @@ const view = ref<string>("Grid View");
 const filter = ref<string>("");
 const sort = ref<string>("");
 const pending_requests = ref<ReimbursementTicket[]>([]);
-
+const viewingRequestsPendingApproval = ref<boolean>(false);
 const confirm = useConfirm();
 const toast = useToast();
 const user_management_popup_is_visible = ref<boolean>(false);
@@ -271,6 +309,10 @@ async function populate_submitted_tickets() {
   );
 
   pending_requests.value = res.data;
+}
+
+function showApprovedPendingRequest() {
+  viewingRequestsPendingApproval.value = !viewingRequestsPendingApproval.value;
 }
 
 async function get_faculty() {
