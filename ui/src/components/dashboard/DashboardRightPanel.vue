@@ -95,6 +95,7 @@
             v-if="reimbursement_has_loaded"
             @user-duplicated-a-request="userDuplicatedARequest"
             @user-wants-to-delete-request="confirmDelete"
+            @user-wants-to-archive-request="archiveRequest"
           ></reimbursement-card-grid>
           <skeleton height="11rem" width="24rem" v-else></skeleton>
         </div>
@@ -327,6 +328,26 @@ function userDuplicatedARequest() {
   toast("Request duplicated successfully", {
     type: TYPE.SUCCESS,
   });
+}
+
+function archiveRequest(id) {
+  axios
+    .post(`${import.meta.env.VITE_API_URL}/api/archive-reimbursement`, {
+      id: id,
+    })
+    .then(() => {
+      reloadReimbursementData();
+      toast.clear();
+      toast("Reimbursement claim archived successfully", {
+        type: TYPE.SUCCESS,
+      });
+    })
+    .catch((err) => {
+      alert(
+        err?.response?.data?.message ||
+          "An error occured, please try again later"
+      );
+    });
 }
 
 function goToReimbursementRequestPage() {

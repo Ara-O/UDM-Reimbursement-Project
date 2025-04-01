@@ -68,6 +68,14 @@
     >
       <img :src="TrackIcon" alt="Track Request" class="w-4" />
     </span>
+    <span
+      @click="archiveRequest"
+      v-if="props.request.reimbursementStatus === 'Approved'"
+      title="Archive Request"
+      class="bg-white h-8 w-12 hover:text-lg transition-all border-solid absolute right-20 top-5 text-center cursor-pointer justify-center py-2 flex items-center content-center rounded-full"
+    >
+      <img :src="ArchiveIcon" alt="Archive Request" class="w-4" />
+    </span>
 
     <Dialog
       v-model:visible="history_messages_dialog_is_visible"
@@ -108,6 +116,7 @@ import PencilIcon from "../../assets/blue-pencil.png";
 import DuplicateIcon from "../../assets/duplicate-blue.png";
 import DeleteIcon from "../../assets/trash-icon-white.png";
 import ReimbursementStatus from "./ReimbursementStatus.vue";
+import ArchiveIcon from "../../assets/archive-icon.png";
 import Timeline from "primevue/timeline";
 import { useRouter } from "vue-router";
 import { ReimbursementTicket } from "../../types/types";
@@ -133,6 +142,7 @@ const props = defineProps<{
 const emits = defineEmits([
   "user-wants-to-delete-request",
   "user-duplicated-a-request",
+  "user-wants-to-archive-request",
 ]);
 
 const confirm = useConfirm();
@@ -151,6 +161,10 @@ function goToReimbursementPage() {
 
 function deleteRequest() {
   emits("user-wants-to-delete-request", props.request._id);
+}
+
+function archiveRequest() {
+  emits("user-wants-to-archive-request", props.request._id);
 }
 
 async function duplicateRequest() {

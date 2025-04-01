@@ -267,6 +267,50 @@ router.post("/delete-reimbursement", verifyToken, async (req, res) => {
   }
 });
 
+// Delete reimbursement: POST /api/archive-reimbursement
+router.post("/archive-reimbursement", verifyToken, async (req, res) => {
+  try {
+    const requestSchema = z.string();
+
+    const userId = req.user.userId;
+
+    // Parse the reimbursement id
+    const reimbursementId = requestSchema.parse(req.body.id);
+
+    let faculty = await Faculty.findById(userId);
+
+    // Remove the reimbursement ID from the faculty's reimbursement list
+    faculty.reimbursementTickets.pull(reimbursementId);
+
+    faculty.archivedReimbursementTickets.push(reimbursementId);
+
+    // Delete the reimbursement from the reimbursement table
+    // await ReimbursementTicket.findByIdAndDelete(reimbursementId);
+
+    await faculty.save();
+
+    logger.info(
+      `User ${userId} has successfully deleted reimbursement ${reimbursementId}`,
+      {
+        api: "/api/delete-reimbursement",
+      }
+    );
+
+    return res
+      .status(200)
+      .send({ message: "Reimbursement ticket deleted successfully" });
+  } catch (err) {
+    logger.error(err, {
+      api: "/api/delete-reimbursement",
+    });
+
+    return res.status(500).send({
+      message:
+        "An unexpected error occured when deleting this reimbursement. Please try again later.",
+    });
+  }
+});
+
 router.post("/duplicate-request", verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;

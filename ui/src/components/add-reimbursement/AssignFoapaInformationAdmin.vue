@@ -196,10 +196,13 @@ function showFoapaPopup() {
 
 function closeFoapaPopup(foapa) {
   foapaPopupIsVisible.value = false;
+  if (foapa === null) {
+    return;
+  }
   assignedFoapa.value = foapa;
   assignedFoapaCost.value = "";
 
-  // userFoapas.value.push(foapa);
+  userFoapas.value.push(foapa);
   // retrieveFoapaDetails();
 
   //@ts-ignore
