@@ -17,6 +17,7 @@
             placeholder="Enter Faculty Name"
             class="w-full !border-gray-200 !h-12 !pl-5 !text-sm"
             style=""
+            v-model="search_field"
           />
           <img
             :src="SearchIcon"
@@ -32,7 +33,7 @@
       />
     </div>
     <DataTable
-      :value="faculty_member_list"
+      :value="fileteredFaculty"
       striped-rows
       tableStyle="min-width: 50rem"
       class="mt-5"
@@ -151,7 +152,7 @@ import SearchIcon from "../assets/search-icon.png";
 import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import InputText from "primevue/inputtext";
 import Select from "primevue/select";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import BackArrow from "../assets/left-arrow.png";
 import Button from "primevue/button";
 import axios from "axios";
@@ -177,6 +178,18 @@ const originalTags = ref<string[]>([]);
 const accountBeingUpdated = ref<any>({});
 const confirmUserDeletePopupIsVisible = ref<boolean>(false);
 const user_email = ref<string>("");
+
+const fileteredFaculty = computed(() => {
+  console.log("Hellooooooooo")
+  if (search_field.value === "") {
+    return faculty_member_list.value;  // Return all faculties if search field is empty
+  }
+
+  // Filter the faculties based on the name (case-insensitive search)
+  return faculty_member_list.value.filter(faculty =>
+    faculty.name.toLowerCase().includes(search_field.value.toLowerCase())
+  );
+});
 
 function showUpdateConfirmPopup(data) {
   accountBeingUpdated.value = data;

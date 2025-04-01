@@ -110,7 +110,7 @@
     </section>
     <ConfirmDialog></ConfirmDialog>
 
-    <!-- User management dialog -->
+    <!-- User management dialog
     <Dialog
       v-model:visible="user_management_popup_is_visible"
       modal
@@ -128,10 +128,11 @@
             font-size: 13px !important;
           }
         "
+        v-model="user_search_field"
       />
 
       <DataTable
-        :value="faculties"
+        :value="filteredFaculties"
         striped-rows
         tableStyle="min-width: 50rem"
         class="mt-5"
@@ -150,7 +151,7 @@
           </template>
         </Column>
       </DataTable>
-    </Dialog>
+    </Dialog> -->
 
     <!-- Department chair dialog -->
     <Dialog
@@ -212,6 +213,7 @@ import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useRouter } from "vue-router";
 const search_field = ref<string>("");
+const user_search_field = ref<string>("");
 const views = ["Grid View", "Table View", "List View"];
 const sort_options = [
   "Name (Ascending)",
