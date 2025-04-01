@@ -69,7 +69,7 @@
             <i class="pi pi-table" v-if="view === 'Table View'" />
           </template>
         </Select>
-        <Select
+        <!-- <Select
           v-model="filter"
           :options="filter_options"
           placeholder="Filter"
@@ -77,8 +77,8 @@
         >
           <template #dropdownicon>
             <i class="pi pi-filter" />
-          </template> </Select
-        ><Select
+          </template> </Select> -->
+        <Select
           v-model="sort"
           :options="sort_options"
           placeholder="Sort"
@@ -88,10 +88,19 @@
             <i class="pi pi-sort-alt" />
           </template>
         </Select>
+        <input type="checkbox" id="pendingRequests" v-model="viewingRequestsPendingApproval" @click="showApprovedPendingRequest">
+        <label for="pendingRequests"> 
+          {{ 
+            viewingRequestsPendingApproval === true
+            ? "Hide Requests Pending Approval"
+            : "Show Requests Pending Approval"
+          }}
+        </label>
       </div>
 
       <div>
-        <p
+
+        <!-- <p
           class="text-sm underline text-gray-600 cursor-pointer"
           @click="showApprovedPendingRequest"
         >
@@ -100,7 +109,7 @@
               ? "View Non-Pending Requests"
               : "View Requests Pending Approval"
           }}
-        </p>
+        </p> -->
       </div>
 
       <!-- PENDING APPROVAL REQUESTS -->
