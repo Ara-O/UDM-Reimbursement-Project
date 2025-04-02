@@ -17,9 +17,10 @@ router.get("/retrieve-dashboard-data", verifyToken, async (req, res) => {
 
     useridSchema.parse(req.user.userId);
 
-    let facultyInfo = await Faculty.findById(req.user.userId).populate(
-      "reimbursementTickets"
-    );
+    let facultyInfo = await Faculty.findById(req.user.userId).populate([
+      "reimbursementTickets",
+      "archivedReimbursementTickets",
+    ]);
 
     // If a faculty was not found based on the userId in their cookies, then prompt the
     // user to log in again - 403 error code makes users have to log in again on frontend

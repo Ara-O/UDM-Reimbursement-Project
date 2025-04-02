@@ -383,7 +383,6 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       logger.info("PDF was generated successfully", {
         api: "generatePDF_function",
       });
-
       base64String = base64String.slice(28);
       sgMail
         .send({

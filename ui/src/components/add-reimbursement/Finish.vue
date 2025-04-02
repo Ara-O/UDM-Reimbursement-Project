@@ -395,6 +395,17 @@ const markClaimAsSubmitted = async () => {
     return;
   }
 
+  if (props.claim.foapaDetails.length === 0) {
+    toast.clear();
+    toast(
+      "You must have at least 1 FOAPA in order to submit this request. Please contact Jim Adair (adairja@udmercy.edu) for guidance if you are unsure of which FOAPA to use.",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+    return;
+  }
+
   createPdf();
 
   confirmSubmission.require({

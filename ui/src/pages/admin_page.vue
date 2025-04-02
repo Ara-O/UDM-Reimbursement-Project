@@ -88,18 +88,20 @@
             <i class="pi pi-sort-alt" />
           </template>
         </Select>
-        <input type="checkbox" id="pendingRequests" v-model="viewingRequestsPendingApproval" @click="showApprovedPendingRequest">
-        <label for="pendingRequests"> 
-          {{ 
-            viewingRequestsPendingApproval === true
-            ? "Hide Requests Pending Approval"
-            : "Show Requests Pending Approval"
-          }}
-        </label>
+        <span class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="pendingRequests"
+            v-model="viewingRequestsPendingApproval"
+            @click="showApprovedPendingRequest"
+          />
+          <label for="pendingRequests" class="text-[13px] text-gray-700 pb-0">
+            Hide Requests Pending Approval
+          </label>
+        </span>
       </div>
 
       <div>
-
         <!-- <p
           class="text-sm underline text-gray-600 cursor-pointer"
           @click="showApprovedPendingRequest"
@@ -113,7 +115,7 @@
       </div>
 
       <!-- PENDING APPROVAL REQUESTS -->
-      <div class="flex mt-6" v-if="viewingRequestsPendingApproval">
+      <div class="flex mt-6">
         <div>
           <!-- VIEWING ONLY THOSE THAT HAS BEEN FORWARDED FOR APPROVAL -->
           <div
@@ -122,7 +124,11 @@
           >
             <template v-for="request in filtered_pending_requests">
               <reimbursement-card-grid-admin
-                v-if="request.request.has_been_forwarded_for_approval"
+                v-if="
+                  viewingRequestsPendingApproval
+                    ? !request.request.has_been_forwarded_for_approval
+                    : true
+                "
                 :request="request"
                 @reload-requests-list="populate_submitted_tickets"
               ></reimbursement-card-grid-admin>
@@ -134,26 +140,6 @@
         </div>
       </div>
       <!-- Cards Section -->
-      <div class="flex mt-6" v-else>
-        <div>
-          <!-- VIEWING ONLY THOSE THAT HAVE NOT BEEN FORWARDED FOR APPROVAL -->
-          <div
-            class="flex gap-3 flex-wrap"
-            v-if="filtered_pending_requests.length !== 0"
-          >
-            <template v-for="request in filtered_pending_requests">
-              <reimbursement-card-grid-admin
-                v-if="!request.request.has_been_forwarded_for_approval"
-                :request="request"
-                @reload-requests-list="populate_submitted_tickets"
-              ></reimbursement-card-grid-admin>
-            </template>
-          </div>
-          <h3 v-else class="text-sm mt-0 text-gray-400 font-medium">
-            No pending requests
-          </h3>
-        </div>
-      </div>
     </section>
     <ConfirmDialog></ConfirmDialog>
 
