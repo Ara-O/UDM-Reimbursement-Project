@@ -503,7 +503,11 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
         attachments: [
           {
             content: base64String,
-            filename: `${req.body.faculty.firstName}_${req.body.faculty.lastName}_Reimbursement_Claim.pdf`,
+            filename: `${req.body.faculty.firstName}_${
+              req.body.faculty.lastName
+            }_${req.body.reimbursementData.reimbursementName}_${retrieveDate(
+              "MM_DD_YYYY"
+            )}_Reimbursement_Claim.pdf`,
             encoding: "base64",
             type: "application/pdf",
           },

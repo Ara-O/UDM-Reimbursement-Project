@@ -406,6 +406,17 @@ const markClaimAsSubmitted = async () => {
     return;
   }
 
+  if (props.claim.reimbursementReason.trim() === "") {
+    toast.clear();
+    toast(
+      "You must have a Reason for Travel/Expense (Claim Information Section)",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+    return;
+  }
+
   createPdf();
 
   confirmSubmission.require({

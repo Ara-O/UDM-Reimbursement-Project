@@ -380,6 +380,7 @@ async function forwardRequest() {
       type: TYPE.INFO,
     });
     forwardRequestDialogIsVisible.value = false;
+    emits("reload-requests-list");
   } catch (err) {}
 }
 
