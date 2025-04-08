@@ -27,6 +27,7 @@
           <input
             type="text"
             name="name"
+            :disabled="view_only_mode === true"
             placeholder="Title of Reimbursement"
             v-model="props.claim.reimbursementName"
             required
@@ -37,6 +38,7 @@
           <h4 class="font-normal text-sm">Reason for Travel/Expense *</h4>
           <input
             type="text"
+            :disabled="view_only_mode === true"
             name="reason-or-expense-input"
             placeholder="Reason for Travel/Expense"
             required
@@ -49,6 +51,7 @@
           <input
             type="text"
             name="destination-city-state-input"
+            :disabled="view_only_mode === true"
             v-model="props.claim.destination"
             placeholder="Destination-City, State, Country"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border pl-5 text-xs border-solid shadow-md"
@@ -62,6 +65,7 @@
         <input
           type="checkbox"
           v-model="props.claim.UDMPUVoucher"
+          :disabled="view_only_mode === true"
           id="check-if-udmpu-checkbox"
         />
       </div>
@@ -71,6 +75,7 @@
           <input
             type="radio"
             id="pickup"
+            :disabled="view_only_mode === true"
             name="payment-type"
             value="Hold for Pickup"
             v-model="props.claim.paymentRetrievalMethod"
@@ -81,6 +86,7 @@
           <input
             type="radio"
             id="direct-deposit"
+            :disabled="view_only_mode === true"
             name="payment-type"
             value="Direct Deposit"
             v-model="props.claim.paymentRetrievalMethod"
@@ -107,7 +113,10 @@
 import { ReimbursementTicket } from "../../types/types";
 
 const emits = defineEmits(["move-to-next-section"]);
-const props = defineProps<{ claim: ReimbursementTicket }>();
+const props = defineProps<{
+  claim: ReimbursementTicket;
+  view_only_mode: Boolean;
+}>();
 
 function moveToNextSection() {
   emits("move-to-next-section");

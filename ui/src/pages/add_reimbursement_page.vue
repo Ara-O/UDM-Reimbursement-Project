@@ -10,9 +10,18 @@
   <div
     class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
     @click="goToDashboard"
+    v-if="!coming_from_foapa_page"
   >
     <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
     <h4 class="font-normal text-sm text-gray-600">Return to dashboard</h4>
+  </div>
+  <div
+    class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
+    @click="router.go(-1)"
+    v-else
+  >
+    <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
+    <h4 class="font-normal text-sm text-gray-600">Return to FOAPA page</h4>
   </div>
   <main class="h-screen block xl:flex mt-40 xl:mt-0 items-center gap-20">
     <!-- SECTIONS SECTION -->
@@ -45,41 +54,58 @@
           <hr class="border-solid border-[0.5px] text-gray-200 h-[1] m-0" />
         </div>
       </article>
+      <p
+        v-if="currentReimbursement.reimbursementStatus === 'Denied'"
+        class="text-sm text-center mt-6 underline cursor-pointer"
+        @click="viewRequestHistory"
+      >
+        View Reason for Denial
+      </p>
     </section>
 
+    <!-- VIEW ONLY MODE WARNING -->
+    <div
+      class="absolute bottom-4 z-10 right-4 rounded-lg bg-udmercy-red max-w-[30rem] text-white px-7 pt-1 pb-2"
+      v-if="view_only_mode"
+    >
+      <p class="underline font-medium">Warning</p>
+      <p class="font-normal leading-7">
+        You are in view-only mode. This is because this request has already
+        being approved, or is awaiting approval by the admin.
+      </p>
+    </div>
     <!-- INFO SECTION -->
     <section class="w-auto">
       <claim-information
         :claim="currentReimbursement"
+        :view_only_mode="view_only_mode"
         v-if="selectedSection === 1"
         @move-to-next-section="moveToNextSection"
       ></claim-information>
       <manage-expenses
         :claim="currentReimbursement"
+        :view_only_mode="view_only_mode"
         v-if="selectedSection === 2"
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
       ></manage-expenses>
       <assign-foapa-information
         :claim="currentReimbursement"
+        :view_only_mode="view_only_mode"
         v-if="selectedSection === 3"
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
       ></assign-foapa-information>
       <manage-receipts
         :claim="currentReimbursement"
+        :view_only_mode="view_only_mode"
         v-if="selectedSection === 4"
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
       ></manage-receipts>
-      <!-- <guest-information
-        :claim="currentReimbursement"
-        v-if="selectedSection === 5"
-        @move-to-next-section="moveToNextSection"
-        @move-to-previous-section="moveToPreviousSection"
-      ></guest-information> -->
       <finish
         :claim="currentReimbursement"
+        :view_only_mode="view_only_mode"
         v-if="selectedSection === 5"
         @on-claim-saved="onClaimSaved"
         @move-to-previous-section="moveToPreviousSection"
@@ -134,7 +160,6 @@ import AssignFoapaInformation from "../components/add-reimbursement/AssignFoapaI
 import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import HistoryIcon from "../assets/black-history.png";
 import Sidebar from "primevue/sidebar";
-import { debounce } from "lodash";
 
 function goToDashboard() {
   router.push("/");
@@ -147,7 +172,9 @@ let show_confirm_dialog = ref<boolean>(false);
 let user_has_unsaved_changes = ref<boolean>(false);
 let claim_is_being_saved = ref<boolean>(false);
 let selectedSection = ref<number>(1);
+const view_only_mode = ref<boolean>(false);
 const request_history_sidebar_is_visible = ref<boolean>(false);
+const coming_from_foapa_page = ref<boolean>(false);
 
 let sections = ref([
   {
@@ -166,10 +193,6 @@ let sections = ref([
     title: "Receipts",
     section: 4,
   },
-  // {
-  //   title: "Guest Information (Optional)",
-  //   section: 5,
-  // },
   {
     title: "Finish",
     section: 5,
@@ -244,6 +267,7 @@ function getAllActivitiesAmount(): number {
 }
 
 const autosave_label = ref<boolean>(false);
+
 async function autosaveData() {
   console.log("Autosaved");
   await axios.post(`${import.meta.env.VITE_API_URL}/api/update-reimbursement`, {
@@ -283,8 +307,26 @@ watch(
 
 onMounted(async () => {
   try {
+    const previous = window.history.state?.from;
+    if (previous === "foapa-page") {
+      coming_from_foapa_page.value = true;
+    }
+
     if (route.query.reimbursementId) {
       await userIsUpdatingReimbursement();
+
+      // Open in view-only mode
+      if (
+        currentReimbursement.value.reimbursementStatus === "Approved" ||
+        currentReimbursement.value.reimbursementStatus === "Approved*" ||
+        currentReimbursement.value.reimbursementStatus === "Submitted"
+      ) {
+        view_only_mode.value = true;
+      }
+
+      // Show the view edit notes if denied
+
+      // if(currentReimbursement.value.reimbursementStatus === "Denied")
     } else if (route.query.templateData) {
       currentReimbursement.value = JSON.parse(
         route.query.templateData as string

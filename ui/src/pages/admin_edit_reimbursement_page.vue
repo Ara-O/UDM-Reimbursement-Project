@@ -51,11 +51,13 @@
     <section class="w-auto">
       <claim-information
         :claim="currentReimbursement"
+        :view_only_mode="false"
         v-if="selectedSection === 1"
         @move-to-next-section="moveToNextSection"
       ></claim-information>
       <manage-expenses
         :claim="currentReimbursement"
+        :view_only_mode="false"
         v-if="selectedSection === 2"
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
@@ -70,6 +72,7 @@
       <manage-receipts
         :claim="currentReimbursement"
         v-if="selectedSection === 4"
+        :view_only_mode="false"
         @move-to-next-section="moveToNextSection"
         @move-to-previous-section="moveToPreviousSection"
       ></manage-receipts>

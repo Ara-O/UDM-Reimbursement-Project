@@ -19,28 +19,25 @@
       <div class="flex gap-5 mt-6 flex-wrap">
         <button
           @click="saveReimbursement"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+          :disabled="view_only_mode === true"
+          class="bg-udmercy-blue disabled:bg-gray-500 text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
           Save as a Draft
         </button>
         <button
           @click="discardChanges"
-          class="bg-udmercy-red text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+          :disabled="view_only_mode === true"
+          class="bg-udmercy-red text-white disabled:bg-gray-500 w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
           Discard Changes
         </button>
-        <!-- <button
-          @click="saveAsTemplate"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
-        >
-          Save as Template
-        </button> -->
       </div>
 
       <h3 class="text-base font-semibold">Manage generated PDF:</h3>
       <div class="flex gap-5 mt-6 flex-wrap">
         <button
           @click="createPdf"
+          :disabled="view_only_mode === true"
           class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
           Preview generated PDF
@@ -57,14 +54,16 @@
       <div class="flex gap-5 mt-6 flex-wrap">
         <button
           @click="emailPDF"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+          :disabled="view_only_mode === true"
+          class="bg-udmercy-blue disabled:bg-gray-500 text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
           Email Reimbursement Request
         </button>
 
         <button
+          :disabled="view_only_mode === true"
           @click="markClaimAsSubmitted"
-          class="bg-udmercy-blue text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
+          class="bg-udmercy-blue disabled:bg-gray-500 text-white w-64 border-none px-5 h-11 rounded-full cursor-pointer text-xs"
         >
           Submit Request
         </button>
@@ -165,12 +164,6 @@
             <h3 class="text-sm font-medium leading-6">
               Note: Your reimbursement claim PDF will be attached to this email
             </h3>
-            <!-- <input type="checkbox" id="submitCB" name="submitCB" v-model="checked" /> -->
-            <!-- <label for="submissionEmail" class="font-semibold text-sm leading-7">
-              Submit Request
-              <img src="../../assets/user-help-icon.png" alt="Help" class="w-4"
-                title="By checking this box the claim will be marked as submitted. This will deduct the respective amounts from each of your saved FOAPA." />
-            </label> -->
           </Form>
         </span>
       </div>
@@ -221,6 +214,7 @@ const toast = useToast();
 
 const props = defineProps<{
   claim: ReimbursementTicket;
+  view_only_mode: Boolean;
 }>();
 const route = useRoute();
 const router = useRouter();

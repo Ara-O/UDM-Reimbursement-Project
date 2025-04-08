@@ -9,14 +9,14 @@
         :class="{ 'text-udmercy-blue': true }"
         @click="showReviewerMessage"
         v-if="
-          props.request.request.needs_approval ||
+          props.request.request.has_been_forwarded_for_approval ||
           props.request.request.approval_status !== ''
         "
       >
         {{
           props.request.request.approval_status
             ? props.request.request.approval_status
-            : "Waiting"
+            : "Pending"
         }}
       </p>
     </div>

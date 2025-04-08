@@ -42,10 +42,14 @@
       <Column field="email" header="Email" sortable></Column>
       <Column field="role" header="Role" sortable>
         <template #body="{ data }">
-          <select v-model="data.role" class="bg-transparent border-none">
-            <option value="USER">User</option>
+          <select
+            v-model="data.role"
+            @change="() => roleChanged(data)"
+            class="bg-transparent border-none"
+          >
             <option value="FACULTY">Faculty</option>
             <option value="ADMIN">Admin</option>
+            <option value="CHAIR">Chair</option>
           </select>
         </template>
       </Column>
@@ -179,14 +183,21 @@ const accountBeingUpdated = ref<any>({});
 const confirmUserDeletePopupIsVisible = ref<boolean>(false);
 const user_email = ref<string>("");
 
+function roleChanged(data) {
+  if (data.role === "CHAIR") {
+    if (data.tag === "") {
+      data.tag = `${data.department} Chair`;
+    }
+  }
+}
+
 const fileteredFaculty = computed(() => {
-  console.log("Hellooooooooo")
   if (search_field.value === "") {
-    return faculty_member_list.value;  // Return all faculties if search field is empty
+    return faculty_member_list.value; // Return all faculties if search field is empty
   }
 
   // Filter the faculties based on the name (case-insensitive search)
-  return faculty_member_list.value.filter(faculty =>
+  return faculty_member_list.value.filter((faculty) =>
     faculty.name.toLowerCase().includes(search_field.value.toLowerCase())
   );
 });
@@ -246,6 +257,7 @@ async function get_faculty() {
     email: faculty.workEmail,
     role: faculty.role,
     tag: faculty.tag,
+    department: faculty.department,
   }));
 }
 

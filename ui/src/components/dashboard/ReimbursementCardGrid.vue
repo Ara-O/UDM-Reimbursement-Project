@@ -3,7 +3,8 @@
     class="relative h-44 overflow-auto flex flex-col justify-center gap-2 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
   >
     <h3
-      class="font-medium text-base my-0 w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
+      class="font-medium text-base my-0 cursor-pointer w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
+      @click="goToReimbursementPage"
     >
       {{ props.request.reimbursementName }}
     </h3>
@@ -23,7 +24,8 @@
         <span
           v-if="
             props.request.reimbursementStatus === 'Submitted' ||
-            props.request.reimbursementStatus === 'Approved'
+            props.request.reimbursementStatus === 'Approved' ||
+            props.request.reimbursementStatus === 'Approved*'
           "
           class="bg-white px-4 h-8 w-12 justify-center cursor-pointer py-2 flex items-center content-center rounded-full"
           @click="viewPdf"
@@ -70,7 +72,10 @@
     </span>
     <span
       @click="archiveRequest"
-      v-if="props.request.reimbursementStatus === 'Approved'"
+      v-if="
+        props.request.reimbursementStatus === 'Approved' ||
+        props.request.reimbursementStatus === 'Approved*'
+      "
       title="Archive Request"
       class="bg-white h-8 w-12 hover:text-lg transition-all border-solid absolute right-20 top-5 text-center cursor-pointer justify-center py-2 flex items-center content-center rounded-full"
     >
