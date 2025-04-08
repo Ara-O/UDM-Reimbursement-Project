@@ -588,7 +588,7 @@ router.post("/check-reimbursement-approval-status", async (req, res) => {
 router.post("/review-reimbursement-request", async (req, res) => {
   try {
     logger.info(
-      `Reimbursement ${req.body.reimbursement_id} is being approved by ${req.body.name}`,
+      `Reimbursement ${req.body.reimbursement_id} is being reviewed by ${req.body.name}`,
       {
         api: "/api/check-reimbursement-approval-status",
       }
@@ -601,6 +601,11 @@ router.post("/review-reimbursement-request", async (req, res) => {
     reimbursement.has_been_forwarded_for_approval = false;
     reimbursement.approval_status = req.body.status;
     reimbursement.additional_approval_information = req.body.message;
+
+    reimbursement.request_history.unshift({
+      date_of_message: `${retrieveDate("MM/DD/YYYY")}`,
+      request_message: `The Request Was ${req.body.status} by ${req.body.name}`,
+    });
 
     await reimbursement.save();
     return res.status(200).send({ message: "This request has been approved" });

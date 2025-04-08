@@ -6,10 +6,16 @@
     <div>
       <h1 class="text-2xl font-semibold">Review Request</h1>
       <p class="mt-0 max-w-3xl text-[14.5px] leading-7">
-        You were forwarded this request for approval. Please indicate whether
-        you have approved or denied the request attached in your email. If you
-        have any questions or concerns, please email Jim Adair -
-        adairja@udmercy.edu
+        You were forwarded this reimbursement request for approval. Please
+        indicate whether you have approved or denied the request attached in
+        your email. If you have any questions or concerns, please email Jim
+        Adair - adairja@udmercy.edu
+      </p>
+      <p
+        class="underline text-[14.5px] cursor-pointer text-udmercy-blue"
+        @click="viewPdf"
+      >
+        Click here to view the reimbursement request
       </p>
       <input
         type="text"
@@ -52,6 +58,7 @@ const attached_message = ref<string>("");
 const approver_name = ref<string>("");
 const route = useRoute();
 const toast = useToast();
+const currentReimbursement = ref<any>({});
 
 async function reviewerAnswer(answer) {
   try {
@@ -77,6 +84,60 @@ async function reviewerAnswer(answer) {
     router.push("/");
   } catch (err) {
     console.log(err);
+  }
+}
+
+function downloadPDF(pdfData: string) {
+  const linkSource = pdfData;
+  let iframe =
+    "<iframe width='100%' height='100%' src='" + linkSource + "'></iframe>";
+  let x = window.open();
+  if (x != null) {
+    x.document.open();
+    x.document.write(iframe);
+    x.document.close();
+
+    // Remove padding from the iframe content
+    x.document.querySelector("style") ||
+      x.document.head.appendChild(x.document.createElement("style"));
+    // @ts-ignore
+    x.document.querySelector("style").textContent += `
+  body, iframe {
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+  }
+`;
+  }
+}
+
+async function viewPdf() {
+  try {
+    toast.clear();
+    toast("Loading... Please wait...", {
+      type: TYPE.INFO,
+    });
+
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/generate-pdf`,
+      {
+        reimbursementTicket: currentReimbursement.value,
+      }
+    );
+
+    downloadPDF(res.data);
+
+    toast.clear();
+  } catch (err: any) {
+    console.log(err);
+    toast.clear();
+    toast(
+      err?.response?.data?.message ||
+        "There was an error previewing this PDF. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
   }
 }
 
@@ -107,6 +168,17 @@ onMounted(async () => {
       );
       router.push("/");
     }
+
+    const reimbursement_info = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/retrieve-ticket-information`,
+      {
+        params: {
+          reimbursementId: route.params.id,
+        },
+      }
+    );
+
+    currentReimbursement.value = reimbursement_info.data;
   } catch (err) {
     console.log(err);
   }

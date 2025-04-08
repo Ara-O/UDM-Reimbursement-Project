@@ -20,17 +20,24 @@
         <b>Note: There is a file upload size limit of 10mb</b>
       </h4>
 
-      <button type="button" @click="() => open()">Upload file</button>
+      <button
+        type="button"
+        @click="() => open()"
+        :disabled="view_only_mode === true"
+      >
+        Upload file
+      </button>
       <h3 class="font-normal text-sm inline" v-if="fileWasSelected">
         Uploading...
       </h3>
       <h4 class="font-normal text-sm">or</h4>
-      <h3
-        class="cursor-pointer text-sm underline font-normal"
+      <button
+        :disabled="view_only_mode === true"
+        class="cursor-pointer bg-white border-none text-sm underline font-normal"
         @click="openCameraPopup"
       >
         Click here to take a picture
-      </h3>
+      </button>
     </div>
     <h3 class="text-[13px] mt-6 text-gray-700 font-normal">
       Added Receipts will show here
@@ -72,7 +79,8 @@
             </a>
             <button
               @click="deleteReceipt(receipt.id)"
-              class="bg-udmercy-red text-xs text-white rounded-full cursor-pointer border-none px-4 py-1 mt-1"
+              :disabled="view_only_mode === true"
+              class="bg-udmercy-red disabled:bg-gray-500 text-xs text-white rounded-full cursor-pointer border-none px-4 py-1 mt-1"
             >
               <img
                 src="../../assets/trash-icon-white.png"
@@ -177,6 +185,7 @@ import { TYPE, useToast } from "vue-toastification";
 
 const props = defineProps<{
   claim: ReimbursementTicket;
+  view_only_mode: Boolean;
 }>();
 
 function parseUrl(rec) {

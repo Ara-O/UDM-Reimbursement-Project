@@ -18,6 +18,7 @@
           <select
             name="foapa"
             id="foapa"
+            :disabled="view_only_mode === true"
             v-model="assignedFoapa"
             class="border-[0.5px] h-11 rounded-md bg-white border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
@@ -34,6 +35,7 @@
           <span class="absolute pl-[0.75rem] pt-[10px] opacity-50">$</span>
           <input
             type="text"
+            :disabled="view_only_mode === true"
             name="quantity-assigned"
             placeholder="Desired Amount"
             v-model="assignedFoapaCost"
@@ -46,8 +48,9 @@
 
       <div class="flex gap-5 mt-8">
         <button
+          :disabled="view_only_mode === true"
           type="submit"
-          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+          class="bg-udmercy-blue disabled:bg-gray-500 text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
         >
           {{ triggerAssignedFoapaEditMode ? "Edit FOAPA" : "Assign FOAPA" }}
         </button>
@@ -164,6 +167,7 @@ type FoapaDetails = FoapaStuff & { _id: string };
 
 let props = defineProps<{
   claim: ReimbursementTicket;
+  view_only_mode: Boolean;
 }>();
 
 let assignedFoapa = ref<any>(null);

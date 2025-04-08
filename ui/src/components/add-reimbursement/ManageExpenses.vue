@@ -25,6 +25,7 @@
             :options="defaultExpenses"
             style="width: 18rem !important"
             :invalid="expense_field_is_empty"
+            :disabled="view_only_mode === true"
             placeholder="Select an Expense"
             class="border-[0.5px] h-11 flex items-center rounded-md !border-gray-200 box-border text-xs border-solid !shadow-md"
           />
@@ -54,6 +55,7 @@
           </h4>
           <input
             type="text"
+            :disabled="view_only_mode === true"
             name="additional-information"
             :placeholder="otherPlaceholderText(expense.name)"
             v-model="expense.additionalInformation"
@@ -76,6 +78,7 @@
             type="text"
             name="expense-cost"
             placeholder="Expense Cost"
+            :disabled="view_only_mode === true"
             v-model="expense.cost"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             style="padding-left: 2rem"
@@ -88,6 +91,7 @@
             type="date"
             name="activity-date"
             placeholder="Activity Date"
+            :disabled="view_only_mode === true"
             v-model="expense.date"
             class="border-[0.5px] h-11 rounded-md border-gray-200 w-72 box-border px-5 text-xs border-solid shadow-md"
             required
@@ -105,7 +109,8 @@
       <div class="flex gap-5">
         <button
           type="submit"
-          class="bg-udmercy-blue text-white border-none w-40 h-11 rounded-full cursor-pointer text-xs"
+          :disabled="view_only_mode === true"
+          class="bg-udmercy-blue text-white disabled:bg-gray-500 border-none w-40 h-11 rounded-full cursor-pointer text-xs"
         >
           Add Expense
         </button>
@@ -172,6 +177,7 @@ import Select from "primevue/select";
 
 const props = defineProps<{
   claim: ReimbursementTicket;
+  view_only_mode: Boolean;
 }>();
 
 const quickAddPopupIsVisible = ref<boolean>(false);
@@ -335,5 +341,13 @@ function duplicateExpense(id: string) {
 
 .p-invalid {
   border: solid 1px red !important;
+}
+
+.p-select + .p-component + .p-inputwrapper + .p-disabled {
+  background-color: pink !important;
+}
+
+.p-select.p-disabled {
+  background-color: white;
 }
 </style>

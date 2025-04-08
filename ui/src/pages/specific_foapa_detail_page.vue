@@ -30,47 +30,24 @@
           class="border box-border px-5 py-3 border-solid border-gray-200 max-w-xl w-56 mt-5"
         >
           <p class="text-sm font-medium">Total Requests Funded</p>
-          <p class="font-semibold text-md">
+          <p class="font-semibold text-2xl">
             {{ foapa_information.claims_used.length }}
           </p>
         </div>
         <div
-          class="border box-border px-5 py-1 h-36 border-solid border-gray-200 max-w-lg w-56 mt-5"
+          class="border box-border px-5 py-- h-36 border-solid border-gray-200 max-w-xl w-72 mt-5"
         >
           <p class="text-sm leading-7 font-medium">
-            Spending from Submitted Requests
+            Submitted Requests: ${{ totalAmountFromFoapaInSubmittedRequests }}
           </p>
-          <p class="font-semibold text-md">
-            ${{ totalAmountFromFoapaInSubmittedRequests }}
-          </p>
-        </div>
-        <div
-          class="border box-border px-5 py-1 h-36 border-solid border-gray-200 max-w-xl w-56 mt-5"
-        >
           <p class="text-sm leading-7 font-medium">
-            Spending from Approved Requests
+            Approved Requests: ${{ totalAmountFromFoapaInApprovedRequests }}
           </p>
-          <p class="font-semibold text-md">
-            ${{ totalAmountFromFoapaInApprovedRequests }}
-          </p>
-        </div>
-        <div
-          class="border box-border px-5 py-1 h-36 border-solid border-gray-200 max-w-xl w-56 mt-5"
-        >
           <p class="text-sm font-medium leading-7">
-            Spending from In-Progress Requests
+            In-Progress Requests: ${{
+              totalAmountFromFoapaInInProgressRequests
+            }}
           </p>
-          <p class="font-semibold text-md">
-            ${{ totalAmountFromFoapaInInProgressRequests }}
-          </p>
-        </div>
-        <div
-          class="border box-border px-5 py-1 h-36 border-solid border-gray-200 max-w-xl w-56 mt-5"
-        >
-          <p class="text-sm font-medium leading-7">
-            Spending combined from all categories
-          </p>
-          <p class="font-semibold text-md">${{ totalAmountUsed }}</p>
         </div>
       </article>
 
@@ -120,37 +97,33 @@
               <i class="pi pi-sort-alt" />
             </template>
           </Select>
+          <div class="flex">
+            <DatePicker
+              v-model="foapa_date_range"
+              selectionMode="range"
+              placeholder="Filter by Date Range"
+              :manualInput="false"
+              :pt="{ root: 'h-9 !w-64' }"
+            />
+            <button
+              type="button"
+              @click="filterByDate"
+              class="bg-udmercy-blue text-white border-none w-20 h-9 ml-3 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
+            >
+              Filter
+            </button>
+            <button
+              type="button"
+              @click="removeFilter"
+              class="bg-udmercy-blue text-white border-none w-32 h-9 ml-3 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
+            >
+              Remove Filter
+            </button>
+          </div>
         </div>
       </div>
-      <div class="">
-        <p class="text-sm">
-          Filter by date ranges (based on when the reimbursement was last
-          updated/submitted):
-        </p>
-        <div class="flex">
-          <DatePicker
-            v-model="foapa_date_range"
-            selectionMode="range"
-            placeholder="Filter by Date Range"
-            :manualInput="false"
-            :pt="{ root: 'h-9 !w-64' }"
-          />
-          <button
-            type="button"
-            @click="filterByDate"
-            class="bg-udmercy-blue text-white border-none w-20 h-9 ml-3 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
-          >
-            Filter
-          </button>
-          <button
-            type="button"
-            @click="removeFilter"
-            class="bg-udmercy-blue text-white border-none w-32 h-9 ml-3 rounded-full cursor-pointer text-xs flex justify-center items-center gap-3"
-          >
-            Remove Filter
-          </button>
-        </div>
-      </div>
+
+      <div class=""></div>
 
       <div class="mb-0">
         <p class="mb-0 text-sm leading-7">
@@ -171,20 +144,47 @@
           v-for="claim in foapaHistoryFiltered"
           class="relative h-44 overflow-auto flex flex-col justify-center gap-2 pt-0 text-white box-border px-6 py-1 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
         >
+          <reimbursement-status
+            class="absolute top-3 right-3"
+            :status="claim.reimbursementStatus"
+          ></reimbursement-status>
           <h3
             @click="goToReimbursement(claim._id, claim.reimbursementStatus)"
-            class="font-medium text-base cursor-pointer my-0 mt-[-5px] w-fit max-w-64 overflow-hidden whitespace-nowrap text-ellipsis"
+            class="font-medium text-base cursor-pointer my-0 mt-[-5px] w-fit max-w-50 overflow-hidden whitespace-nowrap text-ellipsis"
             :title="claim.reimbursementName + ' - ' + claim.reimbursementStatus"
           >
-            {{ claim.reimbursementName }} - {{ claim.reimbursementStatus }}
+            {{ claim.reimbursementName }}
           </h3>
-          <h5 class="my-0 font-normal">Total cost: ${{ claim.totalCost }}</h5>
           <h5 class="my-0 font-normal">
-            FOAPA usage: ${{ parseAmount(claim) }}
+            Last Updated: {{ parseUTCDate(claim.reimbursementDate) }}
           </h5>
-          <p class="text-sm my-0">
-            Date: {{ parseUTCDate(claim.reimbursementDate) }}
-          </p>
+          <h5 class="my-0 font-normal">
+            Total cost: ${{ claim.totalCost }} | FOAPA usage: ${{
+              parseAmount(claim)
+            }}
+          </h5>
+          <div class="flex gap-4 mt-2">
+            <span
+              class="bg-white px-4 h-8 w-12 justify-center cursor-pointer py-2 flex items-center content-center rounded-full"
+              @click="() => viewPdf(claim)"
+              title="View"
+            >
+              <img :src="EyeIcon" class="w-4" alt="Eye Icon" />
+            </span>
+
+            <span
+              class="bg-white px-4 h-8 w-12 cursor-pointer py-2 justify-center flex items-center content-center rounded-full"
+              @click="goToReimbursement(claim._id, claim.reimbursementStatus)"
+              title="Edit Request"
+              v-if="
+                claim.reimbursementStatus != 'Submitted' &&
+                claim.reimbursementStatus != 'Approved' &&
+                claim.reimbursementStatus != 'Approved*'
+              "
+            >
+              <img :src="PencilIcon" class="w-4" alt="Pencil Icon" />
+            </span>
+          </div>
         </div>
       </div>
 
@@ -245,8 +245,12 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { formatFoapaDeails } from "../utils/formatFoapaDetails";
 import { TYPE, useToast } from "vue-toastification";
+import ReimbursementStatus from "../components/dashboard/ReimbursementStatus.vue";
 import DatePicker from "primevue/datepicker";
 import parseUTCDate from "../utils/parseDate";
+import EyeIcon from "../assets/eye-view-blue.png";
+import PencilIcon from "../assets/blue-pencil.png";
+import DuplicateIcon from "../assets/duplicate-blue.png";
 const route = useRoute();
 const router = useRouter();
 
@@ -377,6 +381,60 @@ const totalAmountFromFoapaInInProgressRequests = computed(() => {
   return totalAmount / 100;
 });
 
+function downloadPDF(pdfData: string) {
+  const linkSource = pdfData;
+  let iframe =
+    "<iframe width='100%' height='100%' src='" + linkSource + "'></iframe>";
+  let x = window.open();
+  if (x != null) {
+    x.document.open();
+    x.document.write(iframe);
+    x.document.close();
+
+    // Remove padding from the iframe content
+    x.document.querySelector("style") ||
+      x.document.head.appendChild(x.document.createElement("style"));
+    // @ts-ignore
+    x.document.querySelector("style").textContent += `
+  body, iframe {
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+  }
+`;
+  }
+}
+
+async function viewPdf(request) {
+  try {
+    toast.clear();
+    toast("Loading... Please wait...", {
+      type: TYPE.INFO,
+    });
+
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/generate-pdf`,
+      {
+        reimbursementTicket: request,
+      }
+    );
+
+    downloadPDF(res.data);
+
+    toast.clear();
+  } catch (err: any) {
+    console.log(err);
+    toast.clear();
+    toast(
+      err?.response?.data?.message ||
+        "There was an error previewing this PDF. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+  }
+}
+
 const totalAmountUsed = computed(() => {
   let totalAmount = 0;
 
@@ -444,16 +502,15 @@ function parseAmount(claim) {
 
   return found_claim.cost;
 }
+
 const toast = useToast();
+
 async function goToReimbursement(reimbursementId, status) {
-  if (status === "In Progress" || status === "Denied") {
-    router.push({ path: "/add-reimbursement", query: { reimbursementId } });
-  } else {
-    toast.clear();
-    toast("You can not edit a submitted or approved request", {
-      type: TYPE.ERROR,
-    });
-  }
+  router.push({
+    path: "/add-reimbursement",
+    query: { reimbursementId },
+    state: { from: "foapa-page" },
+  });
 }
 
 onMounted(() => {

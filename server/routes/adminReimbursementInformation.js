@@ -496,14 +496,18 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
       approving requests approved for faculty members, or a necessary party. The reimbursement request necessary for approval has been attached to this email. 
       Please look through the attached PDF and click the link below to either approve or deny this reimbursement request.
       </h3>
-      <a href="http://localhost:5173/review-request/${req.body.reimbursementData._id}">Review Request Here</a>
+      <a href="https://udm-reimbursement-project-testing.vercel.app/review-request/${req.body.reimbursementData._id}">Review Request Here</a>
       </div>
       </div>
       `,
         attachments: [
           {
             content: base64String,
-            filename: `${req.body.faculty.firstName}_${req.body.faculty.lastName}_Reimbursement_Claim.pdf`,
+            filename: `${req.body.faculty.firstName}_${
+              req.body.faculty.lastName
+            }_${req.body.reimbursementData.reimbursementName}_${retrieveDate(
+              "MM_DD_YYYY"
+            )}_Reimbursement_Claim.pdf`,
             encoding: "base64",
             type: "application/pdf",
           },

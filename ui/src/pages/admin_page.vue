@@ -18,11 +18,11 @@
       </div>
 
       <!-- Top Right Icons -->
-      <img
+      <!-- <img
         :src="NotificationIcon"
         alt="Notification Icon"
         class="absolute top-[3.75rem] cursor-pointer right-16 w-5"
-      />
+      /> -->
     </div>
 
     <!-- Naviagation Menu -->
@@ -143,49 +143,6 @@
     </section>
     <ConfirmDialog></ConfirmDialog>
 
-    <!-- User management dialog
-    <Dialog
-      v-model:visible="user_management_popup_is_visible"
-      modal
-      header="User Management"
-    >
-      <p class="text-sm">Search for faculty member</p>
-
-      <InputText
-        placeholder="Enter Faculty Name"
-        class="mt-2 w-96"
-        style="
-          .p-inputtext {
-            padding-left: 20px;
-            height: 45px;
-            font-size: 13px !important;
-          }
-        "
-        v-model="user_search_field"
-      />
-
-      <DataTable
-        :value="filteredFaculties"
-        striped-rows
-        tableStyle="min-width: 50rem"
-        class="mt-5"
-      >
-        <Column field="name" header="Name" sortable></Column>
-        <Column field="email" header="Email" sortable></Column>
-        <Column field="role" header="Role" sortable>
-          <template #body="{ data }">
-            <select name="" id="">
-              <option value="" :selected="data.role === 'user'">User</option>
-              <option value="" :selected="data.role === 'faculty'">
-                Faculty
-              </option>
-              <option value="" :selected="data.role === 'admin'">Admin</option>
-            </select>
-          </template>
-        </Column>
-      </DataTable>
-    </Dialog> -->
-
     <!-- Department chair dialog -->
     <Dialog
       v-model:visible="department_chair_popup_is_visible"
@@ -251,8 +208,10 @@ const views = ["Grid View"];
 const sort_options = [
   "Name (Ascending)",
   "Name (Descending)",
-  "Cost (Ascending)",
-  "Cost (Descending)",
+  "Faculty Name (Ascending)",
+  "Faculty Name (Descending)",
+  "Date (Ascending)",
+  "Date (Descending)",
   "None",
 ];
 const filter_options = ["In Progress", "Submitted"];
@@ -286,15 +245,98 @@ function goToUserManagementPage() {
 }
 
 const filtered_pending_requests = computed(() => {
-  if (search_field.value.trim() !== "") {
-    const filtered = pending_requests.value.filter((request) =>
-      // @ts-ignore
-      request.request.reimbursementName
-        .toLowerCase()
-        .includes(search_field.value.toLowerCase())
-    );
+  // if (search_field.value.trim() !== "") {
+  //   const filtered = pending_requests.value.filter((request) =>
+  //     // @ts-ignore
+  //     request.request.reimbursementName
+  //       .toLowerCase()
+  //       .includes(search_field.value.toLowerCase())
+  //   );
 
-    return filtered;
+  //   return filtered;
+  // }
+
+  if (pending_requests.value.length === 0) {
+    return [];
+  }
+
+  // @ts-ignore
+  let reimbursement_data_options = pending_requests.value.filter((request) =>
+    // @ts-ignore
+    request.request.reimbursementName
+      .toLowerCase()
+      .includes(search_field.value.toLowerCase())
+  );
+
+  if (sort.value === "Cost (Descending)") {
+    return reimbursement_data_options.sort((a: any, b: any): any => {
+      if (a.request.totalCost < b.request.totalCost) {
+        return 1;
+      }
+    });
+  }
+  if (sort.value === "Faculty Name (Ascending)") {
+    return reimbursement_data_options.sort((a: any, b: any): any => {
+      if (a.faculty.firstName > b.faculty.firstName) {
+        return -1;
+      }
+    });
+  }
+
+  if (sort.value === "Faculty Name (Descending)") {
+    return reimbursement_data_options.sort((a: any, b: any): any => {
+      if (a.faculty.firstName > b.faculty.firstName) {
+        return 1;
+      }
+    });
+  }
+
+  if (sort.value === "Name (Ascending)") {
+    return reimbursement_data_options.sort((a: any, b: any): any => {
+      if (
+        b.request.reimbursementName.toUpperCase() <
+        a.request.reimbursementName.toUpperCase()
+      ) {
+        return 1;
+      }
+    });
+  }
+
+  if (sort.value === "Name (Descending)") {
+    return reimbursement_data_options.sort((a: any, b: any): any => {
+      if (
+        a.request.reimbursementName.toUpperCase() <
+        b.request.reimbursementName.toUpperCase()
+      ) {
+        return 1;
+      }
+    });
+  }
+
+  if (sort.value === "Date (Ascending)") {
+    return reimbursement_data_options.sort((a: any, b: any): any => {
+      if (
+        new Date(b.request.reimbursementDate) <
+        new Date(a.request.reimbursementDate)
+      ) {
+        return -1;
+      }
+    });
+  }
+
+  if (sort.value === "Date (Descending)") {
+    return reimbursement_data_options.sort((a: any, b: any): any => {
+      if (
+        new Date(b.request.reimbursementDate) >
+        new Date(a.request.reimbursementDate)
+      ) {
+        return 1;
+      }
+    });
+  }
+
+  if (sort.value === "None") {
+    return reimbursement_data_options;
   }
 
   return pending_requests.value;

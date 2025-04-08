@@ -13,6 +13,9 @@ export function retrieveDate(format = "MM/DD/YYYY") {
     case "MM/DD/YYYY":
       return mm + "/" + dd + "/" + yyyy;
       break;
+    case "MM_DD_YYYY":
+      return mm + "_" + dd + "_" + yyyy;
+      break;
     default:
       break;
   }
