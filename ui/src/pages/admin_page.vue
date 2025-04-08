@@ -358,6 +358,67 @@ async function update_department_code(data) {
     console.log(err);
   }
 }
+
+watch(sort, (sortValue) => {
+  // Makes sure the user is sotring based on the reimbursements presented even if theres something in search field
+  const pending_request_data_options = pending_requests.value.filter(
+    proxy =>{
+    
+      const request = proxy.request; 
+      request.reimbursementName
+        .toLowerCase()
+        .includes(search_field.value.toLowerCase())
+  });
+
+  if (sortValue === "Cost (Descending)") {
+    filtered_pending_requests.value = pending_request_data_options.sort(
+      (a, b) => {
+        if (a.totalCost < b.totalCost) {
+          return 1;
+        }
+      }
+    );
+  }
+
+  if (sortValue === "Cost (Ascending)") {
+    filtered_pending_requests.value = pending_request_data_options.sort(
+      (a, b) => {
+        if (a.totalCost > b.totalCost) {
+          return 1;
+        }
+      }
+    );
+  }
+
+  if (sortValue === "Name (Ascending)") {
+    filtered_pending_requests.value = pending_request_data_options.sort(
+      (a, b) => {
+        if (
+          b.reimbursementName.toUpperCase() < a.reimbursementName.toUpperCase()
+        ) {
+          return 1;
+        }
+      }
+    );
+  }
+
+  if (sortValue === "Name (Descending)") {
+    filtered_pending_requests.value = pending_request_data_options.sort(
+      (a, b) => {
+        if (
+          a.reimbursementName.toUpperCase() < b.reimbursementName.toUpperCase()
+        ) {
+          return 1;
+        }
+      }
+    );
+  }
+
+  if (sortValue === "None") {
+    filtered_pending_requests.value = pending_request_data_options;
+    return;
+  }
+});
 </script>
 
 <style>
