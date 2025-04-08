@@ -46,6 +46,7 @@
             v-model="data.role"
             @change="() => roleChanged(data)"
             class="bg-transparent border-none"
+            :disabled="data.email === user_email"
           >
             <option value="FACULTY">Faculty</option>
             <option value="ADMIN">Admin</option>
@@ -209,7 +210,7 @@ function showUpdateConfirmPopup(data) {
 
 function showDeleteConfirmPopup(data) {
   if (data.email === user_email.value) {
-    toast("Please don can't delete your own account!!", {
+    toast("You cannot delete your own account!!", {
       type: TYPE.ERROR,
     });
 
