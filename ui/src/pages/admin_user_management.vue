@@ -185,11 +185,20 @@ const confirmUserDeletePopupIsVisible = ref<boolean>(false);
 const user_email = ref<string>("");
 
 function roleChanged(data) {
+  // if (data.email === user_email.value){
+  //   data.role = "ADMIN";
+
+  //   toast("You cannot remove your Admin Role!", {
+  //     type: TYPE.ERROR,
+  //   });
+  // }
+
   if (data.role === "CHAIR") {
     if (data.tag === "") {
       data.tag = `${data.department} Chair`;
     }
   }
+
 }
 
 const fileteredFaculty = computed(() => {
@@ -280,15 +289,20 @@ async function save_role_and_tag() {
   const faculty = accountBeingUpdated.value;
   try {
     console.log("Faculty", faculty);
-    let res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/admin/save-role-and-tag`,
-      faculty
-    );
 
-    toast("User account information saved", {
-      type: TYPE.INFO,
-    });
-    console.log(res, "Role Saved");
+    if(faculty.email === user_email.value && faculty.role !== "ADMIN")
+      toast("You cannot change your own admin status!", {type: TYPE.ERROR,});
+    else{
+      let res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/admin/save-role-and-tag`,
+        faculty
+      );
+
+      toast("User account information saved", {
+        type: TYPE.INFO,
+      });
+      console.log(res, "Role Saved");
+    }
   } catch (err) {
     toast("An unexpected error occured when updating this user", {
       type: TYPE.ERROR,
