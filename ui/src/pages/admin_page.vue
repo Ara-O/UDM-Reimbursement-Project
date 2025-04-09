@@ -271,21 +271,23 @@ const filtered_pending_requests = computed(() => {
   if (sort.value === "Cost (Descending)") {
     return reimbursement_data_options.sort((a: any, b: any): any => {
       if (a.request.totalCost < b.request.totalCost) {
+        console.log(a.request.totalCost < b.request.totalCost)
         return 1;
       }
     });
   }
   if (sort.value === "Faculty Name (Ascending)") {
     return reimbursement_data_options.sort((a: any, b: any): any => {
+      console.log(a.faculty.firstName > b.faculty.firstName)
       if (a.faculty.firstName > b.faculty.firstName) {
-        return -1;
+        return 1;
       }
     });
   }
 
   if (sort.value === "Faculty Name (Descending)") {
     return reimbursement_data_options.sort((a: any, b: any): any => {
-      if (a.faculty.firstName > b.faculty.firstName) {
+      if (b.faculty.firstName > a.faculty.firstName) {
         return 1;
       }
     });
@@ -319,7 +321,7 @@ const filtered_pending_requests = computed(() => {
         new Date(b.request.reimbursementDate) <
         new Date(a.request.reimbursementDate)
       ) {
-        return -1;
+        return 1;
       }
     });
   }
