@@ -64,15 +64,14 @@ export const reimbursementSchema = new Schema({
       request_message: String,
     },
   ],
-  has_been_forwarded_for_approval: {
-    type: Boolean,
-    default: false,
-  },
-  approval_status: {
-    type: String,
-    default: "",
-  },
-  additional_approval_information: String,
+  request_review_log: [
+    {
+      email: String,
+      review_status: String,
+      review_message: String,
+      signature: String,
+    },
+  ],
 });
 
 //reimbursements

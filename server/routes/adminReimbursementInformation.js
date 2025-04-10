@@ -458,6 +458,29 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
       throw new Error("Faculty account could not be retrieved");
     }
 
+    const reimbursementData = req.body.reimbursementData;
+
+    if (reimbursementData?.request_review_log) {
+      for (let i = 0; i < reimbursementData.request_review_log.length; i++) {
+        const reviewer = reimbursementData.request_review_log[i];
+        console.log(reviewer);
+        if (reviewer.email === req.body.to) {
+          logger.log(
+            "error",
+            "Admin tried to forward request to faculty that is already part of the review list",
+            {
+              api: "/api/forward-request",
+            }
+          );
+
+          return res.status(409).send({
+            message: "This reviewer has already been sent this request",
+          });
+        }
+      }
+    }
+    // TODO: Check if faculty is not already in the list
+
     const base64Receipts = await Promise.all(
       receipts.map((receipt) => fetchImageBase64(receipt.url))
     );
@@ -496,7 +519,7 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
       approving requests approved for faculty members, or a necessary party. The reimbursement request necessary for approval has been attached to this email. 
       Please look through the attached PDF and click the link below to either approve or deny this reimbursement request.
       </h3>
-      <a href="https://udm-reimbursement-project-testing.vercel.app/review-request/${req.body.reimbursementData._id}">Review Request Here</a>
+      <a href="http://localhost:5173/review-request/${req.body.reimbursementData._id}?email=${req.body.to}">Review Request Here</a>
       </div>
       </div>
       `,
@@ -521,7 +544,11 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
       // Update the reimbursement information to show that it has been forwarded for approval
       // and update the request history
 
-      reimbursement_being_updated.has_been_forwarded_for_approval = true;
+      reimbursement_being_updated.request_review_log.push({
+        email: req.body.to,
+        review_status: "Pending",
+        review_message: "",
+      });
 
       reimbursement_being_updated.request_history.unshift({
         date_of_message: `${retrieveDate("MM/DD/YYYY")}`,
@@ -531,11 +558,11 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
       await reimbursement_being_updated.save();
 
       logger.info("Reimbursement request has been forwarded and updated", {
-        type: "/admin/forward-request",
+        api: "/admin/forward-request",
       });
     });
 
-    res
+    return res
       .status(200)
       .send({ message: "Reimbursement request was forwarded successfully" });
   } catch (err) {
@@ -559,9 +586,63 @@ router.get(
 
       return res.status(200).send({ foapa: faculty.foapaDetails });
     } catch (err) {
-      return res.status(400).send({ message: "There was an error" });
       console.log(err);
+      return res.status(400).send({ message: "There was an error" });
     }
   }
 );
+
+router.post("/withdraw-review-request", verifyAdminToken, async (req, res) => {
+  try {
+    const reimbursement_request = await ReimbursementTicket.findById(
+      req.body.reimbursement_id
+    );
+
+    if (reimbursement_request === null) {
+      logger.error(`Reimbursement Ticket ID could not be found`, {
+        api: "/admin/withdraw-review-reqest",
+      });
+
+      return res.status(400).send({
+        message: "There was an error withdrawing this reviewer's request.",
+      });
+    }
+
+    const result = await ReimbursementTicket.updateOne(
+      { _id: req.body.reimbursement_id },
+      {
+        $pull: {
+          request_review_log: { email: req.body.reviewer_email },
+        },
+      }
+    );
+
+    if (result.modifiedCount > 0) {
+      logger.log(
+        "error",
+        `Successfully removed reviewer ${req.body.reviewer_email} from the review log - ${req.body.reimbursement_id}.`,
+        {
+          api: "/admin/withdraw-review-request",
+        }
+      );
+
+      return res.status(200).send({ message: "Successfully removed reviewer" });
+    } else {
+      logger.log(
+        "info",
+        `Reviewer ${req.body.reviewer_email} could not be found - ${req.body.reimbursement_id}.`,
+        {
+          api: "/admin/withdraw-review-request",
+        }
+      );
+
+      return res.status(404).send({ message: "Reviewer could not be found" });
+    }
+  } catch (err) {
+    logger.error(err, {
+      api: "/admin/withdraw-review-request",
+    });
+    return res.status(404).send({ message: "An unexpected error occured" });
+  }
+});
 export default router;

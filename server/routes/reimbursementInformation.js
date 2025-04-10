@@ -566,14 +566,43 @@ router.post("/check-reimbursement-approval-status", async (req, res) => {
     logger.info(`Reimbursement status is being checked for: ${req.body.id}`, {
       api: "/api/check-reimbursement-approval-status",
     });
-    let reimbursement = await ReimbursementTicket.findById(req.body.id);
 
-    if (
-      !reimbursement?.has_been_forwarded_for_approval ||
-      reimbursement.has_been_forwarded_for_approval === false
-    ) {
-      return res.status(200).send({ needs_approval: false });
+    const reimbursementId = req.body.id;
+    const facultyEmail = req.body.faculty_email;
+
+    let reimbursement = await ReimbursementTicket.findById(reimbursementId);
+
+    if (!reimbursement?.request_review_log) {
+      return res.status(404).send({
+        message:
+          "This reimbursement request no longer needs your approval. You can close out of this page",
+      });
     }
+
+    const faculty_in_review_log = reimbursement.request_review_log.find(
+      (reviewer) => reviewer.email === facultyEmail
+    );
+
+    if (faculty_in_review_log === undefined) {
+      return res.status(404).send({
+        message:
+          "This reimbursement request no longer needs your approval. You can close out of this page",
+      });
+    }
+
+    if (faculty_in_review_log.review_status !== "Pending") {
+      // return res.status(404).send({
+      //   message: "You have already reviewed this request.",
+      // });
+    }
+
+    logger.info(
+      `${facultyEmail} is viewing the request for approval and is in the list of approvers`,
+      {
+        api: "/api/check-reimbursement-approval-status",
+      }
+    );
+
     return res.status(200).send({ needs_approval: true });
   } catch (err) {
     logger.error(err, {
@@ -598,9 +627,20 @@ router.post("/review-reimbursement-request", async (req, res) => {
       req.body.reimbursement_id
     );
 
-    reimbursement.has_been_forwarded_for_approval = false;
-    reimbursement.approval_status = req.body.status;
-    reimbursement.additional_approval_information = req.body.message;
+    let idx = reimbursement.request_review_log.findIndex(
+      (reviewer) => reviewer.email === req.body.email
+    );
+
+    if (idx === -1) {
+      return res.status(404).send({
+        message: "You are no longer needed to approve this request. Thank you!",
+      });
+    }
+
+    reimbursement.request_review_log[idx].review_message = req.body.message;
+    reimbursement.request_review_log[idx].review_status = req.body.status;
+    reimbursement.request_review_log[idx].signature =
+      req.body.name || "No signature given";
 
     reimbursement.request_history.unshift({
       date_of_message: `${retrieveDate("MM/DD/YYYY")}`,

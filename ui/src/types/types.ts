@@ -125,6 +125,7 @@ export type TicketAndFaculty = {
   activities: Expense[];
   foapaDetails: FoapaStuff[];
   request_history: History[];
+  request_review_log?: any[];
 };
 
 // ----------

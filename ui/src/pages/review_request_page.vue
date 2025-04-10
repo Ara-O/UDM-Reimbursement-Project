@@ -62,7 +62,7 @@ const currentReimbursement = ref<any>({});
 
 async function reviewerAnswer(answer) {
   try {
-    toast("Submitting...", {
+    toast("Submitting review...", {
       type: TYPE.INFO,
     });
 
@@ -73,6 +73,7 @@ async function reviewerAnswer(answer) {
         status: answer,
         name: approver_name.value,
         message: attached_message.value,
+        email: route.query.email,
       }
     );
 
@@ -145,29 +146,27 @@ onMounted(async () => {
   // Check for if it is still pending, if it is pending then continue
   // if not, tell the user that the request has been rescinded and there is no longer need
   try {
-    const id = route.params.id;
+    const reimbursement_id = route.params.id;
+    const faculty_email = route.query.email;
 
-    if (id === null || id === "") {
+    if (
+      reimbursement_id === null ||
+      reimbursement_id === "" ||
+      faculty_email === null ||
+      faculty_email === ""
+    ) {
       alert(
         "This request was not found. Please contact Jim Adair (adairja@udmercy.edu) if there was an issue"
       );
+
       router.push("/");
       return;
     }
 
     let res = await axios.post(
       `${import.meta.env.VITE_API_URL}/api/check-reimbursement-approval-status`,
-      { id: id }
+      { id: reimbursement_id, faculty_email: faculty_email }
     );
-
-    let needs_approval = res.data.needs_approval;
-
-    if (needs_approval === false) {
-      alert(
-        "This reimbursement request no longer needs your approval. You can close out of this page"
-      );
-      router.push("/");
-    }
 
     const reimbursement_info = await axios.get(
       `${import.meta.env.VITE_API_URL}/api/retrieve-ticket-information`,
@@ -179,8 +178,13 @@ onMounted(async () => {
     );
 
     currentReimbursement.value = reimbursement_info.data;
-  } catch (err) {
-    console.log(err);
+  } catch (err: any) {
+    toast.clear();
+    toast(err?.response?.data?.message || "An unexpected error has occured", {
+      type: TYPE.ERROR,
+    });
+
+    router.push("/");
   }
 });
 </script>

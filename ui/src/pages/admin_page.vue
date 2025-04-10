@@ -245,17 +245,6 @@ function goToUserManagementPage() {
 }
 
 const filtered_pending_requests = computed(() => {
-  // if (search_field.value.trim() !== "") {
-  //   const filtered = pending_requests.value.filter((request) =>
-  //     // @ts-ignore
-  //     request.request.reimbursementName
-  //       .toLowerCase()
-  //       .includes(search_field.value.toLowerCase())
-  //   );
-
-  //   return filtered;
-  // }
-
   if (pending_requests.value.length === 0) {
     return [];
   }
@@ -271,14 +260,14 @@ const filtered_pending_requests = computed(() => {
   if (sort.value === "Cost (Descending)") {
     return reimbursement_data_options.sort((a: any, b: any): any => {
       if (a.request.totalCost < b.request.totalCost) {
-        console.log(a.request.totalCost < b.request.totalCost)
+        console.log(a.request.totalCost < b.request.totalCost);
         return 1;
       }
     });
   }
   if (sort.value === "Faculty Name (Ascending)") {
     return reimbursement_data_options.sort((a: any, b: any): any => {
-      console.log(a.faculty.firstName > b.faculty.firstName)
+      console.log(a.faculty.firstName > b.faculty.firstName);
       if (a.faculty.firstName > b.faculty.firstName) {
         return 1;
       }
@@ -349,6 +338,7 @@ async function populate_submitted_tickets() {
     `${import.meta.env.VITE_API_URL}/api/retrieve-submitted-requests`
   );
 
+  console.log(res.data);
   pending_requests.value = res.data;
 }
 

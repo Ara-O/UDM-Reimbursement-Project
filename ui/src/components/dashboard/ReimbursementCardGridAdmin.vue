@@ -58,8 +58,20 @@
           <img
             :src="ForwardIcon"
             class="w-4 mt-[-2px]"
-            alt="Edit PDF"
-            title="Edit PDF"
+            alt="Forward Request"
+            title="Forward Request"
+          />
+        </span>
+        <span
+          class="bg-white px-4 w-12 h-8 cursor-pointer py-2 justify-center flex items-center content-center rounded-full"
+          title="Track Request"
+          @click="trackRequestIsVisible = true"
+        >
+          <img
+            :src="ForwardIcon"
+            class="w-4 mt-[-2px]"
+            alt="Track Request"
+            title="Track Request"
           />
         </span>
         <div class="absolute bottom-[1.95rem] flex flex-col gap-3 right-5">
@@ -268,10 +280,46 @@
       ></Button>
     </div>
   </Dialog>
+
+  <!-- Track request -->
+  <!-- Forward Request Dialog -->
+  <Dialog
+    :dismissable-mask="true"
+    v-model:visible="trackRequestIsVisible"
+    modal
+    header="Track Request"
+    :style="{ width: '50rem', 'padding-bottom': '20px' }"
+  >
+    <h3
+      class="text-surface-500 dark:text-surface-400 font-normal mt-1 text-sm leading-7 block !mb-0"
+    >
+      Track the review status of this request
+    </h3>
+
+    <div
+      v-for="reviewer in props.request.request.request_review_log"
+      class="shadow-sm border px-4 py-1 rounded-md border-gray-200 mt-4 relative border-solid"
+    >
+      <reimbursement-status
+        class="absolute top-3 right-4"
+        :status="reviewer.review_status"
+      ></reimbursement-status>
+      <p class="font-medium">Reviewer Email: {{ reviewer.email }}</p>
+      <p class="text-sm" v-if="reviewer.review_message">
+        Message: {{ reviewer.review_message }}
+      </p>
+      <Button
+        class="!bg-udmercy-blue !px-4 !text-sm !py-3 mb-5 !border-none"
+        @click="() => withdrawReviewRequest(reviewer)"
+        >Withdraw review request</Button
+      >
+    </div>
+  </Dialog>
 </template>
 
 <script lang="ts" setup>
 import Dialog from "primevue/dialog";
+import ReimbursementStatus from "./ReimbursementStatus.vue";
 import DenyIcon from "../../assets/deny-icon.png";
 import Button from "primevue/button";
 import ViewIcon from "../../assets/eye-view-blue.png";
@@ -297,6 +345,7 @@ const denyPopupIsVisible = ref<boolean>(false);
 const requestDenialMessage = ref<string>("");
 const approvePopupIsVisible = ref<boolean>(false);
 const forwardRequestDialogIsVisible = ref<boolean>(false);
+const trackRequestIsVisible = ref<boolean>(false);
 const requestApprovalMessage = ref<string>("");
 const reviewerMessageIsVisible = ref<boolean>(false);
 const forwardRequestTo = ref<string>("");
@@ -362,9 +411,11 @@ function selectAsFacultyToForward() {
   selectedTag.value = "";
   forwardRequestTo.value = forwardRequestToAnyEmail.value;
 }
+
 async function forwardRequest() {
   try {
     toast.clear();
+
     toast("Forwarding request...", {
       type: TYPE.INFO,
     });
@@ -376,12 +427,53 @@ async function forwardRequest() {
     });
 
     toast.clear();
+
     toast("Request successfully forwarded...", {
       type: TYPE.INFO,
     });
-    forwardRequestDialogIsVisible.value = false;
+
     emits("reload-requests-list");
-  } catch (err) {}
+    forwardRequestDialogIsVisible.value = false;
+  } catch (err: any) {
+    console.log(err);
+    toast.clear();
+    toast(
+      err?.response?.data?.message ??
+        "An unexpected error occured. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+  }
+}
+
+async function withdrawReviewRequest(reviewer: any) {
+  try {
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/admin/withdraw-review-request`,
+      {
+        reviewer_email: reviewer.email,
+        reimbursement_id: props.request.request._id,
+      }
+    );
+
+    toast("Reviewer has been withdrawn", {
+      type: TYPE.SUCCESS,
+    });
+
+    emits("reload-requests-list");
+
+    // props.request.request.request_review_log
+  } catch (err: any) {
+    toast.clear();
+    toast(
+      err?.response?.data?.message ||
+        "There was an error withdrawing this request. Please try again later",
+      {
+        type: TYPE.ERROR,
+      }
+    );
+  }
 }
 
 async function updateEmailByTag(tag) {
