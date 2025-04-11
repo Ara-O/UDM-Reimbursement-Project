@@ -77,6 +77,7 @@
           <!-- Wait till the user's foapa have been loaded in, so that this component
          can use that to match foapa names, etc -->
           <foapa-container
+            :view_only_mode="false"
             v-for="foapa in props.claim.foapaDetails"
             :foapa="foapa"
             @delete-foapa="deleteFOAPA"
