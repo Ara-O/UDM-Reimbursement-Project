@@ -38,7 +38,6 @@
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
 import Button from "primevue/button";
 import { onMounted, ref } from "vue";
 
@@ -58,6 +57,19 @@ async function acceptRequestWithEdits() {
 function saveRequestWithEdits() {
   emits("save-request-with-edits", edit_notes.value);
 }
+
+/**
+ * Compare two objects and generate a list of human-readable changes between them.
+ *
+ * This function recursively compares the properties of two objects and generates a list of strings
+ * describing the differences. If a property is an array, the function treats it as a list of objects
+ * and checks if any of the objects have changed. If a property is a nested object, the function
+ * recursively compares its properties.
+ *
+ * @param {object} obj1 The first object to compare
+ * @param {object} obj2 The second object to compare
+ * @returns {string[]} A list of strings describing the differences
+ */
 function compareObjects(obj1, obj2) {
   let changes: any = [];
   let foapaChanged = false;
@@ -140,6 +152,11 @@ onMounted(() => {
   const new_changes = changes.map((change) => {
     change = change.replace("reimbursementName", "Reimbursement name");
     change = change.replace("reimbursementReason", "Reimbursement reason");
+    change = change.replace(
+      "paymentRetrievalMethod",
+      "Payment retrieval method"
+    );
+
     return change;
   });
 

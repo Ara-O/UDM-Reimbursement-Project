@@ -188,11 +188,6 @@ const props = defineProps<{
   view_only_mode: Boolean;
 }>();
 
-function parseUrl(rec) {
-  // console.log(rec);
-  return rec.url.split("/").at(-1)[0];
-}
-
 const emits = defineEmits(["move-to-next-section", "move-to-previous-section"]);
 
 let fileWasSelected = ref<boolean>(false);

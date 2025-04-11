@@ -69,6 +69,16 @@ let userCode = ref<string>("");
 let userSignupData = ref<UserData>();
 let tries = ref<number>(0);
 
+/**
+ * Submits the 6-character code to the server to verify the user's signup information
+ *
+ * @remarks
+ * This function is called when the user submits the 6-character code they received via email.
+ * It sends a POST request to the server with the code, work email, and employment number.
+ * If the server successfully verifies the code, it updates the user's signup data and redirects
+ * the user to the complete verification page. If there is an error, it displays an error message
+ * to the user.
+ */
 async function verifySixCharacterCode() {
   if (userCode.value.length !== 6) {
     toast.clear();
@@ -120,6 +130,13 @@ onMounted(() => {
   }
 });
 
+/**
+ * Sends a new verification code to the user's email. This function
+ * is limited to 3 attempts. If the user has exceeded the limit, a
+ * warning toast will be shown and the function will return.
+ *
+ * @throws {Error} if no user data is found
+ */
 async function resendCode() {
   try {
     if (tries.value >= 3) {
@@ -156,7 +173,6 @@ async function resendCode() {
       });
     } else {
       throw new Error("No user data found");
-      return;
     }
   } catch (err: any) {
     toast(

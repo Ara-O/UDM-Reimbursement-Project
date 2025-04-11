@@ -156,7 +156,6 @@ import Dialog from "primevue/dialog";
 import SearchIcon from "../assets/search-icon.png";
 import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import InputText from "primevue/inputtext";
-import Select from "primevue/select";
 import { ref, onMounted, computed } from "vue";
 import BackArrow from "../assets/left-arrow.png";
 import Button from "primevue/button";
@@ -166,18 +165,7 @@ import { TYPE, useToast } from "vue-toastification";
 
 const confirmUserSavingPopupIsVisible = ref<boolean>(false);
 const search_field = ref<string>("");
-const views = ["Grid View", "Table View", "List View"];
-const sort_options = [
-  "Name (Ascending)",
-  "Name (Descending)",
-  "Cost (Ascending)",
-  "Cost (Descending)",
-  "None",
-];
-const filter_options = ["In Progress", "Submitted"];
-const view = ref<string>("Grid View");
-const filter = ref<string>("");
-const sort = ref<string>("");
+
 const tags = ref<string[]>([]);
 const originalTags = ref<string[]>([]);
 const accountBeingUpdated = ref<any>({});
@@ -185,20 +173,11 @@ const confirmUserDeletePopupIsVisible = ref<boolean>(false);
 const user_email = ref<string>("");
 
 function roleChanged(data) {
-  // if (data.email === user_email.value){
-  //   data.role = "ADMIN";
-
-  //   toast("You cannot remove your Admin Role!", {
-  //     type: TYPE.ERROR,
-  //   });
-  // }
-
   if (data.role === "CHAIR") {
     if (data.tag === "") {
       data.tag = `${data.department} Chair`;
     }
   }
-
 }
 
 const fileteredFaculty = computed(() => {
@@ -217,6 +196,13 @@ function showUpdateConfirmPopup(data) {
   confirmUserSavingPopupIsVisible.value = true;
 }
 
+/**
+ * Shows the confirmation popup for deleting a user account. If the account
+ * that is attempting to be deleted is the current user's account, an error
+ * toast is shown and the popup is not shown.
+ *
+ * @param {object} data The user account data to be deleted.
+ */
 function showDeleteConfirmPopup(data) {
   if (data.email === user_email.value) {
     toast("You cannot delete your own account!!", {
@@ -256,6 +242,19 @@ interface Faculties {
 }
 const faculty_member_list = ref<Faculties[]>([]);
 
+/**
+ * Fetches the list of all faculty members from the server and populates
+ * the `faculty_member_list` with their details.
+ *
+ * The function makes an asynchronous GET request to the API endpoint
+ * for retrieving all faculty data. The response data is then mapped to 
+ * an array of objects containing each faculty member's id, full name, 
+ * email, role, tag, and department, which is stored in `faculty_member_list`.
+ *
+ * @returns {Promise<void>} A promise that resolves when the data fetching
+ * and processing is complete.
+ */
+
 async function get_faculty() {
   let res = await axios.get(
     `${import.meta.env.VITE_API_URL}/admin/retrieve-all-faculty`
@@ -285,6 +284,17 @@ async function get_tags() {
 
 const toast = useToast();
 
+/**
+ * Makes a POST request to save the updated role and tag of a faculty member.
+ *
+ * If the currently logged in user is trying to change their own admin status,
+ * a toast error is shown. Otherwise, the request is made and, if successful,
+ * a toast info message is shown. If the request fails, an error toast message
+ * is shown.
+ *
+ * After the request is made (successfully or not), the account being updated
+ * is reset to an empty object and the confirmation popup is closed.
+ */
 async function save_role_and_tag() {
   const faculty = accountBeingUpdated.value;
   try {
@@ -314,6 +324,14 @@ async function save_role_and_tag() {
   }
 }
 
+/**
+ * Makes a POST request to delete the currently selected faculty member.
+ *
+ * If the request is successful, the currently selected faculty is reset to an
+ * empty object and the confirmation popup is closed. If the request fails, an
+ * error toast message is shown. The currently selected faculty is reset to an
+ * empty object and the confirmation popup is closed in any case.
+ */
 async function delete_faculty() {
   try {
     const faculty = accountBeingUpdated.value;

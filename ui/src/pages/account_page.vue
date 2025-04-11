@@ -276,11 +276,10 @@
 import { Form, Field, ErrorMessage } from "vee-validate";
 
 import axios from "axios";
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { UserDataAcct, AddressDetails } from "../types/types";
 import Dialog from "primevue/dialog";
-import Button from "primevue/button";
 import { isNotEmpty, isValidNumber, isValidString } from "../utils/validators";
 import parseDate from "../utils/parseDate";
 let show_archive = ref<boolean>(false);
@@ -336,6 +335,12 @@ function back() {
   router.push("/dashboard");
 }
 
+/**
+ * Handles the submission of the account page form and updates the account data on the backend.
+ * Clears out any existing error or success messages, and displays a loading message.
+ * Upon success, displays a success message with the message from the backend.
+ * Upon failure, displays an error message with the error from the backend.
+ */
 function save() {
   successMessage.value = "";
   errorMessage.value = "";
@@ -355,6 +360,15 @@ function save() {
 }
 
 const archived_tickets = ref<any[]>([]);
+
+/**
+ * Retrieves the account information and the archived reimbursement tickets from the backend.
+ * Upon success, stores the archived reimbursement tickets in the `archived_tickets` ref,
+ * and the account information in the `accountInfo` ref.
+ * Also removes the 'T' from the employment number.
+ * Calls the `countryChanged` function to update the state of the country dropdown.
+ * Upon failure, logs the error to the console.
+ */
 async function retrieveAccountInformation() {
   try {
     let res = await axios.get(
@@ -380,6 +394,12 @@ const countryCode = {
   "United States": "US",
 };
 
+/**
+ * Makes a GET request to the backend to fetch the states in the selected
+ * country and updates the states dropdown.
+ *
+ * If there is an error, it displays an error message to the user.
+ */
 function countryChanged() {
   axios
     .get(`${import.meta.env.VITE_API_URL}/api/get-state-from-country`, {
@@ -394,6 +414,15 @@ function countryChanged() {
       console.log(err);
     });
 }
+
+/**
+ * Fetches the cities for the selected state from the backend and updates the cities dropdown.
+ *
+ * Filters the states to find the selected state's code and makes a GET request to the backend
+ * with this state code to retrieve the list of cities.
+ * Upon success, updates the cities ref with the retrieved data.
+ * In case of failure, logs the error to the console.
+ */
 
 function stateChanged() {
   let realStateData = states.value?.filter(

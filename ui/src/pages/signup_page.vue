@@ -19,6 +19,8 @@
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
       <h3 class="signup-title-description">Basic Questions</h3>
+
+      <!-- Defines the form fields  -->
       <Form @submit="verifyInformation" class="mb-5 signup_form">
         <div class="input-field-wrapper">
           <div class="input-field">
@@ -189,6 +191,14 @@ let userSignupData = reactive<UserData>({
   foapaDetails: [],
 });
 
+/**
+ * Verifies a user's information when they sign up, and sends them an email
+ * with a verification code.
+ *
+ * @async
+ * @function verifyInformation
+ * @throws Error if the API call fails
+ */
 async function verifyInformation() {
   try {
     toast.clear();
@@ -217,9 +227,6 @@ async function verifyInformation() {
     userStore.updateUserData(userSignupData);
 
     toast.clear();
-    // toast("Successfully verified your information!", {
-    //   type: TYPE.SUCCESS,
-    // });
 
     router.push("/verify-account");
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });

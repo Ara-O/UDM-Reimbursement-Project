@@ -167,6 +167,19 @@ let sections = ref([
   },
 ]);
 
+/**
+ * Saves the reimbursement request with provided edit notes.
+ *
+ * This function sends a POST request to the server to save the
+ * reimbursement request with the specified edit notes. Upon a
+ * successful save, it displays a success toast message and
+ * redirects the user to the admin page. If an error occurs during
+ * the process, it displays an error toast message.
+ *
+ * @param {string} edit_notes - The notes detailing the edits made
+ * to the reimbursement request.
+ */
+
 async function saveRequestWithEdits(edit_notes) {
   try {
     await axios.post(
@@ -193,6 +206,11 @@ async function saveRequestWithEdits(edit_notes) {
   }
 }
 
+/**
+ * Changes the current section to the specified section number.
+ *
+ * @param {number} section - The section number to change to.
+ */
 function changeSection(section: number) {
   selectedSection.value = section;
 }
@@ -225,6 +243,29 @@ function moveToPreviousSection() {
   window.scrollTo(0, 0);
 }
 
+/**
+ * Approves the reimbursement request with specified edit notes.
+ *
+ * This function sends a POST request to approve the reimbursement request,
+ * using the provided edit notes. Upon a successful approval, it displays a
+ * success toast message and redirects the user to the admin page. If an error
+ * occurs during the process, it displays an error toast message.
+ *
+ * @param {string} edit_notes - The notes detailing the edits made to the
+ * reimbursement request.
+ */
+
+/**
+ * Approves the reimbursement request with specified edit notes.
+ *
+ * This function sends a POST request to approve the reimbursement request,
+ * using the provided edit notes. Upon a successful approval, it displays a
+ * success toast message and redirects the user to the admin page. If an error
+ * occurs during the process, it displays an error toast message.
+ *
+ * @param {string} edit_notes - The notes detailing the edits made to the
+ * reimbursement request.
+ */
 async function approveRequestWithEdits(edit_notes) {
   try {
     await axios.post(
@@ -257,19 +298,6 @@ function startListeningForReimbursementChanges() {
       user_has_unsaved_changes.value = true;
     }
   });
-}
-
-async function userIsUpdatingReimbursement() {
-  let reimbursement = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/retrieve-ticket-information`,
-    {
-      params: {
-        reimbursementId: route.query.reimbursementId,
-      },
-    }
-  );
-
-  currentReimbursement.value = reimbursement.data;
 }
 
 onMounted(async () => {

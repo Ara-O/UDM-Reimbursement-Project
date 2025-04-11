@@ -26,7 +26,6 @@ router.get(
       for (let request of requests) {
         for (let faculty of faculties) {
           if (!faculty.reimbursementTickets) {
-            console.log("broke because undefined");
             break;
           }
           if (faculty.reimbursementTickets.includes(request._id))

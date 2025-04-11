@@ -82,9 +82,8 @@ async function sendEmail() {
   toast("Sending your message...", {
     type: TYPE.INFO,
   });
-  //let ourEmail = '"UDM Reimbursement Support Team" <udm-reimbursement-team@em2297.araoladipo.dev>"';
+
   try {
-    console.log("HELLLLO");
     await axios.post(`${import.meta.env.VITE_API_URL}/api/send-contact-email`, {
       message: message.value,
       sender: email.value,

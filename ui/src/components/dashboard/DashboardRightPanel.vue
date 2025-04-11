@@ -133,13 +133,11 @@ import InputText from "primevue/inputtext";
 import axios from "axios";
 import Skeleton from "primevue/skeleton";
 import Select from "primevue/select";
-import NoReimbursementClaimIcon from "../../assets/no-reimbursement-added.png";
 import AddIcon from "../../assets/add-icon-blue.png";
 import ReimbursementCardGrid from "./ReimbursementCardGrid.vue";
 import ReimbursementCardTable from "./ReimbursementCardTable.vue";
 import ReimbursementCardList from "./ReimbursementCardList.vue";
 import ConfirmDialog from "primevue/confirmdialog";
-import Button from "primevue/button";
 import { inject, onMounted, ref, watch } from "vue";
 import { ReimbursementTicket, UserInformationSummary } from "../../types/types";
 import { useRouter } from "vue-router";
@@ -257,6 +255,12 @@ watch(sort, (sortValue) => {
   }
 });
 
+/**
+ * Watches the filter state and filters the reimbursement data based on the selected filter.
+ *
+ * If the filter is "Submitted", it filters the reimbursement data to only show submissions with a status of "Submitted".
+ * If the filter is "In Progress", it filters the reimbursement data to only show submissions with a status of "In Progress".
+ */
 watch(filter, (newFilter) => {
   const reimbursement_data_options = reimbursement_data.value.filter(
     (request) =>
@@ -265,6 +269,7 @@ watch(filter, (newFilter) => {
         .includes(search_field.value.toLowerCase())
   );
 
+  // Filter the reimbursement data based on the selected filter
   if (newFilter === "Submitted") {
     filtered_reimbursement_data.value = reimbursement_data_options.filter(
       (request) => request.reimbursementStatus === "Submitted"
@@ -277,6 +282,14 @@ watch(filter, (newFilter) => {
     );
   }
 });
+
+/**
+ * Prompts the user to confirm the deletion of a reimbursement request.
+ * Displays a confirmation dialog with options to cancel or proceed with the deletion.
+ * If confirmed, sends a request to delete the reimbursement and shows appropriate success or error messages.
+ *
+ * @param {string} id - The ID of the reimbursement request to be deleted.
+ */
 
 function confirmDelete(id) {
   confirm.require({
@@ -330,6 +343,12 @@ function userDuplicatedARequest() {
   });
 }
 
+/**
+ * Archives a reimbursement request.
+ * Displays a success message on success and an error message on failure.
+ *
+ * @param {string} id - The ID of the reimbursement request to be archived.
+ */
 function archiveRequest(id) {
   axios
     .post(`${import.meta.env.VITE_API_URL}/api/archive-reimbursement`, {

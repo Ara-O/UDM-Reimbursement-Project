@@ -457,6 +457,13 @@ const totalAmountUsed = computed(() => {
   return totalAmount / 100;
 });
 
+/**
+ * This function is used to filter the reimbursement claims table based on the reimbursement date,
+ * by filtering the foapa information's claims_used array. It will return only the claims that
+ * have a reimbursement date that is within the range of the two dates specified in the
+ * foapa_date_range. If the range is empty, it will do nothing. It will also set
+ * filteringByDateRange to true.
+ */
 function filterByDate() {
   if (foapa_date_range.value && foapa_date_range.value.length === 0) return;
   let foapas = foapa_information.value.claims_used.filter((info) => {

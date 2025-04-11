@@ -84,10 +84,8 @@ import EyeIcon from "../../assets/eye-view-blue.png";
 import PencilIcon from "../../assets/blue-pencil.png";
 import DeleteIcon from "../../assets/red-delete-icon.png";
 import DuplicateIcon from "../../assets/duplicate-blue.png";
-import ReimbursementStatus from "./ReimbursementStatus.vue";
 import { useRouter } from "vue-router";
 import { ReimbursementTicket } from "../../types/types";
-import { useConfirm } from "primevue/useconfirm";
 import { TYPE, useToast } from "vue-toastification";
 import Column from "primevue/column";
 import DataTable from "primevue/datatable";
@@ -102,7 +100,7 @@ const emits = defineEmits([
   "user-wants-to-delete-request",
   "user-duplicated-a-request",
 ]);
-const confirm = useConfirm();
+
 const toast = useToast();
 
 function downloadPDF(pdfData: string) {
@@ -167,6 +165,12 @@ function goToReimbursementPage(id) {
     },
   });
 }
+
+/**
+ * Emits an event to signal that the user wants to delete a reimbursement request.
+ *
+ * @param {string} id - The ID of the reimbursement request to be deleted.
+ */
 
 function deleteRequest(id) {
   emits("user-wants-to-delete-request", id);

@@ -3,25 +3,16 @@
     class="relative h-44 overflow-auto flex flex-col justify-center gap-2.5 text-white box-border px-6 bg-udmercy-blue w-96 max-w-96 min-w-96 rounded-md"
   >
     <div>
-      <!-- v-if="props.request.request.approval_status" -->
       <p
-        class="absolute bg-white top-0 right-3 cursor-pointer rounded-md font-medium text-[13px] w-24 flex items-center justify-center text-center h-7"
+        class="absolute bg-white top-0 right-3 cursor-pointer rounded-md font-medium text-[13px] w-30 px-3 flex items-center justify-center text-center h-7"
         :class="{ 'text-udmercy-blue': true }"
-        @click="showReviewerMessage"
-        v-if="
-          props.request.request.has_been_forwarded_for_approval ||
-          props.request.request.approval_status !== ''
-        "
+        v-if="hasPending(props.request.request.request_review_log)"
       >
-        {{
-          props.request.request.approval_status
-            ? props.request.request.approval_status
-            : "Pending"
-        }}
+        Pending Reviewer
       </p>
     </div>
     <h3
-      class="font-medium text-base my-0 w-fit max-w-64 mt-[-10px] overflow-hidden whitespace-nowrap text-ellipsis"
+      class="font-medium text-base my-0 max-w-48 mt-[-10px] overflow-hidden whitespace-nowrap text-ellipsis"
     >
       {{ props.request.request.reimbursementName }}
     </h3>
@@ -68,8 +59,8 @@
           @click="trackRequestIsVisible = true"
         >
           <img
-            :src="ForwardIcon"
-            class="w-4 mt-[-2px]"
+            :src="TrackIcon"
+            class="w-4"
             alt="Track Request"
             title="Track Request"
           />
@@ -314,13 +305,33 @@
         >Withdraw review request</Button
       >
     </div>
+    <p
+      v-if="props.request.request.request_review_log.length === 0"
+      class="text-sm"
+    >
+      You have not forwarded this request to anyone yet.
+    </p>
   </Dialog>
+
+  <!-- <confirmation-popup
+    v-if="showConfirmationPopup"
+    :key="1"
+    left-button-text="Discard Changes"
+    right-button-text="Cancel"
+    :cancel-function="cancelConfirmationPopup"
+    :continue-function="cancelConfirmationPopup"
+  >
+    <template #message>
+      Are you sure you want to witdraw this request from the list?
+    </template>
+  </confirmation-popup> -->
 </template>
 
 <script lang="ts" setup>
 import Dialog from "primevue/dialog";
 import ReimbursementStatus from "./ReimbursementStatus.vue";
 import DenyIcon from "../../assets/deny-icon.png";
+// import ConfirmationPopup from "../utilities/ConfirmationPopup.vue";
 import Button from "primevue/button";
 import ViewIcon from "../../assets/eye-view-blue.png";
 import ApproveIcon from "../../assets/approve-icon.png";
@@ -334,6 +345,7 @@ import { TYPE, useToast } from "vue-toastification";
 import axios from "axios";
 import { onMounted, ref, watch } from "vue";
 import ForwardIcon from "../../assets/forward-icon.png";
+import TrackIcon from "../../assets/target-icon.png";
 
 const router = useRouter();
 const props = defineProps<{
@@ -359,6 +371,8 @@ const multFacultyFoundByTags = ref<boolean>(false);
 const FacultyFoundByTags = ref<Faculties[]>([]);
 const selectedFaculty = ref<string>("");
 const forwardRequestToAnyEmail = ref<string>("");
+const showConfirmationPopup = ref<boolean>(true);
+
 interface Faculties {
   id: string;
   name: string;
@@ -402,8 +416,19 @@ function confirmRequestDenial() {
   denyPopupIsVisible.value = true;
 }
 
-function showReviewerMessage() {
-  reviewerMessageIsVisible.value = true;
+/**
+ * Checks if a request has at least one reviewer with a pending status.
+ * @param {Object[]} request_review_log - The array of reviewers for the request.
+ * @returns {boolean} - Whether the request has at least one reviewer with a pending status.
+ */
+function hasPending(request_review_log) {
+  for (let i = 0; i < request_review_log.length; i++) {
+    const reviewer = request_review_log[i];
+    if (reviewer.review_status === "Pending") {
+      return true;
+    }
+  }
+  return false;
 }
 
 function selectAsFacultyToForward() {
@@ -411,6 +436,17 @@ function selectAsFacultyToForward() {
   selectedTag.value = "";
   forwardRequestTo.value = forwardRequestToAnyEmail.value;
 }
+
+/**
+ * Forwards a reimbursement request to the specified email address.
+ * Clears any existing toast notifications and shows a loading message.
+ * Sends the reimbursement data and faculty information to the server.
+ * On success, clears the loading message, shows a success toast,
+ * reloads the requests list, and closes the forward request dialog.
+ * On failure, clears the loading message and shows an error toast.
+ *
+ * @throws {Error} - If there is an error during the forwarding process.
+ */
 
 async function forwardRequest() {
   try {
@@ -447,6 +483,11 @@ async function forwardRequest() {
   }
 }
 
+/**
+ * Withdraw a reviewer from a reimbursement request.
+ * @param {Object} reviewer - The reviewer object to be withdrawn.
+ * @throws {Error} - If there was an error withdrawing the request.
+ */
 async function withdrawReviewRequest(reviewer: any) {
   try {
     let res = await axios.post(
@@ -476,6 +517,19 @@ async function withdrawReviewRequest(reviewer: any) {
   }
 }
 
+/**
+ * Makes a GET request to retrieve all faculty with the given tag.
+ *
+ * On success, populates FacultyFoundByTags with the retrieved faculty,
+ * and sets forwardRequestTo and forwardName accordingly.
+ *
+ * If multiple faculty are found, sets multFacultyFoundByTags to true.
+ *
+ * On failure, shows an error toast with a generic error message.
+ *
+ * @param {string} tag the tag to search for
+ * @return {Promise<void>}
+ */
 async function updateEmailByTag(tag) {
   try {
     let faculties = await axios.get(
@@ -554,10 +608,13 @@ function confirmRequestApproval() {
   approvePopupIsVisible.value = true;
 }
 
+/**
+ * Submits a request denial to the backend and updates the component's state accordingly.
+ *
+ * @throws {Error} If there is an unexpected error when making the request
+ */
 async function denyRequest() {
   try {
-    // props.request.request.reimbursementStatus = "Denied";
-
     await axios.post(
       `${import.meta.env.VITE_API_URL}/admin/deny-reimbursement`,
       {

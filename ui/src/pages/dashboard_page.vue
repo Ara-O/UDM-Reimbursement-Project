@@ -31,8 +31,6 @@ const router = useRouter();
 
 const toast = useToast();
 
-// Providers
-
 const user_information_data = ref<null | UserInformationSummary>(null);
 provide("user_information_data", user_information_data);
 
@@ -41,6 +39,15 @@ provide("foapa_data", foapa_data);
 
 const reimbursement_data = ref<ReimbursementTicket[]>([]);
 provide("reimbursement_data", { reimbursement_data, reloadReimbursementData });
+
+/**
+ * Fetches and updates the dashboard data for the user.
+ * Makes an API call to retrieve user-specific dashboard information,
+ * including user details, FOAPA details, and reimbursement tickets.
+ * The retrieved data is then stored in corresponding reactive references
+ * for further use in the application.
+ * If an error occurs (e.g., session expiration), the user is prompted to log in again.
+ */
 
 async function retrieveDashboardData() {
   try {
@@ -72,6 +79,13 @@ async function retrieveDashboardData() {
   }
 }
 
+/**
+ * Reloads reimbursement data for the user.
+ * Makes an API call to retrieve the reimbursement tickets for the user,
+ * and then updates the reimbursement_data reactive reference with the
+ * retrieved data. If an error occurs (e.g., session expiration), displays
+ * an error toast message.
+ */
 async function reloadReimbursementData() {
   try {
     let res = await axios.get(
@@ -87,6 +101,7 @@ async function reloadReimbursementData() {
     });
   }
 }
+
 onMounted(() => {
   if (
     localStorage.getItem("token") === null ||

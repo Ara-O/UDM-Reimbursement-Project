@@ -150,7 +150,6 @@ const emits = defineEmits([
   "user-wants-to-archive-request",
 ]);
 
-const confirm = useConfirm();
 const toast = useToast();
 const history_messages = ref<History[]>([]);
 const history_messages_dialog_is_visible = ref<boolean>(false);
@@ -172,6 +171,14 @@ function archiveRequest() {
   emits("user-wants-to-archive-request", props.request._id);
 }
 
+/**
+ * Duplicates a reimbursement request.
+ *
+ * Emits "user-duplicated-a-request" on success and displays an error message on failure.
+ *
+ * @async
+ * @function
+ */
 async function duplicateRequest() {
   try {
     await axios.post(`${import.meta.env.VITE_API_URL}/api/duplicate-request`, {
@@ -245,6 +252,13 @@ async function viewPdf() {
   }
 }
 
+/**
+ * Shows the request history for the currently selected reimbursement request
+ * in a dialog for the user to view.
+ *
+ * @throws {Error} If there is an unexpected error fetching the request history
+ *                 or displaying the dialog.
+ */
 async function showHistory() {
   try {
     history_messages.value = props.request.request_history;

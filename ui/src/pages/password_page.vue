@@ -2,13 +2,21 @@
   <section class="signup-page">
     <section class="left-section">
       <div class="udmercy-logo-wrapper">
-        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo"
-          @click="$router.push('/dashboard')" />
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo"
+          @click="$router.push('/dashboard')"
+        />
       </div>
     </section>
     <section class="right-section">
       <div class="udmercy-logo-wrapper-mobile">
-        <img src="../assets/detroit-mercy-logo.png" alt="Detroit mercy logo" class="udmercy-logo-mobile" />
+        <img
+          src="../assets/detroit-mercy-logo.png"
+          alt="Detroit mercy logo"
+          class="udmercy-logo-mobile"
+        />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
       <h3 class="signup-title-description" v-if="surveyProgress === 0">
@@ -22,19 +30,18 @@
             <div class="input-field">
               <label for="password">Current Password: </label>
               <span style="position: relative">
-                <input :type="passwordFieldType" name="Password" id="password" class="pr-32"
-                  v-model="currentPassword" />
-                <img v-if="passwordFieldType === 'password'" class="hover:!opacity-100" src="../assets/eye.png"
-                  @click="togglePasswordVisibility" style="
-                    position: absolute;
-                    right: 20px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    cursor: pointer;
-                    width: 20px;
-                    opacity: 25%;
-                  " />
-                <img v-else class="hover:!opacity-100" src="../assets/eyeslash.png" @click="togglePasswordVisibility"
+                <input
+                  :type="passwordFieldType"
+                  name="Password"
+                  id="password"
+                  class="pr-32"
+                  v-model="currentPassword"
+                />
+                <img
+                  v-if="passwordFieldType === 'password'"
+                  class="hover:!opacity-100"
+                  src="../assets/eye.png"
+                  @click="togglePasswordVisibility"
                   style="
                     position: absolute;
                     right: 20px;
@@ -43,7 +50,23 @@
                     cursor: pointer;
                     width: 20px;
                     opacity: 25%;
-                  " />
+                  "
+                />
+                <img
+                  v-else
+                  class="hover:!opacity-100"
+                  src="../assets/eyeslash.png"
+                  @click="togglePasswordVisibility"
+                  style="
+                    position: absolute;
+                    right: 20px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    cursor: pointer;
+                    width: 20px;
+                    opacity: 25%;
+                  "
+                />
               </span>
             </div>
             <!-- NEW PASSWORD -->
@@ -51,19 +74,18 @@
               <div class="input-field">
                 <label for="new-password">New password: </label>
                 <span style="position: relative">
-                  <input :type="passwordFieldType2" name="new-password" id="new-password" class="pr-32"
-                    v-model="newPassword" />
-                  <img v-if="passwordFieldType2 === 'password'" class="hover:!opacity-100" src="../assets/eye.png"
-                    @click="togglePasswordVisibility2" style="
-                      position: absolute;
-                      right: 20px;
-                      top: 50%;
-                      transform: translateY(-50%);
-                      cursor: pointer;
-                      width: 20px;
-                      opacity: 25%;
-                    " />
-                  <img v-else class="hover:!opacity-100" src="../assets/eyeslash.png" @click="togglePasswordVisibility2"
+                  <input
+                    :type="passwordFieldType2"
+                    name="new-password"
+                    id="new-password"
+                    class="pr-32"
+                    v-model="newPassword"
+                  />
+                  <img
+                    v-if="passwordFieldType2 === 'password'"
+                    class="hover:!opacity-100"
+                    src="../assets/eye.png"
+                    @click="togglePasswordVisibility2"
                     style="
                       position: absolute;
                       right: 20px;
@@ -72,17 +94,14 @@
                       cursor: pointer;
                       width: 20px;
                       opacity: 25%;
-                    " />
-                </span>
-              </div>
-              <!-- RE-ENTER NEW PASSWORD -->
-              <div class="input-field">
-                <label for="reenter-password">Re-enter new password: </label>
-                <span style="position: relative">
-                  <input :type="passwordFieldType3" class="pr-32" name="reenter-password" id="reenter-password"
-                    v-model="reEnteredPassword" />
-                  <img v-if="passwordFieldType3 === 'password'" class="hover:!opacity-100" src="../assets/eye.png"
-                    @click="togglePasswordVisibility3" style="
+                    "
+                  />
+                  <img
+                    v-else
+                    class="hover:!opacity-100"
+                    src="../assets/eyeslash.png"
+                    @click="togglePasswordVisibility2"
+                    style="
                       position: absolute;
                       right: 20px;
                       top: 50%;
@@ -90,8 +109,41 @@
                       cursor: pointer;
                       width: 20px;
                       opacity: 25%;
-                    " />
-                  <img v-else class="hover:!opacity-100" src="../assets/eyeslash.png" @click="togglePasswordVisibility3"
+                    "
+                  />
+                </span>
+              </div>
+              <!-- RE-ENTER NEW PASSWORD -->
+              <div class="input-field">
+                <label for="reenter-password">Re-enter new password: </label>
+                <span style="position: relative">
+                  <input
+                    :type="passwordFieldType3"
+                    class="pr-32"
+                    name="reenter-password"
+                    id="reenter-password"
+                    v-model="reEnteredPassword"
+                  />
+                  <img
+                    v-if="passwordFieldType3 === 'password'"
+                    class="hover:!opacity-100"
+                    src="../assets/eye.png"
+                    @click="togglePasswordVisibility3"
+                    style="
+                      position: absolute;
+                      right: 20px;
+                      top: 50%;
+                      transform: translateY(-50%);
+                      cursor: pointer;
+                      width: 20px;
+                      opacity: 25%;
+                    "
+                  />
+                  <img
+                    v-else
+                    class="hover:!opacity-100"
+                    src="../assets/eyeslash.png"
+                    @click="togglePasswordVisibility3"
                     style="
                       position: absolute;
                       right: 20px;
@@ -100,18 +152,29 @@
                       cursor: pointer;
                       width: 20px;
                       opacity: 25%;
-                    " />
+                    "
+                  />
                 </span>
               </div>
             </div>
           </div>
           <div class="continue-buttons">
             <router-link to="/dashboard">
-              <button class="signup-button" type="button" role="link" style="margin-top: 0px">
+              <button
+                class="signup-button"
+                type="button"
+                role="link"
+                style="margin-top: 0px"
+              >
                 Return To Dashboard
               </button>
             </router-link>
-            <button class="signup-button" type="button" style="margin-top: 0px" @click="changePassword">
+            <button
+              class="signup-button"
+              type="button"
+              style="margin-top: 0px"
+              @click="changePassword"
+            >
               Update
             </button>
           </div>
@@ -126,16 +189,13 @@
 
 <script lang="ts" setup>
 import axios from "axios";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-let enterDefault = ref<string>("");
 let feedback = ref<string>("");
 let reEnteredPassword = ref<string>("");
 let currentPassword = ref<string>("");
 let surveyProgress = ref<number>(0);
-
-const router = useRouter();
 
 let newPassword = ref<string>("");
 
@@ -156,6 +216,20 @@ function togglePasswordVisibility3() {
     passwordFieldType3.value === "password" ? "text" : "password";
 }
 
+/**
+ * Updates the user's password.
+ *
+ * Checks if the new password matches the re-entered password. If not, sets
+ * the feedback to "Passwords do not match, please try again".
+ *
+ * Checks if the new password matches the current password. If so, sets the
+ * feedback to "New password can not match current password, please try again".
+ *
+ * If both checks pass, sends a POST request to the /api/changePassword endpoint
+ * with the current password and new password. If successful, sets the feedback
+ * to the response message. If the request fails, sets the feedback to the
+ * error message.
+ */
 function changePassword() {
   if (reEnteredPassword.value !== newPassword.value) {
     feedback.value = "Passwords do not match, please try again";

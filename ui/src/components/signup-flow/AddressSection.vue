@@ -133,6 +133,12 @@ const countryCode = {
 watch(selectedCountry, () => countryChanged());
 watch(selectedState, () => stateChanged());
 
+/**
+ * Makes a GET request to the backend to fetch the states in the selected
+ * country and updates the states dropdown.
+ *
+ * If there is an error, it displays an error message to the user.
+ */
 async function countryChanged() {
   try {
     const res = await axios.get(
@@ -151,6 +157,12 @@ async function countryChanged() {
   }
 }
 
+/**
+ * Makes a GET request to the backend to fetch the cities in the selected
+ * state and updates the cities dropdown.
+ *
+ * If there is an error, it displays an error message to the user.
+ */
 async function stateChanged() {
   try {
     const stateCode = states.value.find(

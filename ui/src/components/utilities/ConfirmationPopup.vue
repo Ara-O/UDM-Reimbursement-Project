@@ -10,7 +10,6 @@
           <img :src="CautionIcon" alt="Caution icon" class="w-10" />
           <h3 class="font-semibold text-sm">{{ title || "Confirmation" }}</h3>
         </div>
-        <!-- <img :src="CancelIcon" alt="Cancel icon" class="w-3 opacity-75" @click="cancelFunction" -->
       </span>
       <h4 class="text-[13px] font-normal leading-6 mt-1">
         <slot name="message"> </slot>
@@ -21,7 +20,6 @@
           class="bg-white border border-solid border-udmercy-red text-udmercy-red px-5 py-1.5 text-xs cursor-pointer hover:text-white hover:bg-udmercy-red transition-all rounded-full"
           v-if="leftButtonText !== 'HIDE'"
         >
-          <!-- temporary v-if solution -->
           {{ leftButtonText || "Cancel" }}
         </button>
         <button
@@ -37,7 +35,6 @@
 
 <script lang="ts" setup>
 import CautionIcon from "../../assets/caution-icon.png";
-import CancelIcon from "../../assets/cross-icon.svg";
 
 defineProps([
   "cancelFunction",

@@ -126,7 +126,7 @@
               <reimbursement-card-grid-admin
                 v-if="
                   viewingRequestsPendingApproval
-                    ? !request.request.has_been_forwarded_for_approval
+                    ? !hasPending(request.request.request_review_log)
                     : true
                 "
                 :request="request"
@@ -344,6 +344,16 @@ async function populate_submitted_tickets() {
 
 function showApprovedPendingRequest() {
   viewingRequestsPendingApproval.value = !viewingRequestsPendingApproval.value;
+}
+
+function hasPending(request_review_log) {
+  for (let i = 0; i < request_review_log.length; i++) {
+    const reviewer = request_review_log[i];
+    if (reviewer.review_status === "Pending") {
+      return true;
+    }
+  }
+  return false;
 }
 
 async function get_faculty() {

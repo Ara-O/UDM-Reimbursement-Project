@@ -243,6 +243,13 @@ function onClaimSaved() {
   show_confirm_dialog.value = false;
 }
 
+/**
+ * Retrieves the reimbursement ticket that the user is currently updating.
+ * Makes an API call to retrieve the reimbursement ticket with the
+ * id specified in the route query parameter 'reimbursementId'.
+ * Updates the `currentReimbursement` reactive reference with the retrieved
+ * data.
+ */
 async function userIsUpdatingReimbursement() {
   let reimbursement = await axios.get(
     `${import.meta.env.VITE_API_URL}/api/retrieve-ticket-information`,
@@ -258,15 +265,14 @@ async function userIsUpdatingReimbursement() {
 
 // const debounceAutoSave = debounce(autosaveData, 10000);
 
-function getAllActivitiesAmount(): number {
-  let sum: number = 0;
-  currentReimbursement.value.activities.forEach((activity) => {
-    sum += Number(activity.cost);
-  });
-  return sum;
-}
-
 const autosave_label = ref<boolean>(false);
+
+/**
+ * Autosaves the current reimbursement ticket data.
+ * Sends a POST request to update the reimbursement ticket with the current
+ * data stored in `currentReimbursement`. Displays an "Autosaved" label
+ * momentarily after the data is successfully sent.
+ */
 
 async function autosaveData() {
   console.log("Autosaved");

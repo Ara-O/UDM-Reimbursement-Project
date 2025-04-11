@@ -60,6 +60,16 @@ const route = useRoute();
 const toast = useToast();
 const currentReimbursement = ref<any>({});
 
+/**
+ * Submits a review of a reimbursement request. Posts to /api/review-reimbursement-request
+ * with the reimbursement_id from the route, the answer (Approved or Denied), the name
+ * of the reviewer, their attached message, and their email.
+ *
+ * Shows a toast to indicate the submission of the review and then redirects to the
+ * homepage.
+ *
+ * @param {string} answer The answer of the reviewer (Approved or Denied)
+ */
 async function reviewerAnswer(answer) {
   try {
     toast("Submitting review...", {
@@ -163,7 +173,7 @@ onMounted(async () => {
       return;
     }
 
-    let res = await axios.post(
+    await axios.post(
       `${import.meta.env.VITE_API_URL}/api/check-reimbursement-approval-status`,
       { id: reimbursement_id, faculty_email: faculty_email }
     );

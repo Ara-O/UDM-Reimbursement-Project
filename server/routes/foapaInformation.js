@@ -348,7 +348,6 @@ router.get("/retrieve-foapa-registry", verifyToken, async (req, res) => {
 
 router.post("/mark-claim-as-submitted", verifyToken, async (req, res) => {
   try {
-    console.log("THIS IS MARKED AS SUBMITTED");
     let faculty = await Faculty.findById(req.user.userId);
     let reimbursementFoapa = req.body.reimbursementData.foapaDetails;
     let facultyFoapa = faculty.foapaDetails;

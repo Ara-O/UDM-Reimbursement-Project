@@ -201,6 +201,10 @@ function showFoapaPopup() {
   document.querySelector("body").style.overflow = "hidden";
 }
 
+/**
+ * Resets the assigned foapa and cost values and closes the popup.
+ * This is also called when a new foapa is added.
+ */
 function closeFoapaPopup() {
   foapaPopupIsVisible.value = false;
   assignedFoapa.value = null;
@@ -212,6 +216,12 @@ function closeFoapaPopup() {
   document.querySelector("body").style.overflow = "auto";
 }
 
+/**
+ * Puts the component into edit mode for the given foapa id.
+ * Sets assignedFoapa and assignedFoapaCost to the given foapa's details.
+ * Also calls deleteFOAPA to remove the foapa from the claim.
+ * @param {string} foapa_to_edit_id - The id of the foapa to edit.
+ */
 function editFOAPA(foapa_to_edit_id) {
   console.log(foapa_to_edit_id);
   triggerAssignedFoapaEditMode.value = true;
@@ -227,6 +237,13 @@ function editFOAPA(foapa_to_edit_id) {
   deleteFOAPA(foapa_to_edit_id);
 }
 
+/**
+ * Emits "move-to-next-section" if the user is not currently editing a FOAPA.
+ * Otherwise, prompts the user to confirm if they want to discard their
+ * currently inputted FOAPA and move to the next section. If the user clicks
+ * 'OK', emits "move-to-next-section". If the user clicks 'Cancel', does
+ * nothing.
+ */
 function moveToNextSection() {
   // console.log(assignedFoapa.value.cost);
   if (assignedFoapaCost.value !== "0" && assignedFoapaCost.value !== "") {

@@ -188,15 +188,9 @@ import { ref, reactive, onMounted } from "vue";
 import { FoapaStuff } from "../../types/types";
 type Foapa = FoapaStuff & { _id?: string };
 import {
-  isValidFundNumber,
-  isValidAccountNumber,
-  isValidFoapaNumber,
-  // isValidFoapaAmount,
   isValidFoapaName,
   isValidActvNumber,
   isValidFoapaDescription,
-  isValidProgramNumber,
-  isValidOrgNumber,
 } from "../../utils/validators";
 import AutoComplete from "primevue/autocomplete";
 
@@ -227,12 +221,14 @@ let currentlyInputtedFOAPA = reactive<FoapaStuff>({
   program: "",
   activity: "",
   foapaName: "",
-  // initialAmount: "",
-  // currentAmount: "",
-  // availableAmount: "",
   description: "",
 });
 
+/**
+ * Retrieves the FOAPA registry from the backend and stores the results in state.
+ * This function is called on mount and is used to populate the autocomplete
+ * options for the ACCT, ORG, PROG, and FUND fields.
+ */
 async function retrieveFoapaRegistry() {
   try {
     let res = await axios.get(
@@ -321,9 +317,14 @@ function filterFund(event) {
   }
 }
 
+/**
+ * Handles the submission of the add FOAPA form. It first checks to ensure that all the required
+ * fields are filled out. If not, it displays an error message. If all the required fields are filled
+ * out, it sends a POST request to the backend to add the FOAPA to the database. If the request is
+ * successful, it resets the form and emits an event to let the parent component know that a new
+ * FOAPA was added. If the request fails, it displays an error message.
+ */
 function addFoapa(values, { resetForm }) {
-  // currentlyInputtedFOAPA.currentAmount = currentlyInputtedFOAPA.initialAmount;
-  // currentlyInputtedFOAPA.availableAmount = currentlyInputtedFOAPA.initialAmount;
   let addedFoapa = Object.assign({}, currentlyInputtedFOAPA);
 
   if (addedFoapa.fund.trim() === "") {
@@ -380,6 +381,17 @@ function addFoapa(values, { resetForm }) {
     });
 }
 
+/**
+ * Deletes a FOAPA with the given name and fund from the database. If show_confirm_dialog is true,
+ * it prompts the user to confirm the deletion. If the user confirms the deletion, it sends a POST
+ * request to the backend to delete the FOAPA. If the request is successful, it removes the FOAPA
+ * from the props.foapaDetails array. If the request fails, it does nothing.
+ *
+ * @param {string} foapaName - The name of the FOAPA to delete.
+ * @param {string} fund - The fund of the FOAPA to delete.
+ * @param {boolean} show_confirm_dialog - Whether to show a confirmation dialog before deleting
+ * the FOAPA. Defaults to true.
+ */
 async function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
   emits("changes-were-made");
   let idOfFoapa;
@@ -397,7 +409,7 @@ async function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/retrieve-foapa-details`
         );
-        // console.log("INDEX: ", index, props.foapaDetails[index], "RES: ", res)
+
         for (let foapa of res.data) {
           if (
             foapa.foapaName === props.foapaDetails[index].foapaName &&
@@ -427,18 +439,6 @@ async function deleteFoapa(foapaName, fund, show_confirm_dialog = true) {
       props.foapaDetails.splice(index, 1);
     }
   }
-}
-
-function editFoapa(foapa) {
-  currentlyInputtedFOAPA.fund = foapa.fund;
-  currentlyInputtedFOAPA.organization = foapa.organization;
-  currentlyInputtedFOAPA.account = foapa.account;
-  currentlyInputtedFOAPA.program = foapa.program;
-  currentlyInputtedFOAPA.activity = foapa.activity;
-  currentlyInputtedFOAPA.foapaName = foapa.foapaName;
-  // currentlyInputtedFOAPA.initialAmount = foapa.currentAmount;
-  currentlyInputtedFOAPA.description = foapa.description;
-  deleteFoapa(foapa.foapaName, foapa.fund, false);
 }
 
 onMounted(() => {

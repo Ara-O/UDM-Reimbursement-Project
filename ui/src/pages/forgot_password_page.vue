@@ -72,6 +72,16 @@ const route = useRoute();
 const router = useRouter();
 let userToken = ref<string>("");
 
+/**
+ * Resets the user's password by sending a POST request with a token and new password.
+ *
+ * If the provided passwords match, a request is sent to the reset password API endpoint.
+ * On success, it alerts the user with a confirmation message, and on error, alerts the user
+ * that the token has expired. If the passwords do not match, it alerts the user accordingly.
+ *
+ * Finally, it redirects the user to the login page.
+ */
+
 function resetPassword() {
   if (password.value === confirmPassword.value) {
     axios
@@ -80,7 +90,6 @@ function resetPassword() {
         newPassword: password.value,
       })
       .then((res) => {
-        // console.log(res);
         alert(res.data.message);
       })
       .catch((err) => {

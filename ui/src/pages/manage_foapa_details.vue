@@ -587,6 +587,7 @@ function goToClashingRequest(claim_id) {
 }
 
 const toast = useToast();
+
 const filteredFoapaDetails: any = computed(() => {
   if (search_value.value.trim() !== "") {
     return foapaDetails.value.filter((foapa) =>

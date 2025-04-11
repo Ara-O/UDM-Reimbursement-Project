@@ -113,7 +113,6 @@
 import { UserData } from "../../types/types";
 import { ref } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
-import { isNotEmpty } from "../../utils/validators";
 
 let reEnteredPassword = ref<string>("");
 

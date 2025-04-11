@@ -147,7 +147,7 @@
 import DetroitMercyLogo from "../assets/detroit-mercy-logo.png";
 import axios from "axios";
 import { Form, Field, ErrorMessage } from "vee-validate";
-import { ref, onMounted, VueElement } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { isNotEmpty, isValidString } from "../utils/validators";
 import { TYPE, useToast } from "vue-toastification";
@@ -165,6 +165,13 @@ function togglePasswordVisibility() {
     passwordFieldType.value === "password" ? "text" : "password";
 }
 
+/**
+ * Sends a POST request to the login endpoint with the userInfo object.
+ * If the request is successful, the token received in the response is stored in local storage.
+ * The authorization header for future axios requests is also set to the received token.
+ * The user is then redirected to the dashboard.
+ * If the request fails, an error message is displayed to the user.
+ */
 async function loginUser() {
   try {
     let res = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
@@ -203,7 +210,6 @@ function sendEmail() {
     })
     .then((res) => {
       emailSent.value = true;
-      // console.log(res);
     })
     .catch((err) => {
       toast.clear();

@@ -49,15 +49,6 @@
         </section>
 
         <!-- SECTION 4 -->
-        <!-- <section v-show="surveyProgress === 3" class="signup-form">
-          <FoapaSection
-            :user-signup-data="userSignupData"
-            @finish="registerUser"
-            @go-back="surveyProgress--"
-          />
-        </section>
-        <br /> -->
-
         <router-link to="/" class="already-have-account mt-5"
           >Already have an Account</router-link
         >
@@ -69,7 +60,6 @@
           completed.
         </h5>
       </section>
-      <!-- <ManageFoapaDetails></ManageFoapaDetails> -->
     </section>
   </section>
 </template>
@@ -77,22 +67,18 @@
 <script lang="ts" setup>
 import PasswordSection from "../components/signup-flow/PasswordSection.vue";
 import AddressSection from "../components/signup-flow/AddressSection.vue";
-import FoapaSection from "../components/signup-flow/FoapaSection.vue";
-import ManageFoapaDetails from "../components/manage-foapa/AddFoapaPopup.vue";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { FoapaStuff, UserData } from "../types/types";
+import { UserData } from "../types/types";
 import { useUserInfoStore } from "../store";
 import { TYPE, useToast } from "vue-toastification";
 let surveyProgress = ref<number>(1);
 
 const router = useRouter();
 const toast = useToast();
-const route = useRoute();
 const store = useUserInfoStore();
 
-let creatingAccountFeedback = ref<boolean>(false);
 let userSignupData = reactive<UserData>({
   firstName: "",
   lastName: "",
@@ -109,6 +95,15 @@ let userSignupData = reactive<UserData>({
   foapaDetails: [],
 });
 
+/**
+ * Registers a new user in the system.
+ *
+ * This function is called when the user submits the sign up form.
+ * It sends a POST request to the API with the user's data and
+ * upon success, it redirects the user to the dashboard.
+ *
+ * @throws Error if the API call fails
+ */
 async function registerUser() {
   try {
     toast.clear();
@@ -122,8 +117,10 @@ async function registerUser() {
     );
 
     localStorage.setItem("token", res.data.token);
+
     axios.defaults.headers.common["authorization"] =
       localStorage.getItem("token");
+
     router.push("/dashboard");
 
     toast.clear();
