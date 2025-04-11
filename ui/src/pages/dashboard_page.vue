@@ -40,6 +40,8 @@ provide("foapa_data", foapa_data);
 const reimbursement_data = ref<ReimbursementTicket[]>([]);
 provide("reimbursement_data", { reimbursement_data, reloadReimbursementData });
 
+const archived_reimbursement_data = ref<ReimbursementTicket[]>([]);
+provide("archived_reimbursement_data", { archived_reimbursement_data });
 /**
  * Fetches and updates the dashboard data for the user.
  * Makes an API call to retrieve user-specific dashboard information,
@@ -67,6 +69,9 @@ async function retrieveDashboardData() {
     foapa_data.value = dashboard_data.foapaDetails;
 
     reimbursement_data.value = dashboard_data.reimbursementTickets;
+
+    archived_reimbursement_data.value =
+      dashboard_data.archivedReimbursementTickets;
 
     // console.log(dashboard_data)
   } catch (err) {

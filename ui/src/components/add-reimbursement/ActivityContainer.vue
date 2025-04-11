@@ -24,33 +24,34 @@
       }}
     </h4>
     <div class="activity-options-wrapper">
-      <div
+      <button
         title="Edit activity"
         @click="$emit('editActivity', expense.id)"
-        class="activity-option"
-        style="background-color: white"
+        :disabled="view_only_mode === true"
+        class="activity-option !bg-white border-none disabled:cursor-default"
       >
         <img
           src="../../assets/blue-pencil.png"
-          class="edit-icon-button w-4"
+          class="edit-icon-button w-4 disabled:cursor-default"
           alt="Edit icon"
         />
-      </div>
-      <div
+      </button>
+      <button
         title="Duplicate activity"
         @click="$emit('duplicateActivity', expense.id)"
-        class="activity-option"
-        style="background-color: white"
+        class="activity-option !bg-white border-none disabled:cursor-default"
+        :disabled="view_only_mode === true"
       >
         <img
           src="../../assets/duplicate-blue.png"
-          class="edit-icon-button w-5"
-          alt="Edit icon"
+          class="edit-icon-button w-5 disabled:cursor-default"
+          alt="Duplicate icon"
         />
-      </div>
-      <div
+      </button>
+      <button
         title="Delete activity"
-        class="activity-option"
+        class="activity-option border-none disabled:bg-gray-500"
+        :disabled="view_only_mode === true"
         @click="$emit('deleteActivity', expense.id)"
       >
         <img
@@ -58,7 +59,7 @@
           alt="Trash icon"
           class="trash-icon"
         />
-      </div>
+      </button>
     </div>
   </div>
 </template>
@@ -68,6 +69,7 @@ import { Expense } from "../../types/types";
 
 const props = defineProps<{
   expense: Expense;
+  view_only_mode: Boolean;
 }>();
 
 defineEmits(["deleteActivity", "editActivity", "duplicateActivity"]);
@@ -82,4 +84,8 @@ function convertDateToMMDDYYYY(date: string) {
 
 <style scoped>
 @import url("../../assets/styles/add-reimbursement-page.css");
+
+.disabled-icons {
+  filter: brightness(300) invert(0) saturate(0) !important;
+}
 </style>

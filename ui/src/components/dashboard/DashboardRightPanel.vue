@@ -156,6 +156,11 @@ const user_information_data = inject<null | UserInformationSummary>(
 );
 const { reimbursement_data, reloadReimbursementData } =
   inject<any>("reimbursement_data");
+
+const { archived_reimbursement_data } = inject<any>(
+  "archived_reimbursement_data"
+);
+
 const views = ["Grid View", "Table View", "List View"];
 const sort_options = [
   "Name (Ascending)",
@@ -164,7 +169,14 @@ const sort_options = [
   "Cost (Descending)",
   "None",
 ];
-const filter_options = ["In Progress", "Submitted"];
+const filter_options = [
+  "In Progress",
+  "Submitted",
+  "Approved",
+  "Denied",
+  "Archived",
+  "None",
+];
 const filtered_reimbursement_data = ref<ReimbursementTicket[]>([]);
 const confirm = useConfirm();
 const toast = useToast();
@@ -188,12 +200,21 @@ watch(
 );
 
 watch(search_field, (searchValue) => {
-  filtered_reimbursement_data.value = reimbursement_data.value.filter(
-    (request) =>
-      request.reimbursementName
-        .toLowerCase()
-        .includes(searchValue.toLowerCase())
-  );
+  if (filter.value === "Archived") {
+    filtered_reimbursement_data.value =
+      archived_reimbursement_data.value.filter((request) =>
+        request.reimbursementName
+          .toLowerCase()
+          .includes(searchValue.toLowerCase())
+      );
+  } else {
+    filtered_reimbursement_data.value = reimbursement_data.value.filter(
+      (request) =>
+        request.reimbursementName
+          .toLowerCase()
+          .includes(searchValue.toLowerCase())
+    );
+  }
 });
 
 watch(sort, (sortValue) => {
@@ -280,6 +301,28 @@ watch(filter, (newFilter) => {
     filtered_reimbursement_data.value = reimbursement_data_options.filter(
       (request) => request.reimbursementStatus === "In Progress"
     );
+  }
+
+  if (newFilter === "Approved") {
+    filtered_reimbursement_data.value = reimbursement_data_options.filter(
+      (request) =>
+        request.reimbursementStatus === "Approved" ||
+        request.reimbursementStatus === "Approved*"
+    );
+  }
+
+  if (newFilter === "Denied") {
+    filtered_reimbursement_data.value = reimbursement_data_options.filter(
+      (request) => request.reimbursementStatus === "Denied"
+    );
+  }
+
+  if (newFilter === "Archived") {
+    filtered_reimbursement_data.value = archived_reimbursement_data.value;
+  }
+
+  if (newFilter === "None") {
+    filtered_reimbursement_data.value = reimbursement_data_options;
   }
 });
 

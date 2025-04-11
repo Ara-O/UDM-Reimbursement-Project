@@ -257,6 +257,8 @@ const filtered_pending_requests = computed(() => {
       .includes(search_field.value.toLowerCase())
   );
 
+  // console.log(reimbursement_data_options);
+
   if (sort.value === "Cost (Descending)") {
     return reimbursement_data_options.sort((a: any, b: any): any => {
       if (a.request.totalCost < b.request.totalCost) {
@@ -330,7 +332,7 @@ const filtered_pending_requests = computed(() => {
     return reimbursement_data_options;
   }
 
-  return pending_requests.value;
+  return reimbursement_data_options;
 }) as any;
 
 async function populate_submitted_tickets() {

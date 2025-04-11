@@ -85,6 +85,7 @@
           <foapa-container
             v-for="foapa in props.claim.foapaDetails"
             :foapa="foapa"
+            :view_only_mode="view_only_mode"
             @delete-foapa="deleteFOAPA"
             @edit-foapa="editFOAPA"
           >
@@ -167,7 +168,7 @@ type FoapaDetails = FoapaStuff & { _id: string };
 
 let props = defineProps<{
   claim: ReimbursementTicket;
-  view_only_mode: Boolean;
+  view_only_mode: boolean;
 }>();
 
 let assignedFoapa = ref<any>(null);

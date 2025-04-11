@@ -13,9 +13,10 @@
     >
       Cost: ${{ foapa.cost }}
     </h4>
-    <div
+    <button
       title="Delete FOAPA"
-      class="activity-option absolute right-10 bottom-5"
+      :disabled="view_only_mode === true"
+      class="activity-option border-none absolute disabled:bg-gray-500 right-10 bottom-5"
       @click="() => $emit('deleteFoapa', foapa._id)"
     >
       <img
@@ -23,10 +24,11 @@
         alt="Trash icon"
         class="trash-icon w-3"
       />
-    </div>
-    <div
+    </button>
+    <button
       title="Edit FOAPA"
-      class="activity-option absolute right-24 bottom-5"
+      class="activity-option absolute disabled:bg-gray-500 :disabled:disabled-icons right-24 border-none bottom-5"
+      :disabled="view_only_mode === true"
       @click="() => $emit('editFoapa', foapa._id)"
       style="background-color: white"
     >
@@ -35,7 +37,7 @@
         alt="Edit Foapa"
         class="trash-icon w-4"
       />
-    </div>
+    </button>
   </div>
 </template>
 
@@ -47,6 +49,7 @@ type FoapaDetails = FoapaStuff & { _id: string };
 
 const props = defineProps<{
   foapa: FoapaStuff;
+  view_only_mode: boolean;
 }>();
 
 defineEmits(["deleteFoapa", "editFoapa"]);
@@ -54,4 +57,8 @@ defineEmits(["deleteFoapa", "editFoapa"]);
 
 <style scoped>
 @import url("../../assets/styles/add-reimbursement-page.css");
+
+.disabled-icons {
+  filter: brightness(300) invert(0) saturate(0) !important;
+}
 </style>

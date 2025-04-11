@@ -131,6 +131,7 @@
 
       <activity-container
         :expense="expense"
+        :view_only_mode="view_only_mode"
         v-for="expense in props.claim.activities"
         @delete-activity="deleteExpense"
         @edit-activity="editExpense"
