@@ -114,7 +114,7 @@ router.post("/forgotPassword", async (req, res) => {
           ],
           subject: "Password Reset Instructions",
           html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
-              with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udm-reimbursement-project.vercel.app/forgot-password/${token}' >Click here</a>
+              with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='https://udmreimbursements/forgot-password/${token}' >Click here</a>
               <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,
         });
 
