@@ -4,9 +4,13 @@ import { retrieveDate } from "../utils/retrieveDate.js";
 import Faculty from "../models/faculty.js";
 import logger from "../logger.js";
 import z, { ZodError } from "zod";
+import createPdfDefinition from "../pdfGenerator.js";
 import ReimbursementTicket from "../models/reimbursement.js";
+import Pdfmake from "pdfmake";
 import AdditionalReimbursementMessages from "../models/reimbursementMessages.js";
 import DepartmentChairRegistry from "../models/departmentChairRegistry.js";
+import sgMail from "@sendgrid/mail";
+
 const router = Router();
 
 const reimbursementRequestSchema = z.object({
@@ -379,6 +383,7 @@ router.post("/duplicate-request", verifyToken, async (req, res) => {
     }
 
     newRequest.reimbursementStatus = "In Progress";
+    newRequest.request_review_log = [];
 
     const duplicatedRequest = new ReimbursementTicket(newRequest);
 
@@ -503,6 +508,41 @@ router.get("/fetch-request-admin-message", verifyToken, async (req, res) => {
   }
 });
 
+function generatePdf(docDefinition, callback) {
+  try {
+    let fonts = {
+      Roboto: {
+        normal: "./fonts/Arial-Light.ttf",
+        bold: "./fonts/Arial-Bold.ttf",
+        italics: "./fonts/Arial-Bold-Italics.ttf",
+        bolditalics: "./fonts/Arial-Bold-Italics.ttf",
+      },
+    };
+
+    let pdfmake = new Pdfmake(fonts);
+
+    let pdfDoc = pdfmake.createPdfKitDocument(docDefinition, {});
+    let chunks = [];
+    let result;
+
+    pdfDoc.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+
+    pdfDoc.on("end", () => {
+      result = Buffer.concat(chunks);
+      callback("data:application/pdf;base64," + result.toString("base64"));
+    });
+
+    pdfDoc.end();
+  } catch (err) {
+    logger.error("There was an error in the generatePdf function", {
+      api: "generatePdf",
+    });
+    throw err;
+  }
+}
+
 //Edit a reimbursement claim: POST /api/submit-reimbursement
 router.post("/submit-request", verifyToken, async (req, res) => {
   try {
@@ -516,6 +556,7 @@ router.post("/submit-request", verifyToken, async (req, res) => {
     reimbursementTicket.reimbursementStatus = "Submitted";
     reimbursementTicket.has_been_forwarded_for_approval = false;
     reimbursementTicket.approval_status = "";
+
     const today = new Date();
     const formattedDate = `${String(today.getMonth() + 1).padStart(
       2,
@@ -539,16 +580,91 @@ router.post("/submit-request", verifyToken, async (req, res) => {
       });
     }
 
-    logger.info(
-      `User ${req.user.userId} has successfully submitted reimbursement ${reimbursementTicket._id}`,
-      {
-        api: "/api/update-reimbursement",
-      }
+    // Email Jim
+
+    let receipts = reimbursementTicket.reimbursementReceipts || [];
+
+    const base64Receipts = await Promise.all(
+      receipts.map((receipt) => fetchImageBase64(receipt.url))
     );
 
-    return res
-      .status(200)
-      .send({ message: "Reimbursement updated successfully!" });
+    const content = createPdfDefinition(
+      reimbursementTicket,
+      faculty,
+      base64Receipts
+    );
+
+    const docDefinition = {
+      content: content,
+      pageMargins: [17, 15, 0, 0],
+      defaultStyle: {
+        fontSize: 10,
+        bold: true,
+      },
+    };
+
+    generatePdf(docDefinition, function (base64String) {
+      logger.info("PDF was generated successfully", {
+        api: "/api/submit-request",
+      });
+
+      base64String = base64String.slice(28);
+
+      sgMail
+        .send({
+          from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+          to:
+            faculty.workEmail !== String("adairja@udmercy.edu").toLowerCase()
+              ? ["adairja@udmercy.edu", faculty.workEmail]
+              : ["adairja@udmercy.edu"],
+          subject: `${faculty.firstName} ${faculty.lastName} - ${reimbursementTicket.reimbursementName}`,
+          html: `
+          <div style="border: solid 1px #efefef; padding: 20px 0px;">
+          <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
+          <img src="https://ik.imagekit.io/x3m2gjklk/site-logo.png" alt="UDM Reimbursement Logo" style="width: 100px"/>
+          <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">
+            ${faculty.firstName} has submitted a reimbursement request.
+          </h3>
+          <h5 style="font-weight: 500; margin: 20px 0; margin-top: 35px">Note: This email was sent on the behalf of: ${faculty.workEmail}</h5>
+          </div>
+          </div>
+          `,
+          attachments: [
+            {
+              content: base64String,
+              filename: `${faculty.firstName}_${faculty.lastName}_Reimbursement_Claim_${formattedDate}.pdf`,
+              encoding: "base64",
+              type: "application/pdf",
+            },
+          ],
+        })
+        .then(() => {
+          logger.info("Email successfully sent", {
+            api: "/api/submit-request",
+          });
+
+          logger.info(
+            `User ${req.user.userId} has successfully submitted reimbursement ${reimbursementTicket._id}`,
+            {
+              api: "/api/update-reimbursement",
+            }
+          );
+
+          return res.status(200).send({ message: "Request successfully sent" });
+        })
+        .catch((err) => {
+          logger.error("There was an error in sending the email", {
+            api: "/api/submit-request",
+          });
+
+          return res.status(500).send({
+            message:
+              "There was an unexpected error sending this email. Please try again later",
+          });
+        });
+    });
+
+    // return res.status(400).send({ message: "An unexpected error occured!" });
   } catch (err) {
     logger.error(err, {
       api: "/api/update-reimbursement",

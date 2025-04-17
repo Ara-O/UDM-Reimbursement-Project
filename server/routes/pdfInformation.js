@@ -386,7 +386,7 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
       base64String = base64String.slice(28);
       sgMail
         .send({
-          from: "oladipea@udmercy.edu",
+          from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
           to:
             req.body.userInfo.workEmail !==
             String(req.body.recipient).toLowerCase()
