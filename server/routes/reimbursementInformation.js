@@ -88,6 +88,25 @@ const reimbursementRequestSchema = z.object({
   }),
 });
 
+function fetchImageBase64(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (response) => {
+      let imageData = [];
+
+      response.on("data", (chunk) => {
+        imageData.push(chunk);
+      });
+
+      response.on("end", () => {
+        const base64Image = Buffer.concat(imageData).toString("base64");
+        resolve(`data:image/png;base64,${base64Image}`);
+      });
+
+      response.on("error", (err) => reject(err));
+    });
+  });
+}
+
 // Add a reimbursement request: POST /api/add-reimbursement
 router.post("/add-reimbursement", verifyToken, async (req, res) => {
   try {
