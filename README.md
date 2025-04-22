@@ -95,6 +95,12 @@ Demo accounts:
 
 Username: oladipea@udmercy.edu. Password: password 
 
+Main features:
+- Account verification during the signup process
+- Reimbursement PDF generation
+- FOAPA management
+- Reimbursement request submission process management
+
 ### Known limitations
 We are currently running a free-instance of Render (the service we use to host backend). Because of this, the server sleeps after 15 minutes of inactivity, so if the initial load time of the website is long, it's not broken (usually), and will have normal loading times after the initial load
 
