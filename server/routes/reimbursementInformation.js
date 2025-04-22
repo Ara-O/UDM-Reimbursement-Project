@@ -10,6 +10,7 @@ import Pdfmake from "pdfmake";
 import AdditionalReimbursementMessages from "../models/reimbursementMessages.js";
 import DepartmentChairRegistry from "../models/departmentChairRegistry.js";
 import sgMail from "@sendgrid/mail";
+import https from "https";
 
 const router = Router();
 
