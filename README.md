@@ -12,7 +12,7 @@ The reimbursement system project at Detroit Mercy’s College of Engineering and
 - Tailwind
 
 #### Backend
-- Node.js
+- Node.js (NODE.JS 18 OR LESS IS REQUIRED)
 - Express
 - MongoDB (Mongoose)
 
