@@ -89,7 +89,7 @@ Start the server
 
 ## Usage instructions
 
-Technical instructions can be found: [TODO]
+Technical instructions can be found: https://www.youtube.com/watch?v=Jg-N9Enmi0s
 
 Demo accounts: 
 
