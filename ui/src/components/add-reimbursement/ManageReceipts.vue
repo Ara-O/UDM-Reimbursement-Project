@@ -1,7 +1,5 @@
 <template>
-  <section
-    class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full mt-20 sm:mt-0 mb-32 sm:mb-0"
-  >
+  <section class="xl:w-auto xl:ml-0 h-full mt-20 sm:mt-0 mb-32 sm:mb-0">
     <span class="flex items-center gap-6 mb-2">
       <h2 class="font-semibold my-0 text-[27px]">Manage Receipts</h2>
       <img
@@ -43,9 +41,9 @@
       Added Receipts will show here
     </h3>
     <!-- Looping through all receipts -->
-    <div class="mt-6 flex gap-10 w-auto max-w-[1100px] flex-wrap">
+    <div class="mt-6 flex gap-4 w-auto flex-wrap">
       <div
-        class="bg-udmercy-blue border border-solid border-gray-200 text-white rounded-md flex items-center box-border w-auto px-5 gap-5 h-auto py-5 pr-10"
+        class="bg-udmercy-blue border border-solid border-gray-200 text-white rounded-md flex items-center box-border w-96 px-5 gap-5 h-auto py-5 pr-10"
         v-for="(receipt, index) in props.claim.reimbursementReceipts"
       >
         <img

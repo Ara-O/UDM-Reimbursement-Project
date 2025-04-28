@@ -1,7 +1,5 @@
 <template>
-  <section
-    class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0"
-  >
+  <section class="xl:w-auto h-full sm:mt-0 mb-32 sm:mb-0">
     <span class="flex items-center gap-6 mb-2 mt-42 md:mt-0">
       <h2 class="font-semibold my-0 text-[27px]">Assign FOAPA Information</h2>
       <img
@@ -63,7 +61,7 @@
 
     <!-- ALL FOAPA SECTION -->
     <div class="flex gap-x-10 flex-wrap">
-      <div class="w-[400px]">
+      <div class="w-[650px]">
         <h4 class="underline mb-5 font-semibold text-lg text-gray-800">
           All FOAPA
         </h4>

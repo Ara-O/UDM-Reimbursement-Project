@@ -1,77 +1,66 @@
 <template>
-  <!-- Top section for returning -->
+  <!-- Return to dashboard -->
+  <div class="flex justify-between gap-4 mt-8">
+    <div
+      class="mx-10 mb-5 xl:ml-28 cursor-pointer"
+      @click="goToDashboard"
+      v-if="!coming_from_foapa_page"
+    >
+      <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
+      <h4 class="font-normal text-sm text-gray-600 hover:underline">
+        Return to dashboard
+      </h4>
+    </div>
+    <div
+      class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
+      @click="router.go(-1)"
+      v-else
+    >
+      <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
+      <h4 class="font-normal text-sm vs text-gray-600">Return to FOAPA page</h4>
+    </div>
 
-  <div
-    class="flex items-center gap-4 mt-8 sm:ml-20 ml-10 mb-5 xl:ml-32 cursor-pointer"
-    @click="goToDashboard"
-    v-if="!coming_from_foapa_page"
-  >
-    <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
-    <h4 class="font-normal text-sm text-gray-600">Return to dashboard</h4>
-  </div>
-  <div
-    class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
-    @click="router.go(-1)"
-    v-else
-  >
-    <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
-    <h4 class="font-normal text-sm text-gray-600">Return to FOAPA page</h4>
-  </div>
-  <main class="flex mt-20 mb-10 gap-20">
-    <!-- SECTIONS SECTION -->
-    <section class="pl-32 hidden xl:block">
-      <h3 class="text-2xl font-semibold mb-0">Section</h3>
-      <p class="text-sm leading-8 mb-0 mt-4">
-        You can also move through sections by clicking below
-      </p>
-      <article
-        class="shadow h-auto border-black border rounded-md w-[22rem] mt-4"
+    <div class="flex mr-28 items-center gap-4">
+      <span
+        class="inline-flex items-center gap-3 cursor-pointer"
+        @click="viewRequestHistory"
+        v-if="currentReimbursement.reimbursementStatus !== 'Denied'"
       >
-        <div v-for="(section, i) in sections">
-          <div
-            class="h-20 w-100 flex justify-between items-center box-border px-10 hover:bg-[#002d72EE] hover:text-gray-100 cursor-pointer"
-            :class="{
-              'rounded-tl-sm rounded-tr-sm': i == 0,
-              'rounded-bl-sm rounded-br-sm': i == sections.length - 1,
-              'bg-[#002d72EE] text-white': selectedSection == section.section,
-            }"
-            @click="changeSection(section.section)"
-          >
-            <h4 class="font-normal text-sm">{{ section.title }}</h4>
-            <img
-              src="../assets/next-arrow.png"
-              alt="Next arrow"
-              class="hover:contrast-50 w-4 transition-all duration-500"
-              :class="{
-                ' contrast-0': selectedSection != section.section,
-                '': selectedSection == section.section,
-              }"
-            />
-          </div>
-          <hr class="border-solid border-[0.5px] text-gray-200 h-[1] m-0" />
-        </div>
-      </article>
-      <div class="flex mt-3 justify-center items-center gap-4">
-        <span
-          class="inline-flex items-center gap-3 cursor-pointer"
-          @click="viewRequestHistory"
-          v-if="currentReimbursement.reimbursementStatus !== 'Denied'"
-        >
-          <img :src="HistoryIcon" alt="History" class="w-4" />
-          <p class="text-udmercy-blue text-sm underline inline">
-            Request History
-          </p>
-        </span>
-      </div>
-      <p
-        v-if="currentReimbursement.reimbursementStatus === 'Denied'"
-        class="text-sm text-center mt-6 underline cursor-pointer"
+        <img :src="HistoryIcon" alt="History" class="w-3 my-0" />
+        <p class="text-udmercy-blue my-0 text-sm underline inline">
+          Request History
+        </p>
+      </span>
+    </div>
+  </div>
+
+  <!-- Section value -->
+  <Stepper :value="selectedSection" class="hidden md:block xl:px-28 px-10">
+    <StepList>
+      <Step
+        @click="changeSection(section.section)"
+        :value="section.section"
+        v-for="section in sections"
+        :pt="{
+          title: '  focus:!text-udmercy-blue',
+        }"
+        >{{ section.title }}</Step
+      >
+    </StepList>
+  </Stepper>
+
+  <main class="flex mt-10 mb-10 px-10 xl:px-28 gap-20">
+    <!-- <div class="flex mt-3 justify-center items-center gap-4">
+      <span
+        class="inline-flex items-center gap-3 cursor-pointer"
         @click="viewRequestHistory"
       >
-        View Reason for Denial
-      </p>
-    </section>
-
+        <img :src="HistoryIcon" alt="History" class="w-4" />
+        <p class="text-udmercy-blue text-sm underline inline">
+          Request History
+        </p>
+      </span>
+    </div> -->
     <!-- VIEW ONLY MODE WARNING -->
     <div
       class="absolute bottom-4 z-10 right-4 rounded-lg bg-udmercy-red max-w-[30rem] text-white px-7 pt-1 pb-2"
@@ -411,4 +400,22 @@ onBeforeRouteLeave((to, from, next) => {
 
 <style scoped>
 @import url("../assets/styles/add-reimbursement-page.css");
+</style>
+
+<style>
+.p-step-active .p-step-title {
+  color: var(--udmercy-blue) !important;
+}
+
+.p-step-active .p-step-number {
+  color: var(--udmercy-blue) !important;
+}
+
+.p-step:has(~ .p-step-active) .p-stepper-separator {
+  background: var(--udmercy-blue) !important;
+}
+
+.p-step:nth-child(1) {
+  padding-left: 0px !important;
+}
 </style>

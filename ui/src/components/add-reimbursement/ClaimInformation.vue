@@ -1,5 +1,5 @@
 <template>
-  <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0">
+  <section class="xl:w-auto ml-0">
     <span class="flex items-center gap-6 mb-2">
       <h2 class="font-semibold my-0 text-[27px]">
         Reimbursement Claim Information

@@ -1,5 +1,5 @@
 <template>
-  <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 sm:mt-0 mb-32 sm:mb-0">
+  <section class="xl:w-auto xl:ml-0 sm:mt-0 mb-32 sm:mb-0">
     <span class="flex items-center gap-6 mb-2">
       <h2 class="font-semibold my-0 text-[27px]">Add or View Expenses</h2>
       <img
@@ -93,11 +93,15 @@
         </span>
       </div>
 
-      <h4
-        class="text-[13px] font-light text-gray-700 leading-7 w-auto max-w-[40rem]"
-      >
+      <h4 class="text-[13px] font-light text-gray-700 leading-7 w-auto">
         By adding an activity; I hereby certify that this claim is correct and
-        reimbursable under published travel expense Policies & Procedures of UDM
+        reimbursable under published travel expense
+        <a
+          href="https://www.udmercy.edu/faculty-staff/procurement-services/policies.php"
+          target="_blank"
+        >
+          Policies & Procedures of UDM
+        </a>
       </h4>
 
       <div class="flex gap-5">
@@ -114,7 +118,7 @@
     <!-- ALL EXPENSES SECTION -->
     <h4 class="underline font-semibold text-lg text-gray-800">All Expenses</h4>
     <div
-      class="h-48 sm:h-auto overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto"
+      class="h-48 sm:h-auto overflow-auto flex gap-4 flex-wrap custom-scroll-bar w-auto"
     >
       <h5
         class="mt-0 font-medium text-gray-500"
