@@ -62,13 +62,13 @@
     </p>
 
     <!-- ALL FOAPA SECTION -->
-    <div class="flex gap-x-28 flex-wrap">
-      <div class="w-[370px]">
+    <div class="flex gap-x-10 flex-wrap">
+      <div class="w-[400px]">
         <h4 class="underline mb-5 font-semibold text-lg text-gray-800">
           All FOAPA
         </h4>
         <div
-          class="overflow-auto flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto"
+          class="flex flex-col gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto"
         >
           <div v-if="props.claim.activities.length === 0">
             <h5 class="mt-0 font-medium text-gray-500">
@@ -77,7 +77,7 @@
           </div>
         </div>
         <div
-          class="flex gap-3 flex-col max-h-80 overflow-auto"
+          class="flex gap-3 flex-col overflow-auto"
           v-if="userFoapas.length !== 0"
         >
           <!-- Wait till the user's foapa have been loaded in, so that this component

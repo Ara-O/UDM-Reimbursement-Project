@@ -43,9 +43,7 @@
       Added Receipts will show here
     </h3>
     <!-- Looping through all receipts -->
-    <div
-      class="mt-6 flex gap-10 w-auto max-w-[1100px] max-h-72 overflow-auto flex-wrap"
-    >
+    <div class="mt-6 flex gap-10 w-auto max-w-[1100px] flex-wrap">
       <div
         class="bg-udmercy-blue border border-solid border-gray-200 text-white rounded-md flex items-center box-border w-auto px-5 gap-5 h-auto py-5 pr-10"
         v-for="(receipt, index) in props.claim.reimbursementReceipts"
@@ -108,6 +106,10 @@
               @click="closeCameraPopup"
             />
           </div>
+          <p class="leading-8 text-sm mt-0 font-medium">
+            Make sure you enable camera permissions. After taking a picture,
+            make sure to scroll to find a preview of the picture.
+          </p>
           <video
             autoplay
             id="video"

@@ -1,14 +1,8 @@
 <template>
   <!-- Top section for returning -->
-  <span
-    class="absolute right-10 top-11 flex cursor-pointer items-center gap-4"
-    @click="viewRequestHistory"
-  >
-    <img :src="HistoryIcon" alt="History" class="w-5" />
-    <p class="text-udmercy-blue underline">Request History</p>
-  </span>
+
   <div
-    class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
+    class="flex items-center gap-4 mt-8 sm:ml-20 ml-10 mb-5 xl:ml-32 cursor-pointer"
     @click="goToDashboard"
     v-if="!coming_from_foapa_page"
   >
@@ -23,12 +17,15 @@
     <img src="../assets/left-arrow.png" alt="Left arrow" class="w-4" />
     <h4 class="font-normal text-sm text-gray-600">Return to FOAPA page</h4>
   </div>
-  <main class="h-screen block xl:flex mt-40 xl:mt-0 items-center gap-20">
+  <main class="flex mt-20 mb-10 gap-20">
     <!-- SECTIONS SECTION -->
     <section class="pl-32 hidden xl:block">
-      <h3 class="text-2xl font-semibold">Section</h3>
+      <h3 class="text-2xl font-semibold mb-0">Section</h3>
+      <p class="text-sm leading-8 mb-0 mt-4">
+        You can also move through sections by clicking below
+      </p>
       <article
-        class="shadow h-auto border-black border rounded-md w-[22rem] mt-8"
+        class="shadow h-auto border-black border rounded-md w-[22rem] mt-4"
       >
         <div v-for="(section, i) in sections">
           <div
@@ -54,6 +51,18 @@
           <hr class="border-solid border-[0.5px] text-gray-200 h-[1] m-0" />
         </div>
       </article>
+      <div class="flex mt-3 justify-center items-center gap-4">
+        <span
+          class="inline-flex items-center gap-3 cursor-pointer"
+          @click="viewRequestHistory"
+          v-if="currentReimbursement.reimbursementStatus !== 'Denied'"
+        >
+          <img :src="HistoryIcon" alt="History" class="w-4" />
+          <p class="text-udmercy-blue text-sm underline inline">
+            Request History
+          </p>
+        </span>
+      </div>
       <p
         v-if="currentReimbursement.reimbursementStatus === 'Denied'"
         class="text-sm text-center mt-6 underline cursor-pointer"
@@ -137,6 +146,14 @@
         <p class="text-sm mt-0 text-gray-500">{{ history.date_of_message }}</p>
         <hr class="text-gray-200 h-0.5 bg-gray-200 border-solid" />
       </div>
+      <div
+        v-if="
+          currentReimbursement.request_history &&
+          currentReimbursement.request_history.length === 0
+        "
+      >
+        <p class="text-sm">You just started this request</p>
+      </div>
     </Sidebar>
   </div>
   <p
@@ -161,6 +178,12 @@ import ConfirmationPopup from "../components/utilities/ConfirmationPopup.vue";
 import HistoryIcon from "../assets/black-history.png";
 import Sidebar from "primevue/sidebar";
 
+import Stepper from "primevue/stepper";
+import StepList from "primevue/steplist";
+import StepPanels from "primevue/steppanels";
+import StepItem from "primevue/stepitem";
+import Step from "primevue/step";
+import StepPanel from "primevue/steppanel";
 function goToDashboard() {
   router.push("/");
 }

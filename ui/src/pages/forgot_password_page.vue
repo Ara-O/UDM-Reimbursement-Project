@@ -106,10 +106,12 @@ function resetPassword() {
 }
 
 onMounted(() => {
+  console.log("bruh");
   if (route.params.userToken === null) {
-    router.push("/");
+    // router.push("/");
   } else {
     userToken.value = route.params.userToken as string;
+    console.log(route.params);
   }
 });
 </script>

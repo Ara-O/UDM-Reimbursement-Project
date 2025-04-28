@@ -38,9 +38,11 @@
   align-items: center;
 }
 
-.delete-guest-button {}
+.delete-guest-button {
+}
 
-.edit-guest-button {}
+.edit-guest-button {
+}
 
 .all-activities-section {
   display: flex;
@@ -257,7 +259,8 @@
   flex-wrap: wrap;
 }
 
-.activity-add-receipt-section {}
+.activity-add-receipt-section {
+}
 
 .receipt-preview .receipt {
   height: 131px;
@@ -326,7 +329,6 @@
   border: solid 1px var(--udmercy-red);
   padding: 8px 20px;
 }
-
 
 .cost-and-other-section {
   height: 45px;
@@ -500,7 +502,7 @@ input#direct-deposit {
 .foapa {
   background: var(--udmercy-blue);
   color: white;
-  width: 320px;
+  width: 100%;
   height: fit-content;
   border-radius: 20px;
   box-sizing: border-box;

@@ -450,6 +450,8 @@ function fetchImageBase64(url) {
 
 router.post("/forward-request", verifyAdminToken, async (req, res) => {
   try {
+    const WEBSITE_URL = process.env.WEBSITE_URL;
+
     let receipts = req.body.reimbursementData.reimbursementReceipts || [];
 
     const facultyInfo = await Faculty.findById(req.body.faculty._id);
@@ -519,7 +521,7 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
       approving requests approved for faculty members, or a necessary party. The reimbursement request necessary for approval has been attached to this email. 
       Please look through the attached PDF and click the link below to either approve or deny this reimbursement request.
       </h3>
-      <a href="https://udmreimbursements.com/review-request/${req.body.reimbursementData._id}?email=${req.body.to}">Review Request Here</a>
+      <a href="${WEBSITE_URL}/review-request/${req.body.reimbursementData._id}?email=${req.body.to}">Review Request Here</a>
       </div>
       </div>
       `,

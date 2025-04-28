@@ -224,13 +224,13 @@ export default createRouter({
     {
       path: "/forgot-password/:userToken",
       component: ForgotPassword,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("token")?.length ?? 0 > 0) {
-          next("/dashboard");
-        } else {
-          next();
-        }
-      },
+      // beforeEnter: (to, from, next) => {
+      //   if (localStorage.getItem("token")?.length ?? 0 > 0) {
+      //     next("/dashboard");
+      //   } else {
+      //     next();
+      //   }
+      // },
     },
     { path: "/:pathMatch(.*)*", redirect: "/" },
   ],

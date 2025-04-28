@@ -1,7 +1,5 @@
 <template>
-  <section
-    class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 h-full sm:mt-0 mb-32 sm:mb-0"
-  >
+  <section class="xl:w-auto mx-10 sm:mx-20 xl:ml-0 sm:mt-0 mb-32 sm:mb-0">
     <span class="flex items-center gap-6 mb-2">
       <h2 class="font-semibold my-0 text-[27px]">Add or View Expenses</h2>
       <img
@@ -10,10 +8,6 @@
         class="w-7 hidden md:block"
       />
     </span>
-    <!-- <h4 class="font-medium text-gray-600 mb-1 text-sm">
-      Or try our experimental
-      <u class="cursor-pointer" @click="showQuickAddPopup">Quick Add</u> feature
-    </h4> -->
 
     <form @submit.prevent="addExpense">
       <div class="flex gap-x-14 gap-y-3 flex-wrap">
@@ -120,7 +114,7 @@
     <!-- ALL EXPENSES SECTION -->
     <h4 class="underline font-semibold text-lg text-gray-800">All Expenses</h4>
     <div
-      class="h-48 sm:h-auto max-h-48 overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto"
+      class="h-48 sm:h-auto overflow-auto flex gap-10 flex-wrap custom-scroll-bar max-w-[1075px] w-auto"
     >
       <h5
         class="mt-0 font-medium text-gray-500"
