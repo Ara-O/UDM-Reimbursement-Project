@@ -72,7 +72,7 @@ router.post("/updateAccountInfo", verifyToken, async (req, res) => {
 });
 
 router.post("/forgotPassword", async (req, res) => {
-  const WEBSITE_URL = process.env.WEBSITE_URL;
+  const WEBSITE_URL = "https://udmreimbursements.com";
   try {
     const email = req.body.workEmail.trim() + "@udmercy.edu";
 
