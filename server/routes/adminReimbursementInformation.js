@@ -8,11 +8,11 @@ import { z, ZodError } from "zod";
 import AdditionalReimbursementMessages from "../models/reimbursementMessages.js";
 import ReimbursementTicket from "../models/reimbursement.js";
 import { retrieveDate } from "../utils/retrieveDate.js";
-import sgMail from "@sendgrid/mail";
 import DepartmentChairRegistry from "../models/departmentChairRegistry.js";
 import https from "https";
 import Pdfmake from "pdfmake";
 import FacultyTagsList from "../models/facultyTagsList.js";
+import { getSmptTransport } from "../utils/mailer.js";
 
 dotenv.config();
 
@@ -60,9 +60,10 @@ router.post("/approve-reimbursement", verifyAdminToken, async (req, res) => {
     }
 
     // Send an email to the professor telling them they were accepted
-    // TODO: Probably also send it to an admin
-    await sgMail.send({
-      from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+    const smtpTransporter = getSmptTransport();
+
+    await smtpTransporter.sendMail({
+      from: "UDM Reimbursement Team<noreply@udmreimbursements.com>",
       to: facultyInfo.workEmail,
       subject: `Reimbursement Request Approved - ${ticket.reimbursementName}`,
       html: `
@@ -140,8 +141,10 @@ router.post("/deny-reimbursement", verifyAdminToken, async (req, res) => {
       });
     }
 
-    await sgMail.send({
-      from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+    const smtpTransporter = getSmptTransport();
+
+    await smtpTransporter.sendMail({
+      from: "UDM Reimbursement Team<noreply@udmreimbursements.com>",
       to: facultyInfo.workEmail,
       subject: `Reimbursement Request Denied - ${ticket.reimbursementName}`,
       html: `
@@ -212,8 +215,10 @@ router.post(
       });
     }
 
-    await sgMail.send({
-      from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+    const smtpTransporter = getSmptTransport();
+
+    await smtpTransporter.sendMail({
+      from: "UDM Reimbursement Team<noreply@udmreimbursements.com>",
       to: faculty.workEmail,
       subject: `Reimbursement Request Approved With Edits - ${ticket.reimbursementName}`,
       html: `
@@ -502,6 +507,7 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
       },
     };
 
+    const smtpTransporter = getSmptTransport();
     generatePdf(docDefinition, async function (base64String) {
       logger.info("PDF was generated successfully", {
         api: "generatePDF_function",
@@ -509,8 +515,8 @@ router.post("/forward-request", verifyAdminToken, async (req, res) => {
 
       base64String = base64String.slice(28);
 
-      await sgMail.send({
-        from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+      await smtpTransporter.sendMail({
+        from: "UDM Reimbursement Team<noreply@udmreimbursements.com>",
         to: req.body.to,
         subject: `[IMPORTANT] Reimbursement Request Approval Needed`,
         html: `

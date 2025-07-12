@@ -9,8 +9,8 @@ import ReimbursementTicket from "../models/reimbursement.js";
 import Pdfmake from "pdfmake";
 import AdditionalReimbursementMessages from "../models/reimbursementMessages.js";
 import DepartmentChairRegistry from "../models/departmentChairRegistry.js";
-import sgMail from "@sendgrid/mail";
 import https from "https";
+import { getSmptTransport } from "../utils/mailer.js";
 
 const router = Router();
 
@@ -566,6 +566,7 @@ function generatePdf(docDefinition, callback) {
 //Edit a reimbursement claim: POST /api/submit-reimbursement
 router.post("/submit-request", verifyToken, async (req, res) => {
   try {
+    let smtpTransporter = getSmptTransport();
     // Validate the user's reimbursement data
     const requestData = reimbursementRequestSchema.parse(req.body);
     const facultyId = req.user.userId;
@@ -630,9 +631,9 @@ router.post("/submit-request", verifyToken, async (req, res) => {
 
       base64String = base64String.slice(28);
 
-      sgMail
-        .send({
-          from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+      smtpTransporter
+        .sendMail({
+          from: "UDM Reimbursement Team<noreply@udmreimbursements.com>",
           to:
             faculty.workEmail !== String("adairja@udmercy.edu").toLowerCase()
               ? ["adairja@udmercy.edu", faculty.workEmail]
@@ -673,6 +674,9 @@ router.post("/submit-request", verifyToken, async (req, res) => {
           return res.status(200).send({ message: "Request successfully sent" });
         })
         .catch((err) => {
+          logger.error(err, {
+            api: "/api/submit-request",
+          });
           logger.error("There was an error in sending the email", {
             api: "/api/submit-request",
           });

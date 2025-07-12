@@ -1,6 +1,5 @@
 import { Router } from "express";
-// import { transporter } from "../app.js";
-import sgMail from "@sendgrid/mail";
+import nodemailer from "nodemailer";
 import Faculty from "../models/faculty.js";
 import {
   encryptPassword,
@@ -10,11 +9,22 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { verifyToken } from "../middleware/auth.js";
 import { Auth } from "../models/auth.js";
+import { getSmptTransport } from "../utils/mailer.js";
 import { ZodError, z } from "zod";
 import logger from "../logger.js";
+
 dotenv.config();
 
 const router = Router();
+
+let smtpTransport = nodemailer.createTransport({
+  host: "mail.smtp2go.com",
+  port: 2525, // 8025, 587 and 25 can also be used.
+  auth: {
+    user: "udmreimbursements",
+    pass: "nSeroJqqsk6yz1PC",
+  },
+});
 
 //Retrieve account infoemation - GET /api/retrieve-account-information
 router.get("/retrieve-account-information", verifyToken, async (req, res) => {
@@ -73,6 +83,7 @@ router.post("/updateAccountInfo", verifyToken, async (req, res) => {
 
 router.post("/forgotPassword", async (req, res) => {
   const WEBSITE_URL = "https://udmreimbursements.com";
+
   try {
     const email = req.body.workEmail.trim() + "@udmercy.edu";
 
@@ -107,13 +118,12 @@ router.post("/forgotPassword", async (req, res) => {
 
         token = token.replaceAll(".", "$");
 
-        // send mail with defined transport object
-        let resp = await sgMail.send({
-          from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
-          to: [
-            String(req.body.workEmail).trim().toLowerCase() + "@udmercy.edu",
-          ],
-          subject: "Password Reset Instructions",
+        const smtpTransport = getSmptTransport();
+
+        let email_resp = await smtpTransport.sendMail({
+          from: "UDM Reimbursement Team <noreply@udmreimbursements.com>",
+          to: String(req.body.workEmail).trim().toLowerCase() + "@udmercy.edu",
+          subject: `Forgot your password`,
           html: `<h4 style='font-weight: 400'>Hello!</h4> <h4 style='font-weight: 400' >We received a request to reset your password. To proceed
               with the password reset, please follow the instructions below</h4><h4 style='font-weight: 400'>Click on the following link to access the password reset page: </h4> <a href='${WEBSITE_URL}/forgot-password/${token}' >Click here</a>
               <br/><br/> <h4 style='font-weight: 400'>Best Regards</h4>`,

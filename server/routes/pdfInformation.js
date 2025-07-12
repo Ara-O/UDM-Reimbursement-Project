@@ -1,7 +1,6 @@
 import { Router } from "express";
 const router = Router();
 import https from "https";
-import sgMail from "@sendgrid/mail";
 import createPdfDefinition from "../pdfGenerator.js";
 import Pdfmake from "pdfmake";
 import multer from "multer";
@@ -11,14 +10,12 @@ import z, { ZodError } from "zod";
 import ReimbursementTicket from "../models/reimbursement.js";
 import fs from "fs";
 import { verifyToken } from "../middleware/auth.js";
-import { request } from "http";
-// import { transporter } from "../app.js";
 import logger from "../logger.js";
 import { generateRandomStringId } from "../utils/generateRandomString.js";
 const upload = multer({ dest: "uploads/" });
 import Faculty from "../models/faculty.js";
-import { log } from "console";
 import PdfPrinter from "pdfmake";
+import { getSmptTransport } from "../utils/mailer.js";
 
 let imagekit = new ImageKit({
   publicKey: process.env.IMAGE_KIT_PUBLIC,
@@ -345,6 +342,8 @@ router.post("/deleteReceiptImage", verifyToken, async (req, res) => {
 
 router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
   try {
+    const smtpTransporter = getSmptTransport();
+
     let receipts = req.body.reimbursementData.reimbursementReceipts || [];
 
     const facultyInfo = await Faculty.findById(req.user.userId);
@@ -384,9 +383,10 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
         api: "generatePDF_function",
       });
       base64String = base64String.slice(28);
-      sgMail
-        .send({
-          from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+
+      smtpTransporter
+        .sendMail({
+          from: "UDM Reimbursement Team<noreply@udmreimbursements.com>",
           to:
             req.body.userInfo.workEmail !==
             String(req.body.recipient).toLowerCase()
@@ -422,6 +422,9 @@ router.post("/send-reimbursement-email", verifyToken, async (req, res) => {
           return res.status(200).send({ message: "Email successfully sent" });
         })
         .catch((err) => {
+          logger.error(err, {
+            api: "generatePDF_function",
+          });
           logger.error("There was an error in sending the email", {
             api: "generatePDF_function",
           });
@@ -450,8 +453,10 @@ router.post("/send-contact-email", verifyToken, async (req, res) => {
   try {
     let facultyInfo = await Faculty.findById(req.user.userId);
 
-    await sgMail.send({
-      from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
+    const smtpTransporter = getSmptTransport();
+
+    await smtpTransporter.sendMail({
+      from: "UDM Reimbursement Team<noreply@udmreimbursements.com>",
       to: [
         '"The Support Team" <theduckateers@gmail.com>',
         facultyInfo.workEmail,

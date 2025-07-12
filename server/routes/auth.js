@@ -2,17 +2,15 @@ import { Router } from "express";
 import logger from "../logger.js";
 import Faculty from "../models/faculty.js";
 import { Auth } from "../models/auth.js";
-// import { transporter } from "../app.js";
 import { getOrgNumber } from "../utils/getDepartmentORGNumber.js";
 import {
   encryptPassword,
   decryptPassword,
 } from "../utils/authenticatePassword.js";
 import { generateRandomStringId } from "../utils/generateRandomString.js";
-
+import { getSmptTransport } from "../utils/mailer.js";
 import jwt from "jsonwebtoken";
 import { ZodError } from "zod";
-import sgMail from "@sendgrid/mail";
 import z from "zod";
 import { verifyToken } from "../middleware/auth.js";
 
@@ -109,29 +107,25 @@ router.post("/send-confirmation-email", async (req, res) => {
     // Generate the random 6-digit code
     let userAuthString = generateRandomStringId(6);
 
-    await sgMail.send({
+    const smtpTransport = getSmptTransport();
+
+    let email_resp = await smtpTransport.sendMail({
+      from: "UDM Reimbursement Team <noreply@udmreimbursements.com>",
       to: data.workEmail,
-      from: "UDM Reimbursement Team<oladipea@udmercy.edu>",
       subject: `Welcome to the UDM Reimbursement System! - ${userAuthString}`,
       html: `
-      <div style="border: solid 1px #efefef; padding: 20px 0px;">
-            <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
-              <h4 style="font-weight: 300; margin: 10px 0;">Hello,</h4>
-              <h4 style="font-weight: 300; margin: 10px 0;">Thanks for signing up for the University of Detroit Mercy Reimbursement System!</h4>
-              <h4 style="font-weight: 300; margin: 10px 0;">Please use the verification code below to activate your account:</h4>
-              <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${userAuthString}</h3>
-            </div>
-            <p style="font-weight: 400; font-size: 10px; color: gray; text-align: center; margin: 10px 0;">
-              If you did not sign up for this service, please ignore this email.
-            </p>
-      </div>`,
+       <div style="border: solid 1px #efefef; padding: 20px 0px;">
+             <div style="background: white;padding: 5% 10%; box-sizing: border-box;">
+               <h4 style="font-weight: 300; margin: 10px 0;">Hello,</h4>
+               <h4 style="font-weight: 300; margin: 10px 0;">Thanks for signing up for the University of Detroit Mercy Reimbursement System!</h4>
+               <h4 style="font-weight: 300; margin: 10px 0;">Please use the verification code below to activate your account:</h4>
+               <h3 style="font-weight: 500; margin: 20px 0; margin-top: 35px">${userAuthString}</h3>
+             </div>
+             <p style="font-weight: 400; font-size: 10px; color: gray; text-align: center; margin: 10px 0;">
+               If you did not sign up for this service, please ignore this email.
+             </p>
+       </div>`,
     });
-
-    //     await transporter.sendMail({
-    //       from: '"UDM Reimbursement Team" <udm-reimbursement-team@em2297.araoladipo.dev>',
-    //       to: data.workEmail,
-    //
-    //     });
 
     logger.info(`Verification email successfully sent to ${data.workEmail}`, {
       api: "/api/send-confirmation-email",
@@ -156,7 +150,7 @@ router.post("/send-confirmation-email", async (req, res) => {
       message: "Email sent successfully!",
     });
   } catch (err) {
-    console.log(err.response.body);
+    console.log(err);
     logger.error(err, { api: "/api/send-confirmation-email" });
 
     if (err instanceof ZodError) {
