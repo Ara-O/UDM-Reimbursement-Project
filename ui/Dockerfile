@@ -1,23 +1,23 @@
-# Use the Node.js LTS Alpine image as the base image
-FROM node:lts-alpine
-
-# Install Python and other necessary libraries for node-canvas
-RUN apk add --no-cache python3 make g++ cairo-dev jpeg-dev pango-dev
-
-# Set the working directory
+# ========================
+# Stage 1: Build Vue app
+# ========================
+FROM node:18-alpine AS build
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container
-COPY package.json package-lock.json ./
-
-# Install the dependencies
+# Install deps
+COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the application code to the container
+# Copy source & build
 COPY . .
+RUN npm run build
 
-# Expose the port your app runs on
-EXPOSE 5173
+# ========================
+# Stage 2: Serve with Nginx
+# ========================
+FROM nginx:alpine
+# Copy build output from first stage
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Start the application
-CMD ["npm", "run", "dev"]
+# Replace default nginx config with SPA-friendly one
+COPY nginx.conf /etc/nginx/conf.d/default.conf
