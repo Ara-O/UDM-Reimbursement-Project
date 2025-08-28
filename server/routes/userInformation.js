@@ -17,15 +17,6 @@ dotenv.config();
 
 const router = Router();
 
-let smtpTransport = nodemailer.createTransport({
-  host: "mail.smtp2go.com",
-  port: 2525, // 8025, 587 and 25 can also be used.
-  auth: {
-    user: "udmreimbursements",
-    pass: "nSeroJqqsk6yz1PC",
-  },
-});
-
 //Retrieve account infoemation - GET /api/retrieve-account-information
 router.get("/retrieve-account-information", verifyToken, async (req, res) => {
   try {
@@ -159,7 +150,6 @@ router.post("/verifyUserSignupToken", async (req, res) => {
 });
 
 router.post("/resetPassword", async (req, res) => {
-  console.log(req.body);
   //parsing the token
   try {
     let token = req.body.token.replaceAll("$", ".");

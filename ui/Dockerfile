@@ -1,23 +1,29 @@
-# ========================
-# Stage 1: Build Vue app
-# ========================
-FROM node:18-alpine AS build
+# Use Node image for building the app
+FROM node:18-bullseye AS build-stage
+
 WORKDIR /app
 
-# Install deps
+# Copy dependency files first for caching
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Copy source & build
+# Copy the rest of your app
 COPY . .
+
+# Build the app for production
 RUN npm run build
 
-# ========================
-# Stage 2: Serve with Nginx
-# ========================
-FROM nginx:alpine
-# Copy build output from first stage
-COPY --from=build /app/dist /usr/share/nginx/html
+# Use a lightweight image to serve the built app
+# Coolify will take care of serving this automatically
+FROM nginx:stable-alpine AS production-stage
 
-# Replace default nginx config with SPA-friendly one
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy the built Vue app
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Optional: custom Nginx config if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
