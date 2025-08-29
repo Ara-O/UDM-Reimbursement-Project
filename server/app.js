@@ -52,4 +52,4 @@ app.use("/health", (req, res) => {
   res.status(200).send("App is running!");
 });
 
-print("Server running on port " + port);
+console.log("Server running on port " + port);
