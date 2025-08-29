@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.listen(port, () => {
   connectToDB();
 
-  logger.info("Server started on port 8080", {
+  logger.info(`Server started on port ${port}`, {
     api: "server",
   });
 });
@@ -51,3 +51,5 @@ app.use("/admin", adminReimbursementInformation);
 app.use("/health", (req, res) => {
   res.status(200).send("App is running!");
 });
+
+print("Server running on port " + port);

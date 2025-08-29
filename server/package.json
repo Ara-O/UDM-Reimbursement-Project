@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "node app.js",
-    "build": "node app.js"
+    "build": "echo 'no build step'"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
