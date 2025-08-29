@@ -26,7 +26,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   connectToDB();
 
   logger.info(`Server started on port ${port}`, {
