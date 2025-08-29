@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "nodemon app.js",
-    "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "start": "node app.js",
+    "dev": "node app.js",
+    "build": "node app.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
