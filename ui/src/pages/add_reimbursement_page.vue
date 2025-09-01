@@ -12,7 +12,7 @@
       </h4>
     </div>
     <div
-      class="flex items-center gap-4 absolute top-8 sm:ml-20 ml-10 xl:ml-32 cursor-pointer"
+      class="mx-10 mb-5 xl:ml-28 cursor-pointer"
       @click="router.go(-1)"
       v-else
     >
