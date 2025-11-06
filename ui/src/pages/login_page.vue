@@ -4,6 +4,10 @@
       <img :src="DetroitMercyLogo" alt="Detroit mercy logo" class="w-24 p-3" />
     </div>
     <h3 class="login-title mt-10">Detroit Mercy Reimbursement System</h3>
+    <p class="font-medium">
+      Disclaimer: This is a student-created project and is not an official UDM
+      platform.
+    </p>
     <Form @submit="loginUser" class="login-form mt-6">
       <div class="login-field">
         <label for="work-email">Work Email: </label>

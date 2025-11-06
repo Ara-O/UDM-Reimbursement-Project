@@ -18,6 +18,10 @@
         />
       </div>
       <h3 class="signup-title">Detroit Mercy Reimbursement System</h3>
+      <p class="font-medium">
+        Disclaimer: This is a student-created project and is not an official UDM
+        platform.
+      </p>
       <h3 class="signup-title-description">Basic Questions</h3>
 
       <!-- Defines the form fields  -->

@@ -1,0 +1,44 @@
+name: Keep Render Awake (Browser)
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  wake-render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install Puppeteer
+        run: npm install puppeteer
+
+      - name: Wake Render with browser
+        run: |
+          node << 'EOF'
+          const puppeteer = require('puppeteer');
+
+          (async () => {
+            const browser = await puppeteer.launch({
+              headless: true,
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
+            
+            const page = await browser.newPage();
+            await page.goto('https://udm-reimbursement-project.onrender.com/health', {
+              waitUntil: 'networkidle2',
+              timeout: 60000
+            });
+            
+            console.log('Successfully loaded!');
+            await browser.close();
+          })();
+          EOF
