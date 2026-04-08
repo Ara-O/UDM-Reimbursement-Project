@@ -32,7 +32,7 @@ const reimbursementRequestSchema = z.object({
           id: z.string(),
           additionalInformation: z.string().optional(),
         })
-        .optional()
+        .optional(),
     ),
     reimbursementReceipts: z.array(
       z
@@ -42,7 +42,7 @@ const reimbursementRequestSchema = z.object({
           name: z.string(),
           url: z.string(),
         })
-        .optional()
+        .optional(),
     ),
     destination: z.string(),
     paymentRetrievalMethod: z.string(),
@@ -57,7 +57,7 @@ const reimbursementRequestSchema = z.object({
           guestFirstName: z.string(),
           guestLastName: z.string(),
         })
-        .optional()
+        .optional(),
     ),
     foapaDetails: z.array(
       z
@@ -74,7 +74,7 @@ const reimbursementRequestSchema = z.object({
           createdAt: z.any(),
           updatedAt: z.any(),
         })
-        .optional()
+        .optional(),
     ),
     request_history: z
       .array(
@@ -83,7 +83,7 @@ const reimbursementRequestSchema = z.object({
             date_of_message: z.string(),
             request_message: z.string(),
           })
-          .optional()
+          .optional(),
       )
       .optional(),
   }),
@@ -218,7 +218,7 @@ router.post("/update-reimbursement", verifyToken, async (req, res) => {
     // inputted updated reimbursement request
     let resp = await ReimbursementTicket.findByIdAndUpdate(
       reimbursementTicket._id,
-      reimbursementTicket
+      reimbursementTicket,
     );
 
     if (resp === null) {
@@ -231,7 +231,7 @@ router.post("/update-reimbursement", verifyToken, async (req, res) => {
       `User ${req.user.userId} has successfully updated reimbursement ${reimbursementTicket._id}`,
       {
         api: "/api/update-reimbursement",
-      }
+      },
     );
 
     return res
@@ -273,7 +273,7 @@ router.post("/delete-reimbursement", verifyToken, async (req, res) => {
       `User ${userId} has successfully deleted reimbursement ${reimbursementId}`,
       {
         api: "/api/delete-reimbursement",
-      }
+      },
     );
 
     return res
@@ -317,7 +317,7 @@ router.post("/archive-reimbursement", verifyToken, async (req, res) => {
       `User ${userId} has successfully deleted reimbursement ${reimbursementId}`,
       {
         api: "/api/delete-reimbursement",
-      }
+      },
     );
 
     return res
@@ -345,7 +345,7 @@ router.post("/duplicate-request", verifyToken, async (req, res) => {
 
     if (faculty === null) {
       throw new Error(
-        "User information not found. Please reload and try again."
+        "User information not found. Please reload and try again.",
       );
     }
 
@@ -354,13 +354,13 @@ router.post("/duplicate-request", verifyToken, async (req, res) => {
 
     if (request === null) {
       throw new Error(
-        "An error occured when fetching this request. Please reload and try again"
+        "An error occured when fetching this request. Please reload and try again",
       );
     }
     const today = new Date();
     const formattedDate = `${String(today.getMonth() + 1).padStart(
       2,
-      "0"
+      "0",
     )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
 
     request.request_history = [
@@ -374,31 +374,32 @@ router.post("/duplicate-request", verifyToken, async (req, res) => {
 
     // Update the request's name and make it new (this generates new _ids)
     newRequest.reimbursementName = "Copy of " + newRequest.reimbursementName;
+    newRequest.reimbursementDate = new Date().toISOString(); // Update the reimbursement date to the current date when duplicating
     if (newRequest._id) {
-      delete newRequest._id;
+      delete newRequest._id; // This allows a new _id to be generated when we save the duplicated request
     }
 
     if (newRequest.activities) {
       newRequest.activities.forEach((actv) => {
-        delete actv._id;
+        delete actv._id; // This allows new _ids to be generated for the activities when we save the duplicated request
       });
     }
 
     if (newRequest.foapaDetails) {
       newRequest.foapaDetails.forEach((foapa) => {
-        delete foapa._id;
+        delete foapa._id; // This allows new _ids to be generated for the foapa details when we save the duplicated request
       });
     }
 
     if (newRequest.guestInformation) {
       newRequest.guestInformation.forEach((guest) => {
-        delete guest._id;
+        delete guest._id; // This allows new _ids to be generated for the guest information when we save the duplicated request
       });
     }
 
     if (newRequest.reimbursementReceipts) {
       newRequest.reimbursementReceipts.forEach((receipt) => {
-        delete receipt._id;
+        delete receipt._id; // This allows new _ids to be generated for the reimbursement receipts when we save the duplicated request
       });
     }
 
@@ -418,7 +419,7 @@ router.post("/duplicate-request", verifyToken, async (req, res) => {
       `${userId} has successfully duplicated a reimbursement request`,
       {
         api: "/api/duplicate-request",
-      }
+      },
     );
 
     return res.status(200).send({ message: "Request duplicated successfully" });
@@ -481,7 +482,7 @@ router.post("/save-as-template", verifyToken, async (req, res) => {
       `User ${userId} has successfully saved a reimbursement request as a template`,
       {
         api: "/api/save-as-template",
-      }
+      },
     );
 
     return res
@@ -492,7 +493,7 @@ router.post("/save-as-template", verifyToken, async (req, res) => {
       "An unexpected error has occured when saving a ticket as a template",
       {
         api: "/api/save-as-template",
-      }
+      },
     );
 
     logger.error(err, {
@@ -581,7 +582,7 @@ router.post("/submit-request", verifyToken, async (req, res) => {
     const today = new Date();
     const formattedDate = `${String(today.getMonth() + 1).padStart(
       2,
-      "0"
+      "0",
     )}/${String(today.getDate()).padStart(2, "0")}/${today.getFullYear()}`;
 
     reimbursementTicket.request_history.unshift({
@@ -591,7 +592,7 @@ router.post("/submit-request", verifyToken, async (req, res) => {
 
     let resp = await ReimbursementTicket.findByIdAndUpdate(
       reimbursementTicket._id,
-      reimbursementTicket
+      reimbursementTicket,
     );
 
     // If the reimbursement request's id could not be found
@@ -606,13 +607,13 @@ router.post("/submit-request", verifyToken, async (req, res) => {
     let receipts = reimbursementTicket.reimbursementReceipts || [];
 
     const base64Receipts = await Promise.all(
-      receipts.map((receipt) => fetchImageBase64(receipt.url))
+      receipts.map((receipt) => fetchImageBase64(receipt.url)),
     );
 
     const content = createPdfDefinition(
       reimbursementTicket,
       faculty,
-      base64Receipts
+      base64Receipts,
     );
 
     const docDefinition = {
@@ -668,7 +669,7 @@ router.post("/submit-request", verifyToken, async (req, res) => {
             `User ${req.user.userId} has successfully submitted reimbursement ${reimbursementTicket._id}`,
             {
               api: "/api/update-reimbursement",
-            }
+            },
           );
 
           return res.status(200).send({ message: "Request successfully sent" });
@@ -720,7 +721,7 @@ router.post("/check-reimbursement-approval-status", async (req, res) => {
     }
 
     const faculty_in_review_log = reimbursement.request_review_log.find(
-      (reviewer) => reviewer.email === facultyEmail
+      (reviewer) => reviewer.email === facultyEmail,
     );
 
     if (faculty_in_review_log === undefined) {
@@ -740,7 +741,7 @@ router.post("/check-reimbursement-approval-status", async (req, res) => {
       `${facultyEmail} is viewing the request for approval and is in the list of approvers`,
       {
         api: "/api/check-reimbursement-approval-status",
-      }
+      },
     );
 
     return res.status(200).send({ needs_approval: true });
@@ -760,15 +761,15 @@ router.post("/review-reimbursement-request", async (req, res) => {
       `Reimbursement ${req.body.reimbursement_id} is being reviewed by ${req.body.name}`,
       {
         api: "/api/check-reimbursement-approval-status",
-      }
+      },
     );
 
     let reimbursement = await ReimbursementTicket.findById(
-      req.body.reimbursement_id
+      req.body.reimbursement_id,
     );
 
     let idx = reimbursement.request_review_log.findIndex(
-      (reviewer) => reviewer.email === req.body.email
+      (reviewer) => reviewer.email === req.body.email,
     );
 
     if (idx === -1) {
